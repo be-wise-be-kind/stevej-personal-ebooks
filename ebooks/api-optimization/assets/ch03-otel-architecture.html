@@ -99,17 +99,17 @@
                 </g>
             </g>
 
-            <!-- Arrows from Apps to Collector -->
+            <!-- Arrows from Apps to Collector (orthogonal lines) -->
             <g stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#arrowhead)">
-                <path d="M 240 180 Q 300 180 340 280"/>
+                <path d="M 240 180 L 290 180 L 290 280 L 340 280"/>
                 <path d="M 240 320 L 340 320"/>
-                <path d="M 240 460 Q 300 460 340 360"/>
+                <path d="M 240 460 L 290 460 L 290 360 L 340 360"/>
             </g>
 
             <!-- Protocol labels -->
-            <text x="290" y="195" font-size="10" fill="#64748b" transform="rotate(-25 290 195)">OTLP/gRPC</text>
-            <text x="280" y="305" font-size="10" fill="#64748b">OTLP/gRPC</text>
-            <text x="290" y="440" font-size="10" fill="#64748b" transform="rotate(25 290 440)">OTLP/gRPC</text>
+            <text x="255" y="172" font-size="10" fill="#64748b">OTLP/gRPC</text>
+            <text x="280" y="312" font-size="10" fill="#64748b">OTLP/gRPC</text>
+            <text x="255" y="468" font-size="10" fill="#64748b">OTLP/gRPC</text>
 
             <!-- OpenTelemetry Collector -->
             <g transform="translate(350, 150)">
@@ -155,12 +155,12 @@
                 </g>
             </g>
 
-            <!-- Arrows from Collector to Backends -->
+            <!-- Arrows from Collector to Backends (orthogonal lines) -->
             <g stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#arrowhead)">
-                <path d="M 600 220 Q 660 220 700 150"/>
+                <path d="M 600 220 L 650 220 L 650 152 L 700 152"/>
                 <path d="M 600 280 L 700 280"/>
-                <path d="M 600 340 Q 660 340 700 410"/>
-                <path d="M 600 400 Q 680 430 700 475"/>
+                <path d="M 600 340 L 650 340 L 650 392 L 700 392"/>
+                <path d="M 600 400 L 650 400 L 650 472 L 700 472"/>
             </g>
 
             <!-- Backends Section -->
@@ -203,12 +203,12 @@
                 </g>
             </g>
 
-            <!-- Connection from all backends to Grafana -->
+            <!-- Connection from all backends to Grafana (orthogonal lines) -->
             <g stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,2" fill="none">
-                <path d="M 895 165 Q 920 165 920 400 Q 920 440 895 440"/>
-                <path d="M 895 225 Q 930 225 930 400 Q 930 440 895 440"/>
-                <path d="M 895 315 Q 940 315 940 420 Q 940 440 895 440"/>
-                <path d="M 895 395 Q 935 395 935 430 Q 935 440 895 440"/>
+                <path d="M 895 152 L 920 152 L 920 472 L 910 472"/>
+                <path d="M 895 232 L 928 232 L 928 472 L 910 472"/>
+                <path d="M 895 312 L 936 312 L 936 472 L 910 472"/>
+                <path d="M 895 392 L 944 392 L 944 472 L 910 472"/>
             </g>
 
             <!-- Legend -->
