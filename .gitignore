@@ -1,0 +1,33 @@
+# Build outputs
+*.pdf
+*.epub
+*.mobi
+*.html
+build/
+dist/
+
+# Editor files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Node modules (if using any build tools)
+node_modules/
+package-lock.json
+
+# Python (if using any build tools)
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# OS files
+Thumbs.db
