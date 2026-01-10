@@ -178,11 +178,6 @@
                     <text x="-95" y="76" text-anchor="middle" fill="#dc2626" font-size="12" font-weight="700">~900ms latency</text>
                 </g>
 
-                <!-- SLA line -->
-                <line x1="0" y1="240" x2="650" y2="240" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="10,5"/>
-                <rect x="550" y="247" width="95" height="26" fill="#f3e8ff" rx="4"/>
-                <text x="597" y="265" text-anchor="middle" fill="#7c3aed" font-size="11" font-weight="600">SLA: 100ms</text>
-
                 <!-- Optimal zone annotation -->
                 <g transform="translate(40, 260)">
                     <rect width="155" height="85" fill="#ffffff" rx="6" stroke="#22c55e" stroke-width="2"/>
@@ -204,6 +199,11 @@
                     <text x="72" y="60" text-anchor="middle" fill="#64748b" font-size="10">Queue buildup</text>
                     <text x="72" y="78" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="500">Cascading failures</text>
                 </g>
+
+                <!-- SLA line (rendered last so label appears on top of annotations) -->
+                <line x1="0" y1="240" x2="650" y2="240" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="10,5"/>
+                <rect x="550" y="247" width="95" height="26" fill="#f3e8ff" rx="4"/>
+                <text x="597" y="265" text-anchor="middle" fill="#7c3aed" font-size="11" font-weight="600">SLA: 100ms</text>
             </g>
 
             <!-- Key Insight Box -->
