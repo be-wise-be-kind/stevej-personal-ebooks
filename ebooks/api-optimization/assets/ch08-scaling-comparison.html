@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horizontal vs Vertical Scaling Comparison</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        
+        <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="serverGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="serverLargeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="loadBalancerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                </linearGradient>
+                <!-- Shadow filter -->
+                <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+                </filter>
+                <!-- Arrow marker -->
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+                </marker>
+            </defs>
+
+            <!-- Left side: Vertical Scaling -->
+            <g transform="translate(0, 0)">
+                <!-- Section background -->
+                <rect x="20" y="50" width="400" height="530" rx="8" fill="#faf5ff" stroke="#e9d5ff" stroke-width="2"/>
+
+                <!-- Title -->
+                <text x="220" y="85" text-anchor="middle" font-size="18" font-weight="600" fill="#6d28d9">Vertical Scaling (Scale Up)</text>
+
+                <!-- Before state -->
+                <text x="120" y="130" text-anchor="middle" font-size="14" fill="#64748b">Before</text>
+
+                <!-- Small server -->
+                <rect x="70" y="145" width="100" height="100" rx="6" fill="url(#serverGradient)" filter="url(#dropShadow)"/>
+                <text x="120" y="180" text-anchor="middle" font-size="11" fill="white" font-weight="500">Server</text>
+                <text x="120" y="205" text-anchor="middle" font-size="10" fill="#bfdbfe">2 CPU / 4GB</text>
+                <text x="120" y="225" text-anchor="middle" font-size="10" fill="#bfdbfe">100 req/s</text>
+
+                <!-- Arrow down -->
+                <line x1="120" y1="255" x2="120" y2="305" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="155" y="285" font-size="11" fill="#64748b">Add resources</text>
+
+                <!-- After state -->
+                <text x="120" y="340" text-anchor="middle" font-size="14" fill="#64748b">After</text>
+
+                <!-- Large server -->
+                <rect x="50" y="355" width="140" height="145" rx="6" fill="url(#serverLargeGradient)" filter="url(#dropShadow)"/>
+                <text x="120" y="400" text-anchor="middle" font-size="13" fill="white" font-weight="600">Server</text>
+                <text x="120" y="430" text-anchor="middle" font-size="11" fill="#ddd6fe">8 CPU / 32GB</text>
+                <text x="120" y="455" text-anchor="middle" font-size="11" fill="#ddd6fe">400 req/s</text>
+
+                <!-- Pros/Cons -->
+                <g transform="translate(220, 145)">
+                    <text x="0" y="0" font-size="12" font-weight="600" fill="#16a34a">Pros:</text>
+                    <text x="0" y="26" font-size="11" fill="#475569">- Simple to implement</text>
+                    <text x="0" y="50" font-size="11" fill="#475569">- No code changes</text>
+                    <text x="0" y="74" font-size="11" fill="#475569">- No distributed state</text>
+
+                    <text x="0" y="118" font-size="12" font-weight="600" fill="#dc2626">Cons:</text>
+                    <text x="0" y="144" font-size="11" fill="#475569">- Hardware limits</text>
+                    <text x="0" y="168" font-size="11" fill="#475569">- Single point of failure</text>
+                    <text x="0" y="192" font-size="11" fill="#475569">- Expensive at scale</text>
+                    <text x="0" y="216" font-size="11" fill="#475569">- Downtime for upgrades</text>
+                </g>
+            </g>
+
+            <!-- Right side: Horizontal Scaling -->
+            <g transform="translate(460, 0)">
+                <!-- Section background -->
+                <rect x="0" y="50" width="420" height="530" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="2"/>
+
+                <!-- Title -->
+                <text x="210" y="85" text-anchor="middle" font-size="18" font-weight="600" fill="#059669">Horizontal Scaling (Scale Out)</text>
+
+                <!-- Before state -->
+                <text x="105" y="130" text-anchor="middle" font-size="14" fill="#64748b">Before</text>
+
+                <!-- Single server -->
+                <rect x="55" y="145" width="100" height="100" rx="6" fill="url(#serverGradient)" filter="url(#dropShadow)"/>
+                <text x="105" y="180" text-anchor="middle" font-size="11" fill="white" font-weight="500">Server</text>
+                <text x="105" y="205" text-anchor="middle" font-size="10" fill="#bfdbfe">2 CPU / 4GB</text>
+                <text x="105" y="225" text-anchor="middle" font-size="10" fill="#bfdbfe">100 req/s</text>
+
+                <!-- Arrow down -->
+                <line x1="105" y1="255" x2="105" y2="305" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="140" y="285" font-size="11" fill="#64748b">Add instances</text>
+
+                <!-- After state with Load Balancer -->
+                <text x="105" y="340" text-anchor="middle" font-size="14" fill="#64748b">After</text>
+
+                <!-- Load balancer -->
+                <rect x="55" y="355" width="100" height="65" rx="6" fill="url(#loadBalancerGradient)" filter="url(#dropShadow)"/>
+                <text x="105" y="385" text-anchor="middle" font-size="11" fill="white" font-weight="500">Load Balancer</text>
+                <text x="105" y="405" text-anchor="middle" font-size="9" fill="#a7f3d0">Distributes traffic</text>
+
+                <!-- Distribution lines -->
+                <line x1="65" y1="420" x2="35" y2="455" stroke="#64748b" stroke-width="1.5"/>
+                <line x1="105" y1="420" x2="105" y2="455" stroke="#64748b" stroke-width="1.5"/>
+                <line x1="145" y1="420" x2="175" y2="455" stroke="#64748b" stroke-width="1.5"/>
+
+                <!-- Multiple servers -->
+                <rect x="10" y="460" width="70" height="70" rx="4" fill="url(#serverGradient)" filter="url(#dropShadow)"/>
+                <text x="45" y="488" text-anchor="middle" font-size="9" fill="white" font-weight="500">Server 1</text>
+                <text x="45" y="510" text-anchor="middle" font-size="9" fill="#bfdbfe">100 req/s</text>
+
+                <rect x="90" y="460" width="70" height="70" rx="4" fill="url(#serverGradient)" filter="url(#dropShadow)"/>
+                <text x="125" y="488" text-anchor="middle" font-size="9" fill="white" font-weight="500">Server 2</text>
+                <text x="125" y="510" text-anchor="middle" font-size="9" fill="#bfdbfe">100 req/s</text>
+
+                <rect x="170" y="460" width="70" height="70" rx="4" fill="url(#serverGradient)" filter="url(#dropShadow)"/>
+                <text x="205" y="488" text-anchor="middle" font-size="9" fill="white" font-weight="500">Server 3</text>
+                <text x="205" y="510" text-anchor="middle" font-size="9" fill="#bfdbfe">100 req/s</text>
+
+                <!-- Total capacity label -->
+                <text x="125" y="555" text-anchor="middle" font-size="11" font-weight="600" fill="#059669">Total: 300 req/s</text>
+
+                <!-- Pros/Cons -->
+                <g transform="translate(255, 145)">
+                    <text x="0" y="0" font-size="12" font-weight="600" fill="#16a34a">Pros:</text>
+                    <text x="0" y="26" font-size="11" fill="#475569">- Near-linear scaling</text>
+                    <text x="0" y="50" font-size="11" fill="#475569">- Fault tolerant</text>
+                    <text x="0" y="74" font-size="11" fill="#475569">- Cost effective</text>
+                    <text x="0" y="98" font-size="11" fill="#475569">- No single point of failure</text>
+
+                    <text x="0" y="142" font-size="12" font-weight="600" fill="#dc2626">Cons:</text>
+                    <text x="0" y="168" font-size="11" fill="#475569">- Requires stateless design</text>
+                    <text x="0" y="192" font-size="11" fill="#475569">- Distributed complexity</text>
+                    <text x="0" y="216" font-size="11" fill="#475569">- Load balancer needed</text>
+                </g>
+            </g>
+
+            <!-- Requests flowing in (both sides) -->
+            <g>
+                <!-- Left side requests -->
+                <text x="120" y="30" text-anchor="middle" font-size="12" fill="#64748b">Requests</text>
+                <path d="M 100 35 Q 100 60 120 70 Q 140 60 140 35" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+                <!-- Right side requests -->
+                <text x="565" y="30" text-anchor="middle" font-size="12" fill="#64748b">Requests</text>
+                <path d="M 545 35 Q 545 60 565 70 Q 585 60 585 35" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,2"/>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed Trace Waterfall View</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 850 465" width="850" height="465" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="apiGatewaySpan" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="userServiceSpan" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="authServiceSpan" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="databaseSpan" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#fbbf24;stop-opacity:1" />
+                </linearGradient>
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.1"/>
+                </filter>
+            </defs>
+
+            <!-- Title -->
+            <text x="425" y="35" text-anchor="middle" font-size="22" font-weight="600" fill="#1f2937">Distributed Trace Waterfall View</text>
+
+            <!-- Trace ID badge -->
+            <rect x="310" y="50" width="230" height="28" rx="14" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+            <text x="425" y="69" text-anchor="middle" font-size="12" fill="#64748b">trace_id: </text>
+            <text x="475" y="69" text-anchor="start" font-size="12" font-family="monospace" fill="#6366f1">7f4d2a8c...</text>
+
+            <!-- Timeline header -->
+            <g transform="translate(200, 100)">
+                <line x1="0" y1="0" x2="600" y2="0" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="0" y="-8" font-size="11" fill="#94a3b8">0ms</text>
+                <text x="120" y="-8" font-size="11" fill="#94a3b8">10ms</text>
+                <text x="240" y="-8" font-size="11" fill="#94a3b8">20ms</text>
+                <text x="360" y="-8" font-size="11" fill="#94a3b8">30ms</text>
+                <text x="480" y="-8" font-size="11" fill="#94a3b8">40ms</text>
+                <text x="590" y="-8" font-size="11" fill="#94a3b8">50ms</text>
+
+                <!-- Vertical grid lines -->
+                <line x1="0" y1="5" x2="0" y2="280" stroke="#f1f5f9" stroke-width="1"/>
+                <line x1="120" y1="5" x2="120" y2="280" stroke="#f1f5f9" stroke-width="1"/>
+                <line x1="240" y1="5" x2="240" y2="280" stroke="#f1f5f9" stroke-width="1"/>
+                <line x1="360" y1="5" x2="360" y2="280" stroke="#f1f5f9" stroke-width="1"/>
+                <line x1="480" y1="5" x2="480" y2="280" stroke="#f1f5f9" stroke-width="1"/>
+                <line x1="600" y1="5" x2="600" y2="280" stroke="#f1f5f9" stroke-width="1"/>
+            </g>
+
+            <!-- Spans -->
+            <!-- API Gateway span (50ms total, full width) -->
+            <g transform="translate(0, 130)">
+                <text x="30" y="18" font-size="13" font-weight="500" fill="#1f2937">API Gateway</text>
+                <text x="30" y="35" font-size="11" fill="#64748b">span_id: a1b2c3</text>
+                <rect x="200" y="5" width="600" height="35" rx="4" fill="url(#apiGatewaySpan)" filter="url(#shadow)"/>
+                <text x="490" y="28" text-anchor="middle" font-size="12" font-weight="500" fill="white">50ms total</text>
+            </g>
+
+            <!-- User Service span (30ms, starts at 5ms) -->
+            <g transform="translate(0, 190)">
+                <text x="50" y="18" font-size="13" font-weight="500" fill="#1f2937">User Service</text>
+                <text x="50" y="35" font-size="11" fill="#64748b">span_id: d4e5f6</text>
+                <rect x="260" y="5" width="360" height="35" rx="4" fill="url(#userServiceSpan)" filter="url(#shadow)"/>
+                <text x="430" y="28" text-anchor="middle" font-size="12" font-weight="500" fill="white">30ms</text>
+                <!-- Parent arrow -->
+                <path d="M 240 22 L 255 22" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+            </g>
+
+            <!-- Auth Service span (15ms, starts at 10ms) -->
+            <g transform="translate(0, 250)">
+                <text x="70" y="18" font-size="13" font-weight="500" fill="#1f2937">Auth Service</text>
+                <text x="70" y="35" font-size="11" fill="#64748b">span_id: g7h8i9</text>
+                <rect x="320" y="5" width="180" height="35" rx="4" fill="url(#authServiceSpan)" filter="url(#shadow)"/>
+                <text x="400" y="28" text-anchor="middle" font-size="12" font-weight="500" fill="white">15ms</text>
+                <!-- Parent arrow -->
+                <path d="M 295 22 L 315 22" stroke="#94a3b8" stroke-width="1.5" fill="none"/>
+            </g>
+
+            <!-- Database span (10ms, starts at 25ms) -->
+            <g transform="translate(0, 310)">
+                <text x="90" y="18" font-size="13" font-weight="500" fill="#1f2937">Database</text>
+                <text x="90" y="35" font-size="11" fill="#64748b">span_id: j0k1l2</text>
+                <rect x="500" y="5" width="120" height="35" rx="4" fill="url(#databaseSpan)" filter="url(#shadow)"/>
+                <text x="555" y="28" text-anchor="middle" font-size="12" font-weight="500" fill="white">10ms</text>
+                <!-- Parent arrow -->
+                <path d="M 470 22 L 495 22" stroke="#94a3b8" stroke-width="1.5" fill="none"/>
+            </g>
+
+            <!-- Parent-child relationship lines -->
+            <g stroke="#cbd5e1" stroke-width="1.5" fill="none">
+                <!-- API Gateway to User Service -->
+                <path d="M 210 160 L 210 205 L 255 205"/>
+                <!-- User Service to Auth Service -->
+                <path d="M 270 220 L 270 265 L 315 265"/>
+                <!-- User Service to Database - route below Auth Service span (which ends at y=290) -->
+                <path d="M 270 220 L 270 300 L 470 300 L 470 325 L 495 325"/>
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(50, 380)">
+                <rect x="0" y="0" width="750" height="55" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+
+                <text x="20" y="20" font-size="12" font-weight="600" fill="#475569">Legend:</text>
+
+                <rect x="80" y="10" width="16" height="16" rx="2" fill="#3b82f6"/>
+                <text x="102" y="22" font-size="11" fill="#64748b">Root span (entry point)</text>
+
+                <rect x="230" y="10" width="16" height="16" rx="2" fill="#10b981"/>
+                <text x="252" y="22" font-size="11" fill="#64748b">Service span</text>
+
+                <rect x="360" y="10" width="16" height="16" rx="2" fill="#f59e0b"/>
+                <text x="382" y="22" font-size="11" fill="#64748b">Database span</text>
+
+                <line x1="495" y1="18" x2="520" y2="18" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="530" y="22" font-size="11" fill="#64748b">Parent-child relationship</text>
+
+                <text x="20" y="43" font-size="11" fill="#94a3b8">Span width represents duration; horizontal position represents start time relative to trace start</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

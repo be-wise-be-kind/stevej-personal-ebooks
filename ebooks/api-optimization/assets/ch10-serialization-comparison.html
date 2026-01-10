@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON vs Protocol Buffers Serialization</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 950 600" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="jsonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="protobufGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="dataGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+                <!-- Shadow -->
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="950" height="600" fill="#f8fafc" rx="8"/>
+
+            <!-- Title -->
+            <text x="475" y="35" text-anchor="middle" font-size="22" font-weight="600" fill="#1e293b">
+                JSON vs Protocol Buffers Serialization
+            </text>
+            <text x="475" y="55" text-anchor="middle" font-size="13" fill="#64748b">
+                Comparing payload size and encoding efficiency for the same data
+            </text>
+
+            <!-- Source Data Box -->
+            <g transform="translate(300, 75)">
+                <rect x="0" y="0" width="350" height="100" rx="8" fill="url(#dataGradient)" filter="url(#shadow)"/>
+                <text x="175" y="25" text-anchor="middle" font-size="14" fill="white" font-weight="600">Source Data: User Object</text>
+                <rect x="15" y="35" width="320" height="55" rx="4" fill="rgba(0,0,0,0.2)"/>
+                <text x="175" y="55" text-anchor="middle" font-size="11" fill="white" font-family="monospace">id: 12345</text>
+                <text x="175" y="70" text-anchor="middle" font-size="11" fill="white" font-family="monospace">name: "Alice Johnson"</text>
+                <text x="175" y="85" text-anchor="middle" font-size="11" fill="white" font-family="monospace">email: "alice@example.com"</text>
+            </g>
+
+            <!-- Arrows down -->
+            <path d="M375 180 L375 200 L200 220" stroke="#64748b" stroke-width="2" fill="none"/>
+            <path d="M575 180 L575 200 L750 220" stroke="#64748b" stroke-width="2" fill="none"/>
+
+            <!-- JSON Section -->
+            <g transform="translate(30, 220)">
+                <rect x="0" y="0" width="420" height="340" rx="8" fill="white" stroke="#fed7aa" stroke-width="2" filter="url(#shadow)"/>
+
+                <!-- Header -->
+                <rect x="0" y="0" width="420" height="50" rx="8" fill="url(#jsonGradient)"/>
+                <rect x="0" y="40" width="420" height="10" fill="url(#jsonGradient)"/>
+                <text x="210" y="32" text-anchor="middle" font-size="16" fill="white" font-weight="600">JSON (Text-Based)</text>
+
+                <!-- JSON content -->
+                <rect x="15" y="65" width="390" height="140" rx="4" fill="#1e293b"/>
+                <text x="25" y="90" font-size="11" fill="#a5f3fc" font-family="monospace">{</text>
+                <text x="35" y="110" font-size="11" fill="#fde68a" font-family="monospace">"id"</text>
+                <text x="60" y="110" font-size="11" fill="#d1d5db" font-family="monospace">:</text>
+                <text x="70" y="110" font-size="11" fill="#c4b5fd" font-family="monospace">12345</text>
+                <text x="108" y="110" font-size="11" fill="#d1d5db" font-family="monospace">,</text>
+
+                <text x="35" y="130" font-size="11" fill="#fde68a" font-family="monospace">"name"</text>
+                <text x="80" y="130" font-size="11" fill="#d1d5db" font-family="monospace">:</text>
+                <text x="90" y="130" font-size="11" fill="#86efac" font-family="monospace">"Alice Johnson"</text>
+                <text x="205" y="130" font-size="11" fill="#d1d5db" font-family="monospace">,</text>
+
+                <text x="35" y="150" font-size="11" fill="#fde68a" font-family="monospace">"email"</text>
+                <text x="85" y="150" font-size="11" fill="#d1d5db" font-family="monospace">:</text>
+                <text x="95" y="150" font-size="11" fill="#86efac" font-family="monospace">"alice@example.com"</text>
+
+                <text x="25" y="170" font-size="11" fill="#a5f3fc" font-family="monospace">}</text>
+
+                <!-- Size indicator -->
+                <rect x="15" y="215" width="390" height="50" rx="4" fill="#fff7ed"/>
+                <text x="210" y="240" text-anchor="middle" font-size="13" fill="#9a3412" font-weight="600">Total Size: ~75 bytes</text>
+                <text x="210" y="255" text-anchor="middle" font-size="10" fill="#c2410c">Field names + quotes + formatting</text>
+
+                <!-- Breakdown -->
+                <text x="25" y="285" font-size="11" fill="#64748b">Overhead breakdown:</text>
+                <text x="25" y="305" font-size="10" fill="#94a3b8">Field names ("id", "name", "email"): 14 bytes</text>
+                <text x="25" y="320" font-size="10" fill="#94a3b8">Quotes and colons: 12 bytes</text>
+                <text x="25" y="335" font-size="10" fill="#94a3b8">Braces and commas: 5 bytes</text>
+            </g>
+
+            <!-- Protobuf Section -->
+            <g transform="translate(500, 220)">
+                <rect x="0" y="0" width="420" height="340" rx="8" fill="white" stroke="#bfdbfe" stroke-width="2" filter="url(#shadow)"/>
+
+                <!-- Header -->
+                <rect x="0" y="0" width="420" height="50" rx="8" fill="url(#protobufGradient)"/>
+                <rect x="0" y="40" width="420" height="10" fill="url(#protobufGradient)"/>
+                <text x="210" y="32" text-anchor="middle" font-size="16" fill="white" font-weight="600">Protocol Buffers (Binary)</text>
+
+                <!-- Binary representation -->
+                <rect x="15" y="65" width="390" height="140" rx="4" fill="#1e293b"/>
+
+                <!-- Field 1: id -->
+                <text x="25" y="88" font-size="10" fill="#94a3b8" font-family="monospace">Field 1 (id):</text>
+                <rect x="130" y="75" width="25" height="18" rx="2" fill="#3b82f6"/>
+                <text x="142" y="88" text-anchor="middle" font-size="9" fill="white" font-family="monospace">08</text>
+                <rect x="160" y="75" width="50" height="18" rx="2" fill="#60a5fa"/>
+                <text x="185" y="88" text-anchor="middle" font-size="9" fill="white" font-family="monospace">B9 60</text>
+                <text x="220" y="88" font-size="9" fill="#64748b">(varint: 12345)</text>
+
+                <!-- Field 2: name -->
+                <text x="25" y="115" font-size="10" fill="#94a3b8" font-family="monospace">Field 2 (name):</text>
+                <rect x="130" y="102" width="25" height="18" rx="2" fill="#3b82f6"/>
+                <text x="142" y="115" text-anchor="middle" font-size="9" fill="white" font-family="monospace">12</text>
+                <rect x="160" y="102" width="25" height="18" rx="2" fill="#818cf8"/>
+                <text x="172" y="115" text-anchor="middle" font-size="9" fill="white" font-family="monospace">0D</text>
+                <rect x="190" y="102" width="160" height="18" rx="2" fill="#60a5fa"/>
+                <text x="270" y="115" text-anchor="middle" font-size="9" fill="white" font-family="monospace">Alice Johnson</text>
+
+                <!-- Field 3: email -->
+                <text x="25" y="142" font-size="10" fill="#94a3b8" font-family="monospace">Field 3 (email):</text>
+                <rect x="130" y="129" width="25" height="18" rx="2" fill="#3b82f6"/>
+                <text x="142" y="142" text-anchor="middle" font-size="9" fill="white" font-family="monospace">1A</text>
+                <rect x="160" y="129" width="25" height="18" rx="2" fill="#818cf8"/>
+                <text x="172" y="142" text-anchor="middle" font-size="9" fill="white" font-family="monospace">12</text>
+                <rect x="190" y="129" width="180" height="18" rx="2" fill="#60a5fa"/>
+                <text x="280" y="142" text-anchor="middle" font-size="9" fill="white" font-family="monospace">alice@example.com</text>
+
+                <!-- Legend -->
+                <rect x="25" y="160" width="12" height="12" rx="2" fill="#3b82f6"/>
+                <text x="42" y="170" font-size="9" fill="#64748b">Tag (field # + type)</text>
+                <rect x="150" y="160" width="12" height="12" rx="2" fill="#818cf8"/>
+                <text x="167" y="170" font-size="9" fill="#64748b">Length</text>
+                <rect x="230" y="160" width="12" height="12" rx="2" fill="#60a5fa"/>
+                <text x="247" y="170" font-size="9" fill="#64748b">Value</text>
+
+                <!-- Size indicator -->
+                <rect x="15" y="215" width="390" height="50" rx="4" fill="#eff6ff"/>
+                <text x="210" y="240" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="600">Total Size: ~38 bytes</text>
+                <text x="210" y="255" text-anchor="middle" font-size="10" fill="#3b82f6">Field numbers + compact encoding</text>
+
+                <!-- Breakdown -->
+                <text x="25" y="285" font-size="11" fill="#64748b">Efficiency gains:</text>
+                <text x="25" y="305" font-size="10" fill="#94a3b8">Field tags instead of names: 3 bytes</text>
+                <text x="25" y="320" font-size="10" fill="#94a3b8">Varint encoding for integers</text>
+                <text x="25" y="335" font-size="10" fill="#94a3b8">No quotes or formatting overhead</text>
+            </g>
+
+            <!-- Comparison Summary -->
+            <g transform="translate(150, 570)">
+                <rect x="0" y="0" width="650" height="25" rx="4" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+                <text x="325" y="17" text-anchor="middle" font-size="12" fill="#047857" font-weight="500">
+                    Protocol Buffers: ~50% smaller payload + faster parsing (no text parsing needed)
+                </text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

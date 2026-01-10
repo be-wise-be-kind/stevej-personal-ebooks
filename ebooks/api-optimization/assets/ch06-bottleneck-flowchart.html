@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Performance Bottleneck Identification Flowchart</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        
+        <svg viewBox="0 0 900 870" xmlns="http://www.w3.org/2000/svg">
+            <!-- Title -->
+            <text x="450.0" y="30" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="20" font-weight="600" fill="#1e293b">Database Performance Bottleneck Identification</text>
+
+            <defs>
+                <!-- Gradient for start/end nodes -->
+                <linearGradient id="startGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                </linearGradient>
+                <!-- Gradient for decision nodes -->
+                <linearGradient id="decisionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <!-- Gradient for action nodes -->
+                <linearGradient id="actionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                </linearGradient>
+                <!-- Arrow marker -->
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+                </marker>
+                <!-- Drop shadow filter -->
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+            </defs>
+
+            <!-- Start Node: Slow API Response -->
+            <g filter="url(#shadow)">
+                <rect x="350" y="55" width="200" height="65" rx="25" fill="url(#startGradient)"/>
+                <text x="450" y="95" text-anchor="middle" fill="white" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Slow API Response</text>
+            </g>
+
+            <!-- Arrow to first decision -->
+            <line x1="450" y1="120" x2="450" y2="165" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+            <!-- Decision 1: Check Query Count -->
+            <g filter="url(#shadow)">
+                <polygon points="450,175 580,245 450,315 320,245" fill="url(#decisionGradient)"/>
+                <text x="450" y="237" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">High Query</text>
+                <text x="450" y="255" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Count?</text>
+            </g>
+
+            <!-- Yes arrow to N+1 solution -->
+            <line x1="580" y1="245" x2="700" y2="245" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <text x="625" y="235" fill="#64748b" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">YES</text>
+
+            <!-- N+1 Solution Box -->
+            <g filter="url(#shadow)">
+                <rect x="710" y="200" width="160" height="95" rx="8" fill="url(#actionGradient)"/>
+                <text x="790" y="240" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">N+1 Problem</text>
+                <text x="790" y="268" text-anchor="middle" fill="white" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Use Eager Loading</text>
+            </g>
+
+            <!-- No arrow down -->
+            <line x1="450" y1="315" x2="450" y2="365" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <text x="465" y="345" fill="#64748b" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">NO</text>
+
+            <!-- Decision 2: Slow Query Execution -->
+            <g filter="url(#shadow)">
+                <polygon points="450,375 590,455 450,535 310,455" fill="url(#decisionGradient)"/>
+                <text x="450" y="447" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Slow Query</text>
+                <text x="450" y="465" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Execution?</text>
+            </g>
+
+            <!-- Yes arrow to Index solution -->
+            <line x1="590" y1="455" x2="700" y2="455" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <text x="630" y="445" fill="#64748b" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">YES</text>
+
+            <!-- Index Solution Box -->
+            <g filter="url(#shadow)">
+                <rect x="710" y="400" width="160" height="110" rx="8" fill="url(#actionGradient)"/>
+                <text x="790" y="435" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Missing Index or</text>
+                <text x="790" y="458" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Full Table Scan</text>
+                <text x="790" y="488" text-anchor="middle" fill="white" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Run EXPLAIN ANALYZE</text>
+            </g>
+
+            <!-- No arrow down -->
+            <line x1="450" y1="535" x2="450" y2="585" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <text x="465" y="565" fill="#64748b" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">NO</text>
+
+            <!-- Decision 3: Connection Wait Time -->
+            <g filter="url(#shadow)">
+                <polygon points="450,595 590,670 450,745 310,670" fill="url(#decisionGradient)"/>
+                <text x="450" y="662" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">High Connection</text>
+                <text x="450" y="680" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Wait Time?</text>
+            </g>
+
+            <!-- Yes arrow to Pool solution -->
+            <line x1="590" y1="670" x2="700" y2="670" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <text x="630" y="660" fill="#64748b" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">YES</text>
+
+            <!-- Pool Solution Box -->
+            <g filter="url(#shadow)">
+                <rect x="710" y="615" width="160" height="110" rx="8" fill="url(#actionGradient)"/>
+                <text x="790" y="653" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Pool Exhausted</text>
+                <text x="790" y="680" text-anchor="middle" fill="white" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Tune Pool Size or</text>
+                <text x="790" y="703" text-anchor="middle" fill="white" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Reduce Query Load</text>
+            </g>
+
+            <!-- No arrow to left side -->
+            <line x1="310" y1="670" x2="200" y2="670" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <text x="270" y="660" fill="#64748b" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">NO</text>
+
+            <!-- Replication Lag Box -->
+            <g filter="url(#shadow)">
+                <rect x="30" y="615" width="160" height="110" rx="8" fill="url(#actionGradient)"/>
+                <text x="110" y="653" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Check Replication</text>
+                <text x="110" y="680" text-anchor="middle" fill="white" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Lag on Replicas</text>
+                <text x="110" y="703" text-anchor="middle" fill="white" font-size="11" font-family="Liberation Sans, Arial, sans-serif">or Other Causes</text>
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(350, 760)">
+                <rect x="0" y="0" width="200" height="120" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="100" y="25" text-anchor="middle" fill="#475569" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Legend</text>
+
+                <rect x="15" y="42" width="24" height="16" rx="8" fill="url(#startGradient)"/>
+                <text x="50" y="55" fill="#475569" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Problem Start</text>
+
+                <polygon points="27,82 41,72 27,62 13,72" fill="url(#decisionGradient)"/>
+                <text x="50" y="77" fill="#475569" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Decision Point</text>
+
+                <rect x="15" y="95" width="24" height="16" rx="4" fill="url(#actionGradient)"/>
+                <text x="50" y="108" fill="#475569" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Solution/Action</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

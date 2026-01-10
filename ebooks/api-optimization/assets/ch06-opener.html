@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Path / Cold Path - Caching Strategies</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Green gradient for hot path (cache hit) -->
+                <linearGradient id="hotPathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Orange/red gradient for cold path (cache miss) -->
+                <linearGradient id="coldPathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Request node gradient -->
+                <linearGradient id="requestGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Response node gradient -->
+                <linearGradient id="responseGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Arrow markers -->
+                <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#16a34a"/>
+                </marker>
+
+                <marker id="arrowOrange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#dc2626"/>
+                </marker>
+
+                <!-- Drop shadow filter -->
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+
+                <!-- Glow effect for hot path -->
+                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="800" height="400" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="400" y="35" text-anchor="middle" fill="#1e293b" font-size="20" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                Hot Path vs Cold Path
+            </text>
+            <text x="400" y="55" text-anchor="middle" fill="#64748b" font-size="12" font-family="Liberation Sans, Arial, sans-serif">
+                The dramatic difference caching makes
+            </text>
+
+            <!-- Main content area -->
+            <g transform="translate(40, 80)">
+
+                <!-- Request starting point -->
+                <g transform="translate(0, 120)">
+                    <rect x="0" y="0" width="90" height="50" rx="8" fill="url(#requestGradient)" filter="url(#shadow)"/>
+                    <text x="45" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                        Request
+                    </text>
+                </g>
+
+                <!-- Fork point -->
+                <circle cx="130" cy="145" r="8" fill="#64748b"/>
+
+                <!-- === HOT PATH (TOP) === -->
+
+                <!-- Hot path line - short and direct -->
+                <path d="M 138 145 L 180 145 Q 200 145 200 115 L 200 95 Q 200 75 220 75 L 480 75"
+                      stroke="url(#hotPathGradient)" stroke-width="4" fill="none" filter="url(#glow)"/>
+
+                <!-- Cache Hit badge -->
+                <g transform="translate(280, 50)">
+                    <rect x="0" y="0" width="90" height="32" rx="16" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+                    <text x="45" y="21" text-anchor="middle" fill="#16a34a" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                        Cache Hit
+                    </text>
+                </g>
+
+                <!-- 5ms timing badge -->
+                <g transform="translate(400, 50)">
+                    <rect x="0" y="0" width="55" height="32" rx="8" fill="#22c55e" filter="url(#shadow)"/>
+                    <text x="27" y="21" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">
+                        5ms
+                    </text>
+                </g>
+
+                <!-- Hot path arrow to response -->
+                <line x1="480" y1="75" x2="600" y2="75" stroke="#16a34a" stroke-width="4" marker-end="url(#arrowGreen)"/>
+
+                <!-- Response (hot path) -->
+                <g transform="translate(620, 50)">
+                    <rect x="0" y="0" width="90" height="50" rx="8" fill="url(#responseGradient)" filter="url(#shadow)"/>
+                    <text x="45" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                        Response
+                    </text>
+                </g>
+
+                <!-- === COLD PATH (BOTTOM) === -->
+
+                <!-- Cold path line - long and winding -->
+                <path d="M 138 145 L 180 145 Q 200 145 200 175 L 200 210 Q 200 230 220 230 L 280 230"
+                      stroke="url(#coldPathGradient)" stroke-width="3" fill="none" stroke-dasharray="8,4"/>
+
+                <!-- Cache Miss badge -->
+                <g transform="translate(160, 175)">
+                    <rect x="0" y="0" width="95" height="28" rx="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="47" y="19" text-anchor="middle" fill="#d97706" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                        Cache Miss
+                    </text>
+                </g>
+
+                <!-- Database hop -->
+                <g transform="translate(280, 210)">
+                    <rect x="0" y="0" width="70" height="40" rx="6" fill="#fef2f2" stroke="#f87171" stroke-width="2"/>
+                    <text x="35" y="25" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
+                        Database
+                    </text>
+                </g>
+
+                <!-- Line from database to API -->
+                <path d="M 350 230 L 380 230 Q 400 230 400 245 L 400 250 Q 400 260 420 260 L 440 260"
+                      stroke="#dc2626" stroke-width="3" fill="none" stroke-dasharray="8,4"/>
+
+                <!-- External API hop -->
+                <g transform="translate(440, 240)">
+                    <rect x="0" y="0" width="80" height="40" rx="6" fill="#fef2f2" stroke="#f87171" stroke-width="2"/>
+                    <text x="40" y="25" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
+                        External API
+                    </text>
+                </g>
+
+                <!-- Line from API to processing -->
+                <path d="M 520 260 L 560 260 Q 580 260 580 240 L 580 220 Q 580 210 600 210 L 620 210"
+                      stroke="#dc2626" stroke-width="3" fill="none" stroke-dasharray="8,4" marker-end="url(#arrowOrange)"/>
+
+                <!-- 200ms timing badge -->
+                <g transform="translate(540, 185)">
+                    <rect x="0" y="0" width="65" height="32" rx="8" fill="#dc2626" filter="url(#shadow)"/>
+                    <text x="32" y="21" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">
+                        200ms
+                    </text>
+                </g>
+
+                <!-- Response (cold path) -->
+                <g transform="translate(620, 185)">
+                    <rect x="0" y="0" width="90" height="50" rx="8" fill="url(#responseGradient)" filter="url(#shadow)"/>
+                    <text x="45" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                        Response
+                    </text>
+                </g>
+
+                <!-- Speed comparison annotation -->
+                <g transform="translate(620, 255)">
+                    <text x="45" y="15" text-anchor="middle" fill="#94a3b8" font-size="11" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                        40x slower
+                    </text>
+                </g>
+
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(40, 360)">
+                <rect x="0" y="0" width="720" height="30" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <line x1="20" y1="15" x2="50" y2="15" stroke="#22c55e" stroke-width="3"/>
+                <text x="60" y="19" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Hot Path (cached)</text>
+                <line x1="190" y1="15" x2="220" y2="15" stroke="#dc2626" stroke-width="3" stroke-dasharray="6,3"/>
+                <text x="230" y="19" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Cold Path (origin fetch)</text>
+                <rect x="400" y="7" width="12" height="12" rx="2" fill="#fef2f2" stroke="#f87171" stroke-width="1"/>
+                <text x="420" y="19" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Expensive operations</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

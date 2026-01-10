@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 8: Scaling - Adding Capacity</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Capacity expansion gradient (blue to green) -->
+                <linearGradient id="capacityGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="50%" style="stop-color:#06b6d4;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#22c55e;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Demand gradient (warm tones) -->
+                <linearGradient id="demandGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.8" />
+                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0.6" />
+                </linearGradient>
+
+                <!-- Concentric ring gradients -->
+                <radialGradient id="ringGradient1" cx="50%" cy="50%" r="50%">
+                    <stop offset="70%" style="stop-color:#3b82f6;stop-opacity:0.15" />
+                    <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0" />
+                </radialGradient>
+
+                <radialGradient id="ringGradient2" cx="50%" cy="50%" r="50%">
+                    <stop offset="70%" style="stop-color:#06b6d4;stop-opacity:0.15" />
+                    <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:0" />
+                </radialGradient>
+
+                <radialGradient id="ringGradient3" cx="50%" cy="50%" r="50%">
+                    <stop offset="70%" style="stop-color:#22c55e;stop-opacity:0.15" />
+                    <stop offset="100%" style="stop-color:#22c55e;stop-opacity:0" />
+                </radialGradient>
+
+                <!-- Core glow -->
+                <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:0.9" />
+                    <stop offset="60%" style="stop-color:#06b6d4;stop-opacity:0.7" />
+                    <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0.5" />
+                </radialGradient>
+
+                <!-- Request dot gradient -->
+                <radialGradient id="requestDot" cx="30%" cy="30%" r="70%">
+                    <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+                </radialGradient>
+
+                <!-- Arrow marker -->
+                <marker id="flowArrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/>
+                </marker>
+
+                <!-- Glow filter -->
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="800" height="400" fill="#ffffff"/>
+
+            <!-- Title -->
+            <text x="400" y="35" text-anchor="middle" fill="#1e293b" font-size="20" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                Scaling: Matching Capacity to Demand
+            </text>
+
+            <!-- Main content area -->
+            <g transform="translate(0, 50)">
+
+                <!-- LEFT SIDE: Constrained state -->
+                <g transform="translate(150, 150)">
+                    <!-- Small constrained rings -->
+                    <circle cx="0" cy="0" r="70" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4,4"/>
+                    <circle cx="0" cy="0" r="50" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+
+                    <!-- Core (small) -->
+                    <circle cx="0" cy="0" r="30" fill="#3b82f6" opacity="0.8"/>
+                    <circle cx="0" cy="0" r="20" fill="#2563eb"/>
+
+                    <!-- Crowded request dots around the edge -->
+                    <circle cx="-45" cy="-25" r="6" fill="url(#requestDot)"/>
+                    <circle cx="-35" cy="-40" r="6" fill="url(#requestDot)"/>
+                    <circle cx="-20" cy="-48" r="6" fill="url(#requestDot)"/>
+                    <circle cx="5" cy="-50" r="6" fill="url(#requestDot)"/>
+                    <circle cx="25" cy="-45" r="6" fill="url(#requestDot)"/>
+                    <circle cx="40" cy="-35" r="6" fill="url(#requestDot)"/>
+                    <circle cx="48" cy="-15" r="6" fill="url(#requestDot)"/>
+                    <circle cx="50" cy="10" r="6" fill="url(#requestDot)"/>
+                    <circle cx="45" cy="30" r="6" fill="url(#requestDot)"/>
+                    <circle cx="30" cy="45" r="6" fill="url(#requestDot)"/>
+                    <circle cx="10" cy="50" r="6" fill="url(#requestDot)"/>
+                    <circle cx="-15" cy="48" r="6" fill="url(#requestDot)"/>
+                    <circle cx="-35" cy="40" r="6" fill="url(#requestDot)"/>
+                    <circle cx="-48" cy="20" r="6" fill="url(#requestDot)"/>
+                    <circle cx="-50" cy="0" r="6" fill="url(#requestDot)"/>
+
+                    <!-- Pressure indicator lines (congestion) -->
+                    <line x1="-60" y1="-35" x2="-75" y2="-50" stroke="#f59e0b" stroke-width="1.5" opacity="0.6"/>
+                    <line x1="55" y1="-25" x2="70" y2="-40" stroke="#f59e0b" stroke-width="1.5" opacity="0.6"/>
+                    <line x1="55" y1="25" x2="70" y2="40" stroke="#f59e0b" stroke-width="1.5" opacity="0.6"/>
+                    <line x1="-55" y1="30" x2="-70" y2="45" stroke="#f59e0b" stroke-width="1.5" opacity="0.6"/>
+                </g>
+
+                <!-- Label: Constrained -->
+                <text x="150" y="310" text-anchor="middle" fill="#64748b" font-size="14" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
+                    Constrained
+                </text>
+                <text x="150" y="328" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    Demand exceeds capacity
+                </text>
+
+                <!-- CENTER: Transition arrow -->
+                <g transform="translate(320, 150)">
+                    <!-- Curved expanding path -->
+                    <path d="M 0 0 Q 80 -20 160 0" fill="none" stroke="url(#capacityGradient)" stroke-width="3" marker-end="url(#flowArrow)"/>
+                    <path d="M 0 0 Q 80 20 160 0" fill="none" stroke="url(#capacityGradient)" stroke-width="3" marker-end="url(#flowArrow)"/>
+
+                    <!-- Center expanding symbol -->
+                    <circle cx="80" cy="0" r="12" fill="none" stroke="#06b6d4" stroke-width="2"/>
+                    <line x1="74" y1="0" x2="86" y2="0" stroke="#06b6d4" stroke-width="2"/>
+                    <line x1="80" y1="-6" x2="80" y2="6" stroke="#06b6d4" stroke-width="2"/>
+                </g>
+
+                <!-- RIGHT SIDE: Scaled state -->
+                <g transform="translate(650, 150)">
+                    <!-- Expanded concentric rings -->
+                    <circle cx="0" cy="0" r="130" fill="url(#ringGradient3)" stroke="#22c55e" stroke-width="1" opacity="0.5"/>
+                    <circle cx="0" cy="0" r="100" fill="url(#ringGradient2)" stroke="#06b6d4" stroke-width="1.5" opacity="0.7"/>
+                    <circle cx="0" cy="0" r="70" fill="url(#ringGradient1)" stroke="#3b82f6" stroke-width="2"/>
+
+                    <!-- Expanded core -->
+                    <circle cx="0" cy="0" r="45" fill="url(#coreGlow)" filter="url(#glow)"/>
+                    <circle cx="0" cy="0" r="30" fill="#22c55e" opacity="0.9"/>
+
+                    <!-- Request dots spread comfortably -->
+                    <circle cx="-55" cy="-30" r="6" fill="url(#requestDot)"/>
+                    <circle cx="-30" cy="-55" r="6" fill="url(#requestDot)"/>
+                    <circle cx="10" cy="-60" r="6" fill="url(#requestDot)"/>
+                    <circle cx="45" cy="-45" r="6" fill="url(#requestDot)"/>
+                    <circle cx="60" cy="-10" r="6" fill="url(#requestDot)"/>
+                    <circle cx="55" cy="35" r="6" fill="url(#requestDot)"/>
+                    <circle cx="25" cy="58" r="6" fill="url(#requestDot)"/>
+                    <circle cx="-20" cy="55" r="6" fill="url(#requestDot)"/>
+                    <circle cx="-50" cy="35" r="6" fill="url(#requestDot)"/>
+                    <circle cx="-60" cy="5" r="6" fill="url(#requestDot)"/>
+
+                    <!-- Outer ring dots (more capacity) -->
+                    <circle cx="-85" cy="-50" r="5" fill="url(#requestDot)" opacity="0.7"/>
+                    <circle cx="-40" cy="-85" r="5" fill="url(#requestDot)" opacity="0.7"/>
+                    <circle cx="30" cy="-90" r="5" fill="url(#requestDot)" opacity="0.7"/>
+                    <circle cx="80" cy="-55" r="5" fill="url(#requestDot)" opacity="0.7"/>
+                    <circle cx="95" cy="10" r="5" fill="url(#requestDot)" opacity="0.7"/>
+                    <circle cx="75" cy="65" r="5" fill="url(#requestDot)" opacity="0.7"/>
+                    <circle cx="20" cy="95" r="5" fill="url(#requestDot)" opacity="0.7"/>
+                    <circle cx="-45" cy="85" r="5" fill="url(#requestDot)" opacity="0.7"/>
+                    <circle cx="-90" cy="40" r="5" fill="url(#requestDot)" opacity="0.7"/>
+                    <circle cx="-95" cy="-15" r="5" fill="url(#requestDot)" opacity="0.7"/>
+
+                    <!-- Breathing room indicators -->
+                    <circle cx="0" cy="-85" r="3" fill="#22c55e" opacity="0.4"/>
+                    <circle cx="85" cy="0" r="3" fill="#22c55e" opacity="0.4"/>
+                    <circle cx="0" cy="85" r="3" fill="#22c55e" opacity="0.4"/>
+                    <circle cx="-85" cy="0" r="3" fill="#22c55e" opacity="0.4"/>
+                </g>
+
+                <!-- Label: Scaled -->
+                <text x="650" y="310" text-anchor="middle" fill="#16a34a" font-size="14" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
+                    Scaled
+                </text>
+                <text x="650" y="328" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    Capacity matches demand
+                </text>
+
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(280, 375)">
+                <circle cx="0" cy="0" r="5" fill="url(#requestDot)"/>
+                <text x="12" y="4" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Requests</text>
+
+                <circle cx="100" cy="0" r="5" fill="#3b82f6"/>
+                <text x="112" y="4" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Capacity</text>
+
+                <circle cx="200" cy="0" r="5" fill="none" stroke="#22c55e" stroke-width="1.5"/>
+                <text x="212" y="4" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Headroom</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

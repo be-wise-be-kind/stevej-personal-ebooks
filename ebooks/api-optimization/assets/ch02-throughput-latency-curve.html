@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Throughput vs Latency: The Saturation Curve</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 710" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradient for the curve -->
+                <linearGradient id="curveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="50%" style="stop-color:#eab308;stop-opacity:1" />
+                    <stop offset="80%" style="stop-color:#f97316;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Zone gradients -->
+                <linearGradient id="greenZone" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:0.2" />
+                    <stop offset="100%" style="stop-color:#22c55e;stop-opacity:0.05" />
+                </linearGradient>
+
+                <linearGradient id="yellowZone" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#eab308;stop-opacity:0.2" />
+                    <stop offset="100%" style="stop-color:#eab308;stop-opacity:0.05" />
+                </linearGradient>
+
+                <linearGradient id="redZone" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3" />
+                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0.1" />
+                </linearGradient>
+
+                <!-- Arrow markers -->
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+                </marker>
+
+                <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#22c55e"/>
+                </marker>
+
+                <marker id="arrowRed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/>
+                </marker>
+            </defs>
+
+            <!-- Background -->
+            <rect width="900" height="710" fill="#ffffff" rx="12"/>
+
+            <!-- Title -->
+            <text x="450" y="40" text-anchor="middle" fill="#1e293b" font-size="22" font-weight="600">
+                Throughput vs Latency: The Saturation Curve
+            </text>
+            <text x="450" y="65" text-anchor="middle" fill="#64748b" font-size="14">
+                How latency increases exponentially as systems approach capacity
+            </text>
+
+            <!-- Main Chart Area -->
+            <g transform="translate(100, 110)">
+                <!-- Utilization zones backgrounds -->
+                <rect x="0" y="0" width="250" height="400" fill="url(#greenZone)"/>
+                <rect x="250" y="0" width="150" height="400" fill="url(#yellowZone)"/>
+                <rect x="400" y="0" width="250" height="400" fill="url(#redZone)"/>
+
+                <!-- Zone labels at top -->
+                <text x="125" y="-15" text-anchor="middle" fill="#166534" font-size="12" font-weight="600">
+                    Linear Zone (0-50%)
+                </text>
+                <text x="325" y="-15" text-anchor="middle" fill="#854d0e" font-size="12" font-weight="600">
+                    Transition (50-80%)
+                </text>
+                <text x="525" y="-15" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">
+                    Saturation Zone (80-100%)
+                </text>
+
+                <!-- Y-axis (Latency) -->
+                <line x1="0" y1="0" x2="0" y2="400" stroke="#94a3b8" stroke-width="2"/>
+                <line x1="0" y1="0" x2="-10" y2="10" stroke="#94a3b8" stroke-width="2"/>
+                <text x="-50" y="200" text-anchor="middle" fill="#475569" font-size="14" font-weight="500" transform="rotate(-90, -50, 200)">
+                    Response Latency (ms)
+                </text>
+
+                <!-- Y-axis labels -->
+                <text x="-10" y="400" text-anchor="end" fill="#64748b" font-size="11">0</text>
+                <text x="-10" y="320" text-anchor="end" fill="#64748b" font-size="11">50</text>
+                <text x="-10" y="240" text-anchor="end" fill="#64748b" font-size="11">100</text>
+                <text x="-10" y="160" text-anchor="end" fill="#64748b" font-size="11">200</text>
+                <text x="-10" y="80" text-anchor="end" fill="#64748b" font-size="11">500</text>
+                <text x="-10" y="15" text-anchor="end" fill="#64748b" font-size="11">1000+</text>
+
+                <!-- Horizontal grid lines -->
+                <line x1="0" y1="320" x2="650" y2="320" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                <line x1="0" y1="240" x2="650" y2="240" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                <line x1="0" y1="160" x2="650" y2="160" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                <line x1="0" y1="80" x2="650" y2="80" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+
+                <!-- X-axis (Throughput/Utilization) -->
+                <line x1="0" y1="400" x2="660" y2="400" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="325" y="445" text-anchor="middle" fill="#475569" font-size="14" font-weight="500">
+                    Throughput / System Utilization
+                </text>
+
+                <!-- X-axis labels -->
+                <text x="0" y="425" text-anchor="middle" fill="#64748b" font-size="11">0%</text>
+                <text x="125" y="425" text-anchor="middle" fill="#64748b" font-size="11">25%</text>
+                <text x="250" y="425" text-anchor="middle" fill="#166534" font-size="11" font-weight="600">50%</text>
+                <text x="400" y="425" text-anchor="middle" fill="#854d0e" font-size="11" font-weight="600">80%</text>
+                <text x="500" y="425" text-anchor="middle" fill="#b91c1c" font-size="11" font-weight="600">95%</text>
+                <text x="600" y="425" text-anchor="middle" fill="#64748b" font-size="11">100%</text>
+
+                <!-- Vertical zone dividers -->
+                <line x1="250" y1="0" x2="250" y2="400" stroke="#166534" stroke-width="2" stroke-dasharray="8"/>
+                <line x1="400" y1="0" x2="400" y2="400" stroke="#b91c1c" stroke-width="2" stroke-dasharray="8"/>
+
+                <!-- The main latency curve (exponential) -->
+                <path d="M0,385
+                         C50,380 100,375 125,370
+                         C150,365 175,358 200,345
+                         C225,332 240,318 250,300
+                         C270,270 290,240 320,205
+                         C350,170 380,135 400,105
+                         C420,80 450,55 480,35
+                         C510,20 540,12 580,8
+                         C600,6 620,5 650,5"
+                      fill="none" stroke="url(#curveGradient)" stroke-width="4" stroke-linecap="round"/>
+
+                <!-- Key points on the curve -->
+                <!-- 50% utilization point -->
+                <circle cx="250" cy="300" r="8" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
+                <g transform="translate(250, 300)">
+                    <line x1="10" y1="0" x2="60" y2="-30" stroke="#166534" stroke-width="1"/>
+                    <rect x="60" y="-60" width="100" height="52" fill="#dcfce7" rx="6" stroke="#22c55e" stroke-width="1"/>
+                    <text x="110" y="-40" text-anchor="middle" fill="#166534" font-size="11" font-weight="600">50% Utilization</text>
+                    <text x="110" y="-22" text-anchor="middle" fill="#15803d" font-size="12" font-weight="700">~60ms latency</text>
+                </g>
+
+                <!-- 80% utilization point -->
+                <circle cx="400" cy="105" r="8" fill="#f97316" stroke="#ffffff" stroke-width="2"/>
+                <g transform="translate(400, 105)">
+                    <line x1="10" y1="0" x2="50" y2="20" stroke="#c2410c" stroke-width="1"/>
+                    <rect x="50" y="5" width="110" height="52" fill="#fff7ed" rx="6" stroke="#f97316" stroke-width="1"/>
+                    <text x="105" y="25" text-anchor="middle" fill="#c2410c" font-size="11" font-weight="600">80% Utilization</text>
+                    <text x="105" y="43" text-anchor="middle" fill="#ea580c" font-size="12" font-weight="700">~450ms latency</text>
+                </g>
+
+                <!-- 95% utilization point -->
+                <circle cx="500" cy="33" r="8" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
+                <g transform="translate(500, 33)">
+                    <line x1="-10" y1="5" x2="-50" y2="40" stroke="#b91c1c" stroke-width="1"/>
+                    <rect x="-150" y="38" width="110" height="52" fill="#fef2f2" rx="6" stroke="#ef4444" stroke-width="1"/>
+                    <text x="-95" y="58" text-anchor="middle" fill="#b91c1c" font-size="11" font-weight="600">95% Utilization</text>
+                    <text x="-95" y="76" text-anchor="middle" fill="#dc2626" font-size="12" font-weight="700">~900ms latency</text>
+                </g>
+
+                <!-- SLA line -->
+                <line x1="0" y1="240" x2="650" y2="240" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="10,5"/>
+                <rect x="550" y="247" width="95" height="26" fill="#f3e8ff" rx="4"/>
+                <text x="597" y="265" text-anchor="middle" fill="#7c3aed" font-size="11" font-weight="600">SLA: 100ms</text>
+
+                <!-- Optimal zone annotation -->
+                <g transform="translate(40, 260)">
+                    <rect width="155" height="85" fill="#ffffff" rx="6" stroke="#22c55e" stroke-width="2"/>
+                    <circle cx="15" cy="18" r="6" fill="#22c55e"/>
+                    <text x="30" y="22" fill="#166534" font-size="11" font-weight="600">Optimal Operating Zone</text>
+                    <text x="77" y="44" text-anchor="middle" fill="#64748b" font-size="10">Predictable latency</text>
+                    <text x="77" y="60" text-anchor="middle" fill="#64748b" font-size="10">Room for traffic spikes</text>
+                    <text x="77" y="78" text-anchor="middle" fill="#166534" font-size="10" font-weight="500">Target: 40-60% util</text>
+                </g>
+
+                <!-- Danger zone annotation -->
+                <g transform="translate(450, 175)">
+                    <rect width="145" height="85" fill="#ffffff" rx="6" stroke="#ef4444" stroke-width="2"/>
+                    <circle cx="15" cy="18" r="6" fill="#ef4444">
+                        <animate attributeName="opacity" values="1;0.5;1" dur="1s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="30" y="22" fill="#b91c1c" font-size="11" font-weight="600">Danger Zone</text>
+                    <text x="72" y="44" text-anchor="middle" fill="#64748b" font-size="10">Exponential latency</text>
+                    <text x="72" y="60" text-anchor="middle" fill="#64748b" font-size="10">Queue buildup</text>
+                    <text x="72" y="78" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="500">Cascading failures</text>
+                </g>
+            </g>
+
+            <!-- Key Insight Box -->
+            <g transform="translate(100, 615)">
+                <rect width="700" height="80" fill="#eff6ff" rx="8" stroke="#3b82f6" stroke-width="2"/>
+                <text x="25" y="28" fill="#1e40af" font-size="13" font-weight="600">Key Insight:</text>
+                <text x="25" y="50" fill="#1e3a8a" font-size="12">
+                    Latency increases linearly up to ~50% utilization, then grows exponentially. At 80% utilization,
+                </text>
+                <text x="25" y="68" fill="#1e3a8a" font-size="12">
+                    small traffic increases cause dramatic latency spikes. Plan capacity to stay in the linear zone.
+                </text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

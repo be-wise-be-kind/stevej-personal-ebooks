@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Optimization Methodology Flowchart</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 900px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        
+        <svg viewBox="0 0 800 680" xmlns="http://www.w3.org/2000/svg">
+            <!-- Title -->
+            <text x="400.0" y="35" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="20" font-weight="600" fill="#1e293b">Performance Optimization Methodology</text>
+
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="greenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="amberGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="slateGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#64748b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#475569;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Arrow marker -->
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+                </marker>
+                <marker id="arrowheadGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#10b981"/>
+                </marker>
+                <marker id="arrowheadRed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/>
+                </marker>
+
+                <!-- Drop shadow -->
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+            </defs>
+
+            <!-- Phase 1: Define SLOs -->
+            <g filter="url(#shadow)">
+                <rect x="300" y="55" width="200" height="60" rx="8" fill="url(#blueGradient)"/>
+                <text x="400" y="80" text-anchor="middle" fill="white" font-size="13" font-weight="600">Phase 1</text>
+                <text x="400" y="97" text-anchor="middle" fill="white" font-size="11">Define SLOs</text>
+            </g>
+
+            <!-- Arrow 1 to 2 -->
+            <path d="M400 115 L400 145" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+            <!-- Phase 2: Instrument -->
+            <g filter="url(#shadow)">
+                <rect x="300" y="155" width="200" height="60" rx="8" fill="url(#blueGradient)"/>
+                <text x="400" y="180" text-anchor="middle" fill="white" font-size="13" font-weight="600">Phase 2</text>
+                <text x="400" y="197" text-anchor="middle" fill="white" font-size="11">Establish Observability</text>
+            </g>
+
+            <!-- Arrow 2 to 3 -->
+            <path d="M400 215 L400 245" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+            <!-- Phase 3: Measure Baseline -->
+            <g filter="url(#shadow)">
+                <rect x="300" y="255" width="200" height="60" rx="8" fill="url(#blueGradient)"/>
+                <text x="400" y="280" text-anchor="middle" fill="white" font-size="13" font-weight="600">Phase 3</text>
+                <text x="400" y="297" text-anchor="middle" fill="white" font-size="11">Measure Baseline</text>
+            </g>
+
+            <!-- Arrow 3 to 4 -->
+            <path d="M400 315 L400 345" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+            <!-- Phase 4: Identify Bottleneck -->
+            <g filter="url(#shadow)">
+                <rect x="300" y="355" width="200" height="60" rx="8" fill="url(#purpleGradient)"/>
+                <text x="400" y="380" text-anchor="middle" fill="white" font-size="13" font-weight="600">Phase 4</text>
+                <text x="400" y="397" text-anchor="middle" fill="white" font-size="11">Identify Bottleneck</text>
+            </g>
+
+            <!-- Arrow 4 to 5 -->
+            <path d="M400 415 L400 445" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+            <!-- Phase 5: Hypothesize & Implement -->
+            <g filter="url(#shadow)">
+                <rect x="300" y="455" width="200" height="60" rx="8" fill="url(#amberGradient)"/>
+                <text x="400" y="480" text-anchor="middle" fill="white" font-size="13" font-weight="600">Phase 5</text>
+                <text x="400" y="497" text-anchor="middle" fill="white" font-size="11">Hypothesize & Implement</text>
+            </g>
+
+            <!-- Arrow 5 to Decision -->
+            <path d="M400 515 L400 545" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+            <!-- Decision Diamond: Meets SLO? -->
+            <g filter="url(#shadow)">
+                <polygon points="400,555 470,595 400,635 330,595" fill="url(#slateGradient)"/>
+                <text x="400" y="591" text-anchor="middle" fill="white" font-size="11" font-weight="600">Meets</text>
+                <text x="400" y="605" text-anchor="middle" fill="white" font-size="11" font-weight="600">SLO?</text>
+            </g>
+
+            <!-- Yes path to Document & Monitor -->
+            <path d="M470 595 L560 595" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowheadGreen)"/>
+            <text x="515" y="585" text-anchor="middle" fill="#10b981" font-size="12" font-weight="600">Yes</text>
+
+            <!-- Document & Monitor box -->
+            <g filter="url(#shadow)">
+                <rect x="570" y="565" width="180" height="60" rx="8" fill="url(#greenGradient)"/>
+                <text x="660" y="590" text-anchor="middle" fill="white" font-size="13" font-weight="600">Document</text>
+                <text x="660" y="607" text-anchor="middle" fill="white" font-size="11">& Monitor</text>
+            </g>
+
+            <!-- No path back to Identify Bottleneck -->
+            <path d="M330 595 L230 595 L230 385 L300 385" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowheadRed)"/>
+            <text x="250" y="585" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="600">No</text>
+
+            <!-- Iteration loop annotation -->
+            <g>
+                <rect x="50" y="365" width="150" height="70" rx="6" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+                <text x="125" y="390" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="600">Iterate</text>
+                <text x="125" y="407" text-anchor="middle" fill="#7f1d1d" font-size="10">New bottleneck</text>
+                <text x="125" y="422" text-anchor="middle" fill="#7f1d1d" font-size="10">becomes limiting factor</text>
+            </g>
+
+            <!-- Success annotation -->
+            <g>
+                <rect x="590" y="465" width="140" height="70" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+                <text x="660" y="490" text-anchor="middle" fill="#16a34a" font-size="11" font-weight="600">Success!</text>
+                <text x="660" y="507" text-anchor="middle" fill="#166534" font-size="10">SLOs met,</text>
+                <text x="660" y="522" text-anchor="middle" fill="#166534" font-size="10">changes documented</text>
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(50, 55)">
+                <text x="0" y="0" fill="#475569" font-size="12" font-weight="600">Legend:</text>
+                <rect x="0" y="15" width="16" height="12" rx="2" fill="url(#blueGradient)"/>
+                <text x="22" y="25" fill="#64748b" font-size="10">Setup phases</text>
+                <rect x="0" y="35" width="16" height="12" rx="2" fill="url(#purpleGradient)"/>
+                <text x="22" y="45" fill="#64748b" font-size="10">Analysis</text>
+                <rect x="0" y="55" width="16" height="12" rx="2" fill="url(#amberGradient)"/>
+                <text x="22" y="65" fill="#64748b" font-size="10">Implementation</text>
+                <rect x="0" y="75" width="16" height="12" rx="2" fill="url(#greenGradient)"/>
+                <text x="22" y="85" fill="#64748b" font-size="10">Completion</text>
+            </g>
+
+            <!-- Chapter reference pills -->
+            <g transform="translate(520, 155)">
+                <rect x="0" y="0" width="90" height="24" rx="12" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+                <text x="45" y="16" text-anchor="middle" fill="#0369a1" font-size="10">Chapter 3</text>
+            </g>
+            <g transform="translate(520, 255)">
+                <rect x="0" y="0" width="90" height="24" rx="12" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+                <text x="45" y="16" text-anchor="middle" fill="#0369a1" font-size="10">Chapters 4-10</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

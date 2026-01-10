@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latency Distribution and Percentiles</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg">
+            <!-- Title -->
+            <text x="350" y="30" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Latency Distribution: Why Percentiles Matter</text>
+            <text x="350" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">Averages hide the tail - percentiles reveal user experience</text>
+
+            <defs>
+                <!-- Gradient for the distribution curve fill -->
+                <linearGradient id="dist-fill" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#dbeafe;stop-opacity:0.9" />
+                    <stop offset="50%" style="stop-color:#93c5fd;stop-opacity:0.7" />
+                    <stop offset="100%" style="stop-color:#fecaca;stop-opacity:0.5" />
+                </linearGradient>
+            </defs>
+
+            <!-- Axis lines -->
+            <line x1="80" y1="320" x2="650" y2="320" stroke="#cbd5e1" stroke-width="2"/>
+            <line x1="80" y1="320" x2="80" y2="80" stroke="#cbd5e1" stroke-width="2"/>
+
+            <!-- X-axis label -->
+            <text x="365" y="360" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b;">Response Time (ms)</text>
+
+            <!-- Y-axis label -->
+            <text x="35" y="200" text-anchor="middle" transform="rotate(-90, 35, 200)" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b;">Frequency</text>
+
+            <!-- X-axis tick marks and labels -->
+            <line x1="130" y1="320" x2="130" y2="325" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="130" y="340" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b;">50</text>
+
+            <line x1="200" y1="320" x2="200" y2="325" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="200" y="340" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b;">100</text>
+
+            <line x1="300" y1="320" x2="300" y2="325" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="300" y="340" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b;">200</text>
+
+            <line x1="450" y1="320" x2="450" y2="325" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="450" y="340" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b;">500</text>
+
+            <line x1="600" y1="320" x2="600" y2="325" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="600" y="340" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b;">1000</text>
+
+            <!-- Tail region highlight -->
+            <path d="M 380 320 Q 420 280 450 295 Q 500 300 550 310 Q 600 315 640 318 L 640 320 Z" style="fill: #fee2e2; opacity: 0.7;"/>
+
+            <!-- Distribution curve (long-tail) -->
+            <path d="M 80 320
+                     Q 100 318 120 280
+                     Q 140 150 180 100
+                     Q 200 90 220 100
+                     Q 260 150 300 220
+                     Q 340 270 380 290
+                     Q 420 300 450 305
+                     Q 500 310 550 315
+                     Q 600 318 640 319
+                     L 640 320 L 80 320 Z"
+                  fill="url(#dist-fill)" stroke="#3b82f6" stroke-width="2.5"/>
+
+            <!-- p50 marker -->
+            <line x1="180" y1="100" x2="180" y2="320" stroke="#059669" stroke-width="2" stroke-dasharray="5,3"/>
+            <circle cx="180" cy="100" r="6" fill="#059669"/>
+            <rect x="160" y="65" width="40" height="22" rx="3" fill="#059669"/>
+            <text x="180" y="80" fill="white" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700;">p50</text>
+            <text x="180" y="380" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">75ms</text>
+
+            <!-- p95 marker -->
+            <line x1="340" y1="260" x2="340" y2="320" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,3"/>
+            <circle cx="340" cy="260" r="6" fill="#f59e0b"/>
+            <rect x="320" y="225" width="40" height="22" rx="3" fill="#f59e0b"/>
+            <text x="340" y="240" fill="white" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700;">p95</text>
+            <text x="340" y="380" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">180ms</text>
+
+            <!-- p99 marker -->
+            <line x1="480" y1="302" x2="480" y2="320" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3"/>
+            <circle cx="480" cy="302" r="6" fill="#dc2626"/>
+            <rect x="460" y="267" width="40" height="22" rx="3" fill="#dc2626"/>
+            <text x="480" y="282" fill="white" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700;">p99</text>
+            <text x="480" y="380" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">550ms</text>
+
+            <!-- Average marker (to show contrast) -->
+            <line x1="240" y1="180" x2="240" y2="320" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="2,2"/>
+            <text x="240" y="175" text-anchor="middle" font-style="italic; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b;">avg: 120ms</text>
+
+            <!-- Annotation box -->
+            <rect x="490" y="130" width="180" height="80" rx="5" style="fill: #fef3c7; stroke: #f59e0b; stroke-width: 1.5;"/>
+            <text x="580" y="152" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #92400e;">The "tail" contains</text>
+            <text x="580" y="168" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #92400e;">1% of requests but</text>
+            <text x="580" y="184" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #92400e;">causes most user</text>
+            <text x="580" y="200" text-anchor="middle" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #92400e;">frustration</text>
+
+            <!-- Arrow pointing to tail -->
+            <path d="M 520 210 Q 500 250 485 285" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow-tail)"/>
+            <defs>
+                <marker id="arrow-tail" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#f59e0b"/>
+                </marker>
+            </defs>
+
+            <!-- Legend -->
+            <rect x="100" y="385" width="500" height="30" rx="4" fill="#f1f5f9" stroke="#e2e8f0"/>
+            <circle cx="140" cy="400" r="5" fill="#059669"/>
+            <text x="150" y="404" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">p50: Half faster</text>
+            <circle cx="280" cy="400" r="5" fill="#f59e0b"/>
+            <text x="290" y="404" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">p95: 95% faster</text>
+            <circle cx="420" cy="400" r="5" fill="#dc2626"/>
+            <text x="430" y="404" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">p99: 99% faster (tail starts)</text>
+        </svg>
+    </div>
+</body>
+</html>

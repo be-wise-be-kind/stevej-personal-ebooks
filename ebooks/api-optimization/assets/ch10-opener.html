@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 9: Traffic Management - Protecting the System</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="50%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
+                </linearGradient>
+
+                <linearGradient id="serverGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+
+                <linearGradient id="chaosGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#fef2f2;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#fee2e2;stop-opacity:0.3" />
+                </linearGradient>
+
+                <linearGradient id="orderGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#dcfce7;stop-opacity:0.3" />
+                    <stop offset="100%" style="stop-color:#bbf7d0;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Drop shadow -->
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.2"/>
+                </filter>
+
+                <!-- Glow for shield -->
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+
+                <!-- Arrow marker for allowed requests -->
+                <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#22c55e"/>
+                </marker>
+
+                <!-- X marker for blocked requests -->
+                <marker id="blockX" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                    <circle cx="5" cy="5" r="4" fill="#ef4444"/>
+                    <line x1="3" y1="3" x2="7" y2="7" stroke="#ffffff" stroke-width="1.5"/>
+                    <line x1="7" y1="3" x2="3" y2="7" stroke="#ffffff" stroke-width="1.5"/>
+                </marker>
+            </defs>
+
+            <!-- Background -->
+            <rect width="800" height="400" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="400" y="32" text-anchor="middle" fill="#1e293b" font-size="18" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                Traffic Management: Protecting the System
+            </text>
+
+            <!-- Chaos zone (left) -->
+            <rect x="20" y="50" width="280" height="300" fill="url(#chaosGradient)" rx="6"/>
+            <text x="160" y="75" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
+                INCOMING TRAFFIC
+            </text>
+
+            <!-- Order zone (right) -->
+            <rect x="500" y="50" width="280" height="300" fill="url(#orderGradient)" rx="6"/>
+            <text x="640" y="75" text-anchor="middle" fill="#16a34a" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
+                PROTECTED SYSTEM
+            </text>
+
+            <!-- Flood of incoming requests (chaotic dots/arrows from left) -->
+            <!-- Row 1 -->
+            <circle cx="40" cy="110" r="5" fill="#ef4444" opacity="0.7"/>
+            <circle cx="65" cy="105" r="4" fill="#f97316" opacity="0.8"/>
+            <circle cx="55" cy="125" r="6" fill="#ef4444" opacity="0.6"/>
+            <circle cx="85" cy="115" r="5" fill="#ef4444" opacity="0.75"/>
+            <circle cx="100" cy="108" r="4" fill="#f97316" opacity="0.7"/>
+
+            <!-- Row 2 -->
+            <circle cx="35" cy="150" r="6" fill="#ef4444" opacity="0.8"/>
+            <circle cx="60" cy="155" r="5" fill="#f97316" opacity="0.65"/>
+            <circle cx="80" cy="145" r="4" fill="#ef4444" opacity="0.7"/>
+            <circle cx="95" cy="160" r="6" fill="#ef4444" opacity="0.75"/>
+            <circle cx="45" cy="175" r="5" fill="#f97316" opacity="0.8"/>
+
+            <!-- Row 3 -->
+            <circle cx="50" cy="200" r="5" fill="#ef4444" opacity="0.7"/>
+            <circle cx="75" cy="195" r="6" fill="#ef4444" opacity="0.8"/>
+            <circle cx="40" cy="215" r="4" fill="#f97316" opacity="0.65"/>
+            <circle cx="90" cy="210" r="5" fill="#ef4444" opacity="0.7"/>
+            <circle cx="65" cy="225" r="5" fill="#f97316" opacity="0.75"/>
+
+            <!-- Row 4 -->
+            <circle cx="45" cy="250" r="6" fill="#ef4444" opacity="0.75"/>
+            <circle cx="70" cy="255" r="4" fill="#f97316" opacity="0.7"/>
+            <circle cx="55" cy="270" r="5" fill="#ef4444" opacity="0.8"/>
+            <circle cx="85" cy="245" r="5" fill="#ef4444" opacity="0.65"/>
+            <circle cx="95" cy="265" r="6" fill="#f97316" opacity="0.7"/>
+
+            <!-- Row 5 -->
+            <circle cx="40" cy="295" r="5" fill="#ef4444" opacity="0.7"/>
+            <circle cx="65" cy="300" r="6" fill="#f97316" opacity="0.75"/>
+            <circle cx="80" cy="290" r="4" fill="#ef4444" opacity="0.8"/>
+            <circle cx="50" cy="315" r="5" fill="#ef4444" opacity="0.65"/>
+            <circle cx="90" cy="310" r="5" fill="#f97316" opacity="0.7"/>
+
+            <!-- Incoming arrow streams (chaotic) -->
+            <line x1="120" y1="120" x2="280" y2="140" stroke="#ef4444" stroke-width="2" opacity="0.6"/>
+            <line x1="115" y1="160" x2="280" y2="175" stroke="#f97316" stroke-width="2" opacity="0.7"/>
+            <line x1="120" y1="200" x2="280" y2="200" stroke="#ef4444" stroke-width="2" opacity="0.65"/>
+            <line x1="115" y1="240" x2="280" y2="225" stroke="#ef4444" stroke-width="2" opacity="0.7"/>
+            <line x1="120" y1="280" x2="280" y2="260" stroke="#f97316" stroke-width="2" opacity="0.6"/>
+            <line x1="118" y1="310" x2="280" y2="295" stroke="#ef4444" stroke-width="2" opacity="0.55"/>
+
+            <!-- The Shield/Gate (center) -->
+            <g transform="translate(340, 90)">
+                <!-- Shield outer glow -->
+                <path d="M60 0 L120 20 L120 120 C120 180 60 220 60 220 C60 220 0 180 0 120 L0 20 Z"
+                      fill="url(#shieldGradient)" filter="url(#glow)" opacity="0.3" transform="scale(1.1) translate(-6, -10)"/>
+
+                <!-- Shield shape -->
+                <path d="M60 0 L120 20 L120 120 C120 180 60 220 60 220 C60 220 0 180 0 120 L0 20 Z"
+                      fill="url(#shieldGradient)" filter="url(#shadow)"/>
+
+                <!-- Shield inner highlight -->
+                <path d="M60 15 L105 30 L105 115 C105 165 60 195 60 195 C60 195 15 165 15 115 L15 30 Z"
+                      fill="none" stroke="#ffffff" stroke-width="2" opacity="0.3"/>
+
+                <!-- Shield emblem - checkmark -->
+                <path d="M35 110 L55 130 L90 80" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+                <!-- Rate limit text on shield -->
+                <text x="60" y="170" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    RATE LIMIT
+                </text>
+                <text x="60" y="185" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif" opacity="0.9">
+                    CIRCUIT BREAKER
+                </text>
+            </g>
+
+            <!-- Blocked requests bouncing off (red, deflected) -->
+            <g transform="translate(280, 100)">
+                <!-- Blocked request 1 -->
+                <line x1="0" y1="40" x2="50" y2="60" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3"/>
+                <circle cx="0" cy="40" r="5" fill="#ef4444"/>
+                <line x1="50" y1="60" x2="30" y2="100" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3" opacity="0.6"/>
+
+                <!-- Blocked request 2 -->
+                <line x1="0" y1="125" x2="50" y2="110" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3"/>
+                <circle cx="0" cy="125" r="5" fill="#ef4444"/>
+                <line x1="50" y1="110" x2="25" y2="70" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3" opacity="0.6"/>
+
+                <!-- Blocked request 3 -->
+                <line x1="0" y1="195" x2="50" y2="180" stroke="#f97316" stroke-width="2" stroke-dasharray="4,3"/>
+                <circle cx="0" cy="195" r="5" fill="#f97316"/>
+                <line x1="50" y1="180" x2="20" y2="230" stroke="#f97316" stroke-width="2" stroke-dasharray="4,3" opacity="0.6"/>
+            </g>
+
+            <!-- X marks for rejected -->
+            <g fill="#ef4444">
+                <g transform="translate(305, 185)">
+                    <circle cx="0" cy="0" r="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+                    <line x1="-4" y1="-4" x2="4" y2="4" stroke="#ef4444" stroke-width="2"/>
+                    <line x1="4" y1="-4" x2="-4" y2="4" stroke="#ef4444" stroke-width="2"/>
+                </g>
+                <g transform="translate(295, 245)">
+                    <circle cx="0" cy="0" r="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+                    <line x1="-4" y1="-4" x2="4" y2="4" stroke="#ef4444" stroke-width="2"/>
+                    <line x1="4" y1="-4" x2="-4" y2="4" stroke="#ef4444" stroke-width="2"/>
+                </g>
+            </g>
+
+            <!-- Allowed requests passing through (green arrows) -->
+            <g stroke="#22c55e" stroke-width="2" fill="none">
+                <!-- Allowed request 1 -->
+                <line x1="470" y1="160" x2="530" y2="160" marker-end="url(#arrowGreen)"/>
+                <circle cx="480" cy="160" r="5" fill="#22c55e"/>
+
+                <!-- Allowed request 2 -->
+                <line x1="470" y1="200" x2="530" y2="200" marker-end="url(#arrowGreen)"/>
+                <circle cx="480" cy="200" r="5" fill="#22c55e"/>
+
+                <!-- Allowed request 3 -->
+                <line x1="470" y1="240" x2="530" y2="240" marker-end="url(#arrowGreen)"/>
+                <circle cx="480" cy="240" r="5" fill="#22c55e"/>
+            </g>
+
+            <!-- Protected Server (right side) -->
+            <g transform="translate(590, 130)">
+                <!-- Server box -->
+                <rect x="0" y="0" width="140" height="140" rx="10" fill="url(#serverGradient)" filter="url(#shadow)"/>
+
+                <!-- Server details -->
+                <rect x="20" y="25" width="100" height="12" rx="2" fill="#ffffff" opacity="0.3"/>
+                <rect x="20" y="45" width="80" height="12" rx="2" fill="#ffffff" opacity="0.3"/>
+                <rect x="20" y="65" width="90" height="12" rx="2" fill="#ffffff" opacity="0.3"/>
+
+                <!-- Status indicators -->
+                <circle cx="35" cy="100" r="8" fill="#ffffff" opacity="0.9"/>
+                <circle cx="35" cy="100" r="5" fill="#16a34a"/>
+                <circle cx="70" cy="100" r="8" fill="#ffffff" opacity="0.9"/>
+                <circle cx="70" cy="100" r="5" fill="#16a34a"/>
+                <circle cx="105" cy="100" r="8" fill="#ffffff" opacity="0.9"/>
+                <circle cx="105" cy="100" r="5" fill="#16a34a"/>
+
+                <!-- Server label -->
+                <text x="70" y="130" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    HEALTHY
+                </text>
+            </g>
+
+            <!-- Labels -->
+            <text x="300" y="370" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
+                Rejected: 429 Too Many Requests
+            </text>
+            <text x="550" y="370" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
+                Accepted: 200 OK
+            </text>
+
+        </svg>
+    </div>
+</body>
+</html>

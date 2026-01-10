@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 4: The Hidden Cost of Network Requests</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Sky gradient -->
+                <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#e0f2fe;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#bae6fd;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Water gradient -->
+                <linearGradient id="waterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:0.85" />
+                    <stop offset="100%" style="stop-color:#0369a1;stop-opacity:0.95" />
+                </linearGradient>
+
+                <!-- Iceberg above water gradient (brighter) -->
+                <linearGradient id="iceAboveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f0f9ff;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#e0f2fe;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Iceberg below water gradient (darker, submerged look) -->
+                <linearGradient id="iceBelowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#7dd3fc;stop-opacity:0.9" />
+                    <stop offset="100%" style="stop-color:#38bdf8;stop-opacity:0.7" />
+                </linearGradient>
+            </defs>
+
+            <!-- Background -->
+            <rect width="800" height="400" fill="#ffffff"/>
+
+            <!-- Title -->
+            <text x="400" y="30" text-anchor="middle" fill="#0c4a6e" font-size="20" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                The Hidden Cost
+            </text>
+
+            <!-- Sky area (above waterline) -->
+            <rect x="0" y="45" width="800" height="95" fill="url(#skyGradient)"/>
+
+            <!-- Water area (below waterline) -->
+            <rect x="0" y="140" width="800" height="240" fill="url(#waterGradient)"/>
+
+            <!-- Waterline -->
+            <line x1="0" y1="140" x2="800" y2="140" stroke="#0284c7" stroke-width="2" stroke-dasharray="8,4"/>
+
+            <!-- Iceberg - Above water portion (small tip) -->
+            <polygon
+                points="400,55 440,140 360,140"
+                fill="url(#iceAboveGradient)"
+                stroke="#bae6fd"
+                stroke-width="1.5"/>
+
+            <!-- Iceberg - Below water portion (large submerged section) -->
+            <polygon
+                points="360,140 440,140 520,280 480,350 320,350 280,280"
+                fill="url(#iceBelowGradient)"
+                stroke="#7dd3fc"
+                stroke-width="1.5"/>
+
+            <!-- HTTP Request label (above water) -->
+            <text x="400" y="115" text-anchor="middle" fill="#0c4a6e" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                HTTP Request
+            </text>
+
+            <!-- Hidden costs labels (below water) -->
+            <!-- DNS -->
+            <text x="400" y="185" text-anchor="middle" fill="#0c4a6e" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                DNS Lookup
+            </text>
+
+            <!-- TCP Handshake -->
+            <text x="400" y="240" text-anchor="middle" fill="#0c4a6e" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                TCP Handshake
+            </text>
+
+            <!-- TLS Handshake -->
+            <text x="400" y="295" text-anchor="middle" fill="#0c4a6e" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                TLS Handshake
+            </text>
+
+            <!-- Connection Reuse (at bottom of iceberg) -->
+            <text x="400" y="340" text-anchor="middle" fill="#0c4a6e" font-size="12" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
+                Connection Setup
+            </text>
+
+            <!-- Side annotations -->
+            <!-- Left side - "What you see" -->
+            <text x="120" y="100" text-anchor="middle" fill="#64748b" font-size="11" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                What you see
+            </text>
+            <line x1="180" y1="100" x2="350" y2="100" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,2"/>
+
+            <!-- Right side - "Hidden latency" -->
+            <text x="680" y="240" text-anchor="middle" fill="#e0f2fe" font-size="11" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                Hidden latency
+            </text>
+            <line x1="530" y1="240" x2="620" y2="240" stroke="#7dd3fc" stroke-width="1" stroke-dasharray="4,2"/>
+
+            <!-- Subtitle at bottom -->
+            <text x="400" y="400" text-anchor="middle" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                The actual request is just the tip of the iceberg
+            </text>
+        </svg>
+    </div>
+</body>
+</html>

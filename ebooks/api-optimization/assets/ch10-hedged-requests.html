@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hedged Requests Timeline</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 950 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="hedgeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="successGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="cancelGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                </linearGradient>
+                <!-- Arrow marker -->
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+                </marker>
+                <!-- Shadow -->
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="950" height="520" fill="#f8fafc" rx="8"/>
+
+            <!-- Title -->
+            <text x="475" y="35" text-anchor="middle" font-size="22" font-weight="600" fill="#1e293b">
+                Hedged Requests for Tail Latency Reduction
+            </text>
+            <text x="475" y="55" text-anchor="middle" font-size="13" fill="#64748b">
+                Send redundant requests after delay, use first response
+            </text>
+
+            <!-- Timeline axis -->
+            <line x1="100" y1="130" x2="880" y2="130" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <text x="890" y="135" font-size="12" fill="#64748b">Time</text>
+
+            <!-- Time markers -->
+            <line x1="150" y1="125" x2="150" y2="135" stroke="#94a3b8" stroke-width="2"/>
+            <text x="150" y="150" text-anchor="middle" font-size="10" fill="#64748b">0ms</text>
+
+            <line x1="350" y1="125" x2="350" y2="135" stroke="#94a3b8" stroke-width="2"/>
+            <text x="350" y="150" text-anchor="middle" font-size="10" fill="#64748b">50ms</text>
+            <text x="350" y="162" text-anchor="middle" font-size="9" fill="#f97316">(hedge delay)</text>
+
+            <line x1="550" y1="125" x2="550" y2="135" stroke="#94a3b8" stroke-width="2"/>
+            <text x="550" y="150" text-anchor="middle" font-size="10" fill="#64748b">100ms</text>
+
+            <line x1="750" y1="125" x2="750" y2="135" stroke="#94a3b8" stroke-width="2"/>
+            <text x="750" y="150" text-anchor="middle" font-size="10" fill="#64748b">150ms</text>
+
+            <!-- Scenario 1: Primary request is fast (no hedge needed) -->
+            <g transform="translate(0, 170)">
+                <rect x="30" y="0" width="890" height="90" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+                <text x="50" y="25" font-size="12" font-weight="600" fill="#1e293b">Scenario 1: Fast Primary Response</text>
+                <text x="50" y="42" font-size="10" fill="#64748b">Primary returns before hedge delay - no hedge sent</text>
+
+                <!-- Primary request bar -->
+                <rect x="150" y="52" width="120" height="24" rx="4" fill="url(#primaryGradient)"/>
+                <text x="210" y="68" text-anchor="middle" font-size="10" fill="white" font-weight="500">Primary Request</text>
+
+                <!-- Success indicator -->
+                <circle cx="280" cy="64" r="10" fill="url(#successGradient)"/>
+                <path d="M275 64 L278 67 L285 60" stroke="white" stroke-width="2" fill="none"/>
+
+                <!-- Result label -->
+                <text x="310" y="68" font-size="10" fill="#059669" font-weight="500">Response at 30ms</text>
+            </g>
+
+            <!-- Scenario 2: Hedge wins -->
+            <g transform="translate(0, 275)">
+                <rect x="30" y="0" width="890" height="110" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+                <text x="50" y="25" font-size="12" font-weight="600" fill="#1e293b">Scenario 2: Hedge Request Wins</text>
+                <text x="50" y="42" font-size="10" fill="#64748b">Primary is slow, hedge returns first - cancel primary</text>
+
+                <!-- Primary request bar (slow, cancelled) -->
+                <rect x="150" y="52" width="350" height="24" rx="4" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,2"/>
+                <text x="325" y="68" text-anchor="middle" font-size="10" fill="#64748b">Primary Request (slow)</text>
+
+                <!-- Hedge request bar -->
+                <rect x="350" y="80" width="120" height="24" rx="4" fill="url(#hedgeGradient)"/>
+                <text x="410" y="96" text-anchor="middle" font-size="10" fill="white" font-weight="500">Hedge Request</text>
+
+                <!-- Cancel X on primary -->
+                <circle cx="510" cy="64" r="10" fill="url(#cancelGradient)"/>
+                <path d="M505 59 L515 69 M515 59 L505 69" stroke="white" stroke-width="2"/>
+                <text x="540" y="68" font-size="9" fill="#dc2626">Cancelled</text>
+
+                <!-- Success indicator on hedge -->
+                <circle cx="480" cy="92" r="10" fill="url(#successGradient)"/>
+                <path d="M475 92 L478 95 L485 88" stroke="white" stroke-width="2" fill="none"/>
+                <text x="510" y="96" font-size="10" fill="#059669" font-weight="500">Response at 80ms</text>
+
+                <!-- Hedge trigger arrow -->
+                <path d="M350 55 L350 75" stroke="#f97316" stroke-width="1.5" stroke-dasharray="3,2"/>
+                <text x="355" y="65" font-size="8" fill="#f97316">Hedge sent</text>
+            </g>
+
+            <!-- Scenario 3: Primary wins after hedge -->
+            <g transform="translate(0, 400)">
+                <rect x="30" y="0" width="890" height="110" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+                <text x="50" y="25" font-size="12" font-weight="600" fill="#1e293b">Scenario 3: Primary Wins (Hedge Cancelled)</text>
+                <text x="50" y="42" font-size="10" fill="#64748b">Primary returns after hedge was sent but before hedge completes</text>
+
+                <!-- Primary request bar -->
+                <rect x="150" y="52" width="180" height="24" rx="4" fill="url(#primaryGradient)"/>
+                <text x="240" y="68" text-anchor="middle" font-size="10" fill="white" font-weight="500">Primary Request</text>
+
+                <!-- Hedge request bar (cancelled) -->
+                <rect x="350" y="80" width="200" height="24" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,2"/>
+                <text x="450" y="96" text-anchor="middle" font-size="10" fill="#92400e">Hedge Request (in flight)</text>
+
+                <!-- Success indicator on primary -->
+                <circle cx="340" cy="64" r="10" fill="url(#successGradient)"/>
+                <path d="M335 64 L338 67 L345 60" stroke="white" stroke-width="2" fill="none"/>
+                <text x="370" y="68" font-size="10" fill="#059669" font-weight="500">Response at 70ms</text>
+
+                <!-- Cancel X on hedge -->
+                <circle cx="560" cy="92" r="10" fill="url(#cancelGradient)"/>
+                <path d="M555 87 L565 97 M565 87 L555 97" stroke="white" stroke-width="2"/>
+                <text x="590" y="96" font-size="9" fill="#dc2626">Cancelled</text>
+
+                <!-- Hedge trigger arrow -->
+                <path d="M350 55 L350 75" stroke="#f97316" stroke-width="1.5" stroke-dasharray="3,2"/>
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(600, 80)">
+                <rect x="0" y="0" width="280" height="40" rx="4" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+                <rect x="15" y="12" width="40" height="16" rx="3" fill="url(#primaryGradient)"/>
+                <text x="65" y="24" font-size="10" fill="#64748b">Primary</text>
+                <rect x="115" y="12" width="40" height="16" rx="3" fill="url(#hedgeGradient)"/>
+                <text x="165" y="24" font-size="10" fill="#64748b">Hedge</text>
+                <rect x="205" y="12" width="40" height="16" rx="3" fill="#e2e8f0" stroke="#94a3b8" stroke-dasharray="3,2"/>
+                <text x="255" y="24" font-size="10" fill="#64748b">Slow/Cancelled</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

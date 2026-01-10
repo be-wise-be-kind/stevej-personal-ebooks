@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimization Technique Decision Matrix</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 950px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        
+        <svg viewBox="0 0 900 575" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="headerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="rowHeaderGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Drop shadow -->
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+            </defs>
+
+            <!-- Main table container -->
+            <rect x="30" y="75" width="840" height="430" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
+
+            <!-- Column headers -->
+            <!-- Empty corner cell -->
+            <rect x="30" y="75" width="150" height="50" rx="8 0 0 0" fill="url(#headerGradient)"/>
+            <text x="105" y="105" text-anchor="middle" fill="white" font-size="12" font-weight="600">Symptom</text>
+
+            <!-- Technique headers -->
+            <g>
+                <rect x="180" y="75" width="110" height="50" fill="url(#headerGradient)"/>
+                <text x="235" y="97" text-anchor="middle" fill="white" font-size="11" font-weight="600">Caching</text>
+                <text x="235" y="112" text-anchor="middle" fill="#93c5fd" font-size="9">(Ch. 5)</text>
+            </g>
+            <g>
+                <rect x="290" y="75" width="110" height="50" fill="url(#headerGradient)"/>
+                <text x="345" y="97" text-anchor="middle" fill="white" font-size="11" font-weight="600">Connection</text>
+                <text x="345" y="112" text-anchor="middle" fill="#93c5fd" font-size="9">Pool (Ch. 4)</text>
+            </g>
+            <g>
+                <rect x="400" y="75" width="110" height="50" fill="url(#headerGradient)"/>
+                <text x="455" y="97" text-anchor="middle" fill="white" font-size="11" font-weight="600">Async</text>
+                <text x="455" y="112" text-anchor="middle" fill="#93c5fd" font-size="9">(Ch. 7)</text>
+            </g>
+            <g>
+                <rect x="510" y="75" width="110" height="50" fill="url(#headerGradient)"/>
+                <text x="565" y="97" text-anchor="middle" fill="white" font-size="11" font-weight="600">Scaling</text>
+                <text x="565" y="112" text-anchor="middle" fill="#93c5fd" font-size="9">(Ch. 8)</text>
+            </g>
+            <g>
+                <rect x="620" y="75" width="110" height="50" fill="url(#headerGradient)"/>
+                <text x="675" y="97" text-anchor="middle" fill="white" font-size="11" font-weight="600">Circuit</text>
+                <text x="675" y="112" text-anchor="middle" fill="#93c5fd" font-size="9">Breaker (Ch. 9)</text>
+            </g>
+            <g>
+                <rect x="730" y="75" width="140" height="50" rx="0 8 0 0" fill="url(#headerGradient)"/>
+                <text x="800" y="97" text-anchor="middle" fill="white" font-size="11" font-weight="600">Edge/CDN</text>
+                <text x="800" y="112" text-anchor="middle" fill="#93c5fd" font-size="9">(Ch. 5, 10)</text>
+            </g>
+
+            <!-- Row 1: High Latency (Read) -->
+            <rect x="30" y="125" width="150" height="80" fill="url(#rowHeaderGradient)"/>
+            <text x="105" y="160" text-anchor="middle" fill="white" font-size="11" font-weight="600">High Latency</text>
+            <text x="105" y="177" text-anchor="middle" fill="#bfdbfe" font-size="10">(Read-Heavy)</text>
+
+            <!-- Cells for Row 1 -->
+            <rect x="180" y="125" width="110" height="80" fill="#dcfce7"/>
+            <circle cx="235" cy="165" r="18" fill="#16a34a"/>
+            <text x="235" y="170" text-anchor="middle" fill="white" font-size="14" font-weight="700">1</text>
+
+            <rect x="290" y="125" width="110" height="80" fill="#fef3c7"/>
+            <circle cx="345" cy="165" r="18" fill="#d97706"/>
+            <text x="345" y="170" text-anchor="middle" fill="white" font-size="14" font-weight="700">2</text>
+
+            <rect x="400" y="125" width="110" height="80" fill="#f1f5f9"/>
+            <text x="455" y="170" text-anchor="middle" fill="#94a3b8" font-size="12">-</text>
+
+            <rect x="510" y="125" width="110" height="80" fill="#fef9c3"/>
+            <circle cx="565" cy="165" r="18" fill="#eab308"/>
+            <text x="565" y="170" text-anchor="middle" fill="white" font-size="14" font-weight="700">3</text>
+
+            <rect x="620" y="125" width="110" height="80" fill="#f1f5f9"/>
+            <text x="675" y="170" text-anchor="middle" fill="#94a3b8" font-size="12">-</text>
+
+            <rect x="730" y="125" width="140" height="80" fill="#fef3c7"/>
+            <circle cx="800" cy="165" r="18" fill="#d97706"/>
+            <text x="800" y="170" text-anchor="middle" fill="white" font-size="14" font-weight="700">2</text>
+
+            <!-- Row 2: Low Throughput -->
+            <rect x="30" y="205" width="150" height="80" fill="url(#rowHeaderGradient)"/>
+            <text x="105" y="240" text-anchor="middle" fill="white" font-size="11" font-weight="600">Low Throughput</text>
+            <text x="105" y="257" text-anchor="middle" fill="#bfdbfe" font-size="10">(Capacity)</text>
+
+            <!-- Cells for Row 2 -->
+            <rect x="180" y="205" width="110" height="80" fill="#fef3c7"/>
+            <circle cx="235" cy="245" r="18" fill="#d97706"/>
+            <text x="235" y="250" text-anchor="middle" fill="white" font-size="14" font-weight="700">2</text>
+
+            <rect x="290" y="205" width="110" height="80" fill="#dcfce7"/>
+            <circle cx="345" cy="245" r="18" fill="#16a34a"/>
+            <text x="345" y="250" text-anchor="middle" fill="white" font-size="14" font-weight="700">1</text>
+
+            <rect x="400" y="205" width="110" height="80" fill="#dcfce7"/>
+            <circle cx="455" cy="245" r="18" fill="#16a34a"/>
+            <text x="455" y="250" text-anchor="middle" fill="white" font-size="14" font-weight="700">1</text>
+
+            <rect x="510" y="205" width="110" height="80" fill="#dcfce7"/>
+            <circle cx="565" cy="245" r="18" fill="#16a34a"/>
+            <text x="565" y="250" text-anchor="middle" fill="white" font-size="14" font-weight="700">1</text>
+
+            <rect x="620" y="205" width="110" height="80" fill="#f1f5f9"/>
+            <text x="675" y="250" text-anchor="middle" fill="#94a3b8" font-size="12">-</text>
+
+            <rect x="730" y="205" width="140" height="80" fill="#f1f5f9"/>
+            <text x="800" y="250" text-anchor="middle" fill="#94a3b8" font-size="12">-</text>
+
+            <!-- Row 3: Cascading Failures -->
+            <rect x="30" y="285" width="150" height="80" fill="url(#rowHeaderGradient)"/>
+            <text x="105" y="320" text-anchor="middle" fill="white" font-size="11" font-weight="600">Cascading</text>
+            <text x="105" y="337" text-anchor="middle" fill="#bfdbfe" font-size="10">Failures</text>
+
+            <!-- Cells for Row 3 -->
+            <rect x="180" y="285" width="110" height="80" fill="#f1f5f9"/>
+            <text x="235" y="330" text-anchor="middle" fill="#94a3b8" font-size="12">-</text>
+
+            <rect x="290" y="285" width="110" height="80" fill="#fef9c3"/>
+            <circle cx="345" cy="325" r="18" fill="#eab308"/>
+            <text x="345" y="330" text-anchor="middle" fill="white" font-size="14" font-weight="700">3</text>
+
+            <rect x="400" y="285" width="110" height="80" fill="#fef3c7"/>
+            <circle cx="455" cy="325" r="18" fill="#d97706"/>
+            <text x="455" y="330" text-anchor="middle" fill="white" font-size="14" font-weight="700">2</text>
+
+            <rect x="510" y="285" width="110" height="80" fill="#f1f5f9"/>
+            <text x="565" y="330" text-anchor="middle" fill="#94a3b8" font-size="12">-</text>
+
+            <rect x="620" y="285" width="110" height="80" fill="#dcfce7"/>
+            <circle cx="675" cy="325" r="18" fill="#16a34a"/>
+            <text x="675" y="330" text-anchor="middle" fill="white" font-size="14" font-weight="700">1</text>
+
+            <rect x="730" y="285" width="140" height="80" fill="#f1f5f9"/>
+            <text x="800" y="330" text-anchor="middle" fill="#94a3b8" font-size="12">-</text>
+
+            <!-- Row 4: Geographic Latency -->
+            <rect x="30" y="365" width="150" height="80" fill="url(#rowHeaderGradient)"/>
+            <text x="105" y="400" text-anchor="middle" fill="white" font-size="11" font-weight="600">Geographic</text>
+            <text x="105" y="417" text-anchor="middle" fill="#bfdbfe" font-size="10">Latency</text>
+
+            <!-- Cells for Row 4 -->
+            <rect x="180" y="365" width="110" height="80" fill="#fef3c7"/>
+            <circle cx="235" cy="405" r="18" fill="#d97706"/>
+            <text x="235" y="410" text-anchor="middle" fill="white" font-size="14" font-weight="700">2</text>
+
+            <rect x="290" y="365" width="110" height="80" fill="#f1f5f9"/>
+            <text x="345" y="410" text-anchor="middle" fill="#94a3b8" font-size="12">-</text>
+
+            <rect x="400" y="365" width="110" height="80" fill="#f1f5f9"/>
+            <text x="455" y="410" text-anchor="middle" fill="#94a3b8" font-size="12">-</text>
+
+            <rect x="510" y="365" width="110" height="80" fill="#fef9c3"/>
+            <circle cx="565" cy="405" r="18" fill="#eab308"/>
+            <text x="565" y="410" text-anchor="middle" fill="white" font-size="14" font-weight="700">3</text>
+
+            <rect x="620" y="365" width="110" height="80" fill="#f1f5f9"/>
+            <text x="675" y="410" text-anchor="middle" fill="#94a3b8" font-size="12">-</text>
+
+            <rect x="730" y="365" width="140" height="80" rx="0 0 8 0" fill="#dcfce7"/>
+            <circle cx="800" cy="405" r="18" fill="#16a34a"/>
+            <text x="800" y="410" text-anchor="middle" fill="white" font-size="14" font-weight="700">1</text>
+
+            <!-- Row 5: Error Spikes -->
+            <rect x="30" y="445" width="150" height="60" rx="0 0 0 8" fill="url(#rowHeaderGradient)"/>
+            <text x="105" y="480" text-anchor="middle" fill="white" font-size="11" font-weight="600">Error Spikes</text>
+
+            <!-- Cells for Row 5 -->
+            <rect x="180" y="445" width="110" height="60" fill="#f1f5f9"/>
+            <text x="235" y="480" text-anchor="middle" fill="#94a3b8" font-size="12">-</text>
+
+            <rect x="290" y="445" width="110" height="60" fill="#fef3c7"/>
+            <circle cx="345" cy="475" r="18" fill="#d97706"/>
+            <text x="345" y="480" text-anchor="middle" fill="white" font-size="14" font-weight="700">2</text>
+
+            <rect x="400" y="445" width="110" height="60" fill="#fef3c7"/>
+            <circle cx="455" cy="475" r="18" fill="#d97706"/>
+            <text x="455" y="480" text-anchor="middle" fill="white" font-size="14" font-weight="700">2</text>
+
+            <rect x="510" y="445" width="110" height="60" fill="#fef9c3"/>
+            <circle cx="565" cy="475" r="18" fill="#eab308"/>
+            <text x="565" y="480" text-anchor="middle" fill="white" font-size="14" font-weight="700">3</text>
+
+            <rect x="620" y="445" width="110" height="60" fill="#dcfce7"/>
+            <circle cx="675" cy="475" r="18" fill="#16a34a"/>
+            <text x="675" y="480" text-anchor="middle" fill="white" font-size="14" font-weight="700">1</text>
+
+            <rect x="730" y="445" width="140" height="60" rx="0 0 8 0" fill="#f1f5f9"/>
+            <text x="800" y="480" text-anchor="middle" fill="#94a3b8" font-size="12">-</text>
+
+            <!-- Grid lines -->
+            <g stroke="#e2e8f0" stroke-width="1">
+                <line x1="180" y1="75" x2="180" y2="505"/>
+                <line x1="290" y1="75" x2="290" y2="505"/>
+                <line x1="400" y1="75" x2="400" y2="505"/>
+                <line x1="510" y1="75" x2="510" y2="505"/>
+                <line x1="620" y1="75" x2="620" y2="505"/>
+                <line x1="730" y1="75" x2="730" y2="505"/>
+                <line x1="30" y1="125" x2="870" y2="125"/>
+                <line x1="30" y1="205" x2="870" y2="205"/>
+                <line x1="30" y1="285" x2="870" y2="285"/>
+                <line x1="30" y1="365" x2="870" y2="365"/>
+                <line x1="30" y1="445" x2="870" y2="445"/>
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(30, 525)">
+                <text x="0" y="15" fill="#475569" font-size="12" font-weight="600">Priority Legend:</text>
+
+                <circle cx="130" cy="12" r="12" fill="#16a34a"/>
+                <text x="130" y="16" text-anchor="middle" fill="white" font-size="11" font-weight="700">1</text>
+                <text x="150" y="16" fill="#64748b" font-size="11">Primary choice</text>
+
+                <circle cx="280" cy="12" r="12" fill="#d97706"/>
+                <text x="280" y="16" text-anchor="middle" fill="white" font-size="11" font-weight="700">2</text>
+                <text x="300" y="16" fill="#64748b" font-size="11">Secondary option</text>
+
+                <circle cx="440" cy="12" r="12" fill="#eab308"/>
+                <text x="440" y="16" text-anchor="middle" fill="white" font-size="11" font-weight="700">3</text>
+                <text x="460" y="16" fill="#64748b" font-size="11">Consider if others fail</text>
+
+                <text x="600" y="16" fill="#94a3b8" font-size="12">-</text>
+                <text x="620" y="16" fill="#64748b" font-size="11">Not applicable</text>
+            </g>
+
+            <!-- Title annotation -->
+            <g transform="translate(700, 35)">
+                <rect x="0" y="0" width="170" height="35" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+                <text x="85" y="22" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="600">Use symptoms to select</text>
+                <text x="85" y="34" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="600">optimization techniques</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Average Lies - Two Distributions with Identical Averages</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 800 475" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Good distribution gradient (green) -->
+                <linearGradient id="goodGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:0.8" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:0.3" />
+                </linearGradient>
+
+                <!-- Bad distribution gradient (orange/red) -->
+                <linearGradient id="badGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f97316;stop-opacity:0.8" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:0.3" />
+                </linearGradient>
+            </defs>
+
+            <!-- Background -->
+            <rect width="800" height="475" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="400" y="40" text-anchor="middle" fill="#1e293b" font-size="22" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                Same Average, Different Reality
+            </text>
+
+            <!-- Subtitle -->
+            <text x="400" y="65" text-anchor="middle" fill="#64748b" font-size="13" font-family="Liberation Sans, Arial, sans-serif">
+                Why averages hide what percentiles reveal
+            </text>
+
+            <!-- Left distribution: Tight, normal distribution (GOOD) -->
+            <g transform="translate(50, 115)">
+                <!-- Panel label -->
+                <text x="150" y="15" text-anchor="middle" fill="#16a34a" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Consistent Performance
+                </text>
+
+                <!-- X-axis -->
+                <line x1="20" y1="235" x2="280" y2="235" stroke="#cbd5e1" stroke-width="2"/>
+
+                <!-- Y-axis -->
+                <line x1="20" y1="235" x2="20" y2="45" stroke="#cbd5e1" stroke-width="2"/>
+
+                <!-- Tight normal distribution curve -->
+                <path d="M 40,235
+                         Q 60,233 80,225
+                         Q 100,195 120,130
+                         Q 140,70 150,60
+                         Q 160,70 180,130
+                         Q 200,195 220,225
+                         Q 240,233 260,235"
+                      fill="url(#goodGradient)" stroke="#16a34a" stroke-width="2"/>
+
+                <!-- Average line -->
+                <line x1="150" y1="235" x2="150" y2="55" stroke="#16a34a" stroke-width="2" stroke-dasharray="6,4"/>
+
+                <!-- Average label -->
+                <rect x="115" y="250" width="70" height="28" rx="4" fill="#16a34a"/>
+                <text x="150" y="269" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Avg: 100ms
+                </text>
+
+                <!-- X-axis labels -->
+                <text x="40" y="295" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">50ms</text>
+                <text x="150" y="295" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">100ms</text>
+                <text x="260" y="295" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">150ms</text>
+
+                <!-- Percentile indicator -->
+                <text x="150" y="325" text-anchor="middle" fill="#16a34a" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
+                    p99: 120ms
+                </text>
+            </g>
+
+            <!-- Right distribution: Long-tail distribution (BAD) -->
+            <g transform="translate(450, 115)">
+                <!-- Panel label -->
+                <text x="150" y="15" text-anchor="middle" fill="#dc2626" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Hidden Outliers
+                </text>
+
+                <!-- X-axis -->
+                <line x1="20" y1="235" x2="280" y2="235" stroke="#cbd5e1" stroke-width="2"/>
+
+                <!-- Y-axis -->
+                <line x1="20" y1="235" x2="20" y2="45" stroke="#cbd5e1" stroke-width="2"/>
+
+                <!-- Long-tail distribution curve -->
+                <path d="M 40,235
+                         Q 50,230 60,195
+                         Q 70,115 80,65
+                         Q 90,60 95,65
+                         Q 105,90 120,150
+                         Q 140,200 160,217
+                         Q 180,227 200,230
+                         Q 220,232 240,233
+                         Q 260,234 280,235"
+                      fill="url(#badGradient)" stroke="#dc2626" stroke-width="2"/>
+
+                <!-- Average line (same position as left, but distribution is skewed) -->
+                <line x1="100" y1="235" x2="100" y2="70" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,4"/>
+
+                <!-- Average label -->
+                <rect x="65" y="250" width="70" height="28" rx="4" fill="#dc2626"/>
+                <text x="100" y="269" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Avg: 100ms
+                </text>
+
+                <!-- Long tail indicator -->
+                <path d="M 240,195 L 260,215 L 280,210" stroke="#dc2626" stroke-width="1.5" fill="none" marker-end="none"/>
+                <text x="265" y="185" text-anchor="middle" fill="#dc2626" font-size="10" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                    long tail
+                </text>
+
+                <!-- X-axis labels -->
+                <text x="40" y="295" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">20ms</text>
+                <text x="150" y="295" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">200ms</text>
+                <text x="260" y="295" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">500ms</text>
+
+                <!-- Percentile indicator (much worse!) -->
+                <text x="150" y="325" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
+                    p99: 450ms
+                </text>
+            </g>
+
+            <!-- Central divider with "vs" -->
+            <line x1="400" y1="125" x2="400" y2="400" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+            <circle cx="400" cy="265" r="18" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+            <text x="400" y="270" text-anchor="middle" fill="#64748b" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                vs
+            </text>
+
+            <!-- Bottom takeaway -->
+            <text x="400" y="450" text-anchor="middle" fill="#475569" font-size="12" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                The average tells you nothing about the worst-case experience
+            </text>
+        </svg>
+    </div>
+</body>
+</html>

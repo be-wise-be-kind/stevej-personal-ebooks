@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenTelemetry Architecture</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 950 585" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="appGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="collectorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0284c7;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="backendGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
+                </filter>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="475" y="35" text-anchor="middle" font-size="22" font-weight="600" fill="#1f2937">OpenTelemetry Architecture</text>
+
+            <!-- Applications Section -->
+            <g transform="translate(30, 80)">
+                <text x="100" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#6366f1">APPLICATIONS</text>
+
+                <!-- App 1 -->
+                <g transform="translate(0, 40)">
+                    <rect x="0" y="0" width="200" height="120" rx="8" fill="url(#appGrad)" filter="url(#shadow)"/>
+                    <text x="100" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="white">API Service</text>
+
+                    <rect x="15" y="45" width="170" height="60" rx="4" fill="white" fill-opacity="0.15"/>
+                    <text x="100" y="65" text-anchor="middle" font-size="11" fill="white" fill-opacity="0.9">OpenTelemetry SDK</text>
+                    <line x1="25" y1="75" x2="175" y2="75" stroke="white" stroke-opacity="0.2" stroke-width="1"/>
+                    <text x="50" y="92" font-size="10" fill="white" fill-opacity="0.8">Traces</text>
+                    <text x="100" y="92" font-size="10" fill="white" fill-opacity="0.8">Metrics</text>
+                    <text x="155" y="92" font-size="10" fill="white" fill-opacity="0.8">Logs</text>
+                </g>
+
+                <!-- App 2 -->
+                <g transform="translate(0, 180)">
+                    <rect x="0" y="0" width="200" height="120" rx="8" fill="url(#appGrad)" filter="url(#shadow)"/>
+                    <text x="100" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="white">User Service</text>
+
+                    <rect x="15" y="45" width="170" height="60" rx="4" fill="white" fill-opacity="0.15"/>
+                    <text x="100" y="65" text-anchor="middle" font-size="11" fill="white" fill-opacity="0.9">OpenTelemetry SDK</text>
+                    <line x1="25" y1="75" x2="175" y2="75" stroke="white" stroke-opacity="0.2" stroke-width="1"/>
+                    <text x="50" y="92" font-size="10" fill="white" fill-opacity="0.8">Traces</text>
+                    <text x="100" y="92" font-size="10" fill="white" fill-opacity="0.8">Metrics</text>
+                    <text x="155" y="92" font-size="10" fill="white" fill-opacity="0.8">Logs</text>
+                </g>
+
+                <!-- App 3 -->
+                <g transform="translate(0, 320)">
+                    <rect x="0" y="0" width="200" height="120" rx="8" fill="url(#appGrad)" filter="url(#shadow)"/>
+                    <text x="100" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="white">Order Service</text>
+
+                    <rect x="15" y="45" width="170" height="60" rx="4" fill="white" fill-opacity="0.15"/>
+                    <text x="100" y="65" text-anchor="middle" font-size="11" fill="white" fill-opacity="0.9">OpenTelemetry SDK</text>
+                    <line x1="25" y1="75" x2="175" y2="75" stroke="white" stroke-opacity="0.2" stroke-width="1"/>
+                    <text x="50" y="92" font-size="10" fill="white" fill-opacity="0.8">Traces</text>
+                    <text x="100" y="92" font-size="10" fill="white" fill-opacity="0.8">Metrics</text>
+                    <text x="155" y="92" font-size="10" fill="white" fill-opacity="0.8">Logs</text>
+                </g>
+            </g>
+
+            <!-- Arrows from Apps to Collector -->
+            <g stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#arrowhead)">
+                <path d="M 240 180 Q 300 180 340 280"/>
+                <path d="M 240 320 L 340 320"/>
+                <path d="M 240 460 Q 300 460 340 360"/>
+            </g>
+
+            <!-- Protocol labels -->
+            <text x="290" y="195" font-size="10" fill="#64748b" transform="rotate(-25 290 195)">OTLP/gRPC</text>
+            <text x="280" y="305" font-size="10" fill="#64748b">OTLP/gRPC</text>
+            <text x="290" y="440" font-size="10" fill="#64748b" transform="rotate(25 290 440)">OTLP/gRPC</text>
+
+            <!-- OpenTelemetry Collector -->
+            <g transform="translate(350, 150)">
+                <text x="120" y="-10" text-anchor="middle" font-size="14" font-weight="600" fill="#0ea5e9">OPENTELEMETRY COLLECTOR</text>
+
+                <rect x="0" y="0" width="240" height="340" rx="10" fill="url(#collectorGrad)" filter="url(#shadow)"/>
+
+                <!-- Receivers -->
+                <g transform="translate(15, 20)">
+                    <rect x="0" y="0" width="210" height="70" rx="6" fill="white" fill-opacity="0.15"/>
+                    <text x="105" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="white">Receivers</text>
+                    <text x="105" y="42" text-anchor="middle" font-size="10" fill="white" fill-opacity="0.8">OTLP | Jaeger | Zipkin</text>
+                    <text x="105" y="58" text-anchor="middle" font-size="10" fill="white" fill-opacity="0.8">Prometheus | Kafka</text>
+                </g>
+
+                <!-- Processors -->
+                <g transform="translate(15, 105)">
+                    <rect x="0" y="0" width="210" height="70" rx="6" fill="white" fill-opacity="0.15"/>
+                    <text x="105" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="white">Processors</text>
+                    <text x="105" y="42" text-anchor="middle" font-size="10" fill="white" fill-opacity="0.8">Batch | Filter | Transform</text>
+                    <text x="105" y="58" text-anchor="middle" font-size="10" fill="white" fill-opacity="0.8">Attributes | Sampling</text>
+                </g>
+
+                <!-- Exporters -->
+                <g transform="translate(15, 190)">
+                    <rect x="0" y="0" width="210" height="70" rx="6" fill="white" fill-opacity="0.15"/>
+                    <text x="105" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="white">Exporters</text>
+                    <text x="105" y="42" text-anchor="middle" font-size="10" fill="white" fill-opacity="0.8">OTLP | Prometheus | Loki</text>
+                    <text x="105" y="58" text-anchor="middle" font-size="10" fill="white" fill-opacity="0.8">Jaeger | Zipkin | Tempo</text>
+                </g>
+
+                <!-- Flow arrows inside collector -->
+                <g stroke="white" stroke-width="1.5" stroke-opacity="0.5" fill="none">
+                    <path d="M 120 95 L 120 105" marker-end="url(#arrowhead-white)"/>
+                    <path d="M 120 180 L 120 190" marker-end="url(#arrowhead-white)"/>
+                </g>
+
+                <!-- Benefits box -->
+                <g transform="translate(15, 275)">
+                    <rect x="0" y="0" width="210" height="50" rx="4" fill="white" fill-opacity="0.1"/>
+                    <text x="105" y="18" text-anchor="middle" font-size="9" fill="white" fill-opacity="0.8">Buffering | Retry | Backpressure</text>
+                    <text x="105" y="35" text-anchor="middle" font-size="9" fill="white" fill-opacity="0.8">Multi-destination routing</text>
+                </g>
+            </g>
+
+            <!-- Arrows from Collector to Backends -->
+            <g stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#arrowhead)">
+                <path d="M 600 220 Q 660 220 700 150"/>
+                <path d="M 600 280 L 700 280"/>
+                <path d="M 600 340 Q 660 340 700 410"/>
+                <path d="M 600 400 Q 680 430 700 475"/>
+            </g>
+
+            <!-- Backends Section -->
+            <g transform="translate(710, 80)">
+                <text x="100" y="20" text-anchor="middle" font-size="14" font-weight="600" fill="#22c55e">BACKENDS</text>
+
+                <!-- Prometheus/Mimir -->
+                <g transform="translate(0, 40)">
+                    <rect x="0" y="0" width="200" height="65" rx="6" fill="url(#backendGrad)" filter="url(#shadow)"/>
+                    <text x="100" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="white">Prometheus / Mimir</text>
+                    <text x="100" y="48" text-anchor="middle" font-size="11" fill="white" fill-opacity="0.85">Metrics Storage</text>
+                </g>
+
+                <!-- Grafana Tempo -->
+                <g transform="translate(0, 120)">
+                    <rect x="0" y="0" width="200" height="65" rx="6" fill="url(#backendGrad)" filter="url(#shadow)"/>
+                    <text x="100" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="white">Grafana Tempo</text>
+                    <text x="100" y="48" text-anchor="middle" font-size="11" fill="white" fill-opacity="0.85">Trace Storage</text>
+                </g>
+
+                <!-- Loki -->
+                <g transform="translate(0, 200)">
+                    <rect x="0" y="0" width="200" height="65" rx="6" fill="url(#backendGrad)" filter="url(#shadow)"/>
+                    <text x="100" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="white">Grafana Loki</text>
+                    <text x="100" y="48" text-anchor="middle" font-size="11" fill="white" fill-opacity="0.85">Log Aggregation</text>
+                </g>
+
+                <!-- Pyroscope -->
+                <g transform="translate(0, 280)">
+                    <rect x="0" y="0" width="200" height="65" rx="6" fill="url(#backendGrad)" filter="url(#shadow)"/>
+                    <text x="100" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="white">Pyroscope</text>
+                    <text x="100" y="48" text-anchor="middle" font-size="11" fill="white" fill-opacity="0.85">Continuous Profiling</text>
+                </g>
+
+                <!-- Grafana -->
+                <g transform="translate(0, 360)">
+                    <rect x="0" y="0" width="200" height="65" rx="6" fill="#f97316" filter="url(#shadow)"/>
+                    <text x="100" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="white">Grafana</text>
+                    <text x="100" y="48" text-anchor="middle" font-size="11" fill="white" fill-opacity="0.85">Visualization & Dashboards</text>
+                </g>
+            </g>
+
+            <!-- Connection from all backends to Grafana -->
+            <g stroke="#d1d5db" stroke-width="1" stroke-dasharray="4,2" fill="none">
+                <path d="M 895 165 Q 920 165 920 400 Q 920 440 895 440"/>
+                <path d="M 895 225 Q 930 225 930 400 Q 930 440 895 440"/>
+                <path d="M 895 315 Q 940 315 940 420 Q 940 440 895 440"/>
+                <path d="M 895 395 Q 935 395 935 430 Q 935 440 895 440"/>
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(350, 515)">
+                <rect x="0" y="0" width="240" height="40" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="15" y="18" font-size="10" fill="#64748b">OTLP = OpenTelemetry Protocol</text>
+                <text x="15" y="32" font-size="10" fill="#64748b">gRPC or HTTP transport</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

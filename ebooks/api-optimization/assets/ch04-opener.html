@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 4: From Data to Action - The Monitoring Loop</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 800 410" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients for stages -->
+                <linearGradient id="dashboardGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+
+                <linearGradient id="alertGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+
+                <linearGradient id="responseGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                </linearGradient>
+
+                <linearGradient id="fixGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Arrow marker -->
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+                </marker>
+
+                <!-- Drop shadow filter -->
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="800" height="410" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="400" y="35" text-anchor="middle" fill="#1e293b" font-size="20" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                From Data to Action
+            </text>
+            <text x="400" y="55" text-anchor="middle" fill="#64748b" font-size="12" font-family="Liberation Sans, Arial, sans-serif">
+                The Monitoring Feedback Loop
+            </text>
+
+            <!-- Main content area -->
+            <g transform="translate(0, 80)">
+                <!-- Orthogonal arrows connecting stages -->
+                <!-- Dashboard to Alert (up then right) -->
+                <path d="M 250 100 L 250 60 L 400 60" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                <!-- Alert to Response (right then down) -->
+                <path d="M 520 100 L 550 100 L 550 170" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                <!-- Response to Fix (down then left) -->
+                <path d="M 550 250 L 550 270 L 400 270" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                <!-- Fix to Dashboard (left then up) -->
+                <path d="M 280 270 L 190 270 L 190 180" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                <!-- Stage 1: Dashboard (left) -->
+                <g transform="translate(130, 100)">
+                    <rect x="0" y="0" width="120" height="80" rx="8" fill="url(#dashboardGradient)" filter="url(#shadow)"/>
+                    <!-- Mini dashboard icon -->
+                    <rect x="15" y="15" width="40" height="25" rx="2" fill="#ffffff" fill-opacity="0.3"/>
+                    <rect x="15" y="20" width="18" height="6" rx="1" fill="#ffffff" fill-opacity="0.7"/>
+                    <rect x="35" y="20" width="18" height="6" rx="1" fill="#ffffff" fill-opacity="0.5"/>
+                    <rect x="15" y="30" width="38" height="6" rx="1" fill="#ffffff" fill-opacity="0.6"/>
+                    <!-- Mini chart bars -->
+                    <rect x="65" y="28" width="6" height="12" rx="1" fill="#ffffff" fill-opacity="0.5"/>
+                    <rect x="75" y="22" width="6" height="18" rx="1" fill="#ffffff" fill-opacity="0.7"/>
+                    <rect x="85" y="18" width="6" height="22" rx="1" fill="#ffffff" fill-opacity="0.6"/>
+                    <rect x="95" y="25" width="6" height="15" rx="1" fill="#ffffff" fill-opacity="0.5"/>
+                    <text x="60" y="60" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600">Dashboard</text>
+                    <text x="60" y="73" text-anchor="middle" fill="#ffffff" font-size="10" fill-opacity="0.9">Monitor</text>
+                </g>
+
+                <!-- Stage 2: Alert (top right) -->
+                <g transform="translate(400, 60)">
+                    <rect x="0" y="0" width="120" height="80" rx="8" fill="url(#alertGradient)" filter="url(#shadow)"/>
+                    <!-- Bell icon -->
+                    <path d="M 50 20 C 50 20 38 22 38 35 L 38 42 L 35 45 L 35 48 L 65 48 L 65 45 L 62 42 L 62 35 C 62 22 50 20 50 20 Z" fill="#ffffff" fill-opacity="0.9"/>
+                    <circle cx="50" cy="52" r="4" fill="#ffffff" fill-opacity="0.9"/>
+                    <!-- Alert waves -->
+                    <path d="M 70 28 Q 78 35 70 42" fill="none" stroke="#ffffff" stroke-width="2" stroke-opacity="0.7"/>
+                    <path d="M 76 24 Q 88 35 76 46" fill="none" stroke="#ffffff" stroke-width="2" stroke-opacity="0.5"/>
+                    <text x="60" y="60" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600">Alert</text>
+                    <text x="60" y="73" text-anchor="middle" fill="#ffffff" font-size="10" fill-opacity="0.9">Detect</text>
+                </g>
+
+                <!-- Stage 3: Response (right) -->
+                <g transform="translate(550, 170)">
+                    <rect x="0" y="0" width="120" height="80" rx="8" fill="url(#responseGradient)" filter="url(#shadow)"/>
+                    <!-- Person icon -->
+                    <circle cx="50" cy="25" r="10" fill="#ffffff" fill-opacity="0.9"/>
+                    <path d="M 35 50 Q 35 38 50 38 Q 65 38 65 50 L 65 45 L 35 45 Z" fill="#ffffff" fill-opacity="0.9"/>
+                    <!-- Action indicator -->
+                    <path d="M 75 22 L 85 22 L 85 18 L 95 25 L 85 32 L 85 28 L 75 28 Z" fill="#ffffff" fill-opacity="0.8"/>
+                    <text x="60" y="60" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600">Response</text>
+                    <text x="60" y="73" text-anchor="middle" fill="#ffffff" font-size="10" fill-opacity="0.9">Investigate</text>
+                </g>
+
+                <!-- Stage 4: Fix (bottom) -->
+                <g transform="translate(280, 230)">
+                    <rect x="0" y="0" width="120" height="80" rx="8" fill="url(#fixGradient)" filter="url(#shadow)"/>
+                    <!-- Wrench/tool icon -->
+                    <path d="M 40 25 L 55 40 L 52 43 L 37 28 Z" fill="#ffffff" fill-opacity="0.9"/>
+                    <circle cx="36" cy="24" r="8" fill="none" stroke="#ffffff" stroke-width="3" stroke-opacity="0.9"/>
+                    <!-- Checkmark -->
+                    <path d="M 70 25 L 78 33 L 95 16" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.9"/>
+                    <text x="60" y="60" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600">Fix</text>
+                    <text x="60" y="73" text-anchor="middle" fill="#ffffff" font-size="10" fill-opacity="0.9">Improve</text>
+                </g>
+
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

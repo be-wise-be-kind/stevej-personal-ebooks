@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCP Three-Way Handshake Timeline</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 700 495" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background -->
+            <rect width="700" height="480" fill="white"/>
+
+            <!-- Title -->
+            <text x="350" y="35" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;">TCP Three-Way Handshake Timeline</text>
+            <text x="350" y="55" text-anchor="middle" style="font-size: 12px; fill: #64748b;">Connection establishment adds 1 RTT before data transfer begins</text>
+
+            <!-- Phase backgrounds -->
+            <rect x="80" y="95" width="540" height="280" style="fill: #f1f5f9; rx: 4;"/>
+
+            <!-- Entity headers -->
+            <g transform="translate(150, 85)">
+                <rect x="-50" y="-20" width="100" height="35" fill="#dbeafe" rx="4"/>
+                <text x="0" y="0" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: #1e293b;">Client</text>
+                <text x="0" y="14" text-anchor="middle" style="font-size: 11px; fill: #64748b;">New York</text>
+            </g>
+
+            <g transform="translate(550, 85)">
+                <rect x="-50" y="-20" width="100" height="35" fill="#dcfce7" rx="4"/>
+                <text x="0" y="0" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: #1e293b;">Server</text>
+                <text x="0" y="14" text-anchor="middle" style="font-size: 11px; fill: #64748b;">London</text>
+            </g>
+
+            <!-- Timeline lines -->
+            <line x1="150" y1="110" x2="150" y2="400" style="stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 4, 4;"/>
+            <line x1="550" y1="110" x2="550" y2="400" style="stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 4, 4;"/>
+
+            <!-- Time markers on left -->
+            <text x="40" y="130" style="font-size: 11px; fill: #64748b;">t = 0ms</text>
+            <text x="40" y="200" style="font-size: 11px; fill: #64748b;">t = 35-40ms</text>
+            <text x="40" y="270" style="font-size: 11px; fill: #64748b;">t = 70-80ms</text>
+            <text x="40" y="340" style="font-size: 11px; fill: #64748b;">t = 70-80ms+</text>
+
+            <!-- SYN Arrow -->
+            <defs>
+                <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#3b82f6"/>
+                </marker>
+                <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#10b981"/>
+                </marker>
+                <marker id="arrowPurple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#8b5cf6"/>
+                </marker>
+                <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"/>
+                </marker>
+            </defs>
+
+            <!-- Step 1: SYN -->
+            <line x1="155" y1="130" x2="545" y2="200" marker-end="url(#arrowBlue)" style="stroke-width: 2; fill: none;; stroke: #3b82f6;"/>
+            <rect x="290" y="145" width="120" height="24" fill="white" rx="4"/>
+            <text x="350" y="162" text-anchor="middle" fill="#3b82f6" style="font-size: 12px; font-weight: 500;">SYN</text>
+
+            <!-- Step 2: SYN-ACK -->
+            <line x1="545" y1="200" x2="155" y2="270" marker-end="url(#arrowGreen)" style="stroke-width: 2; fill: none;; stroke: #10b981;"/>
+            <rect x="290" y="215" width="120" height="24" fill="white" rx="4"/>
+            <text x="350" y="232" text-anchor="middle" fill="#10b981" style="font-size: 12px; font-weight: 500;">SYN-ACK</text>
+
+            <!-- Step 4: Data (optional indicator) - rendered first so it appears behind ACK -->
+            <line x1="155" y1="275" x2="545" y2="345" marker-end="url(#arrowOrange)" stroke-dasharray="5,3" style="stroke-width: 2; fill: none;; stroke: #f59e0b;"/>
+            <rect x="290" y="340" width="120" height="24" fill="white" rx="4"/>
+            <text x="350" y="357" text-anchor="middle" fill="#f59e0b" style="font-size: 12px; font-weight: 500;">Data Transfer</text>
+
+            <!-- Step 3: ACK - rendered last so it appears on top -->
+            <line x1="155" y1="270" x2="545" y2="340" marker-end="url(#arrowPurple)" style="stroke-width: 2; fill: none;; stroke: #8b5cf6;"/>
+            <rect x="290" y="285" width="120" height="24" fill="white" rx="4"/>
+            <text x="350" y="302" text-anchor="middle" fill="#8b5cf6" style="font-size: 12px; font-weight: 500;">ACK</text>
+
+            <!-- RTT Bracket -->
+            <path d="M 620 130 L 640 130 L 640 270 L 620 270" style="stroke: #94a3b8; stroke-width: 1.5; fill: none;"/>
+            <text x="655" y="205" text-anchor="start" style="font-size: 11px; font-weight: 600; fill: #ef4444;">1 RTT</text>
+            <text x="655" y="220" text-anchor="start" style="font-size: 11px; fill: #64748b;">(70-80ms)</text>
+
+            <!-- Connection established marker -->
+            <line x1="100" y1="270" x2="600" y2="270" stroke="#22c55e" stroke-width="1" stroke-dasharray="3,3"/>
+            <rect x="200" y="375" width="300" height="28" fill="#dcfce7" rx="4"/>
+            <text x="350" y="394" text-anchor="middle" fill="#15803d" style="font-size: 14px; font-weight: 600; fill: #1e293b;">Connection Established</text>
+
+            <!-- Legend -->
+            <g transform="translate(100, 440)">
+                <rect x="0" y="-12" width="500" height="30" fill="#f8fafc" rx="4"/>
+                <line x1="20" y1="0" x2="50" y2="0" stroke="#3b82f6" stroke-width="2"/>
+                <text x="60" y="4" font-size="11" fill="#475569">Client to Server</text>
+
+                <line x1="170" y1="0" x2="200" y2="0" stroke="#10b981" stroke-width="2"/>
+                <text x="210" y="4" font-size="11" fill="#475569">Server to Client</text>
+
+                <line x1="320" y1="0" x2="350" y2="0" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,3"/>
+                <text x="360" y="4" font-size="11" fill="#475569">Data (after handshake)</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

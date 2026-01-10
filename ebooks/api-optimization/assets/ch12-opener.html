@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 11: The Optimization Toolbox</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Toolbox gradient -->
+                <linearGradient id="toolboxGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#475569;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Toolbox lid gradient -->
+                <linearGradient id="lidGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#64748b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#475569;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Tool icon gradients -->
+                <linearGradient id="observabilityGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+
+                <linearGradient id="databaseGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+
+                <linearGradient id="cacheGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+
+                <linearGradient id="networkGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+
+                <linearGradient id="asyncGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
+                </linearGradient>
+
+                <linearGradient id="trafficGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                </linearGradient>
+
+                <linearGradient id="scalingGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0891b2;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Drop shadow filter -->
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+
+                <!-- Subtle glow for tool icons -->
+                <filter id="iconGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="800" height="400" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="400" y="40" text-anchor="middle" fill="#1e293b" font-size="22" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                The Optimization Toolbox
+            </text>
+            <text x="400" y="62" text-anchor="middle" fill="#64748b" font-size="13" font-family="Liberation Sans, Arial, sans-serif">
+                Your complete toolkit for API performance
+            </text>
+
+            <!-- Toolbox container -->
+            <g transform="translate(100, 90)">
+                <!-- Toolbox body -->
+                <rect x="0" y="40" width="600" height="220" rx="8" fill="url(#toolboxGradient)" filter="url(#shadow)"/>
+
+                <!-- Toolbox inner area (lighter) -->
+                <rect x="15" y="55" width="570" height="190" rx="4" fill="#f1f5f9"/>
+
+                <!-- Toolbox lid (open, tilted back) -->
+                <path d="M 0 40 L 600 40 L 580 10 L 20 10 Z" fill="url(#lidGradient)" filter="url(#shadow)"/>
+
+                <!-- Handle on lid -->
+                <rect x="260" y="18" width="80" height="12" rx="4" fill="#94a3b8"/>
+                <rect x="270" y="22" width="60" height="4" rx="2" fill="#64748b"/>
+
+                <!-- Tool icons grid - 7 tools arranged in a row -->
+                <g transform="translate(30, 75)">
+
+                    <!-- Tool 1: Observability (Magnifying Glass) -->
+                    <g transform="translate(0, 0)" filter="url(#iconGlow)">
+                        <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#observabilityGradient)"/>
+                        <!-- Magnifying glass -->
+                        <circle cx="32" cy="30" r="14" fill="none" stroke="#ffffff" stroke-width="3"/>
+                        <line x1="42" y1="40" x2="52" y2="50" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Observability</text>
+                    </g>
+
+                    <!-- Tool 2: Database (Cylinder) -->
+                    <g transform="translate(80, 0)" filter="url(#iconGlow)">
+                        <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#databaseGradient)"/>
+                        <!-- Database cylinder -->
+                        <ellipse cx="35" cy="22" rx="16" ry="6" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+                        <path d="M 19 22 L 19 48 Q 19 54 35 54 Q 51 54 51 48 L 51 22" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+                        <ellipse cx="35" cy="48" rx="16" ry="6" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Database</text>
+                    </g>
+
+                    <!-- Tool 3: Caching (Lightning bolt in box) -->
+                    <g transform="translate(160, 0)" filter="url(#iconGlow)">
+                        <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#cacheGradient)"/>
+                        <!-- Cache symbol - stacked layers with lightning -->
+                        <rect x="18" y="18" width="34" height="8" rx="2" fill="none" stroke="#ffffff" stroke-width="2"/>
+                        <rect x="18" y="30" width="34" height="8" rx="2" fill="none" stroke="#ffffff" stroke-width="2"/>
+                        <rect x="18" y="42" width="34" height="8" rx="2" fill="none" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M 38 20 L 32 32 L 38 32 L 32 48" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Caching</text>
+                    </g>
+
+                    <!-- Tool 4: Network (Connected nodes) -->
+                    <g transform="translate(240, 0)" filter="url(#iconGlow)">
+                        <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#networkGradient)"/>
+                        <!-- Network nodes -->
+                        <circle cx="35" cy="20" r="6" fill="#ffffff"/>
+                        <circle cx="20" cy="45" r="6" fill="#ffffff"/>
+                        <circle cx="50" cy="45" r="6" fill="#ffffff"/>
+                        <line x1="35" y1="26" x2="22" y2="40" stroke="#ffffff" stroke-width="2"/>
+                        <line x1="35" y1="26" x2="48" y2="40" stroke="#ffffff" stroke-width="2"/>
+                        <line x1="26" y1="45" x2="44" y2="45" stroke="#ffffff" stroke-width="2"/>
+                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Network</text>
+                    </g>
+
+                    <!-- Tool 5: Async (Queue/Arrow) -->
+                    <g transform="translate(320, 0)" filter="url(#iconGlow)">
+                        <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#asyncGradient)"/>
+                        <!-- Queue with arrow -->
+                        <rect x="15" y="25" width="12" height="20" rx="2" fill="none" stroke="#ffffff" stroke-width="2"/>
+                        <rect x="29" y="25" width="12" height="20" rx="2" fill="none" stroke="#ffffff" stroke-width="2"/>
+                        <rect x="43" y="25" width="12" height="20" rx="2" fill="none" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M 20 50 L 35 58 L 50 50" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Async</text>
+                    </g>
+
+                    <!-- Tool 6: Traffic Management (Shield) -->
+                    <g transform="translate(400, 0)" filter="url(#iconGlow)">
+                        <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#trafficGradient)"/>
+                        <!-- Shield -->
+                        <path d="M 35 15 L 52 22 L 52 38 Q 52 52 35 58 Q 18 52 18 38 L 18 22 Z" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+                        <path d="M 26 35 L 32 41 L 44 29" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Traffic</text>
+                    </g>
+
+                    <!-- Tool 7: Scaling (Expanding nodes) -->
+                    <g transform="translate(480, 0)" filter="url(#iconGlow)">
+                        <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#scalingGradient)"/>
+                        <!-- Scaling nodes (expanding pattern) -->
+                        <rect x="28" y="28" width="14" height="14" rx="2" fill="#ffffff"/>
+                        <rect x="15" y="15" width="10" height="10" rx="1" fill="none" stroke="#ffffff" stroke-width="2"/>
+                        <rect x="45" y="15" width="10" height="10" rx="1" fill="none" stroke="#ffffff" stroke-width="2"/>
+                        <rect x="15" y="45" width="10" height="10" rx="1" fill="none" stroke="#ffffff" stroke-width="2"/>
+                        <rect x="45" y="45" width="10" height="10" rx="1" fill="none" stroke="#ffffff" stroke-width="2"/>
+                        <!-- Connecting lines -->
+                        <line x1="28" y1="28" x2="25" y2="25" stroke="#ffffff" stroke-width="1.5"/>
+                        <line x1="42" y1="28" x2="45" y2="25" stroke="#ffffff" stroke-width="1.5"/>
+                        <line x1="28" y1="42" x2="25" y2="45" stroke="#ffffff" stroke-width="1.5"/>
+                        <line x1="42" y1="42" x2="45" y2="45" stroke="#ffffff" stroke-width="1.5"/>
+                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Scaling</text>
+                    </g>
+                </g>
+            </g>
+
+            <!-- Bottom tagline -->
+            <text x="400" y="375" text-anchor="middle" fill="#94a3b8" font-size="12" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                Every tool you need to optimize your API, in one place
+            </text>
+        </svg>
+    </div>
+</body>
+</html>
