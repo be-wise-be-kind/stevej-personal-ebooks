@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 9: Scaling - Adding Capacity</title>
+    <title>Chapter 9: Scaling Strategies by Bottleneck</title>
     <style>
         body {
             font-family: Liberation Sans, Arial, sans-serif;
@@ -30,189 +30,168 @@
 </head>
 <body>
     <div class="diagram-container">
-        <svg viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 850 480" xmlns="http://www.w3.org/2000/svg">
             <defs>
-                <linearGradient id="serverGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
                     <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
                 </linearGradient>
-                <linearGradient id="serverGradGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="greenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
                     <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="grayGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#64748b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#475569;stop-opacity:1" />
                 </linearGradient>
                 <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
                     <feDropShadow dx="2" dy="2" stdDeviation="2" flood-opacity="0.15"/>
                 </filter>
-                <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+                </marker>
+                <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#f59e0b"/>
+                </marker>
+                <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#22c55e"/>
+                </marker>
+                <marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#8b5cf6"/>
+                </marker>
+                <marker id="arrowGray" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
                     <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
                 </marker>
             </defs>
 
             <!-- Title -->
-            <text x="400" y="35" text-anchor="middle" fill="#1e293b" font-size="20" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
-                Horizontal Scaling: Adding Server Instances
+            <text x="425" y="30" text-anchor="middle" fill="#1e293b" font-size="18" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                Scaling Strategies: Match the Solution to the Bottleneck
             </text>
 
-            <!-- LEFT SIDE: Before scaling (2 overloaded servers) -->
-            <g transform="translate(50, 70)">
-                <text x="100" y="0" text-anchor="middle" fill="#dc2626" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Before: Overloaded</text>
-
-                <!-- Incoming requests (many) -->
-                <text x="100" y="30" text-anchor="middle" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">12 requests/sec incoming</text>
-
-                <!-- Request arrows coming in -->
-                <line x1="40" y1="50" x2="40" y2="75" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
-                <line x1="70" y1="50" x2="70" y2="75" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
-                <line x1="100" y1="50" x2="100" y2="75" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
-                <line x1="130" y1="50" x2="130" y2="75" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
-                <line x1="160" y1="50" x2="160" y2="75" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
-
-                <!-- Load balancer -->
-                <rect x="50" y="80" width="100" height="30" rx="4" fill="#94a3b8" filter="url(#shadow)"/>
-                <text x="100" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Load Balancer</text>
-
-                <!-- Distribution lines -->
-                <line x1="75" y1="110" x2="55" y2="140" stroke="#64748b" stroke-width="1.5"/>
-                <line x1="125" y1="110" x2="145" y2="140" stroke="#64748b" stroke-width="1.5"/>
-
-                <!-- Server 1 (overloaded) -->
-                <g transform="translate(10, 145)">
-                    <rect x="0" y="0" width="80" height="100" rx="6" fill="url(#serverGrad)" filter="url(#shadow)"/>
-                    <text x="40" y="22" text-anchor="middle" fill="white" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Server 1</text>
-
-                    <!-- CPU meter (high) -->
-                    <rect x="10" y="35" width="60" height="10" rx="2" fill="rgba(255,255,255,0.2)"/>
-                    <rect x="10" y="35" width="55" height="10" rx="2" fill="#ef4444"/>
-                    <text x="40" y="60" text-anchor="middle" fill="white" font-size="9" font-family="Liberation Sans, Arial, sans-serif">CPU: 92%</text>
-
-                    <!-- Queue indicator -->
-                    <text x="40" y="80" text-anchor="middle" fill="#fef08a" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Queue: 8</text>
-                </g>
-
-                <!-- Server 2 (overloaded) -->
-                <g transform="translate(110, 145)">
-                    <rect x="0" y="0" width="80" height="100" rx="6" fill="url(#serverGrad)" filter="url(#shadow)"/>
-                    <text x="40" y="22" text-anchor="middle" fill="white" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Server 2</text>
-
-                    <!-- CPU meter (high) -->
-                    <rect x="10" y="35" width="60" height="10" rx="2" fill="rgba(255,255,255,0.2)"/>
-                    <rect x="10" y="35" width="52" height="10" rx="2" fill="#ef4444"/>
-                    <text x="40" y="60" text-anchor="middle" fill="white" font-size="9" font-family="Liberation Sans, Arial, sans-serif">CPU: 88%</text>
-
-                    <!-- Queue indicator -->
-                    <text x="40" y="80" text-anchor="middle" fill="#fef08a" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Queue: 6</text>
-                </g>
-
-                <!-- Warning indicator -->
-                <g transform="translate(70, 260)">
-                    <rect x="0" y="0" width="60" height="24" rx="4" fill="#fef2f2" stroke="#ef4444" stroke-width="1"/>
-                    <text x="30" y="16" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Latency ↑</text>
-                </g>
+            <!-- Traffic/Load box at top -->
+            <g transform="translate(350, 50)">
+                <rect x="0" y="0" width="150" height="40" rx="6" fill="url(#grayGrad)" filter="url(#shadow)"/>
+                <text x="75" y="26" text-anchor="middle" fill="white" font-size="13" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Increased Load</text>
             </g>
 
-            <!-- CENTER: Arrow showing scaling action -->
-            <g transform="translate(310, 180)">
-                <rect x="0" y="0" width="180" height="50" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
-                <text x="90" y="22" text-anchor="middle" fill="#166534" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Scale Out</text>
-                <text x="90" y="38" text-anchor="middle" fill="#16a34a" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Add 2 more servers</text>
+            <!-- Arrow down to question -->
+            <line x1="425" y1="90" x2="425" y2="115" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
 
-                <!-- Arrow -->
-                <line x1="190" y1="25" x2="220" y2="25" stroke="#22c55e" stroke-width="3" marker-end="url(#arrow)"/>
+            <!-- Central question box -->
+            <g transform="translate(300, 120)">
+                <rect x="0" y="0" width="250" height="50" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+                <text x="125" y="32" text-anchor="middle" fill="#92400e" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Where's the bottleneck?</text>
             </g>
 
-            <!-- RIGHT SIDE: After scaling (4 healthy servers) -->
-            <g transform="translate(540, 70)">
-                <text x="110" y="0" text-anchor="middle" fill="#16a34a" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">After: Balanced</text>
+            <!-- Branching arrows -->
+            <!-- To Compute (left) -->
+            <path d="M 350 170 Q 350 195 200 195 L 200 220" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <!-- To Database -->
+            <path d="M 400 170 Q 400 195 365 195 L 365 220" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <!-- To Static Content -->
+            <path d="M 450 170 Q 450 195 485 195 L 485 220" fill="none" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <!-- To Variable Traffic (right) -->
+            <path d="M 500 170 Q 500 195 650 195 L 650 220" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
 
-                <!-- Incoming requests (same amount) -->
-                <text x="110" y="30" text-anchor="middle" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">12 requests/sec incoming</text>
-
-                <!-- Request arrows coming in -->
-                <line x1="50" y1="50" x2="50" y2="75" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
-                <line x1="80" y1="50" x2="80" y2="75" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
-                <line x1="110" y1="50" x2="110" y2="75" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
-                <line x1="140" y1="50" x2="140" y2="75" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
-                <line x1="170" y1="50" x2="170" y2="75" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
-
-                <!-- Load balancer -->
-                <rect x="60" y="80" width="100" height="30" rx="4" fill="#94a3b8" filter="url(#shadow)"/>
-                <text x="110" y="100" text-anchor="middle" fill="white" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Load Balancer</text>
-
-                <!-- Distribution lines (4-way) -->
-                <line x1="85" y1="110" x2="25" y2="140" stroke="#64748b" stroke-width="1.5"/>
-                <line x1="100" y1="110" x2="75" y2="140" stroke="#64748b" stroke-width="1.5"/>
-                <line x1="120" y1="110" x2="145" y2="140" stroke="#64748b" stroke-width="1.5"/>
-                <line x1="135" y1="110" x2="195" y2="140" stroke="#64748b" stroke-width="1.5"/>
-
-                <!-- Server 1 (healthy) -->
-                <g transform="translate(0, 145)">
-                    <rect x="0" y="0" width="50" height="80" rx="5" fill="url(#serverGradGreen)" filter="url(#shadow)"/>
-                    <text x="25" y="18" text-anchor="middle" fill="white" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">S1</text>
-                    <rect x="8" y="28" width="34" height="8" rx="2" fill="rgba(255,255,255,0.2)"/>
-                    <rect x="8" y="28" width="15" height="8" rx="2" fill="white" opacity="0.9"/>
-                    <text x="25" y="52" text-anchor="middle" fill="white" font-size="8" font-family="Liberation Sans, Arial, sans-serif">45%</text>
-                    <text x="25" y="68" text-anchor="middle" fill="white" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Q: 1</text>
-                </g>
-
-                <!-- Server 2 (healthy) -->
-                <g transform="translate(55, 145)">
-                    <rect x="0" y="0" width="50" height="80" rx="5" fill="url(#serverGradGreen)" filter="url(#shadow)"/>
-                    <text x="25" y="18" text-anchor="middle" fill="white" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">S2</text>
-                    <rect x="8" y="28" width="34" height="8" rx="2" fill="rgba(255,255,255,0.2)"/>
-                    <rect x="8" y="28" width="14" height="8" rx="2" fill="white" opacity="0.9"/>
-                    <text x="25" y="52" text-anchor="middle" fill="white" font-size="8" font-family="Liberation Sans, Arial, sans-serif">42%</text>
-                    <text x="25" y="68" text-anchor="middle" fill="white" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Q: 1</text>
-                </g>
-
-                <!-- Server 3 (healthy) - NEW -->
-                <g transform="translate(110, 145)">
-                    <rect x="0" y="0" width="50" height="80" rx="5" fill="url(#serverGradGreen)" filter="url(#shadow)"/>
-                    <text x="25" y="18" text-anchor="middle" fill="white" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">S3</text>
-                    <rect x="8" y="28" width="34" height="8" rx="2" fill="rgba(255,255,255,0.2)"/>
-                    <rect x="8" y="28" width="13" height="8" rx="2" fill="white" opacity="0.9"/>
-                    <text x="25" y="52" text-anchor="middle" fill="white" font-size="8" font-family="Liberation Sans, Arial, sans-serif">38%</text>
-                    <text x="25" y="68" text-anchor="middle" fill="white" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Q: 0</text>
-                    <!-- NEW badge -->
-                    <rect x="32" y="-8" width="24" height="14" rx="3" fill="#f59e0b"/>
-                    <text x="44" y="3" text-anchor="middle" fill="white" font-size="7" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">NEW</text>
-                </g>
-
-                <!-- Server 4 (healthy) - NEW -->
-                <g transform="translate(165, 145)">
-                    <rect x="0" y="0" width="50" height="80" rx="5" fill="url(#serverGradGreen)" filter="url(#shadow)"/>
-                    <text x="25" y="18" text-anchor="middle" fill="white" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">S4</text>
-                    <rect x="8" y="28" width="34" height="8" rx="2" fill="rgba(255,255,255,0.2)"/>
-                    <rect x="8" y="28" width="14" height="8" rx="2" fill="white" opacity="0.9"/>
-                    <text x="25" y="52" text-anchor="middle" fill="white" font-size="8" font-family="Liberation Sans, Arial, sans-serif">40%</text>
-                    <text x="25" y="68" text-anchor="middle" fill="white" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Q: 0</text>
-                    <!-- NEW badge -->
-                    <rect x="32" y="-8" width="24" height="14" rx="3" fill="#f59e0b"/>
-                    <text x="44" y="3" text-anchor="middle" fill="white" font-size="7" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">NEW</text>
-                </g>
-
-                <!-- Success indicator -->
-                <g transform="translate(80, 240)">
-                    <rect x="0" y="0" width="60" height="24" rx="4" fill="#dcfce7" stroke="#22c55e" stroke-width="1"/>
-                    <text x="30" y="16" text-anchor="middle" fill="#166534" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Latency ↓</text>
-                </g>
+            <!-- Compute Bound box -->
+            <g transform="translate(115, 225)">
+                <rect x="0" y="0" width="170" height="45" rx="6" fill="url(#blueGrad)" filter="url(#shadow)"/>
+                <text x="85" y="20" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Compute Bound</text>
+                <text x="85" y="36" text-anchor="middle" fill="#bfdbfe" font-size="10" font-family="Liberation Sans, Arial, sans-serif">CPU/Memory saturated</text>
             </g>
 
-            <!-- Bottom comparison stats -->
-            <g transform="translate(100, 360)">
+            <!-- Database Bound box -->
+            <g transform="translate(295, 225)">
+                <rect x="0" y="0" width="140" height="45" rx="6" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+                <text x="70" y="20" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Database Bound</text>
+                <text x="70" y="36" text-anchor="middle" fill="#fef3c7" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Queries/connections</text>
+            </g>
+
+            <!-- Static Content box -->
+            <g transform="translate(445, 225)">
+                <rect x="0" y="0" width="140" height="45" rx="6" fill="url(#greenGrad)" filter="url(#shadow)"/>
+                <text x="70" y="20" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Static Content</text>
+                <text x="70" y="36" text-anchor="middle" fill="#dcfce7" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Cacheable responses</text>
+            </g>
+
+            <!-- Variable Traffic box -->
+            <g transform="translate(595, 225)">
+                <rect x="0" y="0" width="140" height="45" rx="6" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+                <text x="70" y="20" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Variable Traffic</text>
+                <text x="70" y="36" text-anchor="middle" fill="#e9d5ff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Unpredictable load</text>
+            </g>
+
+            <!-- Arrows to solutions -->
+            <!-- Compute splits to Vertical and Horizontal -->
+            <line x1="170" y1="270" x2="130" y2="305" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <line x1="230" y1="270" x2="230" y2="305" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <!-- Database to solutions -->
+            <line x1="365" y1="270" x2="365" y2="305" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <!-- Static to CDN -->
+            <line x1="515" y1="270" x2="515" y2="305" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <!-- Variable to Serverless -->
+            <line x1="665" y1="270" x2="665" y2="305" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+
+            <!-- Solution boxes - Row 1 -->
+            <!-- Vertical Scaling -->
+            <g transform="translate(50, 310)">
+                <rect x="0" y="0" width="130" height="70" rx="5" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+                <text x="65" y="20" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Vertical Scaling</text>
+                <text x="65" y="38" text-anchor="middle" fill="#3b82f6" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Bigger instances</text>
+                <text x="65" y="52" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">VPA, instance resizing</text>
+                <text x="65" y="64" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Simpler architecture</text>
+            </g>
+
+            <!-- Horizontal Scaling -->
+            <g transform="translate(190, 310)">
+                <rect x="0" y="0" width="130" height="70" rx="5" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+                <text x="65" y="20" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Horizontal Scaling</text>
+                <text x="65" y="38" text-anchor="middle" fill="#3b82f6" font-size="9" font-family="Liberation Sans, Arial, sans-serif">More instances</text>
+                <text x="65" y="52" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">HPA, Kubernetes, ASG</text>
+                <text x="65" y="64" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Near-linear scaling</text>
+            </g>
+
+            <!-- Database Solutions -->
+            <g transform="translate(330, 310)">
+                <rect x="0" y="0" width="130" height="70" rx="5" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="65" y="20" text-anchor="middle" fill="#92400e" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Data Scaling</text>
+                <text x="65" y="38" text-anchor="middle" fill="#b45309" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Read replicas</text>
+                <text x="65" y="52" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Sharding, CQRS</text>
+                <text x="65" y="64" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Connection pooling</text>
+            </g>
+
+            <!-- CDN/Edge -->
+            <g transform="translate(470, 310)">
+                <rect x="0" y="0" width="130" height="70" rx="5" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+                <text x="65" y="20" text-anchor="middle" fill="#166534" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">CDN / Edge</text>
+                <text x="65" y="38" text-anchor="middle" fill="#16a34a" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Cache at edge</text>
+                <text x="65" y="52" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Cloudflare, CloudFront</text>
+                <text x="65" y="64" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Offload origin servers</text>
+            </g>
+
+            <!-- Serverless -->
+            <g transform="translate(610, 310)">
+                <rect x="0" y="0" width="130" height="70" rx="5" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
+                <text x="65" y="20" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Serverless</text>
+                <text x="65" y="38" text-anchor="middle" fill="#7c3aed" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Auto-scaling</text>
+                <text x="65" y="52" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Lambda, Cloud Run</text>
+                <text x="65" y="64" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Pay per request</text>
+            </g>
+
+            <!-- Footer note -->
+            <g transform="translate(125, 410)">
                 <rect x="0" y="0" width="600" height="50" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
-
-                <text x="100" y="20" text-anchor="middle" fill="#64748b" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Before</text>
-                <text x="100" y="38" text-anchor="middle" fill="#dc2626" font-size="11" font-family="Liberation Sans, Arial, sans-serif">6 req/server, 150ms p95</text>
-
-                <line x1="200" y1="10" x2="200" y2="40" stroke="#e2e8f0" stroke-width="1"/>
-
-                <text x="300" y="20" text-anchor="middle" fill="#64748b" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Scaling Action</text>
-                <text x="300" y="38" text-anchor="middle" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">2 servers → 4 servers</text>
-
-                <line x1="400" y1="10" x2="400" y2="40" stroke="#e2e8f0" stroke-width="1"/>
-
-                <text x="500" y="20" text-anchor="middle" fill="#64748b" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">After</text>
-                <text x="500" y="38" text-anchor="middle" fill="#16a34a" font-size="11" font-family="Liberation Sans, Arial, sans-serif">3 req/server, 45ms p95</text>
+                <text x="300" y="20" text-anchor="middle" fill="#475569" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Before Scaling: Profile First</text>
+                <text x="300" y="38" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Observability (Ch. 3) reveals bottlenecks • Optimize queries, caching, async (Ch. 6-8) before adding capacity</text>
             </g>
         </svg>
     </div>

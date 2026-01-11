@@ -64,6 +64,101 @@ Sliding window requires tracking requests across two windows, which increases me
 
 For rate limiting at the CDN edge, including distributed state challenges and edge-specific configuration patterns, see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md).
 
+#### Communicating Rate Limits to Clients
+
+Rate limiting without communication creates a frustrating guessing game for clients. When a request is rejected with HTTP 429, clients need actionable information: How long should I wait? How many requests can I make? Where do I stand relative to my quota?
+
+**Standard Rate Limit Headers**
+
+While no RFC standardizes rate limit response headers, a de facto standard has emerged across major APIs. The IETF has published RFC 9110 which provides guidance, and a draft specification (draft-ietf-httpapi-ratelimit-headers) is progressing toward standardization [Source: IETF, 2024]:
+
+| Header | Purpose | Example |
+|--------|---------|---------|
+| `X-RateLimit-Limit` | Maximum requests allowed per window | `100` |
+| `X-RateLimit-Remaining` | Requests remaining in current window | `42` |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets | `1704067200` |
+| `Retry-After` | Seconds to wait before retrying | `30` |
+
+Include these headers on *all* responses, not just 429 errors. Clients can monitor their usage and self-throttle before hitting limits, reducing wasted requests and improving user experience. When clients approach their limit, well-behaved implementations pause or batch requests rather than hammering the API until rejected.
+
+The `Retry-After` header is particularly important for 429 responses. Without it, clients guess at backoff intervals, often incorrectly. Providing explicit retry timing enables efficient recovery: a client told to wait 30 seconds waits exactly 30 seconds, rather than retrying every 5 seconds for two minutes.
+
+**Rate Limit Headers for Different Algorithms**
+
+Different rate limiting algorithms communicate limits differently:
+
+- **Token bucket**: `X-RateLimit-Remaining` reflects current token count; `X-RateLimit-Reset` indicates when tokens will refill
+- **Sliding window**: Remaining count reflects requests available in the current window; reset time indicates window expiry
+- **Leaky bucket**: Queue depth can be communicated via remaining count; reset is less meaningful since the bucket drains continuously
+
+Consistency matters more than precision. Choose a communication format and apply it uniformly across all rate-limited endpoints.
+
+**Client Implementation Patterns**
+
+Well-designed API clients read rate limit headers and adapt behavior:
+
+```
+on API response:
+    remaining = parse X-RateLimit-Remaining
+    reset_time = parse X-RateLimit-Reset
+
+    if remaining < threshold:
+        slow request rate to avoid hitting limit
+
+    if response is 429:
+        retry_after = parse Retry-After
+        wait retry_after seconds
+        retry request
+```
+
+Encouraging this pattern in client SDKs and documentation reduces support burden and improves API ecosystem health.
+
+#### Adaptive Rate Limiting
+
+Static rate limits represent a fixed contract: 100 requests per minute, regardless of system conditions. This rigidity creates problems during both normal operation (rejecting requests the system could easily handle) and overload (continuing to accept requests that will timeout).
+
+Adaptive rate limiting adjusts limits based on real-time system health, expanding capacity when resources are plentiful and contracting when the system is stressed.
+
+**Health Signals for Adaptive Limits**
+
+Useful signals for adapting rate limits include:
+
+- **CPU utilization**: When CPU exceeds 80%, reduce limits
+- **Request latency**: Rising latency indicates saturation; tighten limits before failures occur
+- **Error rates**: Elevated 5xx rates suggest overload; shed load to recover
+- **Queue depth**: Growing request queues indicate processing cannot keep pace
+- **Downstream health**: Circuit breaker states from dependencies affect available capacity
+
+**Implementation Approaches**
+
+A simple adaptive approach multiplies the base limit by a health factor between 0 and 1:
+
+```
+periodically:
+    health_factor = calculate_health()  // 0.0 to 1.0
+    effective_limit = base_limit * health_factor
+
+    if CPU > 80%:
+        health_factor = 0.7
+    if error_rate > 5%:
+        health_factor = 0.5
+    if circuit_breaker_open:
+        health_factor = 0.3
+```
+
+More sophisticated implementations use control theory (PID controllers) or machine learning to adjust limits smoothly while avoiding oscillation.
+
+**Trade-offs**
+
+Adaptive rate limiting adds complexity and can behave unpredictably. A sudden health signal change might reject requests that were just being accepted, confusing clients. Consider:
+
+- Smooth limit changes over time rather than abrupt adjustments
+- Communicate current effective limits via headers so clients can adapt
+- Maintain minimum guaranteed limits even during degradation
+- Log limit changes for debugging and capacity planning
+
+For most APIs, static limits with appropriate headroom are sufficient. Adaptive rate limiting provides the most value for services with variable workloads and clients that can adapt to changing limits.
+
 ### Adaptive Concurrency Limits
 
 Static concurrency limits (hard-coded maximum connections or request rates) are educated guesses that rarely match actual system capacity. When traffic patterns change, deployments occur, or dependencies slow down, these fixed limits either reject valid requests unnecessarily or allow overload. Netflix pioneered an alternative: adaptive concurrency limits that automatically discover and adjust to the system's true capacity [Source: Netflix Tech Blog, 2018].
@@ -104,6 +199,98 @@ The key insight is that adaptive concurrency limits serve a different purpose th
 | Complexity | Simple to understand | More sophisticated |
 
 When implementing adaptive concurrency, start with conservative initial limits and allow the algorithm time to converge. Monitor the limit values and rejection rates during deployment. In practice, services often discover they can handle 2-3x the traffic that static limits allowed, or conversely, that they were accepting requests they could not actually serve.
+
+### Request Queue Management
+
+Before requests are processed, they wait. Whether in a network buffer, thread pool queue, or application-level queue, this waiting time directly impacts user-perceived latency. Queue management determines how requests are ordered, how long they wait, and when they are rejected.
+
+#### Queue Depth and Latency
+
+Little's Law appears again: queue depth equals arrival rate multiplied by average wait time. A queue of 100 requests with 10ms average processing time means 1-second wait for the last request: 10ms of actual work buried under 990ms of waiting. This explains why p99 latency often spikes during load: most requests process quickly, but the unlucky ones wait behind a long queue.
+
+Unbounded queues are particularly dangerous. Without limits, queues grow until memory exhaustion. Worse, requests that have been waiting for minutes are finally processed, only to return results to clients that have long since given up. Bounded queues with timeout-based rejection are safer: reject requests that cannot be processed quickly rather than accepting them into a queue where they will languish.
+
+**Measuring Queue Time**
+
+Queue time visibility is essential for optimization. Instrument queue entry and exit points to measure:
+
+- **Queue depth**: How many requests are waiting (gauge metric)
+- **Queue time**: Duration from enqueue to processing start (histogram)
+- **Queue rejection rate**: Requests rejected due to queue limits (counter)
+- **End-to-end wait**: Total time from request receipt to response start
+
+When queue time dominates total latency, adding processing capacity (more workers, more instances) provides better ROI than optimizing processing logic.
+
+#### Priority Queues
+
+FIFO (first-in, first-out) queues treat all requests equally, which seems fair but often produces poor outcomes. A bulk data export request that arrived first consumes resources while quick interactive requests queue behind it. Users waiting for page loads suffer while a background job processes at leisure.
+
+Priority queues enable differential treatment based on request importance:
+
+| Priority | Example Requests | Treatment |
+|----------|------------------|-----------|
+| Critical | Health checks, auth validation | Process immediately, never queue |
+| High | User-facing interactions | Short queue limit, fast timeout |
+| Normal | Standard API calls | Moderate queue limit |
+| Low | Analytics, bulk operations | Long queue acceptable, process when capacity available |
+
+Priority assignment can come from multiple sources:
+
+- **HTTP headers**: `X-Priority: high` set by clients or API gateways
+- **Endpoint classification**: `/checkout/*` routes are always high priority
+- **Authentication claims**: Premium tier users receive priority boost
+- **Request characteristics**: Small payloads prioritized over large ones
+
+Implementing priority requires multiple queues or a sorted priority queue. Simple multi-queue approaches dedicate workers to priority levels; sophisticated implementations use weighted fair queuing to prevent starvation of low-priority work.
+
+```
+on request arrival:
+    priority = determine_priority(request)
+    queue = priority_queues[priority]
+
+    if queue.length >= queue.max_length:
+        reject with 503 (or 429 if rate-limited)
+    else:
+        enqueue request
+
+worker loop:
+    // Check higher-priority queues first
+    for queue in priority_queues (high to low):
+        if queue.has_work:
+            request = queue.dequeue
+            process request
+            break
+```
+
+#### Load Shedding Patterns
+
+When demand exceeds capacity, something must give. Load shedding deliberately drops requests to protect overall system health. The goal is controlled degradation: serve 80% of requests well rather than serve 100% of requests poorly.
+
+**Fail Fast vs Queue Indefinitely**
+
+Two extreme philosophies bracket the design space:
+
+- **Fail fast**: Reject immediately when at capacity. Users see quick errors and can retry. System stays responsive. Downside: rejects requests that might have been served if they waited briefly.
+
+- **Queue indefinitely**: Accept all requests, process in order. No immediate errors. Downside: queue grows until timeouts or OOM, requests wait forever, system becomes unresponsive.
+
+Most production systems fall between these extremes: bounded queues with reasonable timeouts. Requests queue briefly, but not so long that responses are useless by the time they return.
+
+**Virtual Queue Time**
+
+Virtual queue time treats already-elapsed time as part of the queue. When a request arrives with a 500ms deadline and 400ms has already elapsed, it has only 100ms of "virtual queue time" remaining. If current queue wait exceeds 100ms, reject immediately rather than accepting a doomed request.
+
+This integrates with deadline propagation (covered earlier): requests that have already consumed their time budget should not consume capacity processing work that will be discarded.
+
+**Adaptive Load Shedding**
+
+Rather than static rejection thresholds, adaptive load shedding responds to real-time conditions:
+
+- When latency rises, increase rejection rate
+- When error rates increase, shed more load to protect healthy capacity
+- When downstream circuits open, reduce accepted load proportionally
+
+CoDel (Controlled Delay) is an algorithm originally designed for network queue management that applies well to request queues. It tracks sojourn time (how long each request spends in the queue) and begins dropping requests when queue delay exceeds a target for too long. This prevents standing queues from accumulating while permitting burst absorption [Source: Nichols & Jacobson, 2012].
 
 ### Circuit Breaker Pattern
 

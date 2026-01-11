@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Where Does Latency Come From?</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Network transit - the "problem" color (slate/gray) -->
+                <linearGradient id="networkGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#64748b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#475569;stop-opacity:1" />
+                </linearGradient>
+                <!-- Processing - the "work" color (blue) -->
+                <linearGradient id="processGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <!-- Edge network - faster (green-tinted) -->
+                <linearGradient id="edgeNetworkGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                </linearGradient>
+                <!-- Highlight for insight -->
+                <linearGradient id="insightGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#fef3c7;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#fde68a;stop-opacity:1" />
+                </linearGradient>
+
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="32" text-anchor="middle" font-size="22" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Where Does Latency Come From?</text>
+            <text x="450" y="55" text-anchor="middle" font-size="12" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Anatomy of an API request: Cache Hit scenario</text>
+
+            <!-- Legend -->
+            <g transform="translate(580, 75)">
+                <rect x="0" y="0" width="20" height="14" rx="2" fill="url(#networkGrad)"/>
+                <text x="28" y="11" font-size="11" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Network Transit (waiting)</text>
+
+                <rect x="0" y="22" width="20" height="14" rx="2" fill="url(#processGrad)"/>
+                <text x="28" y="33" font-size="11" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Processing (actual work)</text>
+            </g>
+
+            <!-- Scale: 4px = 1ms for visibility -->
+            <text x="60" y="95" font-size="9" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">Scale: 4px = 1ms</text>
+
+            <!-- ============================================ -->
+            <!-- TRADITIONAL REQUEST -->
+            <!-- ============================================ -->
+            <g transform="translate(60, 120)">
+                <!-- Section header -->
+                <rect x="0" y="0" width="780" height="150" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+                <text x="20" y="28" font-size="14" font-weight="600" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">Traditional: Origin-Only</text>
+                <text x="200" y="28" font-size="11" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Los Angeles → Virginia → Los Angeles</text>
+
+                <!-- Waterfall bar -->
+                <!-- Network out: 80ms = 320px -->
+                <rect x="20" y="50" width="320" height="40" rx="4" fill="url(#networkGrad)" filter="url(#shadow)"/>
+                <text x="180" y="75" text-anchor="middle" font-size="12" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Network → Origin: 80ms</text>
+
+                <!-- Processing: 2ms = 8px (show minimum 24px for visibility) -->
+                <rect x="340" y="50" width="24" height="40" rx="4" fill="url(#processGrad)" filter="url(#shadow)"/>
+                <text x="352" y="75" text-anchor="middle" font-size="9" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">2ms</text>
+
+                <!-- Network back: 80ms = 320px -->
+                <rect x="364" y="50" width="320" height="40" rx="4" fill="url(#networkGrad)" filter="url(#shadow)"/>
+                <text x="524" y="75" text-anchor="middle" font-size="12" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Network ← Origin: 80ms</text>
+
+                <!-- Total annotation -->
+                <line x1="20" y1="105" x2="684" y2="105" stroke="#dc2626" stroke-width="2"/>
+                <text x="705" y="110" font-size="14" font-weight="600" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">162ms</text>
+
+                <!-- Percentage breakdown -->
+                <text x="20" y="135" font-size="11" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">
+                    <tspan font-weight="600" fill="#475569">Network: 160ms (99%)</tspan>
+                    <tspan dx="20">Processing: 2ms (1%)</tspan>
+                </text>
+            </g>
+
+            <!-- ============================================ -->
+            <!-- EDGE REQUEST -->
+            <!-- ============================================ -->
+            <g transform="translate(60, 290)">
+                <!-- Section header -->
+                <rect x="0" y="0" width="780" height="150" rx="8" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+                <text x="20" y="28" font-size="14" font-weight="600" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">Edge-Optimized</text>
+                <text x="155" y="28" font-size="11" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Los Angeles → San Francisco Edge → Los Angeles</text>
+
+                <!-- Waterfall bar -->
+                <!-- Network out: 15ms = 60px -->
+                <rect x="20" y="50" width="60" height="40" rx="4" fill="url(#edgeNetworkGrad)" filter="url(#shadow)"/>
+                <text x="50" y="75" text-anchor="middle" font-size="10" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
+
+                <!-- Processing: 1ms = 4px (show minimum 20px for visibility) -->
+                <rect x="80" y="50" width="20" height="40" rx="4" fill="url(#processGrad)" filter="url(#shadow)"/>
+                <text x="90" y="75" text-anchor="middle" font-size="8" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">1ms</text>
+
+                <!-- Network back: 15ms = 60px -->
+                <rect x="100" y="50" width="60" height="40" rx="4" fill="url(#edgeNetworkGrad)" filter="url(#shadow)"/>
+                <text x="130" y="75" text-anchor="middle" font-size="10" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
+
+                <!-- Visual comparison: ghost of traditional bar -->
+                <rect x="160" y="55" width="524" height="30" rx="4" fill="none" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="8,4"/>
+                <text x="422" y="75" text-anchor="middle" font-size="10" fill="#cbd5e1" font-family="Liberation Sans, Arial, sans-serif">← time saved →</text>
+
+                <!-- Total annotation -->
+                <line x1="20" y1="105" x2="160" y2="105" stroke="#059669" stroke-width="2"/>
+                <text x="175" y="110" font-size="14" font-weight="600" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">31ms</text>
+
+                <!-- Percentage breakdown -->
+                <text x="20" y="135" font-size="11" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">
+                    <tspan font-weight="600" fill="#059669">Network: 30ms (97%)</tspan>
+                    <tspan dx="20">Processing: 1ms (3%)</tspan>
+                </text>
+            </g>
+
+            <!-- ============================================ -->
+            <!-- KEY INSIGHT BOX -->
+            <!-- ============================================ -->
+            <g transform="translate(60, 455)">
+                <rect x="0" y="0" width="780" height="55" rx="8" fill="url(#insightGrad)" stroke="#f59e0b" stroke-width="2"/>
+
+                <!-- Light bulb icon (simple) -->
+                <circle cx="35" cy="28" r="16" fill="#f59e0b"/>
+                <text x="35" y="34" text-anchor="middle" font-size="18" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">💡</text>
+
+                <text x="65" y="24" font-size="13" font-weight="600" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">The Insight</text>
+                <text x="65" y="42" font-size="12" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">Processing takes ~1-2ms. Network transit takes 160ms. You can't optimize physics—but you can move computation closer.</text>
+            </g>
+
+        </svg>
+    </div>
+</body>
+</html>

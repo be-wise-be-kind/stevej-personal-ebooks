@@ -38,6 +38,18 @@ Effective pool sizing requires balancing several factors. Too few connections an
 
 Pool health management is equally important. Connections can become stale due to server-side timeouts, network interruptions, or load balancer reconfigurations. Production connection pools should validate connections before use and implement background health checking to remove dead connections proactively.
 
+**Connection Pool Exhaustion Under Load**
+
+Connection pool exhaustion occurs when all pooled connections are in use and requests must wait for one to become available. This creates a cascading failure pattern: when a downstream service slows, requests hold connections longer, pools fill up, queues grow, and eventually timeouts propagate upstream. A single slow dependency can exhaust pools across multiple services.
+
+Preventing pool exhaustion requires several defenses. Set connection timeouts aggressively. If a backend normally responds in 50ms, a 5-second timeout is too generous. Configure pool maximum sizes based on realistic concurrent demand, not theoretical peaks. Implement circuit breakers (covered in Chapter 10) to fail fast when backends are unhealthy rather than holding connections waiting for timeouts. Monitor pool utilization as a leading indicator: rising pool occupancy signals impending exhaustion before requests start failing.
+
+**DNS Resolution Latency**
+
+Before establishing a TCP connection, clients must resolve the server hostname to an IP address. DNS resolution adds 20-100ms or more per uncached lookup, depending on resolver proximity and DNS infrastructure [Source: Google Public DNS, 2023]. While operating systems and client libraries typically cache DNS results, cache misses during cold starts or after TTL expiration can cause noticeable latency spikes.
+
+For latency-sensitive applications, ensure DNS TTLs balance freshness against lookup overhead. TTLs of 30-60 seconds are common for dynamic services. Clients should cache DNS results and use connection pooling to amortize resolution costs across many requests. When using service mesh or internal load balancers, short-circuit public DNS by configuring internal DNS or service discovery directly.
+
 ### HTTP/2 and HTTP/3 Benefits
 
 HTTP/2 fundamentally changes the connection efficiency equation through multiplexing. With HTTP/1.1, each TCP connection handles one request-response pair at a time, leading browsers and clients to open multiple connections (typically 6-8) to achieve parallelism. HTTP/2 allows multiple concurrent streams over a single connection, eliminating the need for connection proliferation [Source: RFC 7540, HTTP/2].
@@ -63,6 +75,14 @@ on HTTP/2 connection:
 HTTP/3, built on QUIC, addresses HTTP/2's remaining weakness: head-of-line blocking at the TCP layer. When a single packet is lost on an HTTP/2 connection, all streams stall until retransmission completes. QUIC implements reliability per-stream, so a lost packet only affects its specific stream [Source: RFC 9000, QUIC Protocol].
 
 QUIC also integrates TLS 1.3 directly into the protocol, achieving connection establishment in one round trip for new connections and zero round trips for resumed connections. For mobile users on unreliable networks, HTTP/3 can provide measurably better performance, particularly for tail latencies where packet loss events are more likely.
+
+**Adoption Challenges**
+
+Despite their benefits, HTTP/2 and HTTP/3 adoption involves practical challenges. HTTP/2 requires TLS in most implementations (browsers enforce HTTPS for HTTP/2), so services without TLS must upgrade before adopting HTTP/2. Some older load balancers, proxies, and WAFs may not support HTTP/2 end-to-end, falling back to HTTP/1.1 for backend connections even when accepting HTTP/2 from clients, negating multiplexing benefits for backend communication.
+
+HTTP/3's UDP transport faces different obstacles. Corporate firewalls often block or rate-limit UDP traffic, causing QUIC connections to fail where TCP would succeed. Clients typically implement fallback to HTTP/2 or HTTP/1.1, but the fallback adds latency during connection establishment. Deep packet inspection devices may not recognize QUIC and treat it as unknown UDP traffic, applying restrictive policies.
+
+Debugging HTTP/2 and HTTP/3 also requires updated tooling. Traditional HTTP debugging proxies may not fully support multiplexed streams. Browser developer tools have evolved, but server-side debugging of multiplexed connections requires familiarity with stream-based rather than connection-based analysis. When evaluating protocol upgrades, test thoroughly in representative network environments, particularly corporate networks and regions with restrictive ISPs.
 
 ### Choosing the Right Protocol
 
@@ -339,6 +359,173 @@ Brotli, developed by Google, generally achieves better compression ratios than g
 
 Not all content benefits from compression. Already-compressed formats like JPEG, PNG, and video files may actually grow when compressed. Binary protocols and encrypted payloads compress poorly. Small payloads may not justify the compression overhead, with a common threshold being 1KB minimum size before attempting compression.
 
+### Sparse Fieldsets and Partial Responses
+
+When clients request resources from an API, they often receive far more data than they actually need. A mobile application displaying a list of product names might receive full product objects with descriptions, images, inventory counts, pricing history, and related items. This over-fetching wastes bandwidth, increases serialization time on the server, and forces clients to parse and discard irrelevant data. Sparse fieldsets address this inefficiency by allowing clients to request only the specific fields they need.
+
+GraphQL provides native field selection as a core feature of its query language. Clients specify exactly which fields they want in every query, and the server returns only those fields. This eliminates over-fetching by design. A query for `{ products { id name } }` returns just IDs and names, regardless of how many other fields the product type defines [Source: GraphQL Specification, 2021].
+
+REST APIs lack this capability natively, but several conventions have emerged. A common approach uses a `fields` query parameter where clients specify the desired fields as a comma-separated list: `/products?fields=id,name,price`. The JSON:API specification formalizes this with sparse fieldsets, using the pattern `fields[type]=field1,field2` to request specific fields per resource type [Source: JSON:API Specification v1.1, 2022]. OData provides `$select` for similar functionality: `/products?$select=id,name,price`.
+
+The performance benefits compound across multiple dimensions. Serialization time decreases because the server converts fewer fields to their wire format. Payload size shrinks, reducing transfer time, particularly valuable for mobile clients on constrained networks. Client-side parsing accelerates because there is less data to process. For resources with dozens of fields where clients typically need only a handful, these savings can be substantial.
+
+```
+on API request with fields parameter:
+    parse requested field list
+    fetch full object from database/cache
+    filter response to include only requested fields
+    serialize filtered object
+    return smaller payload
+```
+
+However, sparse fieldsets introduce meaningful trade-offs. Caching becomes more complex because different field combinations produce different responses. A request for `fields=id,name` and a request for `fields=id,name,price` require separate cache entries or a more sophisticated caching strategy that can compose responses from cached field values. The cache key must include the requested fields, reducing cache hit rates compared to full-object caching.
+
+Implementation overhead is another consideration. The server must parse field specifications, validate that requested fields exist, filter responses appropriately, and handle nested objects and relationships. Error handling becomes more nuanced when clients request non-existent or unauthorized fields. Some implementations fetch all data from the database and filter at the API layer, which saves bandwidth but not database resources. More sophisticated implementations push field selection down to the query layer for additional efficiency.
+
+Sparse fieldsets are most valuable in specific scenarios. Mobile clients benefit significantly because cellular networks are bandwidth-constrained and battery-conscious about radio usage. Bandwidth-metered environments, where data transfer has direct costs, gain immediate value. APIs serving large objects with many fields, where clients typically use only a subset, see the greatest relative improvement. List endpoints returning many items multiply the per-item savings.
+
+For APIs with small, focused resources where clients typically use all fields, the implementation complexity may outweigh the benefits. Similarly, if caching is critical and cache hit rates would suffer from field-based fragmentation, the trade-off may not favor sparse fieldsets. The decision depends on measuring actual client usage patterns and network conditions in your specific environment.
+
+### Pagination and Data Retrieval Patterns
+
+When APIs return collections of resources, pagination strategy directly impacts both latency and server load. The two dominant approaches, offset-based and cursor-based pagination, have fundamentally different performance characteristics that become critical as datasets grow.
+
+**Offset Pagination and Its Hidden Cost**
+
+Offset pagination uses `LIMIT` and `OFFSET` parameters: `/products?limit=20&offset=100` retrieves items 101-120. This approach is intuitive and maps directly to SQL syntax. However, offset pagination degrades as users navigate deeper into result sets.
+
+The performance problem stems from how databases execute offset queries. To return rows starting at offset 100, the database must identify and skip the first 100 matching rows. At offset 10,000, the database scans 10,000 rows to skip them. This means page 500 of 20-item pages requires scanning 10,000 rows to return 20, making deeper pages progressively slower [Source: Percona, 2023].
+
+The degradation follows O(n) complexity where n is the offset value. A query that returns in 5ms at offset 0 might take 500ms at offset 100,000. For APIs serving paginated lists where users navigate to later pages or automated systems process entire datasets, this creates significant latency variance.
+
+**Cursor-Based Pagination: O(1) Performance**
+
+Cursor-based pagination (also called keyset pagination) uses a pointer to the last retrieved item rather than a numeric offset. The cursor typically encodes the sort key value of the last item: `/products?limit=20&after=cursor_abc123`. The server decodes this cursor and queries for items greater than (or less than) that value.
+
+The database query becomes a simple range condition like `WHERE created_at > '2024-01-15T10:30:00' ORDER BY created_at LIMIT 20`. This query uses an index seek rather than a full scan, maintaining O(1) performance regardless of how deep into the result set the client has navigated. Page 500 performs identically to page 1.
+
+Cursor pagination requires a stable sort order, typically a unique or nearly-unique field like `created_at` with a secondary sort on `id` to break ties. The cursor must encode all sort key values to ensure correct ordering.
+
+**The COUNT Query Problem**
+
+Many paginated APIs include a total count to display "Page 5 of 47" or enable direct page navigation. However, `COUNT(*)` queries are expensive at scale. Counting millions of rows requires either a full table scan or a full index scan, adding hundreds of milliseconds or more to every paginated request [Source: PostgreSQL Wiki, 2024].
+
+Strategies for addressing count overhead include:
+
+- **Eliminate counts entirely**: Display "Next" and "Previous" without total counts. Most mobile applications use this pattern with infinite scroll.
+
+- **Cache approximate counts**: Maintain a cached count that refreshes periodically (every hour or every 1000 inserts). Accuracy within 1% is often acceptable for display purposes.
+
+- **Use estimate counts**: PostgreSQL's `pg_class.reltuples` provides table row estimates that are refreshed by VACUUM. These estimates cost essentially nothing to query.
+
+- **Bounded counts**: Query `COUNT(*) ... LIMIT 1001` to determine "1000+" without counting all million rows. This caps the worst-case cost while providing exact counts for small result sets.
+
+- **Separate count endpoint**: Move count queries to a dedicated endpoint that can be called asynchronously, cached independently, or skipped entirely when users don't need navigation.
+
+### Batch Operations and Request Coalescing
+
+Network round trips are often the dominant cost in API interactions. Each HTTP request incurs connection overhead, serialization, transit latency, and deserialization. When an operation requires multiple related requests, these costs multiply. Batch operations and request coalescing reduce round trips by combining multiple logical operations into fewer physical requests.
+
+**Bulk Endpoint Patterns**
+
+Bulk endpoints accept arrays of items in a single request. Instead of `POST /users` called 50 times, a bulk endpoint accepts `POST /users/bulk` with 50 users in the request body. The server processes all items and returns aggregated results.
+
+The performance benefit comes from amortizing fixed costs. Connection establishment, TLS negotiation, request routing, and response serialization happen once instead of 50 times. For operations creating 1000 records, bulk insertion can be 10-50x faster than individual requests, with the exact improvement depending on the ratio of fixed overhead to per-item processing time [Source: Stripe API Documentation, 2024].
+
+Bulk endpoints require careful design for partial failures. When 48 of 50 items succeed and 2 fail, the response must communicate which items failed and why. Common patterns include returning an array of results parallel to the input array, or returning a summary with separate success and error lists. Clients must be prepared to handle partial success rather than assuming all-or-nothing semantics.
+
+**Request Deduplication**
+
+When multiple concurrent processes request the same data, naive implementations execute duplicate backend work. If 10 clients simultaneously request `/users/123`, a simple implementation makes 10 database queries for identical data.
+
+Request coalescing (also called request deduplication or singleflight) groups concurrent identical requests so only one executes. The first request proceeds normally. Subsequent requests for the same key wait for the first to complete and share its result. This pattern is particularly valuable during cache misses, when a thundering herd of requests might otherwise hammer the origin.
+
+```
+on incoming request for key:
+    if request for this key is already in flight:
+        wait for in-flight request to complete
+        return same result
+    else:
+        mark key as in-flight
+        execute request
+        cache result
+        notify all waiters
+        clear in-flight status
+        return result
+```
+
+The coalescing key must uniquely identify truly identical requests. For cacheable GET requests, the URL and relevant headers form the key. For authenticated endpoints, the key might include user ID to prevent returning another user's data.
+
+**Client-Side Request Batching**
+
+Client-side batching collects multiple requests over a short time window and combines them into a single batch request. This pattern works well for user interfaces that trigger many small requests in rapid succession.
+
+The DataLoader pattern, discussed in Chapter 6, implements this for data fetching: requests made during a single event loop tick are batched into one backend call. Frontend applications can implement similar batching for API calls, accumulating requests for a brief window (typically 10-50ms) before dispatching a combined request.
+
+The trade-off is added latency for the first request in each batch: it waits for the batching window to close. This small delay (imperceptible to users) enables significant efficiency gains when multiple requests would otherwise execute sequentially.
+
+### Large File Transfers
+
+Standard HTTP request-response patterns work well for typical API payloads, but large file transfers introduce challenges that require specialized approaches. When files reach tens or hundreds of megabytes, we encounter timeout risks, memory pressure from buffering, and the pain of restarting failed transfers from scratch. This section covers techniques for handling large files reliably and efficiently.
+
+#### Chunked Uploads
+
+Breaking large files into smaller pieces enables parallel upload of chunks and reduces the blast radius when something fails. Instead of uploading a 500MB file as a single request, we split it into 5MB chunks and upload each independently. If chunk 47 fails, we retry only that chunk rather than restarting the entire upload.
+
+The chunking strategy involves several decisions. Chunk size affects both parallelism and overhead: smaller chunks enable more parallel connections but increase coordination overhead, while larger chunks reduce overhead but limit parallelism. Common chunk sizes range from 5MB to 100MB depending on expected file sizes and network conditions. The client tracks which chunks have been uploaded, typically storing this state locally or receiving it from a server-side upload session.
+
+#### Resumable Uploads
+
+Resumable uploads extend chunked uploads with persistence, allowing uploads to survive connection drops, browser refreshes, and even device switches. The key insight is maintaining server-side state about upload progress so clients can query what has been received and continue from that point.
+
+The tus protocol provides an open standard for resumable uploads [Source: tus.io, 2024]. It defines HTTP-based operations for creating uploads, sending chunks with byte offsets, and querying upload progress. Many cloud storage providers implement tus or similar resumable upload protocols, making client implementation straightforward.
+
+A resumable upload flow typically works as follows:
+
+```
+client upload flow:
+    split file into chunks
+    for each chunk:
+        upload chunk with chunk number and file ID
+        if upload fails:
+            retry this chunk
+        record progress locally
+
+    when all chunks uploaded:
+        call API to finalize upload
+        server assembles chunks into final file
+```
+
+The finalization step is important: until the server confirms all chunks are present and assembled correctly, the upload is incomplete. This provides atomicity, where either the entire file uploads successfully or it does not exist on the server.
+
+#### Pre-signed URLs
+
+For large file uploads, pre-signed URLs are preferred to avoid proxying file data through the API server. A pre-signed URL is a temporary, authenticated URL that allows direct upload to object storage services like Amazon S3 or Google Cloud Storage. The API server generates the URL with embedded credentials and expiration, then the client uploads directly to the storage service.
+
+This architecture provides several benefits. The API server handles only metadata operations (generating URLs, recording upload completion), not file data, dramatically reducing memory and bandwidth requirements. Object storage services are optimized for large file handling, with built-in support for multipart uploads, automatic retries, and global distribution. The client benefits from direct geographic routing to the nearest storage region rather than routing through the API server's location.
+
+The workflow typically involves: the client requests an upload URL from the API, the API generates a pre-signed URL valid for a limited time (typically 15 minutes to 1 hour), the client uploads directly to object storage using that URL, and finally the client notifies the API of completion. The API can then verify the upload exists and update its records accordingly.
+
+Pre-signed URLs also work for downloads. Instead of streaming large files through the API server, generate a time-limited URL pointing directly to object storage. This offloads bandwidth from the API tier and allows clients to benefit from CDN caching and edge distribution that object storage providers offer.
+
+#### Streaming Downloads
+
+For downloads, chunked transfer encoding and Range headers enable efficient delivery of large files. Chunked transfer encoding allows the server to begin sending data before knowing the total size, streaming content as it becomes available. This reduces time-to-first-byte and enables downloads to start immediately.
+
+HTTP Range headers enable partial downloads, where clients request specific byte ranges of a file. This supports resume functionality (continuing a download from byte 50,000,000 after a connection drop) and parallel downloads (fetching different sections simultaneously and assembling them client-side). The server responds with status 206 Partial Content and includes the `Content-Range` header indicating which bytes are being delivered.
+
+Range requests also enable seeking within media files. Video players use Range headers to fetch specific portions of a file, allowing users to skip to different timestamps without downloading the entire file first.
+
+#### Trade-offs: Complexity vs Reliability
+
+These large file techniques introduce complexity that may not be warranted for all applications. Chunked and resumable uploads require coordination logic on both client and server. Pre-signed URLs add workflow steps and require secure handling of temporary credentials. Streaming downloads need careful header handling and partial content support.
+
+The server-side architecture also differs. Traditional API request handling buffers the entire request body before processing, which works fine for small payloads but consumes memory proportional to file size for large uploads. Streaming architectures process data as it arrives, keeping memory usage constant regardless of file size, but require different programming patterns and may not work with all frameworks.
+
+For files under a few megabytes, standard HTTP uploads usually suffice. As files grow larger, the reliability benefits of chunked and resumable uploads increasingly outweigh the implementation complexity. For very large files (hundreds of megabytes or more), pre-signed URLs become nearly essential to avoid overwhelming API server resources.
+
+When designing file handling, consider the expected file size distribution. If 95% of uploads are under 10MB and only occasional files reach 100MB, a simple implementation with reasonable timeouts may be sufficient. If large files are common, investing in robust chunked upload infrastructure pays dividends in reliability and user experience.
+
 ### Implementing Connection Pooling
 
 Proper HTTP client configuration ensures connection reuse across requests. The key is creating the client once at application startup and sharing it across all requests, allowing the internal connection pool to maintain warm connections.
@@ -367,6 +554,14 @@ periodically:
             close connection
             remove from pool
 ```
+
+**Connection Draining During Deploys**
+
+When deploying new application versions or scaling down instances, active connections must be handled gracefully. Abrupt termination causes in-flight requests to fail. Connection draining allows instances to stop accepting new connections while completing existing requests, minimizing user-visible errors during deployments.
+
+Proper draining involves coordination between the load balancer and application. First, the instance signals unhealthy to the load balancer (failing health checks or deregistering). The load balancer stops routing new requests to that instance. The application continues processing in-flight requests until they complete or a draining timeout expires. Only then does the instance terminate connections and shut down.
+
+Draining timeout configuration balances deployment speed against request completion. Too short, and long-running requests are terminated mid-flight. Too long, and deployments stall waiting for stragglers. Common draining timeouts range from 30 seconds to 5 minutes, depending on expected request duration. For long-polling or streaming connections, consider implementing explicit reconnection signals that clients can act on rather than waiting for extended draining periods.
 
 ### Implementing Response Compression
 

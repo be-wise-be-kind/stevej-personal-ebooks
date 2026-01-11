@@ -28,12 +28,12 @@ Consider what happens when a user places an order:
 
 | Operation | Latency | User Needs to Wait? |
 |-----------|---------|---------------------|
-| Validate order | 5ms | **Yes** — user needs validation errors |
-| Save to database | 15ms | **Yes** — user needs confirmation order exists |
-| Send confirmation email | 120ms | No — email arrives regardless |
-| Update analytics | 45ms | No — internal metrics |
-| Notify warehouse | 80ms | No — backend process |
-| Refresh inventory cache | 20ms | No — background optimization |
+| Validate order | 5ms | **Yes** - user needs validation errors |
+| Save to database | 15ms | **Yes** - user needs confirmation order exists |
+| Send confirmation email | 120ms | No - email arrives regardless |
+| Update analytics | 45ms | No - internal metrics |
+| Notify warehouse | 80ms | No - backend process |
+| Refresh inventory cache | 20ms | No - background optimization |
 | **Total** | **285ms** | **20ms essential, 265ms waste** |
 
 The user waits 285ms, but only 20ms of that is work they actually need completed before seeing a response. The remaining 265ms is **latency waste**: operations that block the response but provide no value to the waiting user.

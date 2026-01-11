@@ -32,6 +32,22 @@ Observability differs from traditional monitoring in a fundamental way: monitori
 
 ![CPU Flame Graph Example](../assets/ch03-flame-graph.html)
 
+**Profiling Blind Spots**
+
+Profilers do not capture everything. Understanding what profilers miss prevents misguided optimization:
+
+- **I/O wait time**: CPU profilers measure time spent executing code, not time waiting for I/O. A function that blocks for 500ms on a network call may appear fast in a CPU profile because the CPU was idle during the wait. For I/O-bound services, CPU profiles show little. Use tracing to measure actual wall-clock time.
+
+- **Lock contention**: Time spent waiting to acquire locks does not always appear clearly in CPU profiles. The thread is blocked, not executing, so the profiler may not attribute time to the contended code path. Specialized lock contention profilers or off-CPU profilers are needed for lock analysis.
+
+- **Garbage collection overhead**: GC pauses stop application threads, but this pause time may not be clearly attributed in application profiles. GC logs and runtime metrics reveal pause duration and frequency that CPU profiles may miss.
+
+- **Kernel and system calls**: User-space profilers only see user-space execution. Time spent in kernel syscalls (especially slow ones like synchronous disk I/O) may be underreported. `perf` on Linux captures both user and kernel stacks but requires additional privileges.
+
+- **Sampling bias**: Statistical profilers sample call stacks periodically (typically 100-1000 Hz). Short, fast functions that complete between samples may be underrepresented. Extremely hot spots are captured accurately; moderately warm paths may be missed.
+
+For complete performance visibility, combine CPU profiling (what code is executing), tracing (what requests are doing end-to-end), and wall-clock analysis (total elapsed time). Each tool reveals blind spots in the others.
+
 ### When to Use Which Pillar
 
 Each pillar serves distinct purposes. Understanding their strengths prevents both gaps in visibility and redundant instrumentation:
@@ -92,7 +108,35 @@ This architecture means spans arrive at the backend out of order. The database q
 
 Since each service timestamps its own spans, clock drift between servers can produce confusing traces where child spans appear to start before their parents. NTP (Network Time Protocol) synchronization across your infrastructure is essential for accurate trace visualization. In Kubernetes environments, all pods typically share the host's clock, minimizing this issue.
 
-**Sampling** reduces trace storage costs by capturing only a subset of requests. Head-based sampling decides at request start whether to trace; tail-based sampling makes decisions after the request completes, allowing capture of all errors or slow requests regardless of sample rate. Most production systems use sampling rates between 1% and 10% for normal traffic, with 100% capture for errors.
+**Sampling Strategies and Trade-offs**
+
+Tracing every request at scale is prohibitively expensive. A service handling 10,000 requests per second generates 864 million traces per day. At $0.01 per thousand traces (typical managed pricing), that costs $8,640 daily just for storage. Sampling makes distributed tracing economically viable, but the choice of sampling strategy affects what you can learn.
+
+**Head-Based Sampling** decides at request entry whether to trace. The first service (typically the API gateway) makes a probabilistic decision: 10% sample rate means 10% of traces are captured. This decision propagates downstream via trace context headers. All participating services either trace or don't trace a request together.
+
+Head-based sampling is simple and predictable. You know exactly what percentage of traffic you're capturing. The limitation: interesting requests (errors, slow responses) are sampled at the same rate as boring ones. With 10% sampling, you capture only 10% of errors, potentially missing rare but important failure modes.
+
+**Tail-Based Sampling** delays the sampling decision until the request completes. The OpenTelemetry Collector buffers all spans for a brief window (typically 30-60 seconds), then evaluates rules to decide which traces to keep. Common rules include:
+
+- Keep 100% of traces with errors (any span with error status)
+- Keep 100% of traces exceeding latency thresholds (p99 outliers)
+- Keep 5% of successful, normal-latency traces
+- Keep 100% of traces matching specific attributes (specific endpoints, user IDs)
+
+Tail-based sampling requires buffering at the collector layer, which increases memory usage and operational complexity. The collector must see all spans before making decisions, so it becomes a bottleneck if undersized. However, the ability to capture all errors and latency outliers often justifies the complexity.
+
+**Adaptive Sampling** adjusts rates based on traffic volume. During normal traffic, sample at 10%. During traffic spikes, reduce to 1% to prevent collector overload. This maintains cost control while preserving debug capability during typical operation. The OpenTelemetry Collector supports probabilistic sampling with rate limiting to implement adaptive behavior.
+
+**Cost Implications**
+
+| Strategy | Storage Cost | Error Coverage | Complexity |
+|----------|--------------|----------------|------------|
+| Head 10% | Predictable | 10% of errors | Simple |
+| Head 1% | Very low | 1% of errors | Simple |
+| Tail-based | Higher (buffering) | 100% of errors | Complex |
+| Adaptive | Variable | Varies | Moderate |
+
+For most API optimization work, tail-based sampling with 100% error capture provides the best debugging capability. Accept the operational complexity of running the collector with adequate resources. The ability to investigate every error is worth the investment.
 
 ### OpenTelemetry: The Industry Standard
 
@@ -114,6 +158,24 @@ The Collector deserves special attention. Rather than sending telemetry directly
 <!-- DIAGRAM: OpenTelemetry architecture: Applications (with SDKs) -> OpenTelemetry Collector (processors, exporters) -> Multiple backends (Prometheus, Grafana Tempo, Loki, Jaeger) -->
 
 ![OpenTelemetry Architecture](../assets/ch03-otel-architecture.html)
+
+**SDK Configuration for Performance**
+
+OpenTelemetry SDKs, while lightweight, do consume resources. Misconfigured SDKs can add measurable latency or cause memory issues under load. Key configuration parameters affect this trade-off:
+
+**Batch sizes** control how many spans or metrics are buffered before export. Small batches (10-50 items) provide low latency but high export overhead. Large batches (5000+ items) reduce overhead but delay telemetry visibility and consume more memory. Default batch sizes (typically 512 spans) work for most applications. Increase batch size for high-throughput services; decrease for low-latency requirements where immediate visibility matters.
+
+**Export timeouts** determine how long the SDK waits for the collector to accept data. Short timeouts (1-5 seconds) fail fast but may drop data during collector hiccups. Long timeouts (30+ seconds) increase reliability but can cause memory pressure if the collector is unreachable and spans accumulate. A 10-second timeout with appropriate retry logic balances these concerns.
+
+**Queue sizes** limit buffered telemetry when export is slow. When the queue fills, the SDK must either drop new telemetry or block the application. Blocking adds latency; dropping loses data. Configure queue sizes based on your tolerance: larger queues (10,000+ items) for reliability-focused systems, smaller queues (500-1000 items) for latency-focused systems with drop-on-overflow.
+
+**Resource attributes** identify your application in telemetry. Always set `service.name`, `service.version`, and `deployment.environment`. These enable filtering in dashboards and alerts. Missing resource attributes make traces nearly impossible to analyze at scale.
+
+**Common SDK pitfalls to avoid:**
+
+- **Synchronous export**: Always use asynchronous exporters. Synchronous export blocks request processing while waiting for the collector, adding latency to every traced request.
+- **Excessive span creation**: Creating hundreds of spans per request overwhelms collectors and makes traces unreadable. Aim for 10-50 spans per typical request, covering meaningful operations rather than every function call.
+- **Missing span status**: Always set span status to ERROR on failures. This enables tail-based sampling to capture errors and makes error traces identifiable in the UI.
 
 ### Choosing an Observability Stack
 

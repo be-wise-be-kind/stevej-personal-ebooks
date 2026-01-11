@@ -157,6 +157,46 @@ on database query:
         route to random healthy replica
 ```
 
+### Pagination Strategies
+
+When APIs return large datasets, pagination becomes essential for both client usability and database performance. However, not all pagination approaches perform equally. The strategy we choose determines whether fetching page 1,000 is as fast as fetching page 1, or orders of magnitude slower.
+
+**Offset pagination** is the most intuitive approach. The client specifies `page=50&limit=20`, and the database executes `OFFSET 980 LIMIT 20`. This simplicity comes with a significant hidden cost: the database must scan and discard 980 rows before returning the 20 we want. At page 1,000, we are discarding 19,980 rows to return 20. Performance degrades linearly with depth. Offset pagination is O(n) where n is the offset value, regardless of indexes.
+
+Offset pagination also suffers from consistency problems. If a new record is inserted while a user navigates between pages, they may see duplicate items or miss items entirely as the window shifts. For administrative interfaces with modest data sizes and infrequent updates, these trade-offs are acceptable. For user-facing product lists with millions of items, they are not.
+
+**Cursor-based pagination** (also called keyset pagination) takes a fundamentally different approach. Instead of "skip 980 rows," we say "give me 20 rows where `created_at` is less than this timestamp." The database uses an index to jump directly to the right position, then reads forward. Whether we are fetching page 1 or page 10,000, the database reads exactly the same number of rows. Performance is O(1) with proper indexing.
+
+The critical requirement for cursor-based pagination is a unique, indexed sort column. If we sort by `created_at` but multiple records share the same timestamp, the cursor becomes ambiguous. The solution is a compound sort: `ORDER BY created_at DESC, id DESC` with a corresponding compound index. The cursor then encodes both values: `created_at < cursor_timestamp OR (created_at = cursor_timestamp AND id < cursor_id)`.
+
+**Seek pagination** is a variation of cursor-based pagination that uses opaque, encoded cursors rather than exposing raw column values. The API returns a `next_cursor` like `eyJjcmVhdGVkX2F0IjoiMjAyNC0wMy0xNSIsImlkIjo0NTY3fQ==` (a Base64-encoded JSON object). Clients treat this as an opaque token and pass it back unchanged. This approach hides implementation details, allows the cursor format to evolve without breaking clients, and can include additional metadata like the sort direction or version number.
+
+The following pseudocode illustrates the performance difference between offset and cursor approaches.
+
+```
+offset pagination (page 100, 20 items per page):
+    SELECT * FROM items ORDER BY created_at DESC
+    OFFSET 1980 LIMIT 20
+    -- database must skip 1980 rows before returning 20
+
+keyset pagination (after cursor):
+    SELECT * FROM items
+    WHERE created_at < cursor_timestamp
+    ORDER BY created_at DESC
+    LIMIT 20
+    -- database uses index, returns 20 rows directly
+```
+
+**When to use each approach:**
+
+Offset pagination fits scenarios with small datasets, administrative interfaces where simplicity matters more than deep-page performance, and situations where users rarely navigate past the first few pages. Most search interfaces fall into this category; users refine their query rather than browsing to page 500.
+
+Cursor-based pagination fits user-facing lists with large datasets: activity feeds, product catalogs, message histories, and audit logs. Any scenario where users might scroll indefinitely or where the dataset grows continuously benefits from cursor-based approaches. APIs that serve mobile clients, which often implement infinite scroll, should default to cursor-based pagination.
+
+**Caching implications differ significantly between approaches.** Offset-based pages are unstable. If we cache "page 5" and new data is inserted, the cached content no longer represents page 5. Cache invalidation becomes difficult or requires accepting stale data. Cursor-based pagination produces stable results: "20 items after this cursor" returns the same items regardless of what was inserted before the cursor position. This stability makes cursor-based responses more cacheable with longer TTLs.
+
+For systems requiring both approaches, consider offering offset pagination for initial discovery (`GET /products?page=1`) and cursor pagination for subsequent navigation (the response includes a `next_cursor` for continuation). This hybrid preserves the simplicity of page numbers for bookmarking while delivering the performance benefits of cursors for actual traversal.
+
 For systems that need both caching and strong consistency on writes, the write-through cache pattern ensures the cache always reflects the database state. Unlike cache-aside (where writes go directly to the database and the cache is invalidated or updated separately), write-through treats the cache as part of the write path.
 
 ```

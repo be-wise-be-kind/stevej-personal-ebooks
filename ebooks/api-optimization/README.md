@@ -26,9 +26,10 @@ A practical guide to API performance, from foundational concepts to advanced tec
 13. [Testing Performance](chapters/13-testing-performance.md)
 14. [Putting It All Together](chapters/14-putting-it-all-together.md)
 
-### Appendix
+### Appendices
 
-- [Appendix: Auth Fundamentals](chapters/16-appendix-auth-fundamentals.md)
+- [Appendix A: Auth Fundamentals](chapters/16-appendix-auth-fundamentals.md)
+- [Appendix B: GraphQL Optimization](chapters/17-appendix-graphql.md)
 
 ## Prerequisites
 

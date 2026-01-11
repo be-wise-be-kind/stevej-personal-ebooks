@@ -364,6 +364,50 @@ The golden signals we measure must be stored and aggregated somehow. Understandi
 
 **Histograms** (and their cousins, summaries) capture the distribution of values. Rather than storing every latency measurement, histograms bucket values into ranges (0-10ms, 10-50ms, 50-100ms, etc.) and count how many observations fall into each bucket. This enables efficient percentile calculation, which is essential for the Latency signal. Without histograms, you could not compute p99 latency without storing every individual measurement.
 
+**Histogram Bucket Selection**
+
+Bucket boundaries dramatically affect histogram accuracy. Wrong bucket choices lead to wrong percentile calculations, which lead to wrong optimization decisions.
+
+The key insight: percentile calculations interpolate within buckets. If your buckets are [0, 100ms, 1000ms] and p99 latency is 150ms, the calculation interpolates within the 100-1000ms range, potentially reporting wildly inaccurate values. Buckets must be granular where you need precision.
+
+Common bucket strategies:
+
+- **Exponential buckets** (1, 2, 4, 8, 16, 32ms...) work well for latency because they provide precision where it matters at the low endwhile still capturing tail values. Most latency distributions are right-skewed, so more granularity at lower values produces more accurate p50/p95 calculations. Prometheus's default histogram buckets use this approach.
+
+- **Linear buckets** (10, 20, 30, 40, 50ms...) provide uniform precision across the range. They work well when values are uniformly distributed or when you need precision at specific thresholds (e.g., SLO boundary at 200ms).
+
+- **Custom buckets** designed around SLO boundaries ensure precision where it matters most. If your SLO is 200ms, ensure bucket boundaries at 150, 175, 200, 225, 250ms provide accurate measurement near the threshold. Crossing an SLO boundary should be detectable, not lost in bucket interpolation.
+
+A practical approach: start with exponential buckets that span your expected range (perhaps 5ms to 10s for API latency), then add custom boundaries at SLO thresholds. Review your histograms after a week of production traffic. If you see most values concentrated in one or two buckets, you need finer granularity in that range.
+
+**When to Optimize p50, p95, or p99**
+
+Different percentiles tell different stories and warrant different responses:
+
+- **p50 (median)** represents the typical user experience. If p50 is slow, most users notice. Optimizing p50 usually involves algorithmic improvements, caching, or architectural changes that affect all requests. Database query optimization, cache hits, and efficient serialization improve p50.
+
+- **p95** captures the experience of users who encounter minor issues: cache misses, slightly slower code paths, modest resource contention. The gap between p50 and p95 often reveals variance sources: inconsistent database query times, cache miss penalties, or garbage collection pauses. Reducing this gap improves consistency.
+
+- **p99** exposes tail latency, the unlucky requests that hit worst-case paths. Queue depth, connection pool exhaustion, cold starts, and timeout accumulation appear in p99. Large gaps between p95 and p99 often indicate resource contention or queuing effects under load. Tail latency optimization (covered in Chapter 10) addresses these through load shedding, deadline propagation, and hedged requests.
+
+| Gap | Indicates | Optimization Focus |
+|-----|-----------|-------------------|
+| p50 is slow | Core path inefficient | Algorithm, caching, architecture |
+| p95 >> p50 | High variance | Consistency, cache hit rate |
+| p99 >> p95 | Tail latency | Queuing, contention, load shedding |
+
+**Load-Dependent Behavior**
+
+Performance does not degrade linearly with load. Systems exhibit nonlinear behavior as they approach saturation:
+
+At low load, latency is roughly constant. Adding requests does not meaningfully increase latency because resources are abundant. This is the "flat" portion of the latency curve.
+
+As load approaches capacity, latency begins to rise. Queuing effects appear: requests wait for connections, threads, or locks. The latency curve bends upward.
+
+Near saturation, latency rises sharply. Small increases in load produce large latency increases. This is the "hockey stick" portion of the curve. Beyond this point, the system cannot sustain the load and begins failing requests.
+
+Understanding this curve is essential for capacity planning. An API performing well at 70% capacity may become unusable at 90% capacity: not 29% worse, but dramatically worse due to queuing. Monitor not just current load but the shape of the latency-vs-load relationship. The knee of the curve (where latency starts rising sharply) defines your practical capacity ceiling, not the theoretical maximum throughput.
+
 These metric types map naturally to the golden signals: latency uses histograms (for percentile distributions), traffic uses counters (for request rates), errors use counters (for error rates), and saturation uses gauges (for current utilization). Chapter 3 covers how to instrument your code to emit these metrics correctly.
 
 #### Consistency Models

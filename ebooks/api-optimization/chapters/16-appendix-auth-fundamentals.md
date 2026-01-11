@@ -210,6 +210,76 @@ API keys are not appropriate for:
 - Scenarios requiring token expiration
 - Fine-grained, dynamic authorization
 
+## WebSocket Authentication
+
+WebSocket connections present unique authentication challenges. Unlike HTTP where each request is independent and can carry authentication headers, WebSocket establishes a long-lived connection that must be authenticated once at connection time.
+
+### Connection-Level vs Per-Message Authentication
+
+Two fundamental approaches exist:
+
+**Connection-level authentication** validates credentials during the WebSocket handshake. Once connected, all messages on that connection are considered authenticated. The user identity is associated with the connection object server-side.
+
+**Per-message authentication** includes credentials with each message sent over the WebSocket. The server validates authentication with every message, similar to HTTP's stateless model.
+
+| Approach | Performance | Flexibility | Security |
+|----------|-------------|-------------|----------|
+| Connection-level | Lower overhead (validate once) | Less flexible (no mid-stream changes) | Token expiration harder to enforce |
+| Per-message | Higher overhead (validate each message) | More flexible (can change auth mid-stream) | Easier to enforce expiration |
+
+Most applications use connection-level authentication for performance. Per-message is reserved for scenarios requiring dynamic permission changes during a session.
+
+### Authentication During Upgrade
+
+The WebSocket protocol starts with an HTTP upgrade handshake. Authentication can happen during this handshake:
+
+**Cookie-based**: If the client has an authenticated session cookie, the browser automatically includes it in the upgrade request. The server validates the session before accepting the upgrade.
+
+**Token in protocol header**: Pass a token in the `Sec-WebSocket-Protocol` header. The server validates before upgrade completion. A common pattern is using a custom subprotocol like `auth-{token}`.
+
+**Query parameter** (less secure): Pass a token in the WebSocket URL. The token appears in server logs and may be cached. Avoid this approach for sensitive tokens, but it can work for short-lived, single-use connection tokens.
+
+**Separate auth step**: Complete the handshake without authentication, then require the first message to contain credentials. Reject the connection if the first message is not valid authentication. This approach works well when the initial token must be refreshed or exchanged.
+
+### Token Validation on Connection Upgrade
+
+When using JWT or OAuth tokens for WebSocket authentication:
+
+1. **Validate the token** during upgrade handshake (signature, expiration, claims)
+2. **Extract identity** from token and associate with connection object
+3. **Store token expiry** with the connection for later enforcement
+4. **Handle expiration**: Either disconnect when token expires or allow token refresh
+
+A key consideration: JWT access tokens typically expire in minutes, but WebSocket connections may last hours. Options for handling this mismatch:
+
+- **Disconnect on expiry**: Force reconnection when the original token expires. Simple but disruptive.
+- **Token refresh messages**: Allow clients to send refresh tokens over the WebSocket. Server validates and extends the session.
+- **Long-lived connection tokens**: Issue a special token with extended lifetime specifically for WebSocket connections, accepting the security tradeoff.
+- **Hybrid approach**: Use short-lived tokens for initial auth; server issues a connection-specific token valid for the connection duration.
+
+### Performance Implications
+
+Connection-level authentication has significant performance advantages:
+
+- **Single validation**: Token validation (signature verification, claim checks) happens once per connection, not per message
+- **No header overhead**: Messages do not carry authentication headers, reducing payload size
+- **Simplified server logic**: The connection object carries identity; handlers do not need to parse auth from each message
+
+For high-frequency messaging (100+ messages/second per client), per-message authentication adds noticeable overhead. For infrequent messaging, the overhead may be acceptable for the security benefits.
+
+### Example: Token-Based WebSocket Auth
+
+A common pattern for browser clients:
+
+1. Client authenticates via HTTP, receives access token
+2. Client initiates WebSocket connection with token in URL or first message
+3. Server validates token during handshake or upon first message
+4. Server associates user identity with connection
+5. Subsequent messages use connection context for identity
+6. Server monitors token expiration; client refreshes or reconnects as needed
+
+For server-to-server WebSocket connections, mTLS provides strong connection-level authentication without token management complexity.
+
 ## When to Use Which Approach
 
 | Scenario | Recommended Approach | Reasoning |

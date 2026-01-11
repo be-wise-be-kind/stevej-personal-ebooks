@@ -199,6 +199,57 @@ Common approaches include:
 
 Shopify's GraphQL API uses complexity analysis, publishing their cost calculation formula and rate limits publicly [Source: Shopify GraphQL Admin API Documentation, 2024].
 
+### Persisted Queries
+
+GraphQL's flexibility comes with a cost: clients send full query strings with every request. A complex query spanning multiple types and fields might be several kilobytes of text, transmitted repeatedly for every request. Persisted queries address this inefficiency by pre-registering queries and identifying them by hash or ID rather than sending the full query text.
+
+The concept is straightforward. Instead of transmitting `query { user(id: "123") { name email posts { title } } }` with every request, the client sends a short hash like `sha256:a3b2c1d0...`. The server looks up the hash in its query registry and executes the corresponding pre-registered query. This approach yields several benefits that compound in high-throughput systems.
+
+**Reduced Request Payload Size**
+
+For mobile clients on constrained networks, eliminating kilobytes of query text from every request meaningfully improves performance. A 4KB query reduced to a 64-character hash represents a 98% reduction in payload size. Across millions of requests, this translates to significant bandwidth savings and faster time-to-first-byte.
+
+**Query Allowlisting for Security**
+
+Persisted queries enable a powerful security pattern: query allowlisting. By only accepting pre-registered queries, you prevent arbitrary query execution. Attackers cannot craft malicious queries designed to exhaust server resources or probe for sensitive data. The server rejects any query hash not in its registry. This transforms GraphQL from an open query language into a controlled API surface, similar to REST endpoints.
+
+**Parse and Validate Once**
+
+GraphQL servers must parse query strings and validate them against the schema before execution. For complex queries, parsing and validation can consume non-trivial CPU time. With persisted queries, this work happens once during registration. Subsequent executions skip parsing entirely, as the server retrieves the already-validated query structure from its cache.
+
+**Implementation Approaches**
+
+Two primary approaches exist for implementing persisted queries: build-time extraction and Automatic Persisted Queries (APQ).
+
+Build-time extraction generates query hashes during the application build process. The build tooling scans the codebase for GraphQL queries, computes their hashes, and produces a manifest mapping hashes to query strings. This manifest is deployed to the server. The approach guarantees that only queries present in the codebase can execute, providing the strongest security guarantees.
+
+Automatic Persisted Queries (APQ), popularized by Apollo, take a more dynamic approach. Clients compute query hashes at runtime and attempt to execute using only the hash. If the server has not seen that hash before, the client retries with the full query, and the server caches it for future requests.
+
+```
+automatic persisted query flow:
+    client computes hash of query string
+    client sends only hash (not full query)
+
+    server checks if hash exists in query cache:
+        if found: execute cached query
+        if not found: return "query not found"
+
+    on cache miss, client retries with full query
+    server caches query by hash for future requests
+```
+
+APQ reduces the barrier to adoption since no build-time tooling changes are required. The first request for a new query incurs the full payload cost, but subsequent requests benefit from hash-only transmission. For APIs with a stable set of queries, the cache quickly reaches steady state where nearly all requests use hashes [Source: Apollo GraphQL Documentation].
+
+**Trade-offs and Considerations**
+
+Persisted queries introduce build and deployment complexity. Build-time extraction requires tooling integration and a deployment pipeline that synchronizes the query manifest with server deployments. If the manifest and server fall out of sync, queries fail.
+
+Schema changes require careful handling. When the schema evolves, previously valid queries may become invalid. Build-time extraction naturally handles this through recompilation, but APQ caches may contain stale queries. Implement cache invalidation tied to schema versions, or use TTLs that ensure queries are re-validated periodically.
+
+Versioning strategies become important in mobile environments where clients may run outdated versions. Maintain backward compatibility in your query registry, or implement version-aware query resolution. Some teams maintain separate registries per client version, purging old versions only after sufficient client migration.
+
+Despite these complexities, persisted queries are a valuable optimization for production GraphQL deployments. The combination of reduced bandwidth, enhanced security, and eliminated parsing overhead makes them particularly attractive for high-scale APIs serving mobile clients or operating in security-sensitive environments.
+
 ### Distributed Cache Patterns
 
 Distributed caches like Redis provide shared caching across multiple application instances. They introduce new considerations around consistency, invalidation, and failure handling.

@@ -12,9 +12,11 @@ Before reaching for more compute, ask a harder question: do you actually underst
 
 The pattern we see repeatedly: a team scales horizontally to handle load, only to discover their database was the bottleneck all along. More application servers just meant more connections competing for the same slow queries. The fix was an index, not an autoscaling policy. Or the issue was an N+1 query pattern (Chapter 6), a missing cache layer (Chapter 6), or work that should have been asynchronous (Chapter 8). These optimizations can deliver 10x improvements. Scaling delivers linear improvements at linear cost.
 
-This is not to say scaling does not matter. When you have genuinely exhausted optimization opportunities, when your traces show time is spent in application code rather than waiting on I/O, when your load tests (Chapter 13) confirm that more instances actually improve throughput, then scaling becomes the right tool. This chapter is for that moment.
+This is not to say scaling does not matter. When you have genuinely exhausted optimization opportunities, when your traces show time is spent in application code rather than waiting on I/O, when your load tests (Chapter 13) confirm that more instances actually improve throughput, then scaling becomes the right tool.
 
-The chapter begins with fundamental scaling concepts that apply regardless of platform, then examines how major platforms implement these concepts: Kubernetes, serverless, and traditional VM-based auto scaling. The principles are universal; the implementation details vary.
+But scaling is not one-dimensional. "Add more servers" is only one answer. When your database is the bottleneck, read replicas or sharding may provide more leverage than any amount of compute scaling. When traffic is unpredictable, serverless platforms handle scaling automatically without capacity planning. When content is cacheable, CDNs and edge caching scale delivery without touching your origin servers. The right scaling strategy depends on where the constraint lies.
+
+This chapter covers all these dimensions. We begin with fundamental scaling concepts that apply regardless of platform, then examine platform-specific implementations (Kubernetes, serverless, VM-based auto scaling), and conclude with hybrid patterns that scale different parts of the system independently.
 
 ## Key Concepts
 
@@ -205,6 +207,78 @@ Before choosing a scaling strategy, analyze your traffic:
 4. **Identify bursts**: Look for traffic spikes that exceed 3× the rolling average
 
 Low variability with clear diurnal patterns → scheduled scaling works well. High variability with unpredictable bursts → reactive scaling with generous headroom. Predictable growth with seasonal peaks → capacity planning with reserved instances.
+
+### Cost-Performance Tradeoffs
+
+Optimization decisions are ultimately economic. Engineering time spent optimizing code has a cost; infrastructure resources have a cost; performance degradation has a cost in user experience and revenue. Effective optimization requires evaluating these tradeoffs explicitly.
+
+#### The Optimization ROI Framework
+
+Before investing engineering effort in optimization, estimate the return:
+
+**Cost of engineering time**: A week of senior engineer time might cost $5,000-10,000 fully loaded. Will the optimization save more than that in infrastructure or user impact?
+
+**Infrastructure savings**: Calculate current monthly spend on the bottleneck (compute, database, bandwidth). Realistic optimization might reduce usage by 20-50%. Is 20% of monthly spend greater than the engineering investment?
+
+**User impact value**: Latency improvements affect conversion and engagement. Studies suggest 100ms latency improvement can increase revenue by 1% for e-commerce [Source: Akamai, 2017]. Quantify your traffic and conversion rates to estimate impact.
+
+| Engineering Time | Monthly Infra Cost | Realistic Savings | Payback Period |
+|------------------|-------------------|-------------------|----------------|
+| 1 week ($7,500) | $10,000 | 30% ($3,000/mo) | 2.5 months |
+| 2 weeks ($15,000) | $5,000 | 40% ($2,000/mo) | 7.5 months |
+| 1 week ($7,500) | $50,000 | 20% ($10,000/mo) | < 1 month |
+
+Quick wins with large infrastructure spend pay back fast. Complex optimizations with modest savings may never recoup investment.
+
+#### When to Optimize vs When to Scale
+
+Sometimes the right answer is more instances, not better code:
+
+**Scale when**:
+- Traffic is growing and optimization only defers the scaling problem
+- Optimization complexity risks reliability (premature optimization)
+- Engineering time is more valuable elsewhere (opportunity cost)
+- The bottleneck is not your code (database, third-party API)
+
+**Optimize when**:
+- Resource costs are significant and growing
+- Latency SLOs are threatened and scaling cannot reduce per-request latency
+- The optimization is straightforward with clear payoff
+- Technical debt from inefficient code will compound
+
+A practical heuristic: if adding 30% more instances solves the problem for less than one week of engineering time, scale first. Optimize later when you have bandwidth and clearer data on bottlenecks.
+
+#### Right-Sizing for Cost and Performance
+
+Over-provisioning wastes money. Under-provisioning degrades performance. Right-sizing finds the balance.
+
+**Utilization targets vary by resource:**
+
+| Resource | Target Utilization | Rationale |
+|----------|-------------------|-----------|
+| CPU | 60-70% average | Headroom for traffic spikes |
+| Memory | 70-80% average | Avoid OOM while maximizing cache |
+| Database connections | 50-70% of max | Reserve for bursts |
+| Network | < 50% of capacity | TCP performance degrades near saturation |
+
+**Right-sizing process:**
+
+1. **Measure actual usage**: Collect CPU, memory, network metrics at p50 and p95 over representative periods (include peak traffic)
+2. **Identify over-provisioning**: Resources consistently below 30% utilization are oversized
+3. **Test smaller sizes**: Reduce instance size or count and monitor performance metrics
+4. **Iterate**: Continue until utilization approaches targets without SLO impact
+
+Cloud provider tools (AWS Compute Optimizer, GCP Recommender) provide right-sizing recommendations based on observed usage. These recommendations are starting points. Validate with load testing before production changes.
+
+**Reserved capacity vs on-demand:**
+
+Committed use discounts (reserved instances, committed use contracts) offer 30-70% savings over on-demand pricing in exchange for 1-3 year commitments. The tradeoff:
+
+- **On-demand**: Full flexibility, highest cost
+- **Reserved/committed**: Lower cost, reduced flexibility
+- **Savings plans**: Balance of savings and flexibility (commit to spend, not instance types)
+
+For stable baseline capacity that will exist for 1+ years, reserved pricing significantly reduces costs. For variable or uncertain capacity, on-demand provides flexibility to right-size without stranded commitments.
 
 ### Cost Optimization with Spot Instances
 

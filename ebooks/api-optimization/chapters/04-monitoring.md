@@ -124,6 +124,72 @@ Throughput monitoring connects directly to capacity planning (covered in Chapter
 
 A well-designed traffic dashboard answers: "How much traffic are we handling, is it normal, and how much headroom do we have?"
 
+### Per-Endpoint SLO Strategies
+
+A single API often contains dozens or hundreds of endpoints with vastly different performance characteristics. A `/health` check returning in 1ms shares metrics with a `/reports/generate` call that legitimately takes 5 seconds. Aggregate SLOs mask these differences: an API might report 99.5% of requests under 200ms while critical user-facing endpoints fail to meet their individual targets.
+
+#### Why Per-Endpoint SLOs Matter
+
+Aggregate metrics create dangerous blind spots:
+
+- **Dilution by volume**: High-traffic, fast endpoints (health checks, simple reads) statistically overwhelm low-traffic, critical endpoints (checkout, payment processing) in aggregate percentiles
+- **Hidden degradation**: An important endpoint can degrade from 50ms to 500ms p99 without moving aggregate metrics if it represents only 1% of traffic
+- **Misguided optimization**: Teams optimize the wrong endpoints because aggregate metrics point to high-volume paths rather than business-critical paths
+
+Per-endpoint SLOs acknowledge that different endpoints have different importance and different performance expectations. A search autocomplete endpoint has stricter latency requirements than a nightly batch export. A payment confirmation needs higher reliability than a profile image upload.
+
+#### Defining Endpoint-Level SLIs and SLOs
+
+For each critical endpoint, define explicit targets:
+
+| Endpoint | SLI | SLO | Rationale |
+|----------|-----|-----|-----------|
+| `POST /checkout` | Latency p99 | < 500ms | User is actively waiting, high conversion impact |
+| `GET /products/:id` | Latency p95 | < 100ms | Frequent access, page load blocking |
+| `POST /reports` | Success rate | > 99.5% | Async job, users tolerate some failures |
+| `GET /search` | Latency p90 | < 200ms | High volume, some latency variance acceptable |
+
+The SLI (Service Level Indicator) specifies what you measure. The SLO (Service Level Objective) specifies the target. Choose the right percentile for each endpoint: p99 for latency-critical paths where tail latency matters, p95 or p90 for high-volume endpoints where some variance is acceptable.
+
+#### Cardinality Management for Multi-Endpoint Metrics
+
+Naive per-endpoint metrics can explode cardinality and overwhelm time-series databases. An API with 500 endpoints across 10 regions and 5 status codes produces 25,000 time series per metric, and that is before adding instance labels.
+
+Strategies for managing cardinality while preserving endpoint visibility:
+
+**Tiered instrumentation**: Instrument critical endpoints with full detail (per-instance, per-status-code). Aggregate less critical endpoints into buckets. A well-designed system might have 20-30 endpoints with full visibility and the remaining 470 grouped by category (`/admin/*`, `/internal/*`, `/webhooks/*`).
+
+**Dynamic top-N recording**: Record individual metrics only for the top N endpoints by traffic or error rate. This captures the endpoints most likely to matter while avoiding cardinality explosion. The top 50 endpoints typically represent 95%+ of traffic.
+
+**Separate hot and cold storage**: Store high-cardinality per-endpoint metrics at shorter retention (7 days) while aggregating to lower cardinality for long-term storage. Full detail for recent investigation; trends for historical analysis.
+
+**Pre-aggregation**: Calculate per-endpoint SLO compliance in the application or a streaming pipeline rather than at query time. Store the compliance percentage rather than every individual data point. This trades flexibility for efficiency.
+
+#### Multi-Tenant Performance Visibility
+
+In multi-tenant systems, performance varies by tenant. A tenant with unusual data patterns or high request volume can experience different performance than others. Per-tenant visibility is essential for identifying tenant-specific issues, but naive tenant-labeling creates cardinality proportional to tenant count.
+
+**Strategies for tenant-aware monitoring:**
+
+- **Sample tenant labels**: Record tenant labels for a sample of requests rather than all requests. A 10% sample provides visibility with 10% of the cardinality cost.
+- **Cohort-based labeling**: Group tenants into cohorts (enterprise, mid-market, free tier) and label by cohort rather than individual tenant. Monitor cohort performance; drill into individual tenants only when investigating.
+- **Top-K tenant tracking**: Dynamically track metrics for the top K tenants by traffic or error rate. Most investigations concern high-activity tenants.
+- **Exemplar-based diagnosis**: Use trace exemplars (links from metrics to specific traces) to investigate tenant-specific issues without storing tenant as a metric dimension. When p99 spikes, examine the trace exemplar to identify the affected tenant.
+
+#### Implementing Per-Endpoint SLO Dashboards
+
+A per-endpoint SLO dashboard differs from an aggregate dashboard:
+
+**Compliance heatmap**: Show endpoint × time grid with color indicating SLO compliance (green = meeting target, yellow = at risk, red = breaching). This visualization immediately highlights which endpoints are struggling and when.
+
+**Error budget burndown**: For each critical endpoint, show remaining error budget over the SLO window. An endpoint burning budget faster than expected warrants investigation even if still within SLO.
+
+**Comparative percentiles**: Show p50, p95, p99 for selected endpoints on the same chart. Divergence between percentiles indicates tail latency problems for specific endpoints.
+
+**Trend lines**: Track SLO compliance percentage over weeks and months. Gradual degradation suggests capacity or code debt accumulating; sudden drops indicate incidents or deployments.
+
+In PromQL, calculate per-endpoint SLO compliance using histogram_quantile with endpoint labels, then compare against thresholds to produce compliance booleans that can be summed into compliance percentages.
+
 ### Measuring Saturation
 
 Chapter 2 introduced saturation as the fourth golden signal and distinguished it from utilization: a resource at 100% utilization with no queue is efficiently used; the same resource with work waiting is saturated. Here we cover how to measure saturation for each resource type.
