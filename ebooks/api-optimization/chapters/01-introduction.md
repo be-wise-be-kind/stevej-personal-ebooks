@@ -95,7 +95,9 @@ If you're new to performance optimization, read the book in order. Chapters buil
 
 - **Chapters 5-11** address specific optimization domains: networking, caching, databases, async processing, scaling, traffic management, and authentication. Each chapter assumes you understand how to measure and identify bottlenecks first.
 
-- **Chapters 12-13** cover advanced techniques and synthesis: edge computing, protocol optimization, and putting everything together into a coherent methodology.
+- **Chapter 12** covers edge infrastructure: CDN caching, edge workers, distributed rate limiting, edge data stores, and edge authentication patterns. Edge infrastructure offloads optimization problems to the network layer closest to users.
+
+- **Chapters 13-14** cover advanced techniques and synthesis: protocol optimization (GraphQL, gRPC), speculative execution, and putting everything together into a coherent methodology.
 
 ### The Reference Path
 
@@ -105,11 +107,12 @@ If you're facing a specific problem, jump directly to relevant chapters:
 - Need better dashboards or alerting? **Chapter 4: Monitoring** covers operational practices
 - Network latency killing you? **Chapter 5: Network Optimization** addresses connection management and protocols
 - Cache hit rates disappointing? **Chapter 6: Caching Strategies** covers patterns and pitfalls
-- Database queries dominating your traces? **Chapter 7: Database Patterns** tackles query optimization
+- Unsure which database type fits your access patterns? **Chapter 7: Database and Storage Selection** helps you choose
 - Need async processing? **Chapter 8: Asynchronous Processing** explains queues and background jobs
 - Scaling problems? **Chapter 9: Compute and Scaling** covers horizontal and vertical strategies
 - System unstable under load? **Chapter 10: Traffic Management** covers circuit breakers and rate limiting
 - Authentication slowing you down? **Chapter 11: Authentication Performance** covers token validation, caching, and auth under attack
+- Need CDN or edge optimization? **Chapter 12: Edge Infrastructure** covers CDN caching, edge workers, and distributed rate limiting
 
 Each chapter stands alone enough to be useful in isolation, while connecting to the broader framework established early in the book.
 
@@ -135,7 +138,7 @@ This book takes you from measurement fundamentals through advanced optimization 
 
 **Chapter 6: Caching Strategies** goes beyond "cache everything" to help you understand when caching helps and when it introduces more complexity than it solves. You'll learn cache invalidation patterns that actually work, multi-tier caching architectures, and how to avoid cache stampedes.
 
-**Chapter 7: Database Patterns** tackles a common source of API latency. You'll learn query optimization beyond "add an index," understand connection pooling, eliminate N+1 problems at their source, and know when to use read replicas versus when to query smarter.
+**Chapter 7: Database and Storage Selection** addresses the strategic question of which database type fits which access pattern. You'll learn when to use relational databases versus document stores, key-value stores for session data, wide-column databases for write-heavy workloads, vector databases for similarity search, and when polyglot persistence is worth the complexity.
 
 **Chapter 8: Asynchronous Processing** covers message queues, async patterns, and background job processing. You'll learn when to move work off the critical path, how to handle backpressure, and patterns for reliable message handling.
 
@@ -145,11 +148,13 @@ This book takes you from measurement fundamentals through advanced optimization 
 
 **Chapter 11: Authentication Performance** examines authentication through the lens of latency and scalability. You'll learn token validation overhead, caching strategies for validation results, stateless vs stateful authentication trade-offs, and how to maintain performance under attack. An appendix provides auth fundamentals for readers who need background.
 
-### Part III: Advanced Topics (Chapters 12-13)
+### Part III: Edge and Advanced Topics (Chapters 12-14)
 
-**Chapter 12: Advanced Techniques** explores edge computing, GraphQL optimization with DataLoader, gRPC and Protocol Buffers, and hedged requests for tail latency mitigation.
+**Chapter 12: Edge Infrastructure** covers the middleware layer between users and origin servers. You'll learn CDN caching patterns for APIs, edge workers and compute, distributed rate limiting, edge data stores (KV, databases, coordination primitives), and edge authentication. Edge infrastructure offloads many optimization problems discussed in earlier chapters to the network edge, reducing latency and origin load.
 
-**Chapter 13: Putting It All Together** synthesizes everything into a coherent methodology. You'll work through real-world case studies, learn decision frameworks for choosing techniques, and develop a systematic approach to performance optimization.
+**Chapter 13: Advanced Techniques** explores GraphQL optimization with DataLoader, gRPC and Protocol Buffers, and hedged requests for tail latency mitigation.
+
+**Chapter 14: Putting It All Together** synthesizes everything into a coherent methodology. You'll work through real-world case studies, learn decision frameworks for choosing techniques, and develop a systematic approach to performance optimization.
 
 ### The Connecting Thread
 

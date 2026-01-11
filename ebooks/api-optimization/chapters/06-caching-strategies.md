@@ -1,4 +1,4 @@
-# Chapter 5: Caching Strategies
+# Chapter 6: Caching Strategies
 
 ![Chapter 6 Opener](../assets/ch06-opener.html)
 
@@ -6,31 +6,41 @@
 
 ## Overview
 
-Caching is often described as the single most effective optimization technique available to API developers. By storing the results of expensive operations and reusing them for subsequent requests, we can dramatically reduce latency, decrease database load, and improve overall system throughput. However, as Phil Karlton famously noted, "There are only two hard things in Computer Science: cache invalidation and naming things." This chapter explores not just how to implement caching, but how to do so correctly.
+Caching is often described as the single most effective optimization technique available to API developers—and for good reason. A well-implemented caching strategy can reduce p95 latency from hundreds of milliseconds to single digits, cut database load by 90% or more, and transform a struggling API into one that scales effortlessly. The introduction to this book promised that caching would be among the most important techniques we cover. This chapter delivers on that promise with the depth the topic deserves.
 
-We will examine caching from multiple angles: the hierarchy of caches from browser to origin, the patterns that govern how data flows through caches, and the strategies for keeping cached data fresh. We will also tackle the thundering herd problem—a failure mode that has brought down production systems at companies of all sizes. Throughout, we maintain our empirical approach: every caching decision should be driven by measured cache hit rates, latency improvements, and consistency requirements.
+The power of caching comes from a simple observation: many API requests ask for the same data. Product catalogs, user profiles, configuration settings, and countless other data types are read far more often than they are written. By storing the results of expensive operations—database queries, computations, or network calls—and reusing them for subsequent requests, we avoid repeating work that has already been done.
 
-The goal is not to cache everything, but to cache strategically. A well-designed caching strategy can reduce p95 latency from hundreds of milliseconds to single digits, while a poorly designed one can introduce subtle bugs, stale data, and operational nightmares.
+However, as Phil Karlton famously noted, "There are only two hard things in Computer Science: cache invalidation and naming things." Caching introduces complexity. Stale data can cause bugs that are maddening to reproduce. Cache stampedes can take down production systems. Memory pressure from unbounded caches can degrade performance rather than improve it. This chapter addresses these challenges head-on.
+
+We examine caching across every layer of the stack: from the database's internal buffer pools, through application-level memoization, to distributed caches like Redis, and finally to CDN edge caches positioned globally. Each layer offers different trade-offs between latency, consistency, and complexity. Understanding these trade-offs—and knowing how to measure their effectiveness—distinguishes strategic caching from hopeful guessing.
+
+Throughout this chapter, we maintain our empirical approach: every caching decision should be driven by measured cache hit rates, latency improvements, and consistency requirements. A cache that is not measured is a cache that is not understood.
 
 ## Key Concepts
 
-### Cache Hierarchy
+### The Cache Hierarchy
 
 Modern API systems employ multiple layers of caching, each with distinct characteristics. Understanding this hierarchy helps us place data at the optimal layer for our access patterns.
 
-<!-- DIAGRAM: Cache hierarchy pyramid showing layers from top to bottom: Browser cache (0ms network latency) -> CDN edge (10-50ms from user) -> Distributed cache/Redis (1-5ms from app) -> In-process cache (microseconds) -> Database (10-100ms), with annotations showing typical latencies and use cases for each layer -->
+<!-- DIAGRAM: Cache hierarchy pyramid showing layers from top to bottom: Browser cache (0ms network latency) -> CDN edge (10-50ms from user) -> Distributed cache/Redis (1-5ms from app) -> In-process cache (microseconds) -> Database buffer pool (microseconds, but still disk-backed) -> Database disk (10-100ms), with annotations showing typical latencies and use cases for each layer -->
 
 ![Cache Hierarchy](../assets/ch05-cache-hierarchy.html)
 
+**L0: Database Internal Caches**
+
+Before considering application-level caching, understand that your database already caches aggressively. PostgreSQL's shared buffers, MySQL's InnoDB buffer pool, and similar mechanisms cache recently accessed data pages in memory. A query that would take 50ms to read from disk might return in microseconds if the data is already in the buffer cache.
+
+This is often overlooked. Teams add Redis caching for data that is already effectively cached by the database itself. Measure your database cache hit ratio before adding additional caching layers. A PostgreSQL database with a 99% buffer cache hit ratio may not benefit significantly from adding Redis for the same data.
+
 **L1: In-Process Cache**
 
-The fastest cache is memory in the application process itself. In-process caches like Python's `functools.lru_cache`, Rust's `moka`, or Node.js's `node-cache` provide sub-millisecond access times—typically measured in microseconds. These caches are ideal for frequently accessed, computationally expensive data that does not change often: configuration values, compiled templates, or parsed schemas.
+The fastest cache is memory in the application process itself. In-process caches like Python's `functools.lru_cache`, Rust's `moka`, or Node.js's `node-cache` provide sub-millisecond access times—typically measured in microseconds. These caches are ideal for frequently accessed, computationally expensive data that does not change often: configuration values, compiled templates, parsed schemas, or database connection metadata.
 
-The trade-off is memory consumption and the lack of sharing between application instances. Each instance maintains its own cache, which can lead to inconsistency in horizontally scaled deployments.
+The trade-off is memory consumption and the lack of sharing between application instances. Each instance maintains its own cache, which can lead to inconsistency in horizontally scaled deployments. If you have 10 application instances and update a cached value, the other 9 instances will serve stale data until their caches expire or are invalidated.
 
 **L2: Distributed Cache**
 
-Distributed caches like Redis or Memcached sit between the application and the database. They provide shared state across all application instances with typical latencies of 1-5ms over a local network. Redis, in particular, has become the de facto standard for application caching, offering not just key-value storage but also data structures like sorted sets and hash maps that enable sophisticated caching patterns.
+Distributed caches like Redis or Memcached sit between the application and the database. They provide shared state across all application instances with typical latencies of 1-5ms over a local network. Redis has become the de facto standard for application caching, offering not just key-value storage but also data structures like sorted sets, hash maps, and pub/sub messaging that enable sophisticated caching patterns.
 
 According to Redis documentation, properly configured Redis instances can handle over 100,000 operations per second on modest hardware, making them suitable for high-throughput API scenarios [Source: Redis Documentation, 2024].
 
@@ -38,21 +48,263 @@ According to Redis documentation, properly configured Redis instances can handle
 
 CDNs cache content at edge locations distributed globally. When a user in Tokyo requests data from an API hosted in Virginia, a CDN edge node in Tokyo can serve the cached response without the request ever reaching the origin server. This eliminates network latency that can add 100-300ms for intercontinental requests.
 
-CDN caching is controlled primarily through HTTP headers: `Cache-Control`, `Expires`, and `ETag`. The `Cache-Control: max-age=3600` header tells CDN nodes (and browsers) to cache the response for one hour. For API responses, the `Vary` header is critical—it tells the CDN which request headers affect the response and should be included in the cache key.
+CDN caching for APIs differs from static asset caching. API responses are often personalized, authenticated, or dynamic. Effective CDN caching requires careful header configuration and cache key design—topics we cover in depth later in this chapter.
 
 Cloudflare reports that customers with well-configured caching rules achieve cache hit ratios above 90% for cacheable content, dramatically reducing origin server load [Source: Cloudflare, 2023].
+
+For comprehensive coverage of CDN architecture, edge workers, and advanced edge patterns, see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md).
 
 **L4: Browser/Client Cache**
 
 For API clients, browser caching reduces requests entirely. When an API response includes appropriate `Cache-Control` headers, the browser may serve subsequent requests from its local cache without any network activity. This is particularly effective for mobile applications where network requests drain battery and may be slow or unreliable.
 
-### Caching Patterns
+**Choosing the Right Layer**
 
-Different access patterns require different caching strategies. The choice of pattern affects consistency guarantees, write latency, and operational complexity.
+Each caching layer has its place:
 
-<!-- DIAGRAM: Cache-aside pattern sequence diagram showing: Client -> Application -> Check Cache -> [Hit: return cached data] or [Miss: Query Database -> Store result in Cache -> return data to client] -->
+| Data Characteristic | Recommended Layer |
+|---------------------|-------------------|
+| Rarely changes, accessed constantly | L1 (In-process) + L2 (Redis) |
+| User-specific, session-bound | L2 (Redis with user-scoped keys) |
+| Same for all users, changes occasionally | L2 (Redis) + L3 (CDN) |
+| Static reference data | L3 (CDN) + L4 (Browser) |
+| Frequently queried, rarely written | Ensure L0 (Database buffers) is sufficient first |
 
-![Cache-Aside Pattern](../assets/ch05-cache-aside-pattern.html)
+### Database Internal Caching
+
+Before adding application-level caches, understand how your database caches data internally. Modern databases maintain sophisticated caching layers that can eliminate the need for additional caching in many scenarios.
+
+<!-- DIAGRAM: PostgreSQL buffer cache architecture showing: Query -> Check shared_buffers -> [Hit: return from memory, ~0.1ms] or [Miss: Load from disk into buffers, possibly evicting LRU pages, 10-100ms] -> Return to query. Annotate with shared_buffers size and hit ratio monitoring -->
+
+![Database Buffer Cache Architecture](../assets/ch06-database-buffer-cache.html)
+
+**PostgreSQL Shared Buffers**
+
+PostgreSQL uses `shared_buffers` as its primary data cache. When a query requests data, PostgreSQL first checks shared buffers. If the data is present (a cache hit), the query returns immediately without disk I/O. If the data is absent (a cache miss), PostgreSQL reads it from disk and stores it in shared buffers for future queries.
+
+The default shared_buffers value of 128 MB is intentionally conservative. For dedicated database servers, PostgreSQL documentation recommends setting shared_buffers to approximately 25% of total system memory. A server with 64 GB RAM might use 16 GB for shared_buffers [Source: PostgreSQL Documentation, 2024].
+
+Monitor your buffer cache hit ratio to determine if shared_buffers is sized appropriately:
+
+```sql
+SELECT
+  sum(heap_blks_hit) / nullif(sum(heap_blks_hit) + sum(heap_blks_read), 0) AS hit_ratio
+FROM pg_statio_user_tables;
+```
+
+A hit ratio below 90% suggests either shared_buffers is too small or your working set exceeds available memory. Aim for hit ratios above 99% for frequently accessed tables (see Example 6.5).
+
+**MySQL InnoDB Buffer Pool**
+
+MySQL's InnoDB storage engine uses a buffer pool that serves a similar purpose. The `innodb_buffer_pool_size` parameter controls the cache size, with a common recommendation of 70-80% of available memory for dedicated database servers [Source: MySQL Documentation, 2024].
+
+Monitor buffer pool efficiency with:
+
+```sql
+SHOW STATUS LIKE 'Innodb_buffer_pool_read%';
+```
+
+The ratio of `Innodb_buffer_pool_read_requests` to `Innodb_buffer_pool_reads` indicates cache effectiveness. A ratio of 1000:1 or higher indicates excellent caching—nearly all reads are served from memory.
+
+**Query Plan Caches**
+
+Beyond data caching, databases cache query execution plans. Parsing and planning a complex query can take milliseconds. PostgreSQL caches plans for prepared statements, while MySQL caches plans in its query cache (deprecated in MySQL 8.0) and through prepared statements.
+
+Use prepared statements consistently to benefit from plan caching. Parameterized queries that differ only in their bound values share the same cached plan, while dynamically constructed SQL forces replanning for each execution.
+
+**When Database Caching Is Sufficient**
+
+If your database buffer cache hit ratio exceeds 99% and query latencies are acceptable, adding Redis may add complexity without proportional benefit. Database caching is sufficient when:
+
+- Your working set fits comfortably in database memory
+- Queries are well-indexed and return quickly
+- You do not need caching across multiple services
+- Consistency requirements are strict (database caching is always consistent)
+
+Add Redis or other distributed caches when you need to cache across service boundaries, when you need data structures beyond key-value (like sorted sets for leaderboards), or when database load needs to be reduced even for already-cached queries.
+
+### HTTP Caching Mechanics
+
+HTTP caching, governed by RFC 9111 (formerly RFC 7234), provides the protocol-level foundation for CDN and browser caching. Understanding these mechanics is essential for API developers, as small header changes can dramatically affect caching behavior [Source: RFC 9111, 2022].
+
+**Cache-Control Directives**
+
+The `Cache-Control` header is the primary mechanism for controlling caching behavior. Key directives for API responses:
+
+| Directive | Meaning |
+|-----------|---------|
+| `max-age=N` | Cache for N seconds in any cache (browser, CDN, proxies) |
+| `s-maxage=N` | Cache for N seconds in shared caches (CDN) only; overrides max-age for CDN while allowing different browser cache duration |
+| `private` | Response is user-specific; do not cache in shared caches (CDN). Use for authenticated, personalized responses |
+| `public` | Response can be cached by any cache, including shared caches |
+| `no-cache` | Must revalidate with origin before serving cached copy |
+| `no-store` | Never cache this response. Use for sensitive data |
+| `stale-while-revalidate=N` | Serve stale content immediately while fetching fresh content in background |
+| `stale-if-error=N` | Serve stale content if origin returns error |
+
+A typical cacheable API response:
+
+```
+Cache-Control: public, max-age=60, s-maxage=300, stale-while-revalidate=600
+```
+
+This configuration caches in browsers for 60 seconds, in CDN for 5 minutes, and allows serving stale content for up to 10 minutes while revalidating in the background.
+
+**ETags and Conditional Requests**
+
+ETags enable efficient cache revalidation. When a client has a cached response, it can ask the server if the data has changed rather than fetching the entire response again.
+
+<!-- DIAGRAM: HTTP conditional request flow showing: Client with cached response (ETag: "abc123") -> If-None-Match: "abc123" to server -> Server checks current ETag -> [Match: 304 Not Modified, no body transferred] or [Changed: 200 OK with new ETag and full response body] -->
+
+![HTTP Conditional Request Flow](../assets/ch06-conditional-request-flow.html)
+
+The flow works as follows:
+
+1. Server includes `ETag: "abc123"` in the initial response
+2. Client caches the response with its ETag
+3. When cache expires, client sends `If-None-Match: "abc123"` with the request
+4. Server compares the ETag to the current data:
+   - If unchanged: return `304 Not Modified` with no body (saves bandwidth)
+   - If changed: return `200 OK` with new data and new ETag
+
+For API responses, generate ETags from a hash of the response body or from version timestamps. The key is consistency—the same data must always produce the same ETag (see Example 6.6).
+
+```python
+import hashlib
+import json
+
+def generate_etag(data: dict) -> str:
+    content = json.dumps(data, sort_keys=True).encode()
+    return hashlib.sha256(content).hexdigest()[:16]
+```
+
+**stale-while-revalidate: The Hidden Performance Gem**
+
+The `stale-while-revalidate` directive is one of the most underutilized caching features for APIs. It instructs caches to serve stale content immediately while fetching fresh content in the background.
+
+Without stale-while-revalidate, when cached content expires, users wait for the full round trip to the origin. With it, users receive an immediate response while the cache refreshes asynchronously.
+
+```
+Cache-Control: max-age=60, stale-while-revalidate=600
+```
+
+This configuration provides a 60-second "fresh" window where cached content is served directly. After 60 seconds, content is "stale but usable" for 10 minutes. Requests during this window receive the stale content immediately while the cache fetches fresh content for subsequent requests [Source: RFC 5861, 2010].
+
+**stale-if-error: Resilience Through Caching**
+
+The `stale-if-error` directive provides resilience when your origin is unavailable. If the origin returns an error (5xx status codes), the cache can serve stale content rather than forwarding the error to users.
+
+```
+Cache-Control: max-age=60, stale-if-error=86400
+```
+
+This allows serving day-old content if the origin fails—often preferable to showing users an error page. Combined with stale-while-revalidate, this creates a robust caching strategy that degrades gracefully under origin failures [Source: MDN Web Docs, 2024].
+
+**The Vary Header**
+
+The `Vary` header tells caches which request headers affect the response. Without proper Vary configuration, caches may serve incorrect responses.
+
+```
+Vary: Accept-Encoding, Accept-Language
+```
+
+This creates separate cache entries for different encodings and languages. A gzip-compressed English response is cached separately from an uncompressed Spanish response.
+
+Be intentional about Vary headers. Each additional header value fragments the cache, reducing hit rates. `Vary: Cookie` or `Vary: Authorization` effectively disable CDN caching since each user gets unique cache entries.
+
+For authenticated APIs, consider validating authentication at the edge and forwarding a standardized user-id header, allowing the response to be cached per-user-id rather than per-cookie.
+
+### Application-Layer Caching
+
+Application-layer caching operates within your service code, providing fine-grained control over what is cached, for how long, and under what conditions.
+
+**Request-Scoped Caching (Memoization)**
+
+Request-scoped caching stores computed values for the duration of a single request. This is particularly valuable when the same data is needed multiple times during request processing—for example, checking user permissions in multiple middleware layers.
+
+```python
+from functools import lru_cache
+from contextvars import ContextVar
+
+# Request-scoped cache using context variables
+_request_cache: ContextVar[dict] = ContextVar('request_cache', default=None)
+
+def get_request_cache() -> dict:
+    cache = _request_cache.get()
+    if cache is None:
+        cache = {}
+        _request_cache.set(cache)
+    return cache
+
+async def get_user_permissions(user_id: str) -> list[str]:
+    cache = get_request_cache()
+    cache_key = f"permissions:{user_id}"
+
+    if cache_key in cache:
+        return cache[cache_key]
+
+    permissions = await db.fetch_permissions(user_id)
+    cache[cache_key] = permissions
+    return permissions
+```
+
+Request-scoped caching is safe because the cache is automatically discarded when the request completes. There is no risk of serving stale data to other users (see Example 6.7).
+
+**Function Memoization**
+
+For expensive pure functions—those that always return the same output for the same input—memoization caches results indefinitely.
+
+Python's `functools.lru_cache` provides simple memoization:
+
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=1000)
+def parse_complex_configuration(config_string: str) -> dict:
+    # Expensive parsing that produces deterministic output
+    return expensive_parse(config_string)
+```
+
+Rust's `moka` crate provides thread-safe, bounded caching with TTL support:
+
+```rust
+use moka::sync::Cache;
+use std::time::Duration;
+
+let cache: Cache<String, ParsedConfig> = Cache::builder()
+    .max_capacity(1000)
+    .time_to_live(Duration::from_secs(3600))
+    .build();
+```
+
+**The DataLoader Pattern**
+
+The DataLoader pattern, popularized by Facebook for GraphQL, combines batching and caching to solve the N+1 query problem. It collects all data requests during a single tick of the event loop, then executes one batched query.
+
+```typescript
+const userLoader = new DataLoader(async (userIds: string[]) => {
+  const users = await db.users.findMany({
+    where: { id: { in: userIds } }
+  });
+  // Return in same order as requested
+  return userIds.map(id => users.find(u => u.id === id));
+});
+
+// These calls are batched into a single database query
+const [user1, user2, user3] = await Promise.all([
+  userLoader.load("user-1"),
+  userLoader.load("user-2"),
+  userLoader.load("user-3"),
+]);
+```
+
+DataLoader provides per-request caching: if user-1 is requested twice during the same request, the second call returns the cached result. This eliminates duplicate queries without risking stale data across requests [Source: DataLoader Documentation, 2024].
+
+For more on DataLoader and GraphQL optimization, see [Chapter 13: Advanced Techniques](./13-advanced-techniques.md).
+
+### Distributed Cache Patterns
+
+Distributed caches like Redis provide shared caching across multiple application instances. They introduce new considerations around consistency, invalidation, and failure handling.
 
 **Cache-Aside (Lazy Loading)**
 
@@ -63,6 +315,10 @@ Cache-aside is the most common caching pattern. The application is responsible f
 3. If not found (cache miss), fetch from the database
 4. Store the result in the cache for future requests
 5. Return the data
+
+<!-- DIAGRAM: Cache-aside pattern sequence diagram showing: Client -> Application -> Check Cache -> [Hit: return cached data] or [Miss: Query Database -> Store result in Cache -> return data to client] -->
+
+![Cache-Aside Pattern](../assets/ch05-cache-aside-pattern.html)
 
 This pattern works well for read-heavy workloads where data is read far more often than written. The cache naturally fills with frequently accessed data, and rarely accessed data expires without consuming cache memory (see Example 6.1).
 
@@ -82,6 +338,111 @@ This pattern is suitable for high-write-volume scenarios where some data loss is
 
 ![Write-Through vs Write-Behind Patterns](../assets/ch05-write-patterns.html)
 
+**Redis Pub/Sub for Distributed Invalidation**
+
+When an API service is scaled horizontally across multiple instances, each instance may maintain its own in-memory cache. If one instance updates data, others continue serving stale content.
+
+Redis Pub/Sub provides a lightweight solution. When data changes, publish an invalidation message. All service instances subscribe to the channel and invalidate their local caches accordingly.
+
+<!-- DIAGRAM: Redis Pub/Sub cache invalidation across instances: Service Instance A writes to DB -> Publishes "invalidate:user:123" to Redis -> Service Instances B, C, D receive message -> Each invalidates local cache entry -->
+
+![Redis Pub/Sub Cache Invalidation](../assets/ch06-redis-pubsub-invalidation.html)
+
+```python
+import redis.asyncio as redis
+
+# Publisher: after updating user data
+async def invalidate_user_cache(user_id: str):
+    await redis_client.publish('cache:invalidate', f'user:{user_id}')
+
+# Subscriber: running in each service instance
+async def cache_invalidation_listener():
+    pubsub = redis_client.pubsub()
+    await pubsub.subscribe('cache:invalidate')
+    async for message in pubsub.listen():
+        if message['type'] == 'message':
+            key = message['data'].decode()
+            local_cache.delete(key)
+```
+
+Note that Pub/Sub is best-effort and non-persistent. If a service is restarted during a publish, it may miss the message. Combine Pub/Sub invalidation with TTL-based expiration as a fallback (see Example 6.8).
+
+**Redis 6+ Client-Side Caching**
+
+Redis 6 introduced server-assisted client-side caching. The server tracks which keys each client has accessed and sends invalidation messages when those keys change.
+
+```python
+# Redis 6+ client-side caching with tracking
+client = redis.Redis(host='localhost', port=6379)
+client.client_tracking_on()  # Enable server-side tracking
+
+# When you GET a key, Redis remembers you accessed it
+value = client.get('user:123')
+
+# If another client modifies 'user:123', Redis sends an invalidation
+# to all clients that accessed it
+```
+
+This provides the benefits of local caching with automatic, server-driven invalidation. The trade-off is increased memory usage on the Redis server to track client access patterns [Source: Redis Documentation, 2024].
+
+### Edge and CDN Caching for APIs
+
+CDN caching for APIs differs from static asset caching in important ways. API responses are often personalized, authenticated, or dynamic. Effective CDN caching requires intentional configuration.
+
+**Why APIs Need Different CDN Strategies**
+
+Static assets like images and JavaScript files are identical for all users and change infrequently. API responses may vary by:
+
+- User identity (personalized content)
+- Request parameters (pagination, filters)
+- Request headers (Accept-Language, Accept-Encoding)
+- Time of day (real-time data)
+
+Naive CDN caching of API responses can serve incorrect data to users. Intentional cache key design and header configuration are essential.
+
+**Cache Keys for API Responses**
+
+The cache key determines when a cached response can be reused. By default, CDNs key on URL only. This is insufficient for APIs where the same URL may return different responses based on headers or authentication.
+
+Configure cache keys to include relevant request characteristics:
+
+```
+# Cloudflare Cache Rule (pseudo-code)
+Match: URL path starts with /api/products
+Cache Key Includes: URL, Accept-Language header, query string
+Cache-Control: s-maxage=300
+```
+
+Be intentional about what is included. Each additional cache key component fragments the cache. Including `Cookie` in the cache key effectively disables caching.
+
+**Surrogate Keys for Targeted Invalidation**
+
+Surrogate keys (also called cache tags) enable invalidation by logical entity rather than URL pattern. Tag responses with the entities they contain:
+
+```
+Surrogate-Key: product-123 category-electronics user-456
+```
+
+When product 123's data changes, purge all responses tagged with `product-123` across all edge locations. This is far more precise than attempting to guess all URL patterns that might include product 123.
+
+Cloudflare's Cache Tags, Fastly's Surrogate-Key, and Akamai's Edge-Cache-Tag provide this capability.
+
+**When to Use Edge Caching**
+
+Edge caching is most effective for:
+
+- **Read-heavy, public data**: Product catalogs, content feeds, reference data
+- **Geographically distributed users**: Edge cache eliminates cross-continent latency
+- **High-volume endpoints**: Offloading popular endpoints reduces origin load
+
+Edge caching is less suitable for:
+
+- **User-specific data**: Per-user cache entries fragment the cache
+- **Rapidly changing data**: High invalidation frequency negates caching benefits
+- **Strong consistency requirements**: Edge eventual consistency may be unacceptable
+
+For comprehensive coverage of CDN architecture, edge workers, edge data stores, and edge authentication, see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md).
+
 ### Cache Invalidation Strategies
 
 Cache invalidation determines how stale data is removed or updated. The choice of strategy depends on your consistency requirements and the nature of your data.
@@ -90,53 +451,396 @@ Cache invalidation determines how stale data is removed or updated. The choice o
 
 Time-to-live (TTL) is the simplest invalidation strategy: cached data automatically expires after a fixed duration. A TTL of 300 seconds means data may be up to 5 minutes stale, which is acceptable for many use cases.
 
-The challenge is choosing the right TTL. Too short, and the cache provides little benefit. Too long, and users see stale data. For most API data, TTLs between 60 seconds and 1 hour strike a reasonable balance, but the optimal value depends on your specific data's update frequency and staleness tolerance.
+The challenge is choosing the right TTL:
+
+- **Too short**: Cache provides little benefit; requests still hit the database
+- **Too long**: Users see stale data; changes take too long to propagate
+
+For most API data, TTLs between 60 seconds and 1 hour strike a reasonable balance. The optimal value depends on your specific data's update frequency and staleness tolerance.
 
 **Event-Based Invalidation**
 
-Event-based invalidation removes cached data when the underlying data changes. When a user updates their profile, the application explicitly deletes the cached profile data. This provides strong consistency at the cost of additional invalidation logic.
+Event-based invalidation removes cached data when the underlying data changes. When a user updates their profile, the application explicitly deletes the cached profile data.
 
 The Facebook paper "Scaling Memcache at Facebook" describes their invalidation pipeline where database writes trigger cache invalidations across their globally distributed Memcached clusters. They found that event-based invalidation was essential for maintaining consistency at scale [Source: Nishtala et al., "Scaling Memcache at Facebook," NSDI 2013].
 
+Implement event-based invalidation using:
+
+1. **Direct invalidation**: Application code deletes cache entries after writes
+2. **Change Data Capture (CDC)**: Database change events trigger cache invalidation
+3. **Pub/Sub messaging**: Publish invalidation events; all services subscribe
+
 **Version-Based Invalidation**
 
-Version-based caching embeds a version identifier in the cache key. When data changes, the version increments, effectively creating a new cache key. Old versions naturally expire via TTL while new requests use the new version.
+Version-based caching embeds a version identifier in the cache key. When data changes, the version increments, effectively creating a new cache key.
+
+```python
+def get_user_cache_key(user_id: str, version: int) -> str:
+    return f"user:{user_id}:v{version}"
+
+# When user data changes, increment version in database
+# Old cache entries naturally expire via TTL
+```
 
 This pattern is particularly useful for configuration data or feature flags where you want an immediate switch across all instances. Changing the version causes all instances to fetch fresh data, achieving coordinated invalidation without explicit communication.
+
+**Surrogate Key Purging**
+
+For CDN caches, surrogate keys enable targeted invalidation. When product data changes, purge by tag:
+
+```bash
+# Purge all responses tagged with product-123
+curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" \
+  -H "Authorization: Bearer {api_token}" \
+  -d '{"tags":["product-123"]}'
+```
+
+This invalidates all cached responses that contain product 123, regardless of URL structure. Surrogate key purging is typically fast (sub-second) across global CDN networks [Source: Cloudflare Documentation, 2024].
 
 ### The Thundering Herd Problem
 
 The thundering herd (also called cache stampede) occurs when a popular cache entry expires and many concurrent requests simultaneously attempt to regenerate it. If 1000 requests arrive in the moment after a cache entry expires, all 1000 may attempt to fetch from the database simultaneously, potentially overwhelming it.
 
-<!-- DIAGRAM: Thundering herd problem visualization: Single cache entry expires -> 100 simultaneous requests arrive -> All 100 hit database simultaneously (database overload). Solution: Single-flight pattern where first request acquires lock, other 99 wait, only 1 database query executes, all 100 receive result -->
+This is not a theoretical concern. Cache stampedes have caused outages at companies of all sizes. The mitigation strategies below should be considered essential for any production caching system.
 
-![Thundering Herd Problem and Solution](../assets/ch05-thundering-herd.html)
+<!-- DIAGRAM: Thundering herd mitigation strategies comparison showing four solutions side-by-side: 1) Single-flight: Lock acquired by first request, others wait, single DB query 2) Probabilistic early expiration: Requests have increasing probability of refresh as TTL approaches, spreads load over time 3) TTL with jitter: Entries expire at random times within range (e.g., 270-330s), prevents synchronized expiration 4) stale-while-revalidate: Serve stale immediately, refresh in background, no user-facing delay -->
+
+![Thundering Herd Mitigation Strategies](../assets/ch06-thundering-herd-strategies.html)
 
 **Single-Flight Pattern**
 
-The single-flight pattern ensures only one request regenerates a cache entry while others wait for its result. The first request to find an expired entry acquires a lock, fetches the data, and populates the cache. Concurrent requests that arrive during this window wait for the first request to complete rather than independently fetching the data (see Example 6.3).
+The single-flight pattern ensures only one request regenerates a cache entry while others wait for its result. The first request to find an expired entry acquires a lock, fetches the data, and populates the cache. Concurrent requests that arrive during this window wait for the first request to complete rather than independently fetching the data.
 
-This pattern is implemented in Go's `golang.org/x/sync/singleflight` package and similar libraries in other languages. It is essential for any cache key that experiences high concurrent access.
+This pattern is implemented in Go's `golang.org/x/sync/singleflight` package and similar libraries in other languages (see Example 6.3).
 
-**Probabilistic Early Expiration**
+**Implementation considerations:**
 
-An alternative approach is probabilistic early expiration: instead of all requests treating the TTL as a hard deadline, each request has a small probability of refreshing the cache before expiration. This spreads cache regeneration over time, reducing the likelihood of simultaneous expirations.
+- **Lock timeout**: Prevent deadlocks if the first request fails. Set a maximum wait time after which waiting requests proceed independently.
+- **Lock scope**: Use distributed locks (Redis-based) for multi-instance deployments. Process-local locks only prevent stampedes within a single instance.
+- **Error handling**: If the first request fails, the lock should be released immediately so another request can retry.
 
-The probability increases as the TTL approaches expiration. With a TTL of 300 seconds, a request at 290 seconds might have a 5% chance of proactively refreshing, while a request at 299 seconds might have a 20% chance.
+```python
+import asyncio
+from typing import Callable, TypeVar, Awaitable
+
+T = TypeVar('T')
+
+class SingleFlight:
+    def __init__(self):
+        self._in_flight: dict[str, asyncio.Future] = {}
+        self._locks: dict[str, asyncio.Lock] = {}
+
+    async def do(self, key: str, fn: Callable[[], Awaitable[T]], timeout: float = 30.0) -> T:
+        # Check if request is already in flight
+        if key in self._in_flight:
+            return await asyncio.wait_for(self._in_flight[key], timeout)
+
+        # Create a lock for this key
+        if key not in self._locks:
+            self._locks[key] = asyncio.Lock()
+
+        async with self._locks[key]:
+            # Double-check after acquiring lock
+            if key in self._in_flight:
+                return await asyncio.wait_for(self._in_flight[key], timeout)
+
+            # We're the first - create future and execute
+            future = asyncio.get_event_loop().create_future()
+            self._in_flight[key] = future
+
+            try:
+                result = await fn()
+                future.set_result(result)
+                return result
+            except Exception as e:
+                future.set_exception(e)
+                raise
+            finally:
+                del self._in_flight[key]
+```
+
+**Probabilistic Early Expiration (XFetch)**
+
+Probabilistic early expiration, formalized as the XFetch algorithm, spreads cache regeneration over time by having requests probabilistically refresh the cache before TTL expiration. The probability increases as the TTL approaches.
+
+The algorithm works as follows: when a request accesses a cache entry, it calculates the probability of early refresh based on remaining TTL and a configurable "beta" parameter. A random value determines whether this request should refresh the cache.
+
+```python
+import math
+import random
+import time
+
+def should_refresh_xfetch(
+    expiry_time: float,
+    delta: float,  # Time to recompute the value
+    beta: float = 1.0  # Higher beta = more aggressive early refresh
+) -> bool:
+    """
+    XFetch algorithm for probabilistic early expiration.
+    Returns True if this request should refresh the cache.
+    """
+    now = time.time()
+    time_to_expiry = expiry_time - now
+
+    if time_to_expiry <= 0:
+        return True  # Already expired
+
+    # Probability increases as expiry approaches
+    # Uses exponential distribution scaled by delta and beta
+    random_value = random.random()
+    threshold = delta * beta * math.log(random_value)
+
+    return time_to_expiry + threshold <= 0
+```
+
+With beta = 1 and a delta of 1 second (time to recompute), the probability of early refresh begins to increase significantly about 2-3 seconds before expiration. This spreads load over time rather than concentrating it at the expiration moment [Source: Vattani et al., "Optimal Probabilistic Cache Stampede Prevention," VLDB 2015].
 
 **TTL with Jitter**
 
-Adding randomized jitter to TTL values prevents synchronized expiration across cache entries. Instead of all entries expiring at exactly 300 seconds, they expire between 270 and 330 seconds (see Example 6.2). This simple technique significantly reduces the severity of thundering herd events.
+Adding randomized jitter to TTL values prevents synchronized expiration across cache entries. Instead of all entries expiring at exactly 300 seconds, they expire between 270 and 330 seconds.
+
+```python
+import random
+
+def ttl_with_jitter(base_ttl: int, jitter_percent: float = 0.1) -> int:
+    """
+    Calculate TTL with random jitter to prevent thundering herd.
+
+    Args:
+        base_ttl: Base TTL in seconds
+        jitter_percent: Maximum jitter as percentage (0.1 = +/-10%)
+    """
+    jitter_range = int(base_ttl * jitter_percent)
+    jitter = random.randint(-jitter_range, jitter_range)
+    return max(1, base_ttl + jitter)  # Ensure positive TTL
+
+# Usage: TTL of 300s +/- 30s
+ttl = ttl_with_jitter(300, jitter_percent=0.1)  # Returns 270-330
+```
+
+This technique is particularly effective when populating caches in bulk (such as during startup or cache warming) to prevent all entries from expiring simultaneously (see Example 6.2).
+
+**stale-while-revalidate**
+
+At the HTTP layer, `stale-while-revalidate` provides thundering herd protection at CDNs and reverse proxies. When a cache entry expires, the CDN serves the stale content immediately while fetching fresh content in the background. Only one background fetch occurs regardless of concurrent requests.
+
+```
+Cache-Control: max-age=60, stale-while-revalidate=600
+```
+
+This approach is powerful because it eliminates user-visible latency during cache refresh. Users always receive an immediate response, even when the cache is refreshing.
+
+**Background Refresh / Cache Warming**
+
+Proactive background refresh eliminates cache misses entirely by refreshing entries before they expire. A background process periodically identifies entries approaching expiration and refreshes them.
+
+```python
+async def cache_warming_loop():
+    """Background task that refreshes entries approaching expiration."""
+    while True:
+        # Find entries expiring within the next 5 minutes
+        expiring_keys = await redis.zrangebyscore(
+            'cache:expiry_index',
+            min=time.time(),
+            max=time.time() + 300
+        )
+
+        for key in expiring_keys:
+            await refresh_cache_entry(key)
+
+        await asyncio.sleep(60)  # Check every minute
+```
+
+This pattern is appropriate for high-value, predictable access patterns where cache misses are particularly costly.
+
+### Advanced Patterns
+
+Beyond the fundamental patterns, several advanced techniques address specific caching challenges.
+
+**Negative Caching**
+
+Negative caching stores the absence of data. When a query returns no results (a 404 or empty set), cache that fact to prevent repeated database queries for nonexistent data.
+
+```typescript
+async function getUserById(userId: string): Promise<User | null> {
+  const cached = await cache.get(`user:${userId}`);
+
+  if (cached === 'NOT_FOUND') {
+    return null;  // Cached negative result
+  }
+
+  if (cached) {
+    return JSON.parse(cached);
+  }
+
+  const user = await db.findUser(userId);
+
+  if (user) {
+    await cache.set(`user:${userId}`, JSON.stringify(user), 'EX', 3600);
+  } else {
+    // Cache the negative result with shorter TTL
+    await cache.set(`user:${userId}`, 'NOT_FOUND', 'EX', 300);
+  }
+
+  return user;
+}
+```
+
+Use shorter TTLs for negative results. If data is created later, you do not want to cache "not found" for hours (see Example 6.10).
+
+**Request Coalescing**
+
+Request coalescing combines multiple identical concurrent requests into a single backend call. Unlike single-flight (which operates on cache population), coalescing operates on the request itself.
+
+CDNs like Cloudflare and Fastly implement request coalescing automatically. When multiple requests for the same resource arrive simultaneously, only one request goes to origin. Other requests wait and receive the same response.
+
+At the application level, implement coalescing using the same single-flight pattern:
+
+```python
+# Multiple concurrent calls for the same user are coalesced
+user_1 = await single_flight.do(f'user:{user_id}', lambda: fetch_user(user_id))
+user_2 = await single_flight.do(f'user:{user_id}', lambda: fetch_user(user_id))
+# Only one fetch_user call actually executes
+```
+
+**Multi-Tier Cache Coordination**
+
+When using multiple cache layers (L1 in-process + L2 Redis), coordinate invalidation across tiers.
+
+<!-- DIAGRAM: Multi-tier caching showing: Request -> L1 In-Process Cache (microseconds) -> L2 Redis (1-5ms) -> Database (10-100ms), with invalidation arrows flowing back through layers. When data changes: invalidate L2, then broadcast to invalidate all L1 instances -->
+
+![Multi-Tier Cache Coordination](../assets/ch06-multi-tier-cache.html)
+
+The pattern:
+
+1. **Read path**: Check L1 first, then L2, then database
+2. **Write path**: Write to database, invalidate L2, broadcast L1 invalidation
+3. **L1 TTL**: Keep short (seconds to minutes) to limit stale data exposure
+4. **L2 TTL**: Can be longer since invalidation is explicit
+
+```python
+async def get_with_multi_tier(key: str) -> Optional[dict]:
+    # L1: In-process cache (fastest)
+    if key in local_cache:
+        return local_cache[key]
+
+    # L2: Redis (shared across instances)
+    value = await redis.get(key)
+    if value:
+        local_cache[key] = json.loads(value)
+        return local_cache[key]
+
+    # L3: Database (slowest)
+    value = await db.fetch(key)
+    if value:
+        await redis.setex(key, 3600, json.dumps(value))
+        local_cache[key] = value
+
+    return value
+
+async def invalidate_multi_tier(key: str):
+    # Delete from L2
+    await redis.delete(key)
+
+    # Broadcast L1 invalidation to all instances
+    await redis.publish('cache:invalidate', key)
+```
+
+(see Example 6.9 for a complete Rust implementation).
+
+**Proxy Caching**
+
+Reverse proxies like Varnish and nginx can cache API responses before they reach your application, providing an additional caching layer with sophisticated configuration options.
+
+Varnish, in particular, excels at API caching with features like:
+
+- **Grace mode**: Serve stale content while fetching fresh (similar to stale-while-revalidate)
+- **Saint mode**: Temporarily mark backends as unhealthy and serve stale content
+- **Request coalescing**: Collapse identical concurrent requests
+
+For most deployments, CDN caching (L3) provides similar benefits with less operational overhead. Consider proxy caching when you need caching logic more sophisticated than CDN rules allow or when operating in environments where CDN is not feasible.
 
 ### Monitoring Cache Effectiveness
 
-Regardless of which caching pattern or invalidation strategy we choose, measuring cache performance is essential for data-driven optimization. Key metrics include cache hit rate, miss rate, and operation latency. Without instrumentation, we cannot know whether our cache is providing value or simply adding complexity (see Example 6.4).
+Regardless of which caching pattern or invalidation strategy we choose, measuring cache performance is essential for data-driven optimization. Without instrumentation, we cannot know whether our cache is providing value or simply adding complexity.
 
-For implementation examples related to these concepts, see the [Appendix: Code Examples](./13-appendix-code-examples.md).
+**Key Metrics**
+
+| Metric | What It Measures | Target |
+|--------|------------------|--------|
+| **Hit rate** | Percentage of requests served from cache | >90% for most workloads |
+| **Miss rate** | Percentage of requests requiring origin fetch | <10% |
+| **Eviction rate** | How often entries are evicted (memory pressure) | Low and stable |
+| **Latency (hit)** | Response time for cache hits | <5ms for Redis, <1ms for in-process |
+| **Latency (miss)** | Response time for cache misses | Baseline without cache |
+| **Memory usage** | Cache memory consumption | Below configured limit |
+| **Key count** | Number of entries in cache | Understand working set size |
+
+**Database Cache Monitoring**
+
+Monitor your database buffer cache hit ratio. For PostgreSQL (see Example 6.5):
+
+```sql
+-- Overall buffer cache hit ratio
+SELECT
+  sum(blks_hit) / nullif(sum(blks_hit) + sum(blks_read), 0) AS hit_ratio
+FROM pg_stat_database;
+
+-- Per-table hit ratios (identify hot tables)
+SELECT
+  schemaname, relname,
+  heap_blks_hit / nullif(heap_blks_hit + heap_blks_read, 0) AS heap_hit_ratio,
+  idx_blks_hit / nullif(idx_blks_hit + idx_blks_read, 0) AS index_hit_ratio
+FROM pg_statio_user_tables
+ORDER BY heap_blks_read DESC
+LIMIT 20;
+```
+
+**Redis Cache Monitoring**
+
+Redis provides built-in metrics via the INFO command:
+
+```bash
+$ redis-cli INFO stats | grep -E 'keyspace_hits|keyspace_misses'
+keyspace_hits:1234567
+keyspace_misses:12345
+
+# Calculate hit rate: hits / (hits + misses)
+# 1234567 / (1234567 + 12345) = 99.0%
+```
+
+Also monitor:
+
+- `used_memory` vs `maxmemory`: Are you approaching memory limits?
+- `evicted_keys`: High eviction rate indicates memory pressure
+- `connected_clients`: Connection pool sizing
+- `instantaneous_ops_per_sec`: Throughput capacity
+
+**CDN Cache Monitoring**
+
+CDN providers expose cache metrics through dashboards and APIs:
+
+- **Cache hit ratio by endpoint**: Identify which endpoints benefit from caching
+- **Origin request reduction**: How much load is offloaded from origin
+- **Geographic hit distribution**: Cache performance by edge location
+- **Bandwidth savings**: Data transferred from cache vs origin
+
+Cloudflare's `cf-cache-status` header in responses indicates cache behavior: `HIT`, `MISS`, `EXPIRED`, `BYPASS`, `DYNAMIC`. Log and aggregate these values to understand caching effectiveness (see Example 6.4).
+
+**Alerting on Cache Degradation**
+
+Set alerts for cache performance degradation:
+
+- **Hit rate drops below 80%**: Investigate cache key fragmentation or invalidation storms
+- **Eviction rate spikes**: Memory pressure; consider increasing cache size
+- **Latency increases**: Network issues, hot keys, or cache overload
+- **Connection errors**: Redis availability problems
 
 ## Common Pitfalls
 
 - **Caching without measuring hit rate**: A cache with a low hit rate wastes memory and adds latency for cache checks. Always instrument your cache and monitor hit rates. A hit rate below 80% often indicates poor cache key design or inappropriate TTLs.
+
+- **Ignoring database buffer cache**: Adding Redis for data that is already well-cached by the database adds complexity without proportional benefit. Measure database buffer cache hit ratio before adding application-level caching.
 
 - **Ignoring cache key collisions**: Poor cache key design can cause different data to share the same key, leading to incorrect responses. Always include all parameters that affect the response in the cache key, and consider including a version prefix.
 
@@ -144,29 +848,41 @@ For implementation examples related to these concepts, see the [Appendix: Code E
 
 - **Caching personalized data with shared keys**: User-specific data cached under generic keys can leak to other users—a serious security vulnerability. Always include user identifiers in cache keys for personalized data.
 
-- **Synchronous cache invalidation across distributed systems**: Attempting to synchronously invalidate caches across multiple services or regions introduces coupling and latency. Prefer eventual consistency with reasonable TTLs.
+- **Synchronous cache invalidation across distributed systems**: Attempting to synchronously invalidate caches across multiple services or regions introduces coupling and latency. Prefer eventual consistency with reasonable TTLs, or use async invalidation via Pub/Sub.
 
-- **Not accounting for cache stampede**: Popular cache entries expiring under high load can overwhelm databases. Implement single-flight, probabilistic early expiration, or TTL jitter to mitigate thundering herd.
+- **Not accounting for cache stampede**: Popular cache entries expiring under high load can overwhelm databases. Implement single-flight, probabilistic early expiration, stale-while-revalidate, or TTL jitter to mitigate thundering herd.
 
-- **Caching errors**: Caching error responses at long TTLs can make temporary failures permanent from the user's perspective. Either do not cache errors, or use very short TTLs (seconds, not minutes).
+- **Caching errors indefinitely**: Caching error responses at long TTLs can make temporary failures permanent from the user's perspective. Either do not cache errors, or use very short TTLs (seconds, not minutes). Consider using `stale-if-error` to serve stale content during origin failures.
 
 - **Over-relying on cache for availability**: If your application cannot function during a cache outage, the cache has become a single point of failure. Design for graceful degradation when the cache is unavailable.
 
+- **Over-fragmenting CDN cache with Vary headers**: Each Vary header value multiplies cache entries. `Vary: Cookie` effectively disables CDN caching. Be intentional about cache key components.
+
+- **Missing stale-while-revalidate for API resilience**: Not using `stale-while-revalidate` and `stale-if-error` means users experience latency spikes during revalidation and errors during origin failures.
+
+- **Not using prepared statements**: Beyond preventing SQL injection, prepared statements enable query plan caching. Dynamic SQL forces replanning for each query.
+
 ## Summary
 
-- The cache hierarchy—browser, CDN, distributed cache, in-process cache—provides multiple opportunities to serve requests without hitting the origin database. Place data at the layer that best matches its access patterns and consistency requirements.
+- **The cache hierarchy**—database buffers, in-process cache, distributed cache, CDN, browser—provides multiple opportunities to serve requests without hitting the origin database. Understand and monitor your database's internal caching before adding application-level caches.
 
-- Cache-aside (lazy loading) is the most common pattern, suitable for read-heavy workloads. Write-through provides stronger consistency at the cost of write latency. Write-behind minimizes write latency but risks data loss.
+- **Database internal caching** is often overlooked. PostgreSQL shared_buffers and MySQL InnoDB buffer pool cache data pages in memory. Monitor buffer cache hit ratios; a 99% hit rate may obviate the need for Redis for the same data.
 
-- TTL-based expiration is simple and effective for most use cases. Event-based invalidation provides stronger consistency when needed. Version-based invalidation enables coordinated cache refresh across instances.
+- **HTTP caching mechanics** (Cache-Control, ETags, stale-while-revalidate) control CDN and browser behavior. Use `stale-while-revalidate` for latency-free cache refresh and `stale-if-error` for resilience during origin failures.
 
-- The thundering herd problem can overwhelm databases when popular cache entries expire. Mitigation strategies include the single-flight pattern, probabilistic early expiration, and TTL with jitter.
+- **Application-layer caching** includes request-scoped memoization (safe, per-request), function memoization (for pure functions), and the DataLoader pattern (batching + caching for N+1 elimination).
 
-- Always measure cache effectiveness. Key metrics include hit rate, miss rate, latency, and eviction rate. A cache hit rate target of 90% or higher is reasonable for most API workloads.
+- **Distributed cache patterns** like cache-aside are foundational. Use Redis Pub/Sub for cross-instance invalidation. Redis 6+ client-side caching provides automatic, server-driven invalidation.
 
-- Cache invalidation is genuinely difficult. When in doubt, prefer shorter TTLs over complex invalidation logic—the simplicity often outweighs the slight efficiency cost.
+- **Edge caching for APIs** requires intentional configuration. Use surrogate keys for targeted invalidation. Avoid Vary: Cookie which fragments the cache per-user.
 
-- Caching introduces trade-offs between consistency, latency, and complexity. Make these trade-offs explicitly, document your cache's consistency guarantees, and ensure your team understands the implications.
+- **Cache invalidation strategies** include TTL-based (simple), event-based (consistent), and version-based (coordinated). Match the strategy to your consistency requirements.
+
+- **The thundering herd problem** is real and dangerous. Mitigation strategies include single-flight (one request regenerates, others wait), probabilistic early expiration (spread load over time), TTL jitter (prevent synchronized expiration), and stale-while-revalidate (serve stale while refreshing).
+
+- **Advanced patterns** include negative caching (cache "not found"), request coalescing (combine identical requests), multi-tier coordination (L1 + L2), and background refresh (proactive cache warming).
+
+- **Monitor cache effectiveness** across all layers. Key metrics: hit rate (>90%), miss rate (<10%), eviction rate (low and stable), latency (sub-5ms for Redis). Alert on degradation.
 
 ## References
 
@@ -176,12 +892,26 @@ For implementation examples related to these concepts, see the [Appendix: Code E
 
 3. **Cloudflare** (2023). "Caching Static and Dynamic Content." https://developers.cloudflare.com/cache/
 
-4. **RFC 7234** (2014). "Hypertext Transfer Protocol (HTTP/1.1): Caching." https://tools.ietf.org/html/rfc7234
+4. **RFC 9111** (2022). "HTTP Caching." https://httpwg.org/specs/rfc9111.html
 
-5. **Veeraraghavan, K., et al.** (2016). "Kraken: Leveraging Live Traffic Tests to Identify and Resolve Resource Utilization Bottlenecks in Large Scale Web Services." OSDI 2016.
+5. **RFC 5861** (2010). "HTTP Cache-Control Extensions for Stale Content." https://tools.ietf.org/html/rfc5861
 
-6. **Fitzpatrick, B.** (2004). "Distributed Caching with Memcached." Linux Journal.
+6. **Vattani, A., et al.** (2015). "Optimal Probabilistic Cache Stampede Prevention." VLDB Endowment.
 
-## Next: [Chapter 7: Database Performance Patterns](./07-database-patterns.md)
+7. **PostgreSQL Documentation** (2024). "Resource Consumption - shared_buffers." https://www.postgresql.org/docs/current/runtime-config-resource.html
 
-With caching strategies in place to reduce load on our data stores, the next chapter examines how to optimize the database layer itself through query optimization, indexing strategies, and connection management.
+8. **MySQL Documentation** (2024). "InnoDB Buffer Pool." https://dev.mysql.com/doc/refman/8.0/en/innodb-buffer-pool.html
+
+9. **MDN Web Docs** (2024). "HTTP Caching." https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching
+
+10. **DataLoader Documentation** (2024). "DataLoader for GraphQL." https://github.com/graphql/dataloader
+
+11. **Fitzpatrick, B.** (2004). "Distributed Caching with Memcached." Linux Journal.
+
+12. **Veeraraghavan, K., et al.** (2016). "Kraken: Leveraging Live Traffic Tests to Identify and Resolve Resource Utilization Bottlenecks in Large Scale Web Services." OSDI 2016.
+
+For implementation examples related to these concepts, see the [Appendix: Code Examples](./15-appendix-code-examples.md).
+
+## Next: [Chapter 7: Database and Storage Selection](./07-database-patterns.md)
+
+With caching strategies in place, the next chapter addresses a more fundamental question: which database type fits which access pattern? We examine when to use relational databases, document stores, key-value stores, wide-column databases, vector databases, and search engines.

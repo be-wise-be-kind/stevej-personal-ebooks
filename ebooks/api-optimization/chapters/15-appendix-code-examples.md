@@ -1256,11 +1256,507 @@ class CompressionMiddleware(BaseHTTPMiddleware):
                        headers=headers, media_type=response.media_type)
 ```
 
+### Example A.14: WebSocket Server with Connection Management (Python)
+
+A WebSocket server implementation that tracks connections, handles broadcasts, and manages connection lifecycle with proper cleanup.
+
+```python
+# WebSocket server with connection management in Python
+import asyncio
+from dataclasses import dataclass, field
+from typing import Set
+import websockets
+from websockets.server import WebSocketServerProtocol
+import json
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+@dataclass
+class ConnectionManager:
+    """Manages WebSocket connections with tracking and broadcast support."""
+    connections: Set[WebSocketServerProtocol] = field(default_factory=set)
+    max_connections: int = 10000
+
+    async def connect(self, websocket: WebSocketServerProtocol) -> bool:
+        """Register a new connection. Returns False if limit exceeded."""
+        if len(self.connections) >= self.max_connections:
+            logger.warning(f"Connection limit reached: {self.max_connections}")
+            return False
+        self.connections.add(websocket)
+        logger.info(f"Client connected. Total: {len(self.connections)}")
+        return True
+
+    def disconnect(self, websocket: WebSocketServerProtocol) -> None:
+        """Remove a connection from tracking."""
+        self.connections.discard(websocket)
+        logger.info(f"Client disconnected. Total: {len(self.connections)}")
+
+    async def broadcast(self, message: str, exclude: WebSocketServerProtocol = None) -> None:
+        """Send message to all connected clients, optionally excluding one."""
+        if not self.connections:
+            return
+
+        targets = [ws for ws in self.connections if ws != exclude]
+        if targets:
+            await asyncio.gather(
+                *[self._safe_send(ws, message) for ws in targets],
+                return_exceptions=True
+            )
+
+    async def _safe_send(self, websocket: WebSocketServerProtocol, message: str) -> None:
+        """Send message with error handling for disconnected clients."""
+        try:
+            await websocket.send(message)
+        except websockets.exceptions.ConnectionClosed:
+            self.disconnect(websocket)
+
+manager = ConnectionManager()
+
+async def handler(websocket: WebSocketServerProtocol) -> None:
+    """Handle individual WebSocket connection."""
+    if not await manager.connect(websocket):
+        await websocket.close(1013, "Server at capacity")
+        return
+
+    try:
+        async for message in websocket:
+            data = json.loads(message)
+            # Echo back and broadcast to others
+            await websocket.send(json.dumps({"type": "ack", "id": data.get("id")}))
+            await manager.broadcast(message, exclude=websocket)
+    except websockets.exceptions.ConnectionClosed:
+        pass
+    finally:
+        manager.disconnect(websocket)
+
+async def main():
+    async with websockets.serve(handler, "localhost", 8765, ping_interval=30, ping_timeout=10):
+        await asyncio.Future()  # Run forever
+
+# asyncio.run(main())
+```
+
+### Example A.15: WebSocket Heartbeat and Reconnection (TypeScript)
+
+Client-side WebSocket wrapper with automatic heartbeat, reconnection with exponential backoff, and connection state tracking.
+
+```typescript
+// WebSocket client with heartbeat and reconnection in TypeScript
+type ConnectionState = 'connecting' | 'connected' | 'disconnected' | 'reconnecting';
+type MessageHandler = (data: unknown) => void;
+
+interface WebSocketConfig {
+  url: string;
+  heartbeatIntervalMs: number;
+  reconnectBaseDelayMs: number;
+  maxReconnectDelayMs: number;
+  maxReconnectAttempts: number;
+}
+
+class ResilientWebSocket {
+  private ws: WebSocket | null = null;
+  private state: ConnectionState = 'disconnected';
+  private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
+  private reconnectAttempts = 0;
+  private messageHandlers: Set<MessageHandler> = new Set();
+  private config: WebSocketConfig;
+
+  constructor(config: Partial<WebSocketConfig> & { url: string }) {
+    this.config = {
+      heartbeatIntervalMs: 30000,
+      reconnectBaseDelayMs: 1000,
+      maxReconnectDelayMs: 30000,
+      maxReconnectAttempts: 10,
+      ...config,
+    };
+  }
+
+  connect(): void {
+    if (this.state === 'connected' || this.state === 'connecting') return;
+
+    this.state = this.reconnectAttempts > 0 ? 'reconnecting' : 'connecting';
+    this.ws = new WebSocket(this.config.url);
+
+    this.ws.onopen = () => {
+      this.state = 'connected';
+      this.reconnectAttempts = 0;
+      this.startHeartbeat();
+      console.log('WebSocket connected');
+    };
+
+    this.ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'pong') return; // Heartbeat response
+      this.messageHandlers.forEach(handler => handler(data));
+    };
+
+    this.ws.onclose = (event) => {
+      this.stopHeartbeat();
+      this.state = 'disconnected';
+
+      if (!event.wasClean && this.reconnectAttempts < this.config.maxReconnectAttempts) {
+        this.scheduleReconnect();
+      }
+    };
+
+    this.ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+  }
+
+  private startHeartbeat(): void {
+    this.heartbeatTimer = setInterval(() => {
+      if (this.ws?.readyState === WebSocket.OPEN) {
+        this.ws.send(JSON.stringify({ type: 'ping', timestamp: Date.now() }));
+      }
+    }, this.config.heartbeatIntervalMs);
+  }
+
+  private stopHeartbeat(): void {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
+    }
+  }
+
+  private scheduleReconnect(): void {
+    const delay = Math.min(
+      this.config.reconnectBaseDelayMs * Math.pow(2, this.reconnectAttempts),
+      this.config.maxReconnectDelayMs
+    );
+    this.reconnectAttempts++;
+    console.log(`Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})`);
+    setTimeout(() => this.connect(), delay);
+  }
+
+  send(data: unknown): void {
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(data));
+    }
+  }
+
+  onMessage(handler: MessageHandler): () => void {
+    this.messageHandlers.add(handler);
+    return () => this.messageHandlers.delete(handler);
+  }
+
+  disconnect(): void {
+    this.reconnectAttempts = this.config.maxReconnectAttempts; // Prevent reconnect
+    this.ws?.close(1000, 'Client disconnect');
+  }
+
+  getState(): ConnectionState { return this.state; }
+}
+
+// Usage:
+// const ws = new ResilientWebSocket({ url: 'wss://api.example.com/ws' });
+// ws.onMessage((data) => console.log('Received:', data));
+// ws.connect();
+```
+
+### Example A.16: SSE Server with Event Streaming (Python)
+
+Server-Sent Events implementation with event ID tracking for resumption and heartbeat comments to keep connections alive.
+
+```python
+# SSE server with event streaming in Python (FastAPI)
+from fastapi import FastAPI, Request
+from fastapi.responses import StreamingResponse
+from typing import AsyncGenerator
+import asyncio
+import json
+from dataclasses import dataclass
+from datetime import datetime
+
+app = FastAPI()
+
+@dataclass
+class Event:
+    id: int
+    event_type: str
+    data: dict
+
+class EventStore:
+    """Simple in-memory event store with ID tracking for resumption."""
+    def __init__(self):
+        self.events: list[Event] = []
+        self.next_id = 1
+
+    def add(self, event_type: str, data: dict) -> Event:
+        event = Event(id=self.next_id, event_type=event_type, data=data)
+        self.events.append(event)
+        self.next_id += 1
+        return event
+
+    def get_since(self, last_id: int) -> list[Event]:
+        """Get all events after the given ID for resumption."""
+        return [e for e in self.events if e.id > last_id]
+
+store = EventStore()
+
+def format_sse(event: Event) -> str:
+    """Format event as SSE message."""
+    lines = [
+        f"id: {event.id}",
+        f"event: {event.event_type}",
+        f"data: {json.dumps(event.data)}",
+        "",  # Empty line ends the event
+    ]
+    return "\n".join(lines) + "\n"
+
+async def event_generator(last_event_id: int) -> AsyncGenerator[str, None]:
+    """Generate SSE events, starting from last_event_id for resumption."""
+    # Send any missed events (for resumption)
+    for event in store.get_since(last_event_id):
+        yield format_sse(event)
+
+    # Stream new events
+    last_seen_id = store.next_id - 1
+    while True:
+        await asyncio.sleep(1)  # Poll interval
+
+        # Send heartbeat comment to keep connection alive
+        yield ": heartbeat\n\n"
+
+        # Check for new events
+        new_events = store.get_since(last_seen_id)
+        for event in new_events:
+            yield format_sse(event)
+            last_seen_id = event.id
+
+@app.get("/events")
+async def stream_events(request: Request):
+    # Support resumption via Last-Event-ID header
+    last_event_id = int(request.headers.get("Last-Event-ID", "0"))
+
+    return StreamingResponse(
+        event_generator(last_event_id),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",  # Disable nginx buffering
+        }
+    )
+
+@app.post("/publish")
+async def publish_event(event_type: str, data: dict):
+    """Publish a new event to all connected clients."""
+    event = store.add(event_type, {**data, "timestamp": datetime.utcnow().isoformat()})
+    return {"id": event.id}
+
+# Run with: uvicorn sse_server:app --host 0.0.0.0 --port 8000
+```
+
+### Example A.17: gRPC Service with Bidirectional Streaming (Rust)
+
+A gRPC service implementation using Tonic that demonstrates bidirectional streaming for a chat-like application.
+
+```rust
+// gRPC service with bidirectional streaming in Rust (using Tonic)
+use tonic::{transport::Server, Request, Response, Status, Streaming};
+use tokio::sync::broadcast;
+use tokio_stream::wrappers::BroadcastStream;
+use tokio_stream::StreamExt;
+use std::pin::Pin;
+
+// Proto definitions (normally generated from .proto file)
+pub mod chat {
+    tonic::include_proto!("chat");
+}
+use chat::{chat_server::{Chat, ChatServer}, ChatMessage, JoinRequest, Empty};
+
+type ResponseStream = Pin<Box<dyn tokio_stream::Stream<Item = Result<ChatMessage, Status>> + Send>>;
+
+pub struct ChatService {
+    tx: broadcast::Sender<ChatMessage>,
+}
+
+impl ChatService {
+    pub fn new() -> Self {
+        let (tx, _) = broadcast::channel(1000);
+        ChatService { tx }
+    }
+}
+
+#[tonic::async_trait]
+impl Chat for ChatService {
+    type ChatStreamStream = ResponseStream;
+
+    // Bidirectional streaming: receive messages and broadcast to all
+    async fn chat_stream(
+        &self,
+        request: Request<Streaming<ChatMessage>>,
+    ) -> Result<Response<Self::ChatStreamStream>, Status> {
+        let tx = self.tx.clone();
+        let mut inbound = request.into_inner();
+
+        // Spawn task to handle incoming messages
+        let tx_clone = tx.clone();
+        tokio::spawn(async move {
+            while let Some(result) = inbound.next().await {
+                if let Ok(msg) = result {
+                    let _ = tx_clone.send(msg);
+                }
+            }
+        });
+
+        // Return stream of all messages (including from other clients)
+        let rx = self.tx.subscribe();
+        let stream = BroadcastStream::new(rx)
+            .filter_map(|result| result.ok())
+            .map(Ok);
+
+        Ok(Response::new(Box::pin(stream)))
+    }
+
+    // Server streaming: stream all messages to a subscriber
+    type SubscribeStream = ResponseStream;
+
+    async fn subscribe(
+        &self,
+        _request: Request<JoinRequest>,
+    ) -> Result<Response<Self::SubscribeStream>, Status> {
+        let rx = self.tx.subscribe();
+        let stream = BroadcastStream::new(rx)
+            .filter_map(|result| result.ok())
+            .map(Ok);
+
+        Ok(Response::new(Box::pin(stream)))
+    }
+
+    // Unary: send a single message
+    async fn send_message(
+        &self,
+        request: Request<ChatMessage>,
+    ) -> Result<Response<Empty>, Status> {
+        let msg = request.into_inner();
+        self.tx.send(msg).map_err(|_| Status::internal("Broadcast failed"))?;
+        Ok(Response::new(Empty {}))
+    }
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let addr = "[::1]:50051".parse()?;
+    let service = ChatService::new();
+
+    println!("gRPC server listening on {}", addr);
+    Server::builder()
+        .add_service(ChatServer::new(service))
+        .serve(addr)
+        .await?;
+
+    Ok(())
+}
+```
+
+### Example A.18: gRPC Client with Channel Reuse (Python)
+
+A gRPC client that demonstrates proper channel reuse, keepalive configuration, and connection pooling for high-throughput scenarios.
+
+```python
+# gRPC client with channel reuse in Python
+import grpc
+from dataclasses import dataclass
+from typing import Optional
+import time
+from concurrent import futures
+import logging
+
+# Generated from .proto file
+# from your_service_pb2 import GetUserRequest, User
+# from your_service_pb2_grpc import UserServiceStub
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+@dataclass
+class GrpcClientConfig:
+    target: str
+    keepalive_time_ms: int = 30000           # Send keepalive ping every 30s
+    keepalive_timeout_ms: int = 10000        # Wait 10s for keepalive response
+    keepalive_permit_without_calls: bool = True  # Send keepalive even when idle
+    max_connection_idle_ms: int = 300000     # Close idle connections after 5min
+    max_connection_age_ms: int = 0           # No max age (0 = infinite)
+    enable_retries: bool = True
+
+class GrpcClientPool:
+    """
+    gRPC client with proper channel reuse and configuration.
+    Create once at application startup, reuse for all RPCs.
+    """
+
+    def __init__(self, config: GrpcClientConfig):
+        self.config = config
+        self._channel: Optional[grpc.Channel] = None
+        self._stub = None
+
+    def _create_channel(self) -> grpc.Channel:
+        """Create a configured gRPC channel with keepalive and retry settings."""
+        options = [
+            ('grpc.keepalive_time_ms', self.config.keepalive_time_ms),
+            ('grpc.keepalive_timeout_ms', self.config.keepalive_timeout_ms),
+            ('grpc.keepalive_permit_without_calls',
+             1 if self.config.keepalive_permit_without_calls else 0),
+            ('grpc.max_connection_idle_ms', self.config.max_connection_idle_ms),
+            ('grpc.enable_retries', 1 if self.config.enable_retries else 0),
+            # Load balancing for multiple backends
+            ('grpc.lb_policy_name', 'round_robin'),
+            # Initial connection window size (for high-throughput)
+            ('grpc.http2.initial_connection_window_size', 1024 * 1024),
+        ]
+
+        # Use secure channel in production
+        # return grpc.secure_channel(self.config.target, credentials, options)
+        return grpc.insecure_channel(self.config.target, options)
+
+    @property
+    def channel(self) -> grpc.Channel:
+        """Get or create the shared channel."""
+        if self._channel is None:
+            self._channel = self._create_channel()
+            logger.info(f"Created gRPC channel to {self.config.target}")
+        return self._channel
+
+    def get_stub(self, stub_class):
+        """Get a stub for the given service class, reusing the channel."""
+        return stub_class(self.channel)
+
+    def close(self):
+        """Close the channel. Call during application shutdown."""
+        if self._channel:
+            self._channel.close()
+            self._channel = None
+            logger.info("Closed gRPC channel")
+
+# Usage example:
+#
+# # Create once at application startup
+# client = GrpcClientPool(GrpcClientConfig(target="localhost:50051"))
+#
+# # Reuse for all RPCs throughout application lifecycle
+# stub = client.get_stub(UserServiceStub)
+# response = stub.GetUser(GetUserRequest(id=123))
+#
+# # For async operations with connection reuse:
+# async def get_users_batch(user_ids: list[int]) -> list:
+#     stub = client.get_stub(UserServiceStub)
+#     with futures.ThreadPoolExecutor(max_workers=10) as executor:
+#         tasks = [executor.submit(stub.GetUser, GetUserRequest(id=uid)) for uid in user_ids]
+#         return [task.result() for task in futures.as_completed(tasks)]
+#
+# # Close during shutdown
+# client.close()
+```
+
 ---
 
 ## Caching Strategies (Chapter 6)
 
-### Example A.14: Cache-Aside Pattern (TypeScript)
+### Example A.19: Cache-Aside Pattern (TypeScript)
 
 A complete cache-aside implementation that checks the cache first and falls back to the database on cache miss, then stores the result for future requests.
 
@@ -1303,7 +1799,7 @@ const cache = new CacheAside('redis://localhost:6379');
 const user = await cache.getOrSet(`user:${userId}`, () => db.fetchUser(userId), 600);
 ```
 
-### Example A.15: TTL with Jitter (Python)
+### Example A.20: TTL with Jitter (Python)
 
 A utility function that adds random jitter to TTL values, preventing synchronized cache expiration that can cause thundering herd events.
 
@@ -1326,7 +1822,7 @@ def ttl_with_jitter(base_ttl: int, jitter_percent: float = 0.1) -> int:
 ttl = ttl_with_jitter(300, jitter_percent=0.1)  # Returns 270-330
 ```
 
-### Example A.16: Single-Flight Pattern (Rust)
+### Example A.21: Single-Flight Pattern (Rust)
 
 The single-flight pattern ensures only one request regenerates an expired cache entry while other concurrent requests wait for the result, preventing database overload.
 
@@ -1379,7 +1875,7 @@ impl<T: Clone + Send + 'static> SingleFlight<T> {
 }
 ```
 
-### Example A.17: Cache Metrics Collection (TypeScript)
+### Example A.22: Cache Metrics Collection (TypeScript)
 
 A metered cache wrapper that tracks hits, misses, and latency using Prometheus metrics, enabling data-driven tuning of cache configuration.
 
@@ -1429,315 +1925,904 @@ class MeteredCache {
 }
 ```
 
----
+### Example A.23: Database Buffer Cache Monitoring (Python)
 
-## Database Performance Patterns (Chapter 7)
-
-### Example A.18: N+1 Query Problem and Solution (Python)
+Monitor PostgreSQL buffer cache hit ratios to determine if shared_buffers is sized appropriately. A hit ratio below 90% suggests the buffer pool is too small.
 
 ```python
-# The N+1 problem in Python (using SQLAlchemy)
-from sqlalchemy.orm import Session, joinedload
-from models import Post
+# Database buffer cache monitoring in Python (psycopg2)
+import psycopg2
+from dataclasses import dataclass
 
-def get_posts_with_authors_n_plus_one(db: Session):
-    posts = db.query(Post).limit(100).all()
-    result = []
-    for post in posts:
-        # Each access to post.author triggers a separate query!
-        result.append({"title": post.title, "author_name": post.author.name})
-    return result  # Total: 101 database round-trips
+@dataclass
+class CacheStats:
+    overall_hit_ratio: float
+    table_stats: list[dict]
 
-def get_posts_with_authors_optimized(db: Session):
-    # Single query with JOIN - fetches posts and authors together
-    posts = db.query(Post).options(joinedload(Post.author)).limit(100).all()
-    result = []
-    for post in posts:
-        # No additional query - author is already loaded
-        result.append({"title": post.title, "author_name": post.author.name})
-    return result  # Total: 1 database round-trip
-```
+def get_buffer_cache_stats(conn) -> CacheStats:
+    """Get PostgreSQL buffer cache statistics."""
+    with conn.cursor() as cur:
+        # Overall buffer cache hit ratio
+        cur.execute("""
+            SELECT
+                sum(blks_hit) / nullif(sum(blks_hit) + sum(blks_read), 0) AS hit_ratio
+            FROM pg_stat_database
+            WHERE datname = current_database()
+        """)
+        overall = cur.fetchone()[0] or 0.0
 
-### Example A.19: Creating Indexes with SQLAlchemy/Alembic (Python)
+        # Per-table hit ratios (top 20 by reads)
+        cur.execute("""
+            SELECT
+                schemaname,
+                relname,
+                heap_blks_hit,
+                heap_blks_read,
+                heap_blks_hit / nullif(heap_blks_hit + heap_blks_read, 0) AS heap_hit_ratio,
+                idx_blks_hit / nullif(idx_blks_hit + idx_blks_read, 0) AS index_hit_ratio
+            FROM pg_statio_user_tables
+            WHERE heap_blks_read > 0
+            ORDER BY heap_blks_read DESC
+            LIMIT 20
+        """)
+        tables = [
+            {
+                "schema": row[0],
+                "table": row[1],
+                "heap_hits": row[2],
+                "heap_reads": row[3],
+                "heap_hit_ratio": row[4] or 0.0,
+                "index_hit_ratio": row[5] or 0.0,
+            }
+            for row in cur.fetchall()
+        ]
 
-```python
-# Creating indexes in Python using SQLAlchemy migrations (Alembic)
-from alembic import op
-import sqlalchemy as sa
-
-def upgrade():
-    # B-tree index for equality and range queries on created_at
-    op.create_index(
-        'ix_posts_created_at',
-        'posts',
-        ['created_at'],
-        unique=False
-    )
-
-    # Composite index for queries filtering by status and created_at
-    # Index order matters: put equality columns first, range columns last
-    op.create_index(
-        'ix_posts_status_created_at',
-        'posts',
-        ['status', 'created_at'],
-        unique=False
-    )
-
-    # Covering index: includes all columns needed by query
-    # Avoids table lookup by reading directly from index
-    op.create_index(
-        'ix_posts_covering',
-        'posts',
-        ['author_id', 'status'],
-        postgresql_include=['title', 'created_at']  # PostgreSQL INCLUDE clause
-    )
-```
-
-### Example A.20: Creating Indexes with Diesel Migrations (Rust)
-
-```rust
-// Creating indexes in Rust using Diesel migrations
-// In migrations/2024-01-01-000001_add_indexes/up.sql
-
--- B-tree index for equality and range queries on created_at
-CREATE INDEX ix_posts_created_at ON posts (created_at);
-
--- Composite index for queries filtering by status and created_at
--- Put high-selectivity columns first for equality, range columns last
-CREATE INDEX ix_posts_status_created_at ON posts (status, created_at);
-
--- Covering index with INCLUDE clause (PostgreSQL 11+)
--- All query columns are in the index, avoiding heap table access
-CREATE INDEX ix_posts_covering ON posts (author_id, status)
-    INCLUDE (title, created_at);
-```
-
-### Example A.21: Creating Indexes with Prisma Schema (TypeScript)
-
-```typescript
-// Creating indexes in TypeScript using Prisma schema
-// In schema.prisma
-
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  status    String
-  createdAt DateTime @default(now()) @map("created_at")
-  authorId  Int      @map("author_id")
-  author    User     @relation(fields: [authorId], references: [id])
-
-  // B-tree index on created_at (default index type)
-  @@index([createdAt])
-
-  // Composite index for filtering by status and created_at
-  @@index([status, createdAt])
-
-  // Composite index for author lookups with status filter
-  @@index([authorId, status])
-
-  @@map("posts")
-}
-```
-
-### Example A.22: Analyzing Query Plans (Python)
-
-```python
-# Analyzing query plans in Python
-from sqlalchemy import text
-
-def analyze_query(db: Session, user_id: int):
-    # Get the query plan with execution statistics
-    explain_query = text("""
-        EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)
-        SELECT p.*, u.name as author_name
-        FROM posts p
-        JOIN users u ON p.author_id = u.id
-        WHERE p.author_id = :user_id
-        AND p.status = 'published'
-        ORDER BY p.created_at DESC
-        LIMIT 20
-    """)
-
-    result = db.execute(explain_query, {"user_id": user_id})
-    plan = result.fetchone()[0]
-
-    # Key metrics to examine:
-    # - "Seq Scan" indicates a full table scan (often a red flag)
-    # - "Index Scan" or "Index Only Scan" indicates index usage
-    # - "Rows" vs "Actual Rows" shows estimation accuracy
-    # - "Buffers" shows I/O operations
-    return plan
-```
-
-### Example A.23: Analyzing Query Plans (Rust)
-
-```rust
-// Analyzing query plans in Rust
-use diesel::prelude::*;
-use diesel::sql_query;
-use diesel::sql_types::Text;
-
-#[derive(QueryableByName, Debug)]
-struct ExplainResult {
-    #[diesel(sql_type = Text)]
-    #[diesel(column_name = "QUERY PLAN")]
-    query_plan: String,
-}
-
-fn analyze_query(conn: &mut PgConnection, user_id: i32) -> Vec<String> {
-    // Get the query plan with execution statistics
-    let explain_sql = format!(
-        "EXPLAIN (ANALYZE, BUFFERS) \
-         SELECT p.*, u.name as author_name \
-         FROM posts p \
-         JOIN users u ON p.author_id = u.id \
-         WHERE p.author_id = {} \
-         AND p.status = 'published' \
-         ORDER BY p.created_at DESC \
-         LIMIT 20",
-        user_id
-    );
-
-    sql_query(explain_sql)
-        .load::<ExplainResult>(conn)
-        .expect("Error running EXPLAIN")
-        .into_iter()
-        .map(|r| r.query_plan)
-        .collect()
-}
-```
-
-### Example A.24: Analyzing Query Plans (TypeScript)
-
-```typescript
-// Analyzing query plans in TypeScript
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
-async function analyzeQuery(userId: number) {
-  // Get the query plan with execution statistics
-  const plan = await prisma.$queryRaw`
-    EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)
-    SELECT p.*, u.name as author_name
-    FROM posts p
-    JOIN users u ON p.author_id = u.id
-    WHERE p.author_id = ${userId}
-    AND p.status = 'published'
-    ORDER BY p.created_at DESC
-    LIMIT 20
-  `;
-
-  // Key indicators in the plan:
-  // - "Seq Scan" = full table scan (needs index)
-  // - "Index Scan" = using index (good)
-  // - "Index Only Scan" = covered by index (best)
-  // - High "Actual Rows" vs "Rows" = statistics need updating
-  return plan;
-}
-```
-
-### Example A.25: Connection Pool Configuration (Python)
-
-```python
-# Connection pool configuration in Python with asyncpg
-import asyncpg
-from contextlib import asynccontextmanager
-
-async def create_pool():
-    # Create a connection pool with explicit bounds
-    pool = await asyncpg.create_pool(
-        dsn="postgresql://user:pass@localhost/dbname",
-        min_size=5,           # Minimum connections to maintain warm
-        max_size=20,          # Maximum connections (tune based on workload)
-        max_inactive_connection_lifetime=300.0,  # Close idle connections after 5 min
-        command_timeout=30.0,  # Query timeout in seconds
-    )
-    return pool
-
-@asynccontextmanager
-async def get_connection(pool: asyncpg.Pool):
-    """Acquire a connection from the pool with proper cleanup."""
-    conn = await pool.acquire()
-    try:
-        yield conn
-    finally:
-        await pool.release(conn)
+    return CacheStats(overall_hit_ratio=overall, table_stats=tables)
 
 # Usage
-async def fetch_user(pool: asyncpg.Pool, user_id: int):
-    async with get_connection(pool) as conn:
-        return await conn.fetchrow(
-            "SELECT * FROM users WHERE id = $1",
-            user_id
-        )
+conn = psycopg2.connect("postgresql://localhost/mydb")
+stats = get_buffer_cache_stats(conn)
+print(f"Overall buffer cache hit ratio: {stats.overall_hit_ratio:.2%}")
+for table in stats.table_stats[:5]:
+    print(f"  {table['table']}: heap={table['heap_hit_ratio']:.2%}")
+
+# Alert if hit ratio is too low
+if stats.overall_hit_ratio < 0.90:
+    print("WARNING: Buffer cache hit ratio below 90%. Consider increasing shared_buffers.")
 ```
 
-### Example A.26: Connection Pool Configuration (Rust)
+### Example A.24: HTTP Conditional Requests with ETags (TypeScript)
 
-```rust
-// Connection pool configuration in Rust with SQLx
-use sqlx::postgres::{PgPoolOptions, PgPool};
-use std::time::Duration;
-
-async fn create_pool() -> Result<PgPool, sqlx::Error> {
-    // Create a connection pool with explicit bounds
-    let pool = PgPoolOptions::new()
-        .min_connections(5)      // Minimum connections to maintain warm
-        .max_connections(20)     // Maximum connections (tune based on workload)
-        .acquire_timeout(Duration::from_secs(30))  // Wait timeout for connection
-        .idle_timeout(Duration::from_secs(300))    // Close idle connections after 5 min
-        .max_lifetime(Duration::from_secs(1800))   // Recycle connections after 30 min
-        .connect("postgresql://user:pass@localhost/dbname")
-        .await?;
-
-    Ok(pool)
-}
-
-// Usage - connections automatically return to pool when dropped
-async fn fetch_user(pool: &PgPool, user_id: i32) -> Result<User, sqlx::Error> {
-    sqlx::query_as::<_, User>("SELECT * FROM users WHERE id = $1")
-        .bind(user_id)
-        .fetch_one(pool)
-        .await
-}
-```
-
-### Example A.27: Connection Pool Configuration (TypeScript)
+Generate and validate ETags for efficient cache revalidation. Returns 304 Not Modified when content hasn't changed, saving bandwidth.
 
 ```typescript
-// Connection pool configuration in TypeScript with pg
-import { Pool, PoolConfig } from 'pg';
+// HTTP conditional requests with ETags in TypeScript
+import { createHash } from 'crypto';
 
-function createPool(): Pool {
-  const config: PoolConfig = {
-    connectionString: 'postgresql://user:pass@localhost/dbname',
-    min: 5,                    // Minimum connections to maintain warm
-    max: 20,                   // Maximum connections (tune based on workload)
-    idleTimeoutMillis: 300000, // Close idle connections after 5 min
-    connectionTimeoutMillis: 30000,  // Wait timeout for connection
-    maxUses: 7500,             // Recycle connections after N uses
-  };
-
-  return new Pool(config);
+/** Generate ETag from response data. */
+function generateETag(data: unknown): string {
+  const content = JSON.stringify(data);
+  const hash = createHash('sha256').update(content).digest('hex');
+  return `"${hash.slice(0, 16)}"`;  // Weak ETag
 }
 
-// Usage with proper connection release
-async function fetchUser(pool: Pool, userId: number) {
-  const client = await pool.connect();
-  try {
-    const result = await client.query(
-      'SELECT * FROM users WHERE id = $1',
-      [userId]
-    );
-    return result.rows[0];
-  } finally {
-    client.release();  // Always release back to pool
-  }
+/** Express middleware for ETag handling. */
+function etagMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  const originalJson = res.json.bind(res);
+
+  res.json = (data: unknown) => {
+    const etag = generateETag(data);
+    res.setHeader('ETag', etag);
+
+    // Check If-None-Match header
+    const ifNoneMatch = req.headers['if-none-match'];
+    if (ifNoneMatch === etag) {
+      res.status(304).end();
+      return res;
+    }
+
+    return originalJson(data);
+  };
+
+  next();
+}
+
+// Example API endpoint
+app.get('/api/products/:id', etagMiddleware, async (req, res) => {
+  const product = await db.findProduct(req.params.id);
+
+  // Set caching headers
+  res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=600');
+
+  res.json(product);
+  // ETag is automatically added by middleware
+  // 304 is returned if client's ETag matches
+});
+```
+
+### Example A.25: Request-Scoped Memoization (Python)
+
+Request-scoped caching stores computed values for a single request's duration. Safe because cache is discarded when request completes.
+
+```python
+# Request-scoped memoization in Python (FastAPI/Starlette)
+from contextvars import ContextVar
+from functools import wraps
+from typing import TypeVar, Callable, Awaitable
+
+T = TypeVar('T')
+
+# Context variable holds per-request cache
+_request_cache: ContextVar[dict] = ContextVar('request_cache')
+
+def get_request_cache() -> dict:
+    """Get or create the request-scoped cache."""
+    try:
+        return _request_cache.get()
+    except LookupError:
+        cache = {}
+        _request_cache.set(cache)
+        return cache
+
+def request_cached(key_fn: Callable[..., str]):
+    """Decorator for request-scoped caching."""
+    def decorator(fn: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
+        @wraps(fn)
+        async def wrapper(*args, **kwargs) -> T:
+            cache = get_request_cache()
+            key = key_fn(*args, **kwargs)
+
+            if key in cache:
+                return cache[key]
+
+            result = await fn(*args, **kwargs)
+            cache[key] = result
+            return result
+        return wrapper
+    return decorator
+
+# Usage example
+@request_cached(lambda user_id: f"permissions:{user_id}")
+async def get_user_permissions(user_id: str) -> list[str]:
+    """Fetch user permissions, cached for this request."""
+    return await db.fetch_permissions(user_id)
+
+# Middleware to reset cache per request
+@app.middleware("http")
+async def request_cache_middleware(request: Request, call_next):
+    _request_cache.set({})  # Fresh cache for each request
+    response = await call_next(request)
+    return response
+```
+
+### Example A.26: Redis Pub/Sub Cache Invalidation (Python)
+
+Use Redis Pub/Sub to invalidate in-memory caches across multiple service instances when data changes.
+
+```python
+# Redis Pub/Sub cache invalidation in Python
+import asyncio
+import redis.asyncio as redis
+from cachetools import TTLCache
+
+# Local in-memory cache with TTL
+local_cache: TTLCache = TTLCache(maxsize=10000, ttl=300)
+
+# Redis client
+redis_client: redis.Redis = None
+
+async def init_redis(url: str = "redis://localhost:6379"):
+    global redis_client
+    redis_client = redis.from_url(url)
+
+async def invalidate_cache(key: str):
+    """Invalidate cache locally and broadcast to other instances."""
+    # Delete from local cache
+    local_cache.pop(key, None)
+
+    # Broadcast to all instances
+    await redis_client.publish('cache:invalidate', key)
+
+async def cache_invalidation_listener():
+    """Background task listening for invalidation messages."""
+    pubsub = redis_client.pubsub()
+    await pubsub.subscribe('cache:invalidate')
+
+    async for message in pubsub.listen():
+        if message['type'] == 'message':
+            key = message['data'].decode('utf-8')
+            local_cache.pop(key, None)
+            print(f"Invalidated local cache: {key}")
+
+async def get_user(user_id: str) -> dict:
+    """Get user with local + Redis caching."""
+    cache_key = f"user:{user_id}"
+
+    # Check local cache first (fastest)
+    if cache_key in local_cache:
+        return local_cache[cache_key]
+
+    # Check Redis (shared across instances)
+    cached = await redis_client.get(cache_key)
+    if cached:
+        user = json.loads(cached)
+        local_cache[cache_key] = user
+        return user
+
+    # Fetch from database
+    user = await db.fetch_user(user_id)
+    if user:
+        await redis_client.setex(cache_key, 3600, json.dumps(user))
+        local_cache[cache_key] = user
+
+    return user
+
+async def update_user(user_id: str, data: dict):
+    """Update user and invalidate caches."""
+    await db.update_user(user_id, data)
+    await invalidate_cache(f"user:{user_id}")
+
+# Start listener on application startup
+asyncio.create_task(cache_invalidation_listener())
+```
+
+### Example A.27: Multi-Tier Cache Coordination (Rust)
+
+Coordinate L1 (in-process) and L2 (Redis) caches with proper invalidation across tiers.
+
+```rust
+// Multi-tier cache coordination in Rust
+use moka::sync::Cache;
+use redis::AsyncCommands;
+use serde::{Deserialize, Serialize};
+use std::sync::Arc;
+use std::time::Duration;
+
+#[derive(Clone)]
+pub struct MultiTierCache {
+    l1: Cache<String, String>,  // In-process cache
+    redis: redis::Client,
+}
+
+impl MultiTierCache {
+    pub fn new(redis_url: &str) -> Self {
+        Self {
+            l1: Cache::builder()
+                .max_capacity(10_000)
+                .time_to_live(Duration::from_secs(60))  // Short L1 TTL
+                .build(),
+            redis: redis::Client::open(redis_url).unwrap(),
+        }
+    }
+
+    /// Get value, checking L1 first, then L2, then fetching.
+    pub async fn get_or_fetch<T, F, Fut>(
+        &self,
+        key: &str,
+        fetch_fn: F,
+    ) -> Result<T, Box<dyn std::error::Error>>
+    where
+        T: Serialize + for<'de> Deserialize<'de> + Clone,
+        F: FnOnce() -> Fut,
+        Fut: std::future::Future<Output = Result<T, Box<dyn std::error::Error>>>,
+    {
+        // L1: Check in-process cache
+        if let Some(cached) = self.l1.get(key) {
+            return Ok(serde_json::from_str(&cached)?);
+        }
+
+        // L2: Check Redis
+        let mut conn = self.redis.get_async_connection().await?;
+        if let Some(cached) = conn.get::<_, Option<String>>(key).await? {
+            // Populate L1 from L2
+            self.l1.insert(key.to_string(), cached.clone());
+            return Ok(serde_json::from_str(&cached)?);
+        }
+
+        // Fetch from origin
+        let value = fetch_fn().await?;
+        let serialized = serde_json::to_string(&value)?;
+
+        // Store in both tiers
+        conn.set_ex::<_, _, ()>(key, &serialized, 3600).await?;
+        self.l1.insert(key.to_string(), serialized);
+
+        Ok(value)
+    }
+
+    /// Invalidate across both tiers and broadcast to other instances.
+    pub async fn invalidate(&self, key: &str) -> Result<(), Box<dyn std::error::Error>> {
+        // Remove from L1
+        self.l1.invalidate(key);
+
+        // Remove from L2
+        let mut conn = self.redis.get_async_connection().await?;
+        conn.del::<_, ()>(key).await?;
+
+        // Broadcast to other instances
+        conn.publish::<_, _, ()>("cache:invalidate", key).await?;
+
+        Ok(())
+    }
 }
 ```
 
-### Example A.28: Read Replica Routing (Rust)
+### Example A.28: Negative Caching Pattern (TypeScript)
+
+Cache "not found" results to prevent repeated database queries for nonexistent data.
+
+```typescript
+// Negative caching pattern in TypeScript
+import Redis from 'ioredis';
+
+const redis = new Redis();
+const NOT_FOUND_SENTINEL = '__NOT_FOUND__';
+const POSITIVE_TTL = 3600;  // 1 hour for found items
+const NEGATIVE_TTL = 300;   // 5 minutes for not-found items
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+async function getUserById(userId: string): Promise<User | null> {
+  const cacheKey = `user:${userId}`;
+
+  // Check cache
+  const cached = await redis.get(cacheKey);
+
+  if (cached === NOT_FOUND_SENTINEL) {
+    // Cached negative result - user definitively doesn't exist
+    return null;
+  }
+
+  if (cached) {
+    // Cached positive result
+    return JSON.parse(cached) as User;
+  }
+
+  // Cache miss - fetch from database
+  const user = await db.findUser(userId);
+
+  if (user) {
+    // Cache positive result with longer TTL
+    await redis.setex(cacheKey, POSITIVE_TTL, JSON.stringify(user));
+  } else {
+    // Cache negative result with shorter TTL
+    // Short TTL allows recovery if user is created later
+    await redis.setex(cacheKey, NEGATIVE_TTL, NOT_FOUND_SENTINEL);
+  }
+
+  return user;
+}
+
+// When a user is created, invalidate any negative cache
+async function createUser(userData: Omit<User, 'id'>): Promise<User> {
+  const user = await db.createUser(userData);
+
+  // Invalidate potential negative cache entry
+  await redis.del(`user:${user.id}`);
+
+  return user;
+}
+```
+
+---
+
+## Database and Storage Selection (Chapter 7)
+
+### Example 7.1: Database Selection Decision Helper (Python)
+
+A utility function that recommends database types based on access pattern characteristics. Useful for documenting architectural decisions.
+
+```python
+# Database selection decision helper in Python
+from dataclasses import dataclass
+from enum import Enum
+from typing import Optional
+
+class DatabaseType(Enum):
+    SQL = "relational"
+    DOCUMENT = "document"
+    KEY_VALUE = "key_value"
+    WIDE_COLUMN = "wide_column"
+    VECTOR = "vector"
+    SEARCH = "search"
+
+@dataclass
+class AccessPattern:
+    needs_acid: bool = False
+    needs_complex_joins: bool = False
+    read_write_ratio: float = 0.8  # 0.8 = 80% reads
+    writes_per_second: int = 100
+    needs_full_text_search: bool = False
+    needs_similarity_search: bool = False
+    schema_flexibility: str = "fixed"  # "fixed", "moderate", "high"
+    consistency: str = "strong"  # "strong", "eventual"
+
+def recommend_database(pattern: AccessPattern) -> list[tuple[DatabaseType, str]]:
+    """Return ranked database recommendations with rationale."""
+    recommendations = []
+
+    # ACID requirements strongly suggest SQL
+    if pattern.needs_acid or pattern.needs_complex_joins:
+        recommendations.append((
+            DatabaseType.SQL,
+            "ACID transactions and/or complex joins required"
+        ))
+
+    # Vector search is specialized
+    if pattern.needs_similarity_search:
+        recommendations.append((
+            DatabaseType.VECTOR,
+            "Semantic similarity search required (embeddings)"
+        ))
+
+    # Full-text search is specialized
+    if pattern.needs_full_text_search:
+        recommendations.append((
+            DatabaseType.SEARCH,
+            "Full-text search is primary access pattern"
+        ))
+
+    # Write-heavy with eventual consistency -> wide-column
+    if (pattern.writes_per_second > 10000 and
+        pattern.consistency == "eventual"):
+        recommendations.append((
+            DatabaseType.WIDE_COLUMN,
+            f"High write throughput ({pattern.writes_per_second}/s) with eventual consistency"
+        ))
+
+    # Simple key lookups with high read ratio -> key-value
+    if (pattern.read_write_ratio > 0.9 and
+        not pattern.needs_complex_joins and
+        pattern.schema_flexibility == "high"):
+        recommendations.append((
+            DatabaseType.KEY_VALUE,
+            "Simple key-based lookups with high read ratio"
+        ))
+
+    # Flexible schema without joins -> document
+    if (pattern.schema_flexibility in ("moderate", "high") and
+        not pattern.needs_complex_joins):
+        recommendations.append((
+            DatabaseType.DOCUMENT,
+            "Flexible schema requirements without complex joins"
+        ))
+
+    # Default to SQL if nothing else matches
+    if not recommendations:
+        recommendations.append((
+            DatabaseType.SQL,
+            "General-purpose; consider specialized stores as needs clarify"
+        ))
+
+    return recommendations
+
+# Usage
+pattern = AccessPattern(
+    needs_acid=False,
+    needs_full_text_search=True,
+    read_write_ratio=0.95,
+    consistency="eventual"
+)
+for db_type, reason in recommend_database(pattern):
+    print(f"{db_type.value}: {reason}")
+```
+
+### Example 7.2: SQL vs Document Store Comparison (Python)
+
+Shows the same product API implemented with PostgreSQL and MongoDB, highlighting when each approach works better.
+
+```python
+# Comparing SQL and Document store approaches for a product API
+
+# === PostgreSQL approach (SQL) ===
+# Best when: Products have consistent structure, need complex queries/reporting
+
+import asyncpg
+
+async def get_product_sql(pool: asyncpg.Pool, product_id: str) -> dict:
+    """Fetch product with category from normalized tables."""
+    return await pool.fetchrow("""
+        SELECT p.*, c.name as category_name, c.parent_id
+        FROM products p
+        JOIN categories c ON p.category_id = c.id
+        WHERE p.id = $1
+    """, product_id)
+
+async def search_products_sql(pool: asyncpg.Pool, filters: dict) -> list:
+    """Complex filtering across normalized data."""
+    return await pool.fetch("""
+        SELECT p.*, c.name as category_name
+        FROM products p
+        JOIN categories c ON p.category_id = c.id
+        WHERE ($1::text IS NULL OR c.name = $1)
+          AND ($2::numeric IS NULL OR p.price <= $2)
+          AND ($3::text[] IS NULL OR p.tags && $3)
+        ORDER BY p.created_at DESC
+        LIMIT 50
+    """, filters.get('category'), filters.get('max_price'), filters.get('tags'))
+
+
+# === MongoDB approach (Document) ===
+# Best when: Products have varying attributes, schema evolves frequently
+
+from motor.motor_asyncio import AsyncIOMotorClient
+
+async def get_product_mongo(db, product_id: str) -> dict:
+    """Fetch complete product document - no joins needed."""
+    return await db.products.find_one({"_id": product_id})
+    # Document contains embedded category, attributes, variants - all in one read
+
+async def search_products_mongo(db, filters: dict) -> list:
+    """Query with flexible document structure."""
+    query = {}
+    if filters.get('category'):
+        query['category.name'] = filters['category']
+    if filters.get('max_price'):
+        query['price'] = {'$lte': filters['max_price']}
+    if filters.get('tags'):
+        query['tags'] = {'$in': filters['tags']}
+
+    # Can query nested fields without schema changes
+    if filters.get('color'):
+        query['attributes.color'] = filters['color']
+
+    return await db.products.find(query).sort('created_at', -1).limit(50).to_list(50)
+
+# Key decision factors:
+# - SQL: Need reporting, complex joins, strong consistency, ACID
+# - Document: Varying product attributes, embedded data, horizontal scale
+```
+
+### Example 7.3: Key-Value Session Storage (Rust)
+
+High-performance session management using Redis with sub-millisecond lookups.
+
+```rust
+// Key-value session storage in Rust using Redis
+use redis::{AsyncCommands, Client};
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct Session {
+    pub user_id: String,
+    pub roles: Vec<String>,
+    pub created_at: i64,
+    pub last_accessed: i64,
+}
+
+pub struct SessionStore {
+    client: Client,
+    ttl_seconds: u64,
+}
+
+impl SessionStore {
+    pub fn new(redis_url: &str, ttl_seconds: u64) -> Result<Self, redis::RedisError> {
+        Ok(Self {
+            client: Client::open(redis_url)?,
+            ttl_seconds,
+        })
+    }
+
+    /// Create a new session, returns session token
+    pub async fn create(&self, user_id: &str, roles: Vec<String>) -> Result<String, redis::RedisError> {
+        let mut conn = self.client.get_multiplexed_async_connection().await?;
+        let token = Uuid::new_v4().to_string();
+        let session = Session {
+            user_id: user_id.to_string(),
+            roles,
+            created_at: chrono::Utc::now().timestamp(),
+            last_accessed: chrono::Utc::now().timestamp(),
+        };
+
+        let key = format!("session:{}", token);
+        let value = serde_json::to_string(&session).unwrap();
+        conn.set_ex(&key, value, self.ttl_seconds).await?;
+
+        Ok(token)
+    }
+
+    /// Get session by token - O(1) lookup, typically <1ms
+    pub async fn get(&self, token: &str) -> Result<Option<Session>, redis::RedisError> {
+        let mut conn = self.client.get_multiplexed_async_connection().await?;
+        let key = format!("session:{}", token);
+
+        let value: Option<String> = conn.get(&key).await?;
+        Ok(value.map(|v| serde_json::from_str(&v).unwrap()))
+    }
+
+    /// Refresh session TTL on activity
+    pub async fn touch(&self, token: &str) -> Result<bool, redis::RedisError> {
+        let mut conn = self.client.get_multiplexed_async_connection().await?;
+        let key = format!("session:{}", token);
+        conn.expire(&key, self.ttl_seconds as i64).await
+    }
+
+    /// Invalidate session on logout
+    pub async fn delete(&self, token: &str) -> Result<(), redis::RedisError> {
+        let mut conn = self.client.get_multiplexed_async_connection().await?;
+        conn.del(format!("session:{}", token)).await
+    }
+}
+```
+
+### Example 7.4: Write-Heavy Analytics with Wide-Column Store (TypeScript)
+
+Ingesting high-volume analytics events using Cassandra/ScyllaDB patterns.
+
+```typescript
+// Write-heavy analytics with Cassandra in TypeScript
+import { Client, types } from 'cassandra-driver';
+
+const client = new Client({
+  contactPoints: ['cassandra-1', 'cassandra-2', 'cassandra-3'],
+  localDataCenter: 'datacenter1',
+  keyspace: 'analytics',
+});
+
+interface AnalyticsEvent {
+  userId: string;
+  eventType: string;
+  properties: Record<string, unknown>;
+  timestamp?: Date;
+}
+
+// Partition by user_id and date for efficient time-range queries
+// Clustering by timestamp for ordered retrieval within partition
+const INSERT_EVENT = `
+  INSERT INTO events (user_id, event_date, timestamp, event_type, properties)
+  VALUES (?, ?, ?, ?, ?)
+`;
+
+async function recordEvent(event: AnalyticsEvent): Promise<void> {
+  const timestamp = event.timestamp ?? new Date();
+  const eventDate = timestamp.toISOString().split('T')[0]; // YYYY-MM-DD
+
+  // Async write - doesn't block the API response
+  await client.execute(INSERT_EVENT, [
+    event.userId,
+    eventDate,
+    timestamp,
+    event.eventType,
+    JSON.stringify(event.properties),
+  ], { prepare: true });
+}
+
+// Batch writes for higher throughput (use unlogged batch for performance)
+async function recordEventsBatch(events: AnalyticsEvent[]): Promise<void> {
+  const queries = events.map(event => {
+    const timestamp = event.timestamp ?? new Date();
+    const eventDate = timestamp.toISOString().split('T')[0];
+    return {
+      query: INSERT_EVENT,
+      params: [event.userId, eventDate, timestamp, event.eventType, JSON.stringify(event.properties)],
+    };
+  });
+
+  // Unlogged batch: no atomicity guarantee, but much faster for analytics
+  await client.batch(queries, { prepare: true, logged: false });
+}
+
+// Query events for a user within a time range (efficient due to partition design)
+async function getUserEvents(userId: string, startDate: string, endDate: string) {
+  const result = await client.execute(`
+    SELECT * FROM events
+    WHERE user_id = ? AND event_date >= ? AND event_date <= ?
+    ORDER BY timestamp DESC
+    LIMIT 1000
+  `, [userId, startDate, endDate], { prepare: true });
+
+  return result.rows;
+}
+```
+
+### Example 7.5: Fire-and-Forget Analytics Pattern (Python)
+
+Async event ingestion that prioritizes API latency over guaranteed delivery.
+
+```python
+# Fire-and-forget analytics pattern in Python
+import asyncio
+from collections import deque
+from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Any
+import json
+
+@dataclass
+class AnalyticsEvent:
+    event_type: str
+    properties: dict[str, Any]
+    timestamp: datetime = field(default_factory=datetime.utcnow)
+    user_id: str | None = None
+
+class FireAndForgetBuffer:
+    """In-memory buffer that flushes to durable storage periodically."""
+
+    def __init__(self, flush_interval: float = 1.0, max_buffer_size: int = 1000):
+        self._buffer: deque[AnalyticsEvent] = deque(maxlen=max_buffer_size)
+        self._flush_interval = flush_interval
+        self._flush_task: asyncio.Task | None = None
+        self._storage = None  # Injected storage backend
+
+    async def start(self, storage):
+        """Start the background flush loop."""
+        self._storage = storage
+        self._flush_task = asyncio.create_task(self._flush_loop())
+
+    async def stop(self):
+        """Graceful shutdown - flush remaining events."""
+        if self._flush_task:
+            self._flush_task.cancel()
+            await self._flush_remaining()
+
+    def record(self, event: AnalyticsEvent) -> None:
+        """Record event - returns immediately, no await needed."""
+        self._buffer.append(event)
+        # If buffer is full, oldest events are dropped (maxlen behavior)
+        # This is acceptable for analytics - we trade completeness for latency
+
+    async def _flush_loop(self):
+        """Background task that periodically flushes buffer to storage."""
+        while True:
+            await asyncio.sleep(self._flush_interval)
+            await self._flush_remaining()
+
+    async def _flush_remaining(self):
+        """Flush current buffer contents to durable storage."""
+        if not self._buffer:
+            return
+
+        # Drain buffer atomically
+        events_to_flush = []
+        while self._buffer:
+            events_to_flush.append(self._buffer.popleft())
+
+        # Batch write to durable storage (Kafka, S3, database)
+        try:
+            await self._storage.write_batch([
+                {"event_type": e.event_type, "properties": e.properties,
+                 "timestamp": e.timestamp.isoformat(), "user_id": e.user_id}
+                for e in events_to_flush
+            ])
+        except Exception as e:
+            # Log error but don't crash - data loss is acceptable for analytics
+            print(f"Failed to flush {len(events_to_flush)} events: {e}")
+
+# Usage in API endpoint
+buffer = FireAndForgetBuffer(flush_interval=1.0)
+
+async def track_event(event_type: str, properties: dict, user_id: str = None):
+    """Non-blocking event tracking - adds ~0.01ms to request latency."""
+    buffer.record(AnalyticsEvent(event_type, properties, user_id=user_id))
+    # Returns immediately - no await, no network call
+```
+
+### Example 7.6: WORM Audit Log Pattern (Rust)
+
+Append-only audit logging with immutability guarantees for compliance.
+
+```rust
+// WORM audit log pattern in Rust
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
+use sqlx::{PgPool, Row};
+use uuid::Uuid;
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AuditEntry {
+    pub id: Uuid,
+    pub timestamp: DateTime<Utc>,
+    pub actor_id: String,
+    pub action: String,
+    pub resource_type: String,
+    pub resource_id: String,
+    pub old_value: Option<serde_json::Value>,
+    pub new_value: Option<serde_json::Value>,
+    pub metadata: serde_json::Value,
+}
+
+pub struct AuditLog {
+    pool: PgPool,
+}
+
+impl AuditLog {
+    pub fn new(pool: PgPool) -> Self {
+        Self { pool }
+    }
+
+    /// Append an audit entry - INSERT only, no UPDATE or DELETE
+    pub async fn append(&self, entry: AuditEntry) -> Result<Uuid, sqlx::Error> {
+        // Audit table has no UPDATE or DELETE permissions
+        // Uses append-only table structure
+        sqlx::query(r#"
+            INSERT INTO audit_log (id, timestamp, actor_id, action, resource_type,
+                                   resource_id, old_value, new_value, metadata)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        "#)
+        .bind(entry.id)
+        .bind(entry.timestamp)
+        .bind(&entry.actor_id)
+        .bind(&entry.action)
+        .bind(&entry.resource_type)
+        .bind(&entry.resource_id)
+        .bind(&entry.old_value)
+        .bind(&entry.new_value)
+        .bind(&entry.metadata)
+        .execute(&self.pool)
+        .await?;
+
+        Ok(entry.id)
+    }
+
+    /// Query audit entries by resource - read-only operations
+    pub async fn get_by_resource(
+        &self,
+        resource_type: &str,
+        resource_id: &str,
+    ) -> Result<Vec<AuditEntry>, sqlx::Error> {
+        sqlx::query_as::<_, AuditEntry>(r#"
+            SELECT * FROM audit_log
+            WHERE resource_type = $1 AND resource_id = $2
+            ORDER BY timestamp DESC
+        "#)
+        .bind(resource_type)
+        .bind(resource_id)
+        .fetch_all(&self.pool)
+        .await
+    }
+
+    /// Query audit entries by time range for compliance reporting
+    pub async fn get_by_time_range(
+        &self,
+        start: DateTime<Utc>,
+        end: DateTime<Utc>,
+    ) -> Result<Vec<AuditEntry>, sqlx::Error> {
+        sqlx::query_as::<_, AuditEntry>(r#"
+            SELECT * FROM audit_log
+            WHERE timestamp >= $1 AND timestamp < $2
+            ORDER BY timestamp ASC
+        "#)
+        .bind(start)
+        .bind(end)
+        .fetch_all(&self.pool)
+        .await
+    }
+}
+
+// Helper to create audit entries with consistent structure
+pub fn audit_update(
+    actor_id: &str,
+    resource_type: &str,
+    resource_id: &str,
+    old_value: serde_json::Value,
+    new_value: serde_json::Value,
+) -> AuditEntry {
+    AuditEntry {
+        id: Uuid::new_v4(),
+        timestamp: Utc::now(),
+        actor_id: actor_id.to_string(),
+        action: "update".to_string(),
+        resource_type: resource_type.to_string(),
+        resource_id: resource_id.to_string(),
+        old_value: Some(old_value),
+        new_value: Some(new_value),
+        metadata: serde_json::json!({}),
+    }
+}
+```
+
+### Example 7.7: Read Replica Routing (Rust)
+
+Route reads to replicas while ensuring writes go to primary.
 
 ```rust
 // Read replica routing in Rust
@@ -1751,11 +2836,21 @@ pub struct DatabaseRouter {
 
 impl DatabaseRouter {
     pub async fn new(primary_url: &str, replica_urls: &[&str]) -> Result<Self, sqlx::Error> {
-        let primary = PgPoolOptions::new().max_connections(10).connect(primary_url).await?;
+        let primary = PgPoolOptions::new()
+            .max_connections(10)
+            .connect(primary_url)
+            .await?;
+
         let mut replicas = Vec::new();
         for url in replica_urls {
-            replicas.push(PgPoolOptions::new().max_connections(10).connect(url).await?);
+            replicas.push(
+                PgPoolOptions::new()
+                    .max_connections(10)
+                    .connect(url)
+                    .await?
+            );
         }
+
         Ok(Self { primary, replicas })
     }
 
@@ -1765,19 +2860,358 @@ impl DatabaseRouter {
     }
 
     /// Get a random replica pool for read operations
+    /// Falls back to primary if no replicas available
     pub fn read_pool(&self) -> &PgPool {
-        self.replicas.choose(&mut rand::thread_rng()).unwrap_or(&self.primary)
+        self.replicas
+            .choose(&mut rand::thread_rng())
+            .unwrap_or(&self.primary)
+    }
+
+    /// Get primary for read-after-write consistency
+    pub fn consistent_read_pool(&self) -> &PgPool {
+        &self.primary
     }
 }
 
-// Usage: router.read_pool() for SELECTs, router.write_pool() for INSERT/UPDATE/DELETE
+// Usage pattern:
+// - router.read_pool() for general SELECT queries
+// - router.write_pool() for INSERT/UPDATE/DELETE
+// - router.consistent_read_pool() when user just wrote and needs to read back
+```
+
+### Example 7.8: Vector Search with pgvector (Python)
+
+Semantic similarity search using PostgreSQL with the pgvector extension.
+
+```python
+# Vector search with pgvector in Python
+import asyncpg
+from openai import AsyncOpenAI
+
+client = AsyncOpenAI()
+
+async def generate_embedding(text: str) -> list[float]:
+    """Generate embedding using OpenAI's API."""
+    response = await client.embeddings.create(
+        model="text-embedding-3-small",
+        input=text
+    )
+    return response.data[0].embedding
+
+async def store_product_embedding(pool: asyncpg.Pool, product_id: str, description: str):
+    """Store product with its embedding for similarity search."""
+    embedding = await generate_embedding(description)
+
+    await pool.execute("""
+        INSERT INTO products (id, description, embedding)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (id) DO UPDATE SET
+            description = EXCLUDED.description,
+            embedding = EXCLUDED.embedding
+    """, product_id, description, embedding)
+
+async def search_similar_products(
+    pool: asyncpg.Pool,
+    query: str,
+    limit: int = 10
+) -> list[dict]:
+    """Find products semantically similar to the query."""
+    query_embedding = await generate_embedding(query)
+
+    # Use cosine distance for similarity (1 - cosine_similarity)
+    # Lower distance = more similar
+    results = await pool.fetch("""
+        SELECT id, description,
+               1 - (embedding <=> $1::vector) as similarity
+        FROM products
+        ORDER BY embedding <=> $1::vector
+        LIMIT $2
+    """, query_embedding, limit)
+
+    return [
+        {"id": r["id"], "description": r["description"], "similarity": r["similarity"]}
+        for r in results
+    ]
+
+# Hybrid search: combine vector similarity with traditional filters
+async def search_products_hybrid(
+    pool: asyncpg.Pool,
+    query: str,
+    category: str | None = None,
+    max_price: float | None = None,
+    limit: int = 10
+) -> list[dict]:
+    """Combine semantic search with traditional SQL filters."""
+    query_embedding = await generate_embedding(query)
+
+    results = await pool.fetch("""
+        SELECT id, description, price, category,
+               1 - (embedding <=> $1::vector) as similarity
+        FROM products
+        WHERE ($2::text IS NULL OR category = $2)
+          AND ($3::numeric IS NULL OR price <= $3)
+        ORDER BY embedding <=> $1::vector
+        LIMIT $4
+    """, query_embedding, category, max_price, limit)
+
+    return [dict(r) for r in results]
+```
+
+### Example 7.9: Elasticsearch Integration (TypeScript)
+
+Full-text search and faceted navigation alongside a primary database.
+
+```typescript
+// Elasticsearch integration in TypeScript
+import { Client } from '@elastic/elasticsearch';
+
+const es = new Client({ node: 'http://localhost:9200' });
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  price: number;
+  tags: string[];
+}
+
+// Index a product for search (called after database write)
+async function indexProduct(product: Product): Promise<void> {
+  await es.index({
+    index: 'products',
+    id: product.id,
+    document: {
+      name: product.name,
+      description: product.description,
+      category: product.category,
+      price: product.price,
+      tags: product.tags,
+      // Combine fields for unified search
+      searchable: `${product.name} ${product.description} ${product.tags.join(' ')}`,
+    },
+  });
+}
+
+// Full-text search with facets
+async function searchProducts(query: string, filters?: {
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  tags?: string[];
+}) {
+  const must: object[] = [
+    { multi_match: { query, fields: ['name^3', 'description', 'tags'] } }
+  ];
+
+  const filter: object[] = [];
+  if (filters?.category) {
+    filter.push({ term: { category: filters.category } });
+  }
+  if (filters?.minPrice || filters?.maxPrice) {
+    filter.push({ range: { price: {
+      ...(filters.minPrice && { gte: filters.minPrice }),
+      ...(filters.maxPrice && { lte: filters.maxPrice }),
+    }}});
+  }
+  if (filters?.tags?.length) {
+    filter.push({ terms: { tags: filters.tags } });
+  }
+
+  const result = await es.search({
+    index: 'products',
+    query: { bool: { must, filter } },
+    aggs: {
+      categories: { terms: { field: 'category' } },
+      price_ranges: { range: { field: 'price', ranges: [
+        { to: 50 }, { from: 50, to: 100 }, { from: 100, to: 500 }, { from: 500 }
+      ]}},
+      tags: { terms: { field: 'tags', size: 20 } },
+    },
+    highlight: { fields: { name: {}, description: {} } },
+    size: 20,
+  });
+
+  return {
+    hits: result.hits.hits.map(hit => ({
+      ...hit._source,
+      score: hit._score,
+      highlights: hit.highlight,
+    })),
+    facets: result.aggregations,
+    total: (result.hits.total as { value: number }).value,
+  };
+}
+
+// Keep Elasticsearch in sync with database changes
+async function onProductUpdated(product: Product): Promise<void> {
+  await indexProduct(product);
+}
+
+async function onProductDeleted(productId: string): Promise<void> {
+  await es.delete({ index: 'products', id: productId });
+}
+```
+
+### Example 7.10: Polyglot Persistence Coordinator (Python)
+
+Managing data consistency across multiple database types.
+
+```python
+# Polyglot persistence coordinator in Python
+import asyncio
+from dataclasses import dataclass
+from typing import Any
+import asyncpg
+import redis.asyncio as redis
+from elasticsearch import AsyncElasticsearch
+
+@dataclass
+class Product:
+    id: str
+    name: str
+    description: str
+    price: float
+    category: str
+    tags: list[str]
+
+class DataCoordinator:
+    """Coordinates writes across PostgreSQL, Redis, and Elasticsearch."""
+
+    def __init__(self, pg_pool: asyncpg.Pool, redis_client: redis.Redis, es_client: AsyncElasticsearch):
+        self.pg = pg_pool  # Source of truth
+        self.redis = redis_client  # Cache
+        self.es = es_client  # Search index
+
+    async def create_product(self, product: Product) -> None:
+        """Create product with coordinated writes to all stores."""
+        # 1. Write to PostgreSQL first (source of truth)
+        await self.pg.execute("""
+            INSERT INTO products (id, name, description, price, category, tags)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        """, product.id, product.name, product.description,
+           product.price, product.category, product.tags)
+
+        # 2. Update secondary stores (can be async/eventual)
+        await asyncio.gather(
+            self._update_cache(product),
+            self._update_search_index(product),
+            return_exceptions=True  # Don't fail if secondary stores fail
+        )
+
+    async def update_product(self, product: Product) -> None:
+        """Update product across all stores."""
+        # 1. Update PostgreSQL (source of truth)
+        await self.pg.execute("""
+            UPDATE products SET name=$2, description=$3, price=$4, category=$5, tags=$6
+            WHERE id = $1
+        """, product.id, product.name, product.description,
+           product.price, product.category, product.tags)
+
+        # 2. Invalidate cache and update search
+        await asyncio.gather(
+            self._invalidate_cache(product.id),
+            self._update_search_index(product),
+            return_exceptions=True
+        )
+
+    async def get_product(self, product_id: str) -> Product | None:
+        """Get product, checking cache first."""
+        # Try cache first
+        cached = await self.redis.get(f"product:{product_id}")
+        if cached:
+            return Product(**json.loads(cached))
+
+        # Cache miss - fetch from PostgreSQL
+        row = await self.pg.fetchrow(
+            "SELECT * FROM products WHERE id = $1", product_id
+        )
+        if not row:
+            return None
+
+        product = Product(**dict(row))
+
+        # Populate cache for next time (fire and forget)
+        asyncio.create_task(self._update_cache(product))
+
+        return product
+
+    async def _update_cache(self, product: Product) -> None:
+        """Update Redis cache with product data."""
+        await self.redis.setex(
+            f"product:{product.id}",
+            3600,  # 1 hour TTL
+            json.dumps(product.__dict__)
+        )
+
+    async def _invalidate_cache(self, product_id: str) -> None:
+        """Invalidate product cache on update."""
+        await self.redis.delete(f"product:{product_id}")
+
+    async def _update_search_index(self, product: Product) -> None:
+        """Update Elasticsearch index."""
+        await self.es.index(
+            index="products",
+            id=product.id,
+            document={
+                "name": product.name,
+                "description": product.description,
+                "price": product.price,
+                "category": product.category,
+                "tags": product.tags,
+            }
+        )
+```
+
+### Example 7.11: Connection Pool Configuration (Multi-language)
+
+Connection pooling patterns that apply regardless of database type.
+
+```python
+# Python: asyncpg pool for PostgreSQL
+import asyncpg
+
+pool = await asyncpg.create_pool(
+    dsn="postgresql://user:pass@localhost/db",
+    min_size=5,       # Keep connections warm
+    max_size=20,      # Limit total connections
+    max_inactive_connection_lifetime=300,  # Recycle idle connections
+    command_timeout=30,  # Query timeout
+)
+```
+
+```rust
+// Rust: SQLx pool configuration
+use sqlx::postgres::PgPoolOptions;
+use std::time::Duration;
+
+let pool = PgPoolOptions::new()
+    .min_connections(5)
+    .max_connections(20)
+    .acquire_timeout(Duration::from_secs(30))
+    .idle_timeout(Duration::from_secs(300))
+    .connect("postgresql://localhost/db")
+    .await?;
+```
+
+```typescript
+// TypeScript: pg pool configuration
+import { Pool } from 'pg';
+
+const pool = new Pool({
+  connectionString: 'postgresql://localhost/db',
+  min: 5,
+  max: 20,
+  idleTimeoutMillis: 300000,
+  connectionTimeoutMillis: 30000,
+});
 ```
 
 ---
 
 ## Asynchronous Processing and Queuing (Chapter 8)
 
-### Example A.29: Background Job Producer and Consumer (TypeScript)
+### Example A.40: Background Job Producer and Consumer (TypeScript)
 
 This example demonstrates enqueueing work for background processing and consuming it reliably using BullMQ with Redis as the backing store.
 
@@ -1819,7 +3253,7 @@ const orderWorker = new Worker<OrderJobData, OrderJobResult>('orders',
 );
 ```
 
-### Example A.30: Backpressure Implementation (Python)
+### Example A.41: Backpressure Implementation (Python)
 
 This example shows rate-limited consumers that implement backpressure when overwhelmed, using a token bucket algorithm for rate limiting combined with semaphore-based concurrency control.
 
@@ -1869,7 +3303,7 @@ class BackpressureError(Exception):
     pass
 ```
 
-### Example A.31: Retry with Exponential Backoff and Jitter (Rust)
+### Example A.42: Retry with Exponential Backoff and Jitter (Rust)
 
 This implementation provides a reusable retry wrapper with configurable backoff parameters and jitter to prevent thundering herd problems.
 
@@ -1919,7 +3353,7 @@ where F: FnMut() -> Fut, Fut: Future<Output = Result<T, E>>, E: std::fmt::Debug 
 }
 ```
 
-### Example A.32: Async HTTP Endpoint with Job Status (Python)
+### Example A.43: Async HTTP Endpoint with Job Status (Python)
 
 This FastAPI implementation demonstrates the async request pattern where the API accepts work, returns immediately with a job ID, and provides a polling endpoint for status updates.
 
@@ -1973,7 +3407,7 @@ async def get_job_status(job_id: str):
 
 ## Compute and Scaling Patterns (Chapter 9)
 
-### Example A.33: Stateless Service with External Session Store (Python)
+### Example A.44: Stateless Service with External Session Store (Python)
 
 ```python
 # Stateless service design in Python
@@ -2032,7 +3466,7 @@ async def get_profile(request: Request):
     return {"user_id": session["user_id"]}
 ```
 
-### Example A.34: Multi-Metric Kubernetes HPA Configuration (YAML)
+### Example A.45: Multi-Metric Kubernetes HPA Configuration (YAML)
 
 ```yaml
 # Kubernetes HPA with multiple metrics
@@ -2082,7 +3516,7 @@ spec:
       selectPolicy: Max        # Use whichever allows more scaling
 ```
 
-### Example A.35: Cold Start Mitigation in AWS Lambda (TypeScript)
+### Example A.46: Cold Start Mitigation in AWS Lambda (TypeScript)
 
 ```typescript
 // Cold start mitigation in TypeScript Lambda
@@ -2153,7 +3587,7 @@ export const handler: APIGatewayProxyHandler = async (event): Promise<APIGateway
 };
 ```
 
-### Example A.36: Graceful Shutdown and Health Checks (Rust)
+### Example A.47: Graceful Shutdown and Health Checks (Rust)
 
 ```rust
 // Graceful shutdown and health checks in Rust
@@ -2239,7 +3673,7 @@ async fn main() -> std::io::Result<()> {
 
 ## Traffic Management and Resilience (Chapter 10)
 
-### Example A.37: Token Bucket Rate Limiter (Python)
+### Example A.48: Token Bucket Rate Limiter (Python)
 
 ```python
 import time
@@ -2300,7 +3734,7 @@ def handle_request(user_id: str):
     # Process request...
 ```
 
-### Example A.38: Circuit Breaker Implementation (TypeScript)
+### Example A.49: Circuit Breaker Implementation (TypeScript)
 
 ```typescript
 enum CircuitState {
@@ -2415,7 +3849,7 @@ async function fetchPaymentStatus(orderId: string): Promise<PaymentStatus> {
 }
 ```
 
-### Example A.39: Retry with Exponential Backoff and Jitter (Rust)
+### Example A.50: Retry with Exponential Backoff and Jitter (Rust)
 
 ```rust
 use rand::Rng;
@@ -2528,7 +3962,7 @@ async fn fetch_user_data(user_id: &str) -> Result<User, reqwest::Error> {
 }
 ```
 
-### Example A.40: Bulkhead with Semaphore (TypeScript)
+### Example A.51: Bulkhead with Semaphore (TypeScript)
 
 ```typescript
 class BulkheadFullError extends Error {
@@ -3143,9 +4577,9 @@ class AuthMetricsMiddleware:
 
 ---
 
-## Advanced Optimization Techniques (Chapter 12)
+## Edge Infrastructure (Chapter 12)
 
-### Example A.41: A/B Test Routing Edge Function (TypeScript)
+### Example 12.1: A/B Test Routing Edge Function (TypeScript)
 
 ```typescript
 // Edge function example: A/B test routing (Cloudflare Workers)
@@ -3193,7 +4627,352 @@ function parseCookies(cookieHeader: string): Record<string, string> {
 }
 ```
 
-### Example A.42: GraphQL N+1 Query Pattern (GraphQL)
+### Example 12.2: Edge JWT Validation (TypeScript)
+
+```typescript
+// Edge JWT validation with KV-cached public keys (Cloudflare Workers)
+interface Env {
+  JWT_KEYS: KVNamespace;
+}
+
+interface JWTPayload {
+  sub: string;
+  exp: number;
+  iat: number;
+  iss: string;
+  roles?: string[];
+}
+
+async function validateJWT(
+  token: string,
+  env: Env
+): Promise<JWTPayload | null> {
+  const [headerB64, payloadB64, signatureB64] = token.split('.');
+  if (!headerB64 || !payloadB64 || !signatureB64) {
+    return null;
+  }
+
+  // Decode payload
+  const payload: JWTPayload = JSON.parse(atob(payloadB64));
+
+  // Check expiration
+  if (payload.exp * 1000 < Date.now()) {
+    return null;
+  }
+
+  // Get public key from KV (cached JWKS)
+  const publicKeyPem = await env.JWT_KEYS.get(`key:${payload.iss}`);
+  if (!publicKeyPem) {
+    return null;
+  }
+
+  // Import public key
+  const publicKey = await crypto.subtle.importKey(
+    'spki',
+    pemToArrayBuffer(publicKeyPem),
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    false,
+    ['verify']
+  );
+
+  // Verify signature
+  const data = new TextEncoder().encode(`${headerB64}.${payloadB64}`);
+  const signature = base64UrlDecode(signatureB64);
+
+  const valid = await crypto.subtle.verify(
+    'RSASSA-PKCS1-v1_5',
+    publicKey,
+    signature,
+    data
+  );
+
+  return valid ? payload : null;
+}
+
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+
+    const token = authHeader.slice(7);
+    const payload = await validateJWT(token, env);
+
+    if (!payload) {
+      return new Response('Invalid token', { status: 401 });
+    }
+
+    // Forward validated claims to origin
+    const headers = new Headers(request.headers);
+    headers.set('X-User-ID', payload.sub);
+    headers.set('X-User-Roles', (payload.roles || []).join(','));
+    headers.delete('Authorization'); // Don't forward token to origin
+
+    return fetch(request.url, {
+      method: request.method,
+      headers,
+      body: request.body,
+    });
+  }
+};
+
+function pemToArrayBuffer(pem: string): ArrayBuffer {
+  const b64 = pem.replace(/-----[^-]+-----/g, '').replace(/\s/g, '');
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes.buffer;
+}
+
+function base64UrlDecode(str: string): ArrayBuffer {
+  const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = base64 + '==='.slice(0, (4 - base64.length % 4) % 4);
+  const binary = atob(padded);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes.buffer;
+}
+```
+
+### Example 12.3: KV Store Session Lookup (TypeScript)
+
+```typescript
+// Session lookup with KV store and origin fallback (Cloudflare Workers)
+interface Env {
+  SESSIONS: KVNamespace;
+  ORIGIN_URL: string;
+}
+
+interface Session {
+  userId: string;
+  roles: string[];
+  expiresAt: number;
+}
+
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const sessionId = getSessionIdFromCookie(request);
+    if (!sessionId) {
+      return new Response('No session', { status: 401 });
+    }
+
+    // Try KV first (fast path)
+    let session = await env.SESSIONS.get<Session>(sessionId, { type: 'json' });
+
+    if (!session) {
+      // Fallback to origin for session lookup
+      const originResponse = await fetch(
+        `${env.ORIGIN_URL}/internal/session/${sessionId}`,
+        { headers: { 'X-Internal-Auth': 'edge-service' } }
+      );
+
+      if (!originResponse.ok) {
+        return new Response('Invalid session', { status: 401 });
+      }
+
+      session = await originResponse.json();
+
+      // Cache in KV for future requests
+      const ttl = Math.floor((session.expiresAt - Date.now()) / 1000);
+      if (ttl > 0) {
+        await env.SESSIONS.put(sessionId, JSON.stringify(session), {
+          expirationTtl: ttl,
+        });
+      }
+    }
+
+    // Check expiration
+    if (session.expiresAt < Date.now()) {
+      await env.SESSIONS.delete(sessionId);
+      return new Response('Session expired', { status: 401 });
+    }
+
+    // Forward validated session to origin
+    const headers = new Headers(request.headers);
+    headers.set('X-User-ID', session.userId);
+    headers.set('X-User-Roles', session.roles.join(','));
+
+    return fetch(request.url, {
+      method: request.method,
+      headers,
+      body: request.body,
+    });
+  }
+};
+
+function getSessionIdFromCookie(request: Request): string | null {
+  const cookie = request.headers.get('Cookie') || '';
+  const match = cookie.match(/session_id=([^;]+)/);
+  return match ? match[1] : null;
+}
+```
+
+### Example 12.4: Cloudflare Rate Limiting Rule (JSON)
+
+```json
+{
+  "description": "API rate limit: 100 requests per minute per IP",
+  "expression": "(http.request.uri.path contains \"/api/\")",
+  "action": "block",
+  "ratelimit": {
+    "characteristics": ["ip.src"],
+    "period": 60,
+    "requests_per_period": 100,
+    "mitigation_timeout": 60,
+    "counting_expression": "",
+    "requests_to_origin": true
+  }
+}
+```
+
+```json
+{
+  "description": "Login endpoint: 5 attempts per 5 minutes per IP",
+  "expression": "(http.request.uri.path eq \"/api/login\")",
+  "action": "challenge",
+  "ratelimit": {
+    "characteristics": ["ip.src"],
+    "period": 300,
+    "requests_per_period": 5,
+    "mitigation_timeout": 300
+  }
+}
+```
+
+```json
+{
+  "description": "API key quota: 10,000 requests per hour",
+  "expression": "(http.request.uri.path contains \"/api/v2/\")",
+  "action": "block",
+  "ratelimit": {
+    "characteristics": ["http.request.headers[\"x-api-key\"]"],
+    "period": 3600,
+    "requests_per_period": 10000,
+    "mitigation_timeout": 3600
+  }
+}
+```
+
+### Example 12.5: Durable Object Counter (TypeScript)
+
+```typescript
+// Durable Object for strongly consistent counting (Cloudflare Workers)
+export class RateLimitCounter implements DurableObject {
+  private count: number = 0;
+  private windowStart: number = 0;
+  private readonly windowMs: number = 60000; // 1 minute window
+
+  constructor(
+    private readonly state: DurableObjectState,
+    private readonly env: Env
+  ) {}
+
+  async fetch(request: Request): Promise<Response> {
+    const url = new URL(request.url);
+
+    if (url.pathname === '/increment') {
+      return this.increment();
+    } else if (url.pathname === '/check') {
+      return this.check();
+    }
+
+    return new Response('Not found', { status: 404 });
+  }
+
+  private async increment(): Promise<Response> {
+    const now = Date.now();
+
+    // Reset counter if window expired
+    if (now - this.windowStart > this.windowMs) {
+      this.windowStart = now;
+      this.count = 0;
+    }
+
+    this.count++;
+
+    // Persist state
+    await this.state.storage.put({
+      count: this.count,
+      windowStart: this.windowStart,
+    });
+
+    return Response.json({
+      count: this.count,
+      remaining: Math.max(0, 100 - this.count),
+      resetAt: this.windowStart + this.windowMs,
+    });
+  }
+
+  private async check(): Promise<Response> {
+    // Load state if needed
+    const stored = await this.state.storage.get<{
+      count: number;
+      windowStart: number;
+    }>(['count', 'windowStart']);
+
+    if (stored) {
+      this.count = stored.count || 0;
+      this.windowStart = stored.windowStart || 0;
+    }
+
+    const now = Date.now();
+    if (now - this.windowStart > this.windowMs) {
+      this.count = 0;
+    }
+
+    return Response.json({
+      count: this.count,
+      remaining: Math.max(0, 100 - this.count),
+      limited: this.count >= 100,
+    });
+  }
+}
+
+// Worker that uses the Durable Object
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
+
+    // Get Durable Object for this IP
+    const id = env.RATE_LIMITER.idFromName(clientIP);
+    const rateLimiter = env.RATE_LIMITER.get(id);
+
+    // Check rate limit
+    const checkResponse = await rateLimiter.fetch(
+      new Request('https://internal/check')
+    );
+    const { limited, remaining } = await checkResponse.json();
+
+    if (limited) {
+      return new Response('Rate limit exceeded', {
+        status: 429,
+        headers: { 'X-RateLimit-Remaining': '0' },
+      });
+    }
+
+    // Increment counter
+    await rateLimiter.fetch(new Request('https://internal/increment'));
+
+    // Forward to origin
+    const response = await fetch(request);
+    const newResponse = new Response(response.body, response);
+    newResponse.headers.set('X-RateLimit-Remaining', String(remaining - 1));
+
+    return newResponse;
+  }
+};
+```
+
+---
+
+## Advanced Optimization Techniques (Chapter 13)
+
+### Example 13.1: GraphQL N+1 Query Pattern (GraphQL)
 
 ```graphql
 query {
@@ -3207,7 +4986,7 @@ query {
 }
 ```
 
-### Example A.43: DataLoader Pattern Implementation (Python)
+### Example A.54: DataLoader Pattern Implementation (Python)
 
 ```python
 # DataLoader implementation in Python (using aiodataloader)
@@ -3268,7 +5047,7 @@ async def resolve_user_posts(user, info):
     return await post_loader.load(user['id'])
 ```
 
-### Example A.44: gRPC Service with Streaming (Rust)
+### Example A.55: gRPC Service with Streaming (Rust)
 
 ```rust
 // gRPC service implementation in Rust using tonic
@@ -3356,7 +5135,7 @@ impl UserService for UserServiceImpl {
 }
 ```
 
-### Example A.45: Hedged Requests for Tail Latency Reduction (Python)
+### Example A.56: Hedged Requests for Tail Latency Reduction (Python)
 
 ```python
 # Hedged request implementation in Python
@@ -3439,9 +5218,9 @@ async def fetch_user_with_hedging(user_id: int) -> dict:
 
 ---
 
-## Putting It All Together (Chapter 13)
+## Putting It All Together (Chapter 14)
 
-### Example A.46: Performance Budget Checker (TypeScript)
+### Example A.57: Performance Budget Checker (TypeScript)
 
 This CI integration fails the build if key performance metrics regress. Integrate it into your deployment pipeline to catch regressions before they reach production.
 
@@ -3538,7 +5317,7 @@ function runBudgetCheck(budgetsFile: string, resultsFile: string): number {
 process.exit(runBudgetCheck('budgets.json', 'load_test_results.json'));
 ```
 
-### Example A.47: Optimization Decision Helper (Python)
+### Example A.58: Optimization Decision Helper (Python)
 
 This utility helps select optimization strategies based on observed symptoms. It encodes the decision framework in code, providing a starting point for investigation.
 
@@ -3634,8 +5413,9 @@ if __name__ == "__main__":
 - A.18, A.19, A.22, A.25: Database
 - A.30, A.31, A.32: Async Processing
 - A.33, A.37: Scaling/Traffic
-- A.43, A.45: Advanced Techniques
-- A.47: Synthesis
+- 13.2: Advanced Techniques (DataLoader)
+- 13.4: Advanced Techniques (Hedged Requests)
+- A.51, A.52: Synthesis
 
 ### Rust
 - A.1, A.2, A.3: Performance Fundamentals
@@ -3645,7 +5425,7 @@ if __name__ == "__main__":
 - A.20, A.23, A.26, A.28: Database
 - A.31: Async Processing
 - A.36, A.39: Scaling/Traffic
-- A.44: Advanced Techniques
+- 13.3: Advanced Techniques (gRPC)
 
 ### TypeScript
 - A.1, A.2, A.3, A.4: Performance Fundamentals
@@ -3655,11 +5435,14 @@ if __name__ == "__main__":
 - A.21, A.24, A.27: Database
 - A.29: Async Processing
 - A.35, A.38, A.40: Scaling/Traffic
-- A.41: Advanced Techniques
-- A.46: Synthesis
+- 12.1, 12.2, 12.3, 12.5: Edge Infrastructure
+- A.51: Synthesis
+
+### JSON
+- 12.4: Edge Infrastructure (Rate Limiting Rules)
 
 ### YAML
 - A.34: Kubernetes HPA Configuration
 
 ### GraphQL
-- A.42: N+1 Query Pattern
+- 13.1: N+1 Query Pattern

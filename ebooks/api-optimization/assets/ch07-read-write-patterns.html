@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Read-Heavy vs Write-Heavy Patterns</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background -->
+            <rect width="900" height="400" fill="white"/>
+
+            <!-- Title -->
+            <text x="450" y="30" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Read-Heavy vs Write-Heavy Optimization Patterns</text>
+
+            <!-- Divider -->
+            <line x1="450" y1="50" x2="450" y2="370" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="5,5"/>
+
+            <!-- LEFT SIDE: Read-Heavy -->
+            <rect x="50" y="55" width="350" height="30" fill="#3b82f6" rx="4"/>
+            <text x="225" y="75" text-anchor="middle" style="font-size: 14px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Read-Heavy Pattern (80%+ reads)</text>
+
+            <!-- Clients -->
+            <text x="80" y="115" text-anchor="middle" style="font-size: 11px; fill: #374151; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Clients</text>
+            <rect x="50" y="125" width="60" height="25" fill="#dbeafe" rx="4" stroke="#3b82f6" stroke-width="1"/>
+            <rect x="50" y="155" width="60" height="25" fill="#dbeafe" rx="4" stroke="#3b82f6" stroke-width="1"/>
+            <rect x="50" y="185" width="60" height="25" fill="#dbeafe" rx="4" stroke="#3b82f6" stroke-width="1"/>
+            <rect x="50" y="215" width="60" height="25" fill="#dbeafe" rx="4" stroke="#3b82f6" stroke-width="1"/>
+            <rect x="50" y="245" width="60" height="25" fill="#dbeafe" rx="4" stroke="#3b82f6" stroke-width="1"/>
+
+            <!-- Cache layer -->
+            <rect x="150" y="140" width="80" height="120" fill="#22c55e" rx="6"/>
+            <text x="190" y="175" text-anchor="middle" style="font-size: 11px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Cache</text>
+            <text x="190" y="195" text-anchor="middle" style="font-size: 9px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Redis</text>
+            <text x="190" y="210" text-anchor="middle" style="font-size: 9px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Memcached</text>
+            <text x="190" y="240" text-anchor="middle" style="font-size: 9px; fill: #dcfce7;" font-family="Liberation Sans, Arial, sans-serif">85% hit rate</text>
+
+            <!-- Arrows to cache (many) -->
+            <line x1="110" y1="137" x2="145" y2="160" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <line x1="110" y1="167" x2="145" y2="175" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <line x1="110" y1="197" x2="145" y2="195" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <line x1="110" y1="227" x2="145" y2="215" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <line x1="110" y1="257" x2="145" y2="240" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+            <!-- Read replicas -->
+            <rect x="270" y="120" width="70" height="40" fill="#0ea5e9" rx="4"/>
+            <text x="305" y="145" text-anchor="middle" style="font-size: 9px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Replica 1</text>
+
+            <rect x="270" y="175" width="70" height="40" fill="#0ea5e9" rx="4"/>
+            <text x="305" y="200" text-anchor="middle" style="font-size: 9px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Replica 2</text>
+
+            <rect x="270" y="230" width="70" height="40" fill="#0ea5e9" rx="4"/>
+            <text x="305" y="255" text-anchor="middle" style="font-size: 9px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Replica 3</text>
+
+            <!-- Arrows from cache to replicas (fewer) -->
+            <line x1="230" y1="160" x2="265" y2="145" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+            <line x1="230" y1="200" x2="265" y2="195" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+            <line x1="230" y1="240" x2="265" y2="250" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+
+            <!-- Primary -->
+            <rect x="360" y="170" width="70" height="50" fill="#1e40af" rx="4"/>
+            <text x="395" y="195" text-anchor="middle" style="font-size: 10px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Primary</text>
+            <text x="395" y="210" text-anchor="middle" style="font-size: 8px; fill: #93c5fd;" font-family="Liberation Sans, Arial, sans-serif">Writes only</text>
+
+            <!-- Replication arrows -->
+            <line x1="360" y1="185" x2="345" y2="160" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+            <line x1="360" y1="195" x2="345" y2="195" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+            <line x1="360" y1="205" x2="345" y2="250" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+
+            <!-- Read-heavy annotations -->
+            <text x="225" y="295" text-anchor="middle" style="font-size: 10px; fill: #22c55e; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Most reads served from cache</text>
+            <text x="225" y="310" text-anchor="middle" style="font-size: 10px; fill: #0ea5e9; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Cache misses distributed across replicas</text>
+            <text x="225" y="325" text-anchor="middle" style="font-size: 10px; fill: #1e40af; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Primary handles only writes</text>
+
+            <!-- Use cases -->
+            <rect x="80" y="345" width="290" height="40" fill="#f1f5f9" rx="4"/>
+            <text x="225" y="365" text-anchor="middle" style="font-size: 10px; fill: #475569; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Use cases: Product catalogs, content delivery,</text>
+            <text x="225" y="378" text-anchor="middle" style="font-size: 10px; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">user profiles, configuration data</text>
+
+            <!-- RIGHT SIDE: Write-Heavy -->
+            <rect x="500" y="55" width="350" height="30" fill="#ef4444" rx="4"/>
+            <text x="675" y="75" text-anchor="middle" style="font-size: 14px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Write-Heavy Pattern (50%+ writes)</text>
+
+            <!-- Clients -->
+            <text x="530" y="115" text-anchor="middle" style="font-size: 11px; fill: #374151; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Clients</text>
+            <rect x="500" y="125" width="60" height="25" fill="#fee2e2" rx="4" stroke="#ef4444" stroke-width="1"/>
+            <rect x="500" y="155" width="60" height="25" fill="#fee2e2" rx="4" stroke="#ef4444" stroke-width="1"/>
+            <rect x="500" y="185" width="60" height="25" fill="#fee2e2" rx="4" stroke="#ef4444" stroke-width="1"/>
+            <rect x="500" y="215" width="60" height="25" fill="#fee2e2" rx="4" stroke="#ef4444" stroke-width="1"/>
+            <rect x="500" y="245" width="60" height="25" fill="#fee2e2" rx="4" stroke="#ef4444" stroke-width="1"/>
+
+            <!-- Router/Load balancer -->
+            <rect x="600" y="155" width="70" height="80" fill="#f59e0b" rx="6"/>
+            <text x="635" y="185" text-anchor="middle" style="font-size: 10px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Router</text>
+            <text x="635" y="200" text-anchor="middle" style="font-size: 9px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Partition</text>
+            <text x="635" y="215" text-anchor="middle" style="font-size: 9px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">key hash</text>
+
+            <!-- Arrows to router -->
+            <line x1="560" y1="137" x2="595" y2="165" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+            <line x1="560" y1="167" x2="595" y2="175" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+            <line x1="560" y1="197" x2="595" y2="195" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+            <line x1="560" y1="227" x2="595" y2="215" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+            <line x1="560" y1="257" x2="595" y2="225" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+
+            <!-- Partitions/Shards -->
+            <rect x="710" y="110" width="70" height="45" fill="#dc2626" rx="4"/>
+            <text x="745" y="130" text-anchor="middle" style="font-size: 9px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Partition A</text>
+            <text x="745" y="145" text-anchor="middle" style="font-size: 8px; fill: #fca5a5;" font-family="Liberation Sans, Arial, sans-serif">keys 0-33%</text>
+
+            <rect x="710" y="165" width="70" height="45" fill="#dc2626" rx="4"/>
+            <text x="745" y="185" text-anchor="middle" style="font-size: 9px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Partition B</text>
+            <text x="745" y="200" text-anchor="middle" style="font-size: 8px; fill: #fca5a5;" font-family="Liberation Sans, Arial, sans-serif">keys 34-66%</text>
+
+            <rect x="710" y="220" width="70" height="45" fill="#dc2626" rx="4"/>
+            <text x="745" y="240" text-anchor="middle" style="font-size: 9px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Partition C</text>
+            <text x="745" y="255" text-anchor="middle" style="font-size: 8px; fill: #fca5a5;" font-family="Liberation Sans, Arial, sans-serif">keys 67-100%</text>
+
+            <!-- Arrows from router to partitions -->
+            <line x1="670" y1="170" x2="705" y2="135" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
+            <line x1="670" y1="195" x2="705" y2="187" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
+            <line x1="670" y1="220" x2="705" y2="242" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
+
+            <!-- Batch writes indicator -->
+            <rect x="795" y="165" width="55" height="45" fill="#fef3c7" rx="4" stroke="#f59e0b" stroke-width="1"/>
+            <text x="822" y="185" text-anchor="middle" style="font-size: 8px; fill: #92400e; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Batch</text>
+            <text x="822" y="198" text-anchor="middle" style="font-size: 8px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">writes</text>
+
+            <line x1="780" y1="187" x2="792" y2="187" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowAmber)"/>
+
+            <!-- Write-heavy annotations -->
+            <text x="675" y="295" text-anchor="middle" style="font-size: 10px; fill: #f59e0b; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Writes routed by partition key</text>
+            <text x="675" y="310" text-anchor="middle" style="font-size: 10px; fill: #dc2626; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Each partition handles subset of keys</text>
+            <text x="675" y="325" text-anchor="middle" style="font-size: 10px; fill: #92400e; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Batch writes reduce per-operation overhead</text>
+
+            <!-- Use cases -->
+            <rect x="530" y="345" width="290" height="40" fill="#f1f5f9" rx="4"/>
+            <text x="675" y="365" text-anchor="middle" style="font-size: 10px; fill: #475569; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Use cases: IoT telemetry, activity streams,</text>
+            <text x="675" y="378" text-anchor="middle" style="font-size: 10px; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">analytics events, logging, metrics</text>
+
+            <!-- Arrow markers -->
+            <defs>
+                <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#3b82f6"/>
+                </marker>
+                <marker id="arrowGray" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
+                </marker>
+                <marker id="arrowRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#ef4444"/>
+                </marker>
+                <marker id="arrowAmber" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"/>
+                </marker>
+            </defs>
+        </svg>
+    </div>
+</body>
+</html>

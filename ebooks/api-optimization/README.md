@@ -16,18 +16,19 @@ A practical guide to API performance optimization, from foundational concepts to
 4. [Monitoring: Dashboards & Alerting](chapters/04-monitoring.md)
 5. [Network & Connection Optimization](chapters/05-network-connections.md)
 6. [Caching Strategies](chapters/06-caching-strategies.md)
-7. [Database & Data Patterns](chapters/07-database-patterns.md)
+7. [Database & Storage Selection](chapters/07-database-patterns.md)
 8. [Async & Queue-Based Patterns](chapters/08-async-queuing.md)
 9. [Compute & Scaling](chapters/09-compute-scaling.md)
 10. [Traffic Management & Resilience](chapters/10-traffic-management.md)
 11. [Authentication Performance](chapters/11-auth-performance.md)
-12. [Advanced Optimization Techniques](chapters/12-advanced-techniques.md)
-13. [Putting It All Together](chapters/13-synthesis.md)
+12. [Edge Infrastructure](chapters/12-edge-infrastructure.md)
+13. [Advanced Optimization Techniques](chapters/13-advanced-techniques.md)
+14. [Putting It All Together](chapters/14-putting-it-all-together.md)
 
 ### Appendices
 
-14. [Appendix: Code Examples](chapters/14-appendix-code-examples.md)
-15. [Appendix: Auth Fundamentals](chapters/15-appendix-auth-fundamentals.md)
+- [Appendix: Code Examples](chapters/15-appendix-code-examples.md)
+- [Appendix: Auth Fundamentals](chapters/16-appendix-auth-fundamentals.md)
 
 ## Prerequisites
 
