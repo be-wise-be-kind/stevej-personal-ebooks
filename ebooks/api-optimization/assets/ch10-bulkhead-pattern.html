@@ -31,7 +31,7 @@
 <body>
     <div class="diagram-container">
         
-        <svg viewBox="0 0 900 550" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 900 640" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <linearGradient id="serviceGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
@@ -64,10 +64,10 @@
             </defs>
 
             <!-- Title and concept -->
-            <text x="450" y="35" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Isolated Resource Pools Prevent Cascading Failures</text>
+            <text x="450" y="22" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Isolated Resource Pools Prevent Cascading Failures</text>
 
             <!-- Ship bulkhead analogy -->
-            <g transform="translate(30, 55)">
+            <g transform="translate(335, 45)">
                 <rect x="0" y="0" width="230" height="100" rx="6" fill="#f1f5f9" stroke="#cbd5e1"/>
                 <text x="115" y="22" text-anchor="middle" fill="#64748b" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Ship Bulkhead Analogy</text>
 
@@ -90,7 +90,7 @@
             </g>
 
             <!-- Main Application -->
-            <g transform="translate(320, 70)">
+            <g transform="translate(175, 160)">
                 <rect x="0" y="0" width="550" height="80" rx="8" fill="url(#serviceGrad)" filter="url(#shadow)"/>
                 <text x="275" y="35" text-anchor="middle" fill="white" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Your Application Service</text>
                 <text x="275" y="55" text-anchor="middle" fill="white" font-size="11" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Incoming requests distributed across bulkheads</text>
@@ -106,7 +106,7 @@
             </g>
 
             <!-- Bulkhead Pools -->
-            <g transform="translate(60, 200)">
+            <g transform="translate(60, 290)">
                 <!-- Pool A: Payment Service (Healthy) -->
                 <g transform="translate(0, 0)">
                     <rect x="0" y="0" width="240" height="170" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="2" filter="url(#shadow)"/>
@@ -153,20 +153,18 @@
                     <text x="120" y="27" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Inventory Service Pool</text>
 
                     <!-- Connection slots visualization -->
-                    <text x="20" y="60" fill="#991b1b" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Connection Slots (10 max) - EXHAUSTED</text>
+                    <text x="20" y="60" fill="#991b1b" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Connection Slots (8 max) - EXHAUSTED</text>
 
                     <!-- All slots used -->
-                    <g transform="translate(10, 70)">
-                        <rect x="0" y="0" width="20" height="30" rx="2" fill="#ef4444"/>
-                        <rect x="24" y="0" width="20" height="30" rx="2" fill="#ef4444"/>
-                        <rect x="48" y="0" width="20" height="30" rx="2" fill="#ef4444"/>
-                        <rect x="72" y="0" width="20" height="30" rx="2" fill="#ef4444"/>
-                        <rect x="96" y="0" width="20" height="30" rx="2" fill="#ef4444"/>
-                        <rect x="120" y="0" width="20" height="30" rx="2" fill="#ef4444"/>
-                        <rect x="144" y="0" width="20" height="30" rx="2" fill="#ef4444"/>
-                        <rect x="168" y="0" width="20" height="30" rx="2" fill="#ef4444"/>
-                        <rect x="192" y="0" width="20" height="30" rx="2" fill="#ef4444"/>
-                        <rect x="216" y="0" width="20" height="30" rx="2" fill="#ef4444"/>
+                    <g transform="translate(15, 70)">
+                        <rect x="0" y="0" width="24" height="30" rx="2" fill="#ef4444"/>
+                        <rect x="28" y="0" width="24" height="30" rx="2" fill="#ef4444"/>
+                        <rect x="56" y="0" width="24" height="30" rx="2" fill="#ef4444"/>
+                        <rect x="84" y="0" width="24" height="30" rx="2" fill="#ef4444"/>
+                        <rect x="112" y="0" width="24" height="30" rx="2" fill="#ef4444"/>
+                        <rect x="140" y="0" width="24" height="30" rx="2" fill="#ef4444"/>
+                        <rect x="168" y="0" width="24" height="30" rx="2" fill="#ef4444"/>
+                        <rect x="196" y="0" width="24" height="30" rx="2" fill="#ef4444"/>
                     </g>
 
                     <!-- Waiting indicator -->
@@ -219,13 +217,13 @@
 
             <!-- Connection arrows from main service to pools -->
             <g stroke-width="2" fill="none">
-                <path d="M 420 150 L 180 200" stroke="#22c55e" marker-end="url(#arrowBlue)"/>
-                <path d="M 595 150 L 390 200" stroke="#ef4444" marker-end="url(#arrowBlue)"/>
-                <path d="M 770 150 L 680 200" stroke="#22c55e" marker-end="url(#arrowBlue)"/>
+                <path d="M 350 240 L 180 290" stroke="#22c55e" marker-end="url(#arrowBlue)"/>
+                <path d="M 450 240 L 450 290" stroke="#ef4444" marker-end="url(#arrowBlue)"/>
+                <path d="M 550 240 L 720 290" stroke="#22c55e" marker-end="url(#arrowBlue)"/>
             </g>
 
             <!-- Key insight callout -->
-            <g transform="translate(270, 395)">
+            <g transform="translate(270, 485)">
                 <rect x="0" y="0" width="360" height="70" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
                 <text x="180" y="25" text-anchor="middle" fill="#1e40af" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Key Insight: Failure Isolation</text>
                 <text x="180" y="45" text-anchor="middle" fill="#3b82f6" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Inventory pool exhaustion does NOT affect</text>
@@ -233,7 +231,7 @@
             </g>
 
             <!-- Legend -->
-            <g transform="translate(60, 480)">
+            <g transform="translate(60, 570)">
                 <rect x="0" y="0" width="780" height="55" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 
                 <rect x="20" y="15" width="20" height="20" rx="3" fill="#22c55e"/>

@@ -30,6 +30,16 @@ The mechanism has two parameters. The *refill rate* controls sustained throughpu
 
 This two-parameter design is why token bucket works well for user-facing APIs. A mobile app that opens and makes 20 API calls in 2 seconds, then goes idle for a minute, behaves very differently from a script hammering the API at a steady 10 requests per second. Both average 0.33 RPS, but they feel completely different. Token bucket permits the bursty human pattern while throttling the steady automated pattern, which is usually the desired behavior.
 
+```
+on request:
+    refill tokens based on time elapsed (up to capacity)
+    if tokens >= 1:
+        consume one token
+        allow request
+    else:
+        reject request (429 Too Many Requests)
+```
+
 The predictability also helps. Clients can calculate their own limits: idle time accumulates tokens up to the capacity cap, activity drains them at one per request. This transparency reduces the "why am I being rate limited?" support burden compared to algorithms whose behavior is harder to reason about.
 
 #### Leaky Bucket Algorithm
@@ -112,6 +122,21 @@ The three states represent a progression from trust to distrust and back:
 **Open** means the breaker has lost trust. Every request fails immediately with a predetermined error, typically within microseconds. No attempt is made to contact the downstream service. This instant failure sounds harsh, but it prevents threads from piling up waiting for timeouts from a service that cannot respond. After a cooling-off period (30-60 seconds is typical), the breaker cautiously tests whether trust can be restored.
 
 **Half-Open** is the probationary period. A small number of requests (often just one) are permitted through. Success transitions back to Closed; failure returns to Open with the timer reset. This graduated recovery prevents a stampede of pent-up requests from immediately overwhelming a service that has just recovered.
+
+```
+on request:
+    if circuit is OPEN:
+        if enough time has passed:
+            allow one request (HALF-OPEN)
+        else:
+            fail fast
+
+    result = call downstream service
+    record success or failure
+
+    if failure rate exceeds threshold:
+        open circuit, start timer
+```
 
 <!-- DIAGRAM: Circuit breaker state machine: Closed (normal) -[failures exceed threshold]-> Open (fail fast) -[timeout expires]-> Half-Open (test) -[success]-> Closed OR -[failure]-> Open, with annotations for each transition condition -->
 

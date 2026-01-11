@@ -60,6 +60,20 @@ A **span** represents a single unit of work within a trace. Spans have:
 
 **Context propagation** ensures trace information travels with requests. When Service A calls Service B, the trace ID and parent span ID must transfer via HTTP headers, message metadata, or similar mechanisms. OpenTelemetry standardizes this propagation through the W3C Trace Context specification.
 
+The propagation logic follows this pattern:
+
+```
+on outgoing request:
+    trace_id = current trace ID (or generate new if none exists)
+    span_id = generate new unique span ID
+    add headers: traceparent = trace_id + span_id
+    record span start time and operation name
+
+    make the outbound request
+
+    record span end time, status code, and any error info
+```
+
 <!-- DIAGRAM: Distributed trace waterfall view showing a request spanning 4 services: API Gateway (50ms total) -> User Service (30ms) -> Auth Service (15ms) -> Database (10ms), with parent-child span relationships and timing breakdown -->
 
 ![Distributed Trace Waterfall View](../assets/ch03-trace-waterfall.html)

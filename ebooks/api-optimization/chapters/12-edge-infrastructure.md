@@ -334,6 +334,20 @@ JWT tokens are self-contained and can be validated without origin contact:
 
 The edge worker extracts the token from the Authorization header, validates it, and either rejects with 401 or forwards the request with validated claims (user ID, roles) in custom headers. This pattern eliminates cryptographic validation overhead at origin while enabling edge caching of responses by user ID.
 
+```
+on request at edge:
+    token = extract from Authorization header
+    if no token:
+        return 401 Unauthorized
+
+    claims = verify signature using cached public key
+    if signature invalid or token expired:
+        return 401 Unauthorized
+
+    add claims to request headers
+    forward to origin
+```
+
 #### Token Revocation at Edge
 
 JWT validation alone cannot handle revocation. Tokens remain valid until expiration. Edge revocation patterns:
@@ -366,6 +380,18 @@ One of the most powerful edge optimization patterns is aggregating responses fro
 #### Multi-Origin Response Assembly
 
 The fundamental pattern uses `Promise.all` to fetch from multiple origins concurrently. An edge worker receives a client request, fans out to multiple backend services simultaneously, awaits all responses, and assembles the combined data before returning to the client. This approach transforms multiple sequential round trips into a single client request with parallel backend fetches.
+
+```
+on aggregation request:
+    start all backend requests in parallel:
+        user_data = fetch from user service
+        orders = fetch from order service
+        recommendations = fetch from rec service
+
+    wait for all to complete
+    combine responses into single payload
+    return to client
+```
 
 The latency improvement is substantial. Consider a mobile client that needs user profile, recent orders, and recommendations. Without edge aggregation, three sequential API calls from Singapore to Virginia:
 

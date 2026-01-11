@@ -225,6 +225,19 @@ The multi-burn-rate approach uses different time windows and consumption rates:
 
 This approach pages only when user impact is significant and sustained, not for transient spikes that self-resolve.
 
+The threshold evaluation logic follows this pattern:
+
+```
+on metric window complete:
+    if metric > critical_threshold:
+        fire alert immediately
+    else if metric > warning_threshold:
+        if above warning for N consecutive windows:
+            fire alert
+    else:
+        clear any pending alerts
+```
+
 **Symptom-Based vs Cause-Based Alerts**
 
 Symptom-based alerts focus on user-visible impact: high latency, elevated error rates, reduced availability. Cause-based alerts focus on internal conditions: high CPU, low memory, queue depth.

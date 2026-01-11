@@ -48,6 +48,18 @@ This multiplexing provides several benefits. Header compression using HPACK redu
 
 ![HTTP/1.1 vs HTTP/2 Multiplexing](../assets/ch05-http2-multiplexing.html)
 
+```
+on HTTP/2 connection:
+    for each request:
+        assign unique stream ID
+        send request frames tagged with stream ID
+
+    as response frames arrive:
+        route each frame to its stream by ID
+        streams complete independently
+        one slow response does not block others
+```
+
 HTTP/3, built on QUIC, addresses HTTP/2's remaining weakness: head-of-line blocking at the TCP layer. When a single packet is lost on an HTTP/2 connection, all streams stall until retransmission completes. QUIC implements reliability per-stream, so a lost packet only affects its specific stream [Source: RFC 9000, QUIC Protocol].
 
 QUIC also integrates TLS 1.3 directly into the protocol, achieving connection establishment in one round trip for new connections and zero round trips for resumed connections. For mobile users on unreliable networks, HTTP/3 can provide measurably better performance, particularly for tail latencies where packet loss events are more likely.
@@ -96,6 +108,21 @@ A WebSocket connection begins with an HTTP upgrade handshake. The client sends a
 ![WebSocket Upgrade Handshake](../assets/ch05-websocket-upgrade.html)
 
 This upgrade handshake adds one round trip compared to a plain HTTP request, but subsequent messages have minimal overhead (just 2-14 bytes of framing per message) compared to HTTP's headers on every request. For applications exchanging many small messages, this overhead reduction is substantial.
+
+```
+client sends HTTP request:
+    GET /chat
+    Connection: Upgrade
+    Upgrade: websocket
+    Sec-WebSocket-Key: random-key
+
+server responds:
+    101 Switching Protocols
+    Upgrade: websocket
+    Sec-WebSocket-Accept: computed-hash
+
+connection is now bidirectional WebSocket
+```
 
 After the handshake, the connection remains open indefinitely. Messages flow as WebSocket frames, which can carry text (UTF-8) or binary data. The protocol includes built-in ping/pong frames for connection health checking.
 
@@ -316,9 +343,30 @@ Not all content benefits from compression. Already-compressed formats like JPEG,
 
 Proper HTTP client configuration ensures connection reuse across requests. The key is creating the client once at application startup and sharing it across all requests, allowing the internal connection pool to maintain warm connections.
 
+```
+on request needing connection:
+    if pool has idle connection:
+        return idle connection
+    if pool size < max size:
+        create new connection
+        return new connection
+    wait for connection to become available
+    if timeout exceeded:
+        return error
+```
+
 ### Health Checking for Connection Pools
 
 Production connection pools need health checking to detect and remove stale connections. Connections can become invalid due to server restarts, network changes, or load balancer timeouts. A health-checked pool validates connections before returning them and runs periodic background checks.
+
+```
+periodically:
+    for each idle connection in pool:
+        send health check query
+        if no response within timeout:
+            close connection
+            remove from pool
+```
 
 ### Implementing Response Compression
 

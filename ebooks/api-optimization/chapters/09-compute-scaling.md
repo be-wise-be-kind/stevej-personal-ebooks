@@ -68,6 +68,18 @@ Every auto-scaling system follows the same basic loop:
 4. **Execute** the scaling action (add/remove instances)
 5. **Wait** for stabilization before re-evaluating
 
+```
+periodically:
+    current_value = measure metric (CPU, RPS, queue depth)
+    desired_replicas = current_replicas * (current_value / target_value)
+
+    if desired_replicas > current_replicas:
+        scale up immediately
+    if desired_replicas < current_replicas:
+        wait stabilization window
+        then scale down gradually
+```
+
 The specifics vary by platform, but this loop is universal.
 
 ![Auto-scaling Feedback Loop](../assets/ch09-autoscaling-loop.html)
@@ -228,6 +240,19 @@ Regardless of platform, scaling down requires graceful shutdown. Abrupt terminat
 3. **Complete in-flight requests** (with a reasonable timeout)
 4. **Close connections and release resources**
 5. **Exit the process**
+
+```
+on SIGTERM received:
+    stop accepting new requests
+    set health check to unhealthy
+
+    wait for in-flight requests to complete
+        (up to grace period timeout)
+
+    close database connections
+    close other resources
+    exit process
+```
 
 Most platforms provide a grace period between the termination signal and forced termination. Applications must complete shutdown within this window.
 

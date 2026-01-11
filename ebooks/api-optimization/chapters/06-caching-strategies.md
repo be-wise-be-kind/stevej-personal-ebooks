@@ -217,6 +217,17 @@ The cache contents emerge organically from actual access patterns. Frequently re
 
 The trade-off is that every cache miss pays the full database round-trip cost, and the application bears responsibility for invalidation. When data changes in the database, the cache does not know. Stale data persists until TTL expiration or explicit invalidation.
 
+```
+on read request for key:
+    value = check cache for key
+    if cache hit:
+        return value
+
+    value = fetch from database
+    store value in cache with TTL
+    return value
+```
+
 **Write-Through**
 
 In write-through caching, every write operation updates both the cache and the database synchronously. This ensures the cache is always consistent with the database but increases write latency since both operations must complete before the write is acknowledged.
@@ -352,6 +363,18 @@ This is not a theoretical concern. Cache stampedes have caused outages at compan
 The single-flight pattern ensures only one request regenerates a cache entry while others wait for its result. The first request to find an expired entry acquires a lock, fetches the data, and populates the cache. Concurrent requests that arrive during this window wait for the first request to complete rather than independently fetching the data.
 
 This pattern is implemented in Go's `golang.org/x/sync/singleflight` package and similar libraries in other languages.
+
+```
+on cache miss for key:
+    if another request is already fetching key:
+        wait for that request to complete
+        return its result
+
+    mark this request as the fetcher for key
+    value = fetch from database
+    notify all waiting requests
+    return value
+```
 
 **Implementation considerations:**
 

@@ -455,6 +455,17 @@ Think time should have variance to avoid synchronized request patterns:
 - Random range (good): `random(3, 8)` seconds creates realistic distribution
 - Statistical distribution (better): Normal or Poisson distribution matches real behavior
 
+```
+simulated user behavior:
+    perform action (click, submit, navigate)
+    wait random duration between min and max think time
+        (e.g., 1-5 seconds, matching real user patterns)
+    perform next action
+
+this prevents artificial load spikes
+and matches production traffic patterns
+```
+
 #### Ramp-Up Patterns
 
 Ramp-up defines how load increases from zero to target levels. The pattern affects what the test reveals about system behavior.
@@ -490,6 +501,15 @@ Ramp to baseline, hold, then spike:
 
 - Tests normal operation before spike
 - Reveals whether baseline load affects spike handling
+
+```
+load test stages:
+    stage 1: ramp from 0 to 100 users over 5 minutes
+    stage 2: hold at 100 users for 10 minutes
+    stage 3: ramp to 500 users over 5 minutes
+    stage 4: hold at 500 users for 10 minutes
+    stage 5: ramp down to 0 over 2 minutes
+```
 
 #### Realistic Scenarios
 

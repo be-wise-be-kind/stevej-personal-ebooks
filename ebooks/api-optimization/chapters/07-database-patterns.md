@@ -147,6 +147,30 @@ A database router directs write operations to the primary and distributes reads 
 
 Replication introduces eventual consistency. After a write to the primary, there is a delay before the data appears on replicas (typically milliseconds, but potentially seconds under heavy load) [Source: PostgreSQL Documentation, "Streaming Replication"]. For read-after-write consistency (a user creating a post and immediately viewing it), either route that specific read to the primary, or track recent writes per session and route accordingly.
 
+```
+on database query:
+    if query is a write (INSERT, UPDATE, DELETE):
+        route to primary
+    else if user just performed a write:
+        route to primary (read-after-write consistency)
+    else:
+        route to random healthy replica
+```
+
+For systems that need both caching and strong consistency on writes, the write-through cache pattern ensures the cache always reflects the database state. Unlike cache-aside (where writes go directly to the database and the cache is invalidated or updated separately), write-through treats the cache as part of the write path.
+
+```
+on write operation:
+    write data to database
+    if database write succeeds:
+        write same data to cache
+        return success
+    else:
+        return failure (cache unchanged)
+```
+
+This pattern guarantees that successful writes are immediately visible in the cache, eliminating the window of inconsistency that exists with cache-aside patterns. The trade-off is higher write latency (two writes instead of one) and the need to handle partial failures (database succeeds but cache fails).
+
 **Write-heavy optimization: Partitioning and batching**
 
 For write-heavy workloads, optimization focuses on distributing writes across partitions (sharding) and batching writes to reduce per-operation overhead. Wide-column databases handle this natively. Relational databases require application-level sharding or specialized extensions (Citus for PostgreSQL, Vitess for MySQL).
@@ -302,6 +326,22 @@ Real-world systems often use multiple database types together. An e-commerce API
 **Source of truth:** Designate one database as authoritative for each piece of data. Other databases hold derived views. When data diverges (and it will), the source of truth wins.
 
 **Synchronization patterns:** Data flows from the source of truth to secondary databases. This can be synchronous (within the same transaction, which adds latency and coupling), asynchronous via change data capture (CDC) or event streams (adds eventual consistency), or periodic batch jobs (adds latency, simpler implementation).
+
+Change data capture reads the database's transaction log rather than querying tables directly, capturing every committed change without impacting query performance. A CDC processor transforms these log entries into events that downstream systems consume.
+
+```
+CDC processor:
+    read database transaction log
+    for each committed change:
+        transform to event format
+        publish to message stream
+
+downstream consumers:
+    subscribe to stream
+    apply changes to secondary databases
+```
+
+This pattern decouples the primary database from secondary systems. The primary does not need to know which systems consume its changes, and downstream systems can be added or removed without modifying the primary. Tools like Debezium (for relational databases) and MongoDB Change Streams provide CDC capabilities out of the box.
 
 **Failure handling:** When a secondary database is unavailable, should writes fail, succeed with degraded functionality, or queue for retry? Design explicit failure modes rather than discovering them in production.
 

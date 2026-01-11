@@ -126,6 +126,18 @@ Token validation, whether local or remote, can be cached. The insight: the same 
 
 Cache the output of validation (the user claims and validity status) keyed by a hash of the token. Never cache the raw token itself, as this creates a credential store that becomes an attack target. The caching pattern checks for a cached result first, records cache hit/miss metrics, validates on miss, and caches the result with a TTL shorter than token expiration.
 
+```
+on request with token:
+    cache_key = hash(token)
+    cached_result = check cache for cache_key
+    if cache hit:
+        return cached_result
+
+    claims = validate token cryptographically
+    store claims in cache with TTL
+    return claims
+```
+
 <!-- DIAGRAM: Token cache-aside pattern: Request with token -> Hash token -> Check validation cache -> [hit: return cached user claims] or [miss: validate token, cache result with TTL, return claims] -->
 
 ![Token Cache Pattern](../assets/ch11-token-cache-pattern.html)
@@ -225,6 +237,19 @@ Access tokens expire. The refresh strategy affects user experience:
 **Reactive refresh**: Wait for token expiration (or 401 response), then refresh. Users experience latency during refresh.
 
 **Proactive refresh**: Refresh tokens before expiration. Background refresh when tokens are within a threshold of expiring (e.g., 5 minutes before expiration) eliminates user-visible latency.
+
+```
+on token use:
+    time_remaining = token.expiry - now
+    if time_remaining < refresh_threshold:
+        start background refresh
+
+    return current token (still valid)
+
+background refresh:
+    new_token = call identity provider
+    replace stored token with new_token
+```
 
 Proactive refresh requires tracking token expiration and scheduling refresh. The complexity is justified for user-facing applications where perceived latency matters.
 

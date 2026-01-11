@@ -31,7 +31,7 @@
 <body>
     <div class="diagram-container">
 
-        <svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <!-- Gradients -->
                 <linearGradient id="requestGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -155,12 +155,12 @@
             <!-- Arrow from Measure to Update -->
             <path d="M 770 170 L 770 230" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowOrange)"/>
 
-            <!-- Feedback loop arrow -->
-            <path d="M 680 290 L 420 290 Q 400 290 400 270 L 400 190 Q 400 175 415 175 L 470 175" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowPurple)"/>
-            <text x="440" y="280" text-anchor="middle" font-size="9" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">Feedback loop</text>
+            <!-- Feedback loop arrow (to Check Limit for next request) -->
+            <path d="M 680 340 L 680 355 L 200 355 Q 180 355 180 335 L 180 180 Q 180 165 195 165 L 220 165" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowPurple)"/>
+            <text x="440" y="372" text-anchor="middle" font-size="9" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">Next request uses updated limit</text>
 
             <!-- Legend -->
-            <g transform="translate(30, 360)">
+            <g transform="translate(30, 390)">
                 <rect x="0" y="0" width="840" height="120" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
                 <text x="420" y="24" text-anchor="middle" font-size="12" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Gradient Algorithm Behavior</text>
 

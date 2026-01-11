@@ -141,6 +141,18 @@ For example, given latencies [10, 12, 15, 18, 22, 25, 30, 45, 100, 500] (10 valu
 
 The dramatic difference between p50 (23.5ms) and p99 (near 500ms) reveals a tail that averages would obscure. The average of this dataset is 77.7ms, a number that represents neither typical nor worst-case experience.
 
+```
+sort values in ascending order
+position = (count - 1) * (percentile / 100)
+if position is a whole number:
+    return value at position
+else:
+    lower = value at floor(position)
+    upper = value at ceil(position)
+    fraction = position - floor(position)
+    return lower + fraction * (upper - lower)
+```
+
 ![Latency Distribution: Why Averages Lie](../assets/ch02-latency-distribution.html)
 
 #### Latency Budgets: Allocating Time Across Services

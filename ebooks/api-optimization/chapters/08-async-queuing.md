@@ -208,6 +208,21 @@ Because the outbox relay might publish a message more than once (crash after pub
 
 **Deduplication windows**: SQS FIFO queues deduplicate messages with the same deduplication ID within a 5-minute window. Kafka's idempotent producer prevents duplicates from producer retries.
 
+The transactional outbox pattern combines reliable publishing with idempotent consumption:
+
+```
+on write operation:
+    begin database transaction
+    save business data to main table
+    save event to outbox table
+    commit transaction
+
+separately, outbox processor:
+    poll outbox table for unsent events
+    for each event:
+        publish to message queue
+        mark event as sent
+```
 
 ### Backpressure and Flow Control
 
@@ -246,6 +261,19 @@ Messages fail for various reasons: malformed data, transient downstream failures
 4. Cap the maximum delay and total retry count
 
 The jitter is essential. Without it, all failed messages retry simultaneously, potentially overwhelming a recovering downstream service (the "thundering herd" problem).
+
+```
+on message failure:
+    attempt = attempt + 1
+    if attempt > max_retries:
+        move to dead letter queue
+        return
+
+    base_delay = initial_delay * (2 ^ attempt)
+    jittered_delay = random between 0 and base_delay
+    wait jittered_delay
+    retry message
+```
 
 **Dead letter queues (DLQ)** capture messages that exceed retry limits. Rather than losing the message or blocking the queue, we move it to a separate queue for inspection. DLQs enable:
 
