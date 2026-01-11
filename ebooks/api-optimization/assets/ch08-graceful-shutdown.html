@@ -31,7 +31,7 @@
 <body>
     <div class="diagram-container">
         
-        <svg viewBox="0 0 950 720" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 950 735" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <!-- Gradients -->
                 <linearGradient id="runningGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -76,36 +76,36 @@
 
             <!-- Timeline axis -->
             <line x1="80" y1="510" x2="880" y2="510" stroke="#94a3b8" stroke-width="2"/>
-            <text x="480" y="538" text-anchor="middle" font-size="12" fill="#64748b">Time (terminationGracePeriodSeconds: default 30s)</text>
+            <text x="480" y="538" text-anchor="middle" font-size="12" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Time (terminationGracePeriodSeconds: default 30s)</text>
 
             <!-- Time markers -->
             <g transform="translate(80, 510)">
                 <line x1="0" y1="-5" x2="0" y2="5" stroke="#94a3b8" stroke-width="2"/>
-                <text x="0" y="20" text-anchor="middle" font-size="10" fill="#64748b">0s</text>
+                <text x="0" y="20" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">0s</text>
 
                 <line x1="200" y1="-5" x2="200" y2="5" stroke="#94a3b8" stroke-width="2"/>
-                <text x="200" y="20" text-anchor="middle" font-size="10" fill="#64748b">~5s</text>
+                <text x="200" y="20" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">~5s</text>
 
                 <line x1="400" y1="-5" x2="400" y2="5" stroke="#94a3b8" stroke-width="2"/>
-                <text x="400" y="20" text-anchor="middle" font-size="10" fill="#64748b">~15s</text>
+                <text x="400" y="20" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">~15s</text>
 
                 <line x1="600" y1="-5" x2="600" y2="5" stroke="#94a3b8" stroke-width="2"/>
-                <text x="600" y="20" text-anchor="middle" font-size="10" fill="#64748b">~25s</text>
+                <text x="600" y="20" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">~25s</text>
 
                 <line x1="800" y1="-5" x2="800" y2="5" stroke="#94a3b8" stroke-width="2"/>
-                <text x="800" y="20" text-anchor="middle" font-size="10" fill="#64748b">30s</text>
+                <text x="800" y="20" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">30s</text>
             </g>
 
             <!-- Step 1: Pod Running -->
             <g transform="translate(50, 100)">
                 <rect x="0" y="0" width="130" height="100" rx="8" fill="url(#runningGradient)" filter="url(#dropShadow)"/>
-                <text x="65" y="35" text-anchor="middle" font-size="13" font-weight="600" fill="white">Pod Running</text>
-                <text x="65" y="58" text-anchor="middle" font-size="10" fill="#a7f3d0">Healthy</text>
-                <text x="65" y="78" text-anchor="middle" font-size="10" fill="#a7f3d0">Serving Traffic</text>
+                <text x="65" y="35" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Pod Running</text>
+                <text x="65" y="58" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Healthy</text>
+                <text x="65" y="78" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Serving Traffic</text>
 
                 <!-- Step number -->
                 <circle cx="0" cy="0" r="14" fill="#059669" stroke="white" stroke-width="2"/>
-                <text x="0" y="5" text-anchor="middle" font-size="11" font-weight="600" fill="white">1</text>
+                <text x="0" y="5" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">1</text>
             </g>
 
             <!-- Arrow 1->2 -->
@@ -114,13 +114,13 @@
             <!-- Step 2: SIGTERM Received -->
             <g transform="translate(240, 100)">
                 <rect x="0" y="0" width="140" height="100" rx="8" fill="url(#signalGradient)" filter="url(#dropShadow)"/>
-                <text x="70" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="white">SIGTERM</text>
-                <text x="70" y="56" text-anchor="middle" font-size="10" fill="#fecaca">Signal Received</text>
-                <text x="70" y="78" text-anchor="middle" font-size="9" fill="#fecaca">Shutdown initiated</text>
+                <text x="70" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">SIGTERM</text>
+                <text x="70" y="56" text-anchor="middle" font-size="10" fill="#fecaca" font-family="Liberation Sans, Arial, sans-serif">Signal Received</text>
+                <text x="70" y="78" text-anchor="middle" font-size="9" fill="#fecaca" font-family="Liberation Sans, Arial, sans-serif">Shutdown initiated</text>
 
                 <!-- Step number -->
                 <circle cx="0" cy="0" r="14" fill="#dc2626" stroke="white" stroke-width="2"/>
-                <text x="0" y="5" text-anchor="middle" font-size="11" font-weight="600" fill="white">2</text>
+                <text x="0" y="5" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">2</text>
             </g>
 
             <!-- Arrow 2->3 -->
@@ -129,34 +129,34 @@
             <!-- Step 3: PreStop Hook -->
             <g transform="translate(440, 100)">
                 <rect x="0" y="0" width="140" height="100" rx="8" fill="url(#prestopGradient)" filter="url(#dropShadow)"/>
-                <text x="70" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="white">PreStop Hook</text>
-                <text x="70" y="56" text-anchor="middle" font-size="10" fill="#fef3c7">Optional cleanup</text>
-                <text x="70" y="78" text-anchor="middle" font-size="9" fill="#fef3c7">Runs if configured</text>
+                <text x="70" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">PreStop Hook</text>
+                <text x="70" y="56" text-anchor="middle" font-size="10" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Optional cleanup</text>
+                <text x="70" y="78" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Runs if configured</text>
 
                 <!-- Step number -->
                 <circle cx="0" cy="0" r="14" fill="#d97706" stroke="white" stroke-width="2"/>
-                <text x="0" y="5" text-anchor="middle" font-size="11" font-weight="600" fill="white">3</text>
+                <text x="0" y="5" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">3</text>
             </g>
 
             <!-- Parallel track indicator -->
             <g transform="translate(280, 215)">
                 <rect x="0" y="0" width="400" height="55" rx="4" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
-                <text x="200" y="22" text-anchor="middle" font-size="11" font-weight="500" fill="#dc2626">Parallel: Endpoint removed from Service (load balancer stops sending traffic)</text>
-                <text x="200" y="42" text-anchor="middle" font-size="10" fill="#64748b">Note: This happens concurrently with PreStop hook</text>
+                <text x="200" y="22" text-anchor="middle" font-size="11" font-weight="500" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">Parallel: Endpoint removed from Service (load balancer stops sending traffic)</text>
+                <text x="200" y="42" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Note: This happens concurrently with PreStop hook</text>
             </g>
 
             <!-- Step 4: Stop Accepting / Drain -->
             <g transform="translate(230, 290)">
                 <rect x="0" y="0" width="180" height="135" rx="8" fill="url(#drainGradient)" filter="url(#dropShadow)"/>
-                <text x="90" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="white">Connection Drain</text>
+                <text x="90" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Connection Drain</text>
                 <line x1="15" y1="48" x2="165" y2="48" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-                <text x="90" y="72" text-anchor="middle" font-size="10" fill="#ddd6fe">Stop accepting new</text>
-                <text x="90" y="94" text-anchor="middle" font-size="10" fill="#ddd6fe">Complete in-flight</text>
-                <text x="90" y="116" text-anchor="middle" font-size="10" fill="#ddd6fe">Return 503 to new</text>
+                <text x="90" y="72" text-anchor="middle" font-size="10" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Stop accepting new</text>
+                <text x="90" y="94" text-anchor="middle" font-size="10" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Complete in-flight</text>
+                <text x="90" y="116" text-anchor="middle" font-size="10" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Return 503 to new</text>
 
                 <!-- Step number -->
                 <circle cx="0" cy="0" r="14" fill="#6d28d9" stroke="white" stroke-width="2"/>
-                <text x="0" y="5" text-anchor="middle" font-size="11" font-weight="600" fill="white">4</text>
+                <text x="0" y="5" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">4</text>
             </g>
 
             <!-- Arrow 4->5 -->
@@ -165,21 +165,21 @@
             <!-- Step 5: Cleanup & Exit -->
             <g transform="translate(480, 290)">
                 <rect x="0" y="0" width="160" height="135" rx="8" fill="url(#completeGradient)" filter="url(#dropShadow)"/>
-                <text x="80" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="white">Cleanup & Exit</text>
+                <text x="80" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Cleanup & Exit</text>
                 <line x1="15" y1="48" x2="145" y2="48" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-                <text x="80" y="72" text-anchor="middle" font-size="10" fill="#a5f3fc">Close DB connections</text>
-                <text x="80" y="94" text-anchor="middle" font-size="10" fill="#a5f3fc">Flush buffers</text>
-                <text x="80" y="116" text-anchor="middle" font-size="10" fill="#a5f3fc">Exit process</text>
+                <text x="80" y="72" text-anchor="middle" font-size="10" fill="#a5f3fc" font-family="Liberation Sans, Arial, sans-serif">Close DB connections</text>
+                <text x="80" y="94" text-anchor="middle" font-size="10" fill="#a5f3fc" font-family="Liberation Sans, Arial, sans-serif">Flush buffers</text>
+                <text x="80" y="116" text-anchor="middle" font-size="10" fill="#a5f3fc" font-family="Liberation Sans, Arial, sans-serif">Exit process</text>
 
                 <!-- Step number -->
                 <circle cx="0" cy="0" r="14" fill="#0891b2" stroke="white" stroke-width="2"/>
-                <text x="0" y="5" text-anchor="middle" font-size="11" font-weight="600" fill="white">5</text>
+                <text x="0" y="5" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">5</text>
             </g>
 
             <!-- OR path to SIGKILL -->
             <g transform="translate(680, 320)">
-                <text x="30" y="57" text-anchor="middle" font-size="12" font-weight="600" fill="#64748b">OR</text>
-                <text x="30" y="75" text-anchor="middle" font-size="9" fill="#94a3b8">if timeout</text>
+                <text x="30" y="57" text-anchor="middle" font-size="12" font-weight="600" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">OR</text>
+                <text x="30" y="75" text-anchor="middle" font-size="9" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">if timeout</text>
             </g>
 
             <!-- Arrow to SIGKILL -->
@@ -188,56 +188,56 @@
             <!-- Step 6: SIGKILL (if needed) -->
             <g transform="translate(775, 290)">
                 <rect x="0" y="0" width="140" height="135" rx="8" fill="url(#killGradient)" filter="url(#dropShadow)"/>
-                <text x="70" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="white">SIGKILL</text>
+                <text x="70" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">SIGKILL</text>
                 <line x1="15" y1="48" x2="125" y2="48" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-                <text x="70" y="72" text-anchor="middle" font-size="10" fill="#9ca3af">Force terminate</text>
-                <text x="70" y="94" text-anchor="middle" font-size="10" fill="#9ca3af">No cleanup</text>
-                <text x="70" y="116" text-anchor="middle" font-size="10" fill="#f87171">Requests dropped!</text>
+                <text x="70" y="72" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Liberation Sans, Arial, sans-serif">Force terminate</text>
+                <text x="70" y="94" text-anchor="middle" font-size="10" fill="#9ca3af" font-family="Liberation Sans, Arial, sans-serif">No cleanup</text>
+                <text x="70" y="116" text-anchor="middle" font-size="10" fill="#f87171" font-family="Liberation Sans, Arial, sans-serif">Requests dropped!</text>
 
                 <!-- Step number -->
                 <circle cx="0" cy="0" r="14" fill="#1f2937" stroke="white" stroke-width="2"/>
-                <text x="0" y="5" text-anchor="middle" font-size="11" font-weight="600" fill="white">6</text>
+                <text x="0" y="5" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">6</text>
             </g>
 
             <!-- Grace period indicator -->
             <g transform="translate(80, 455)">
                 <rect x="0" y="0" width="680" height="45" rx="4" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
-                <text x="340" y="28" text-anchor="middle" font-size="11" fill="#059669">terminationGracePeriodSeconds (default: 30s) - Time allowed for graceful shutdown</text>
+                <text x="340" y="28" text-anchor="middle" font-size="11" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">terminationGracePeriodSeconds (default: 30s) - Time allowed for graceful shutdown</text>
             </g>
 
             <g transform="translate(770, 455)">
                 <rect x="0" y="0" width="140" height="45" rx="4" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
-                <text x="70" y="28" text-anchor="middle" font-size="11" fill="#dc2626">Force kill zone</text>
+                <text x="70" y="28" text-anchor="middle" font-size="11" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">Force kill zone</text>
             </g>
 
             <!-- Health checks sidebar -->
             <g transform="translate(50, 575)">
-                <rect x="0" y="0" width="420" height="130" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
-                <text x="210" y="24" text-anchor="middle" font-size="13" font-weight="600" fill="#1d4ed8">Health Checks During Shutdown</text>
+                <rect x="0" y="0" width="420" height="145" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+                <text x="210" y="24" text-anchor="middle" font-size="13" font-weight="600" fill="#1d4ed8" font-family="Liberation Sans, Arial, sans-serif">Health Checks During Shutdown</text>
                 <line x1="15" y1="38" x2="405" y2="38" stroke="#bfdbfe" stroke-width="1"/>
 
                 <g transform="translate(20, 52)">
                     <rect x="0" y="0" width="180" height="65" rx="4" fill="#dbeafe"/>
-                    <text x="90" y="26" text-anchor="middle" font-size="10" font-weight="500" fill="#1d4ed8">Liveness Probe</text>
-                    <text x="90" y="50" text-anchor="middle" font-size="9" fill="#475569">Still returns 200 (process alive)</text>
+                    <text x="90" y="26" text-anchor="middle" font-size="10" font-weight="500" fill="#1d4ed8" font-family="Liberation Sans, Arial, sans-serif">Liveness Probe</text>
+                    <text x="90" y="50" text-anchor="middle" font-size="9" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Still returns 200 (process alive)</text>
                 </g>
 
                 <g transform="translate(215, 52)">
                     <rect x="0" y="0" width="180" height="65" rx="4" fill="#fee2e2"/>
-                    <text x="90" y="26" text-anchor="middle" font-size="10" font-weight="500" fill="#dc2626">Readiness Probe</text>
-                    <text x="90" y="50" text-anchor="middle" font-size="9" fill="#475569">Returns 503 (not accepting traffic)</text>
+                    <text x="90" y="26" text-anchor="middle" font-size="10" font-weight="500" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">Readiness Probe</text>
+                    <text x="90" y="50" text-anchor="middle" font-size="9" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Returns 503 (not accepting traffic)</text>
                 </g>
             </g>
 
             <!-- Best practices sidebar -->
             <g transform="translate(490, 575)">
-                <rect x="0" y="0" width="430" height="130" rx="8" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
-                <text x="215" y="24" text-anchor="middle" font-size="13" font-weight="600" fill="#b45309">Best Practices</text>
-                <line x1="15" y1="38" x2="415" y2="38" stroke="#fcd34d" stroke-width="1"/>
+                <rect x="0" y="0" width="430" height="145" rx="8" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+                <text x="215" y="26" text-anchor="middle" font-size="13" font-weight="600" fill="#b45309" font-family="Liberation Sans, Arial, sans-serif">Best Practices</text>
+                <line x1="15" y1="42" x2="415" y2="42" stroke="#fcd34d" stroke-width="1"/>
 
-                <text x="22" y="62" font-size="10" fill="#78350f">1. Handle SIGTERM in your application</text>
-                <text x="22" y="84" font-size="10" fill="#78350f">2. Set grace period > expected drain time (e.g., 45s)</text>
-                <text x="22" y="106" font-size="10" fill="#78350f">3. Return 503 from readiness probe during shutdown</text>
+                <text x="22" y="68" font-size="10" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">1. Handle SIGTERM in your application</text>
+                <text x="22" y="94" font-size="10" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">2. Set grace period > expected drain time (e.g., 45s)</text>
+                <text x="22" y="120" font-size="10" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">3. Return 503 from readiness probe during shutdown</text>
             </g>
         </svg>
     </div>

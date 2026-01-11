@@ -81,29 +81,29 @@
             </defs>
 
             <!-- Application Threads Section -->
-            <g filter="url(#shadow)">
-                <rect x="30" y="60" width="180" height="350" rx="10" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+            <g>
+                <rect x="30" y="60" width="180" height="350" rx="10" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2" filter="url(#shadow)"/>
                 <text x="120" y="85" text-anchor="middle" fill="#6d28d9" font-size="14" font-weight="700">Application Threads</text>
 
                 <!-- Thread boxes -->
-                <rect x="50" y="105" width="140" height="35" rx="6" fill="url(#threadGradient)"/>
+                <rect x="50" y="105" width="140" height="35" rx="6" fill="url(#threadGradient)" filter="url(#shadow)"/>
                 <text x="120" y="128" text-anchor="middle" fill="white" font-size="11" font-weight="500">Thread 1 (active)</text>
 
-                <rect x="50" y="150" width="140" height="35" rx="6" fill="url(#threadGradient)"/>
+                <rect x="50" y="150" width="140" height="35" rx="6" fill="url(#threadGradient)" filter="url(#shadow)"/>
                 <text x="120" y="173" text-anchor="middle" fill="white" font-size="11" font-weight="500">Thread 2 (active)</text>
 
-                <rect x="50" y="195" width="140" height="35" rx="6" fill="url(#threadGradient)"/>
+                <rect x="50" y="195" width="140" height="35" rx="6" fill="url(#threadGradient)" filter="url(#shadow)"/>
                 <text x="120" y="218" text-anchor="middle" fill="white" font-size="11" font-weight="500">Thread 3 (active)</text>
 
-                <rect x="50" y="240" width="140" height="35" rx="6" fill="url(#threadGradient)" opacity="0.6"/>
+                <rect x="50" y="240" width="140" height="35" rx="6" fill="url(#threadGradient)" opacity="0.6" filter="url(#shadow)"/>
                 <text x="120" y="263" text-anchor="middle" fill="white" font-size="11" font-weight="500">Thread 4 (waiting)</text>
 
-                <rect x="50" y="285" width="140" height="35" rx="6" fill="url(#threadGradient)" opacity="0.6"/>
+                <rect x="50" y="285" width="140" height="35" rx="6" fill="url(#threadGradient)" opacity="0.6" filter="url(#shadow)"/>
                 <text x="120" y="308" text-anchor="middle" fill="white" font-size="11" font-weight="500">Thread 5 (waiting)</text>
 
                 <text x="120" y="340" text-anchor="middle" fill="#7c3aed" font-size="14" font-weight="bold">...</text>
 
-                <rect x="50" y="355" width="140" height="35" rx="6" fill="url(#threadGradient)" opacity="0.6"/>
+                <rect x="50" y="355" width="140" height="35" rx="6" fill="url(#threadGradient)" opacity="0.6" filter="url(#shadow)"/>
                 <text x="120" y="378" text-anchor="middle" fill="white" font-size="11" font-weight="500">Thread N (waiting)</text>
             </g>
 
@@ -118,12 +118,12 @@
             <line x1="190" y1="372" x2="295" y2="400" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowPurple)"/>
 
             <!-- Connection Pool Section -->
-            <g filter="url(#shadow)">
-                <rect x="300" y="60" width="300" height="380" rx="10" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+            <g>
+                <rect x="300" y="60" width="300" height="380" rx="10" fill="#eff6ff" stroke="#93c5fd" stroke-width="2" filter="url(#shadow)"/>
                 <text x="450" y="85" text-anchor="middle" fill="#1d4ed8" font-size="14" font-weight="700">Connection Pool Manager</text>
 
                 <!-- Pool manager box -->
-                <rect x="320" y="100" width="260" height="50" rx="6" fill="url(#poolGradient)"/>
+                <rect x="320" y="100" width="260" height="50" rx="6" fill="url(#poolGradient)" filter="url(#shadow)"/>
                 <text x="450" y="122" text-anchor="middle" fill="white" font-size="12" font-weight="600">Pool Manager</text>
                 <text x="450" y="138" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">Acquire / Release / Monitor</text>
 
@@ -131,24 +131,24 @@
                 <text x="450" y="175" text-anchor="middle" fill="#1d4ed8" font-size="12" font-weight="600">Connection Slots (max: 5)</text>
 
                 <!-- Active connections -->
-                <rect x="330" y="190" width="110" height="40" rx="6" fill="url(#connActiveGradient)"/>
+                <rect x="330" y="190" width="110" height="40" rx="6" fill="url(#connActiveGradient)" filter="url(#shadow)"/>
                 <text x="385" y="215" text-anchor="middle" fill="white" font-size="10" font-weight="500">Conn 1 (in use)</text>
 
-                <rect x="455" y="190" width="110" height="40" rx="6" fill="url(#connActiveGradient)"/>
+                <rect x="455" y="190" width="110" height="40" rx="6" fill="url(#connActiveGradient)" filter="url(#shadow)"/>
                 <text x="510" y="215" text-anchor="middle" fill="white" font-size="10" font-weight="500">Conn 2 (in use)</text>
 
-                <rect x="330" y="240" width="110" height="40" rx="6" fill="url(#connActiveGradient)"/>
+                <rect x="330" y="240" width="110" height="40" rx="6" fill="url(#connActiveGradient)" filter="url(#shadow)"/>
                 <text x="385" y="265" text-anchor="middle" fill="white" font-size="10" font-weight="500">Conn 3 (in use)</text>
 
                 <!-- Idle connections -->
-                <rect x="455" y="240" width="110" height="40" rx="6" fill="url(#connIdleGradient)"/>
+                <rect x="455" y="240" width="110" height="40" rx="6" fill="url(#connIdleGradient)" filter="url(#shadow)"/>
                 <text x="510" y="265" text-anchor="middle" fill="white" font-size="10" font-weight="500">Conn 4 (idle)</text>
 
-                <rect x="390" y="290" width="110" height="40" rx="6" fill="url(#connIdleGradient)"/>
+                <rect x="390" y="290" width="110" height="40" rx="6" fill="url(#connIdleGradient)" filter="url(#shadow)"/>
                 <text x="445" y="315" text-anchor="middle" fill="white" font-size="10" font-weight="500">Conn 5 (idle)</text>
 
                 <!-- Wait queue -->
-                <rect x="320" y="350" width="260" height="70" rx="6" fill="url(#queueGradient)"/>
+                <rect x="320" y="350" width="260" height="70" rx="6" fill="url(#queueGradient)" filter="url(#shadow)"/>
                 <text x="450" y="372" text-anchor="middle" fill="white" font-size="11" font-weight="600">Wait Queue</text>
                 <text x="450" y="390" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10">Thread 4, Thread 5, ..., Thread N</text>
                 <text x="450" y="408" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9">(waiting for connection)</text>
@@ -160,14 +160,14 @@
             <line x1="600" y1="210" x2="700" y2="260" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
 
             <!-- Database Section -->
-            <g filter="url(#shadow)">
-                <rect x="710" y="130" width="200" height="200" rx="10" fill="#fffbeb" stroke="#fcd34d" stroke-width="2"/>
+            <g>
+                <rect x="710" y="130" width="200" height="200" rx="10" fill="#fffbeb" stroke="#fcd34d" stroke-width="2" filter="url(#shadow)"/>
                 <text x="810" y="160" text-anchor="middle" fill="#b45309" font-size="14" font-weight="700">PostgreSQL</text>
 
                 <!-- Database cylinder representation -->
-                <ellipse cx="810" cy="200" rx="60" ry="15" fill="url(#dbGradient)"/>
-                <rect x="750" y="200" width="120" height="80" fill="url(#dbGradient)"/>
-                <ellipse cx="810" cy="280" rx="60" ry="15" fill="#d97706"/>
+                <ellipse cx="810" cy="200" rx="60" ry="15" fill="url(#dbGradient)" filter="url(#shadow)"/>
+                <rect x="750" y="200" width="120" height="80" fill="url(#dbGradient)" filter="url(#shadow)"/>
+                <ellipse cx="810" cy="280" rx="60" ry="15" fill="#d97706" filter="url(#shadow)"/>
 
                 <text x="810" y="245" text-anchor="middle" fill="white" font-size="11" font-weight="500">Database</text>
                 <text x="810" y="262" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">Tables</text>
@@ -188,8 +188,8 @@
             <path d="M 700 310 Q 650 350 600 310" stroke="#64748b" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#arrowGray)"/>
 
             <!-- Metrics Section -->
-            <g filter="url(#shadow)">
-                <rect x="300" y="460" width="300" height="100" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+            <g>
+                <rect x="300" y="460" width="300" height="100" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="2" filter="url(#shadow)"/>
                 <text x="450" y="485" text-anchor="middle" fill="#166534" font-size="12" font-weight="700">Pool Metrics to Monitor</text>
 
                 <text x="320" y="510" fill="#166534" font-size="10">Pool utilization: 60% (3/5 active)</text>
@@ -198,8 +198,8 @@
             </g>
 
             <!-- Configuration Section -->
-            <g filter="url(#shadow)">
-                <rect x="620" y="370" width="290" height="100" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="2"/>
+            <g>
+                <rect x="620" y="370" width="290" height="100" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="2" filter="url(#shadow)"/>
                 <text x="765" y="395" text-anchor="middle" fill="#dc2626" font-size="12" font-weight="700">Pool Configuration</text>
 
                 <text x="640" y="420" fill="#991b1b" font-size="10">min_size: 5 (warm connections)</text>
@@ -208,18 +208,18 @@
             </g>
 
             <!-- Legend -->
-            <g filter="url(#shadow)">
-                <rect x="710" y="60" width="200" height="55" rx="6" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+            <g>
+                <rect x="710" y="60" width="200" height="55" rx="6" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
                 <text x="810" y="80" text-anchor="middle" fill="#475569" font-size="11" font-weight="600">Connection Status</text>
-                <rect x="725" y="90" width="14" height="10" rx="2" fill="url(#connActiveGradient)"/>
+                <rect x="725" y="90" width="14" height="10" rx="2" fill="url(#connActiveGradient)" filter="url(#shadow)"/>
                 <text x="748" y="99" fill="#475569" font-size="9">In Use</text>
-                <rect x="810" y="90" width="14" height="10" rx="2" fill="url(#connIdleGradient)"/>
+                <rect x="810" y="90" width="14" height="10" rx="2" fill="url(#connIdleGradient)" filter="url(#shadow)"/>
                 <text x="833" y="99" fill="#475569" font-size="9">Idle</text>
             </g>
 
             <!-- Performance note -->
-            <g filter="url(#shadow)">
-                <rect x="30" y="460" width="250" height="100" rx="8" fill="#fefce8" stroke="#fde047" stroke-width="2"/>
+            <g>
+                <rect x="30" y="460" width="250" height="100" rx="8" fill="#fefce8" stroke="#fde047" stroke-width="2" filter="url(#shadow)"/>
                 <text x="155" y="485" text-anchor="middle" fill="#854d0e" font-size="12" font-weight="700">Why Pool?</text>
                 <text x="50" y="510" fill="#713f12" font-size="10">Without pool: 50-100ms per connection</text>
                 <text x="50" y="528" fill="#713f12" font-size="10">With pool: 0.1-1ms (reuse existing)</text>

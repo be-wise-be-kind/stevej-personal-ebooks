@@ -1,10 +1,11 @@
 # Build outputs
+build/
+dist/
+
+# Generated ebook files (anywhere in repo)
 *.pdf
 *.epub
 *.mobi
-*.html
-build/
-dist/
 
 # Editor files
 .DS_Store

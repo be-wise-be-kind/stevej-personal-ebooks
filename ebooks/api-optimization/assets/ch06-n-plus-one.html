@@ -31,7 +31,7 @@
 <body>
     <div class="diagram-container">
         
-        <svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1000 625" xmlns="http://www.w3.org/2000/svg">
             <!-- Title -->
             <text x="500.0" y="35" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="20" font-weight="600" fill="#1e293b">N+1 Query Problem vs. JOIN Solution</text>
 
@@ -70,117 +70,117 @@
             </defs>
 
             <!-- Divider line -->
-            <line x1="500" y1="70" x2="500" y2="550" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="8,4"/>
+            <line x1="500" y1="95" x2="500" y2="575" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="8,4"/>
 
             <!-- LEFT SIDE: N+1 Pattern (Bad) -->
-            <text x="250" y="60" text-anchor="middle" fill="#dc2626" font-size="18" font-weight="700">N+1 Pattern (Inefficient)</text>
+            <text x="250" y="85" text-anchor="middle" fill="#dc2626" font-size="18" font-weight="700">N+1 Pattern (Inefficient)</text>
 
             <!-- Application Box -->
-            <g filter="url(#shadow)">
-                <rect x="30" y="90" width="120" height="50" rx="8" fill="url(#appGradient)"/>
-                <text x="90" y="120" text-anchor="middle" fill="white" font-size="13" font-weight="600">Application</text>
+            <g>
+                <rect x="30" y="115" width="120" height="50" rx="8" fill="url(#appGradient)" filter="url(#shadow)"/>
+                <text x="90" y="145" text-anchor="middle" fill="white" font-size="13" font-weight="600">Application</text>
             </g>
 
             <!-- Database Box -->
-            <g filter="url(#shadow)">
-                <rect x="320" y="90" width="140" height="50" rx="8" fill="url(#dbGradient)"/>
-                <text x="390" y="120" text-anchor="middle" fill="white" font-size="13" font-weight="600">Database</text>
+            <g>
+                <rect x="320" y="115" width="140" height="50" rx="8" fill="url(#dbGradient)" filter="url(#shadow)"/>
+                <text x="390" y="145" text-anchor="middle" fill="white" font-size="13" font-weight="600">Database</text>
             </g>
 
             <!-- Query 1: Get all posts -->
-            <line x1="150" y1="115" x2="310" y2="115" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
-            <text x="230" y="108" text-anchor="middle" fill="#64748b" font-size="10">SELECT * FROM posts</text>
+            <line x1="150" y1="140" x2="310" y2="140" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+            <text x="230" y="133" text-anchor="middle" fill="#64748b" font-size="10">SELECT * FROM posts</text>
 
             <!-- Response 1: N posts -->
-            <line x1="310" y1="165" x2="150" y2="165" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
-            <text x="230" y="180" text-anchor="middle" fill="#64748b" font-size="10">Returns N posts</text>
+            <line x1="310" y1="190" x2="150" y2="190" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <text x="230" y="205" text-anchor="middle" fill="#64748b" font-size="10">Returns N posts</text>
 
             <!-- Query 2-N+1: Individual author queries (shown as multiple arrows) -->
             <g>
                 <!-- Query 2 -->
-                <line x1="150" y1="215" x2="310" y2="215" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
-                <text x="230" y="208" text-anchor="middle" fill="#64748b" font-size="9">SELECT * FROM users WHERE id=1</text>
-                <line x1="310" y1="235" x2="150" y2="235" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrowBlue)"/>
+                <line x1="150" y1="240" x2="310" y2="240" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+                <text x="230" y="233" text-anchor="middle" fill="#64748b" font-size="9">SELECT * FROM users WHERE id=1</text>
+                <line x1="310" y1="260" x2="150" y2="260" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrowBlue)"/>
 
                 <!-- Query 3 -->
-                <line x1="150" y1="265" x2="310" y2="265" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
-                <text x="230" y="258" text-anchor="middle" fill="#64748b" font-size="9">SELECT * FROM users WHERE id=2</text>
-                <line x1="310" y1="285" x2="150" y2="285" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrowBlue)"/>
+                <line x1="150" y1="290" x2="310" y2="290" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+                <text x="230" y="283" text-anchor="middle" fill="#64748b" font-size="9">SELECT * FROM users WHERE id=2</text>
+                <line x1="310" y1="310" x2="150" y2="310" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrowBlue)"/>
 
                 <!-- Query 4 -->
-                <line x1="150" y1="315" x2="310" y2="315" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
-                <text x="230" y="308" text-anchor="middle" fill="#64748b" font-size="9">SELECT * FROM users WHERE id=3</text>
-                <line x1="310" y1="335" x2="150" y2="335" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrowBlue)"/>
+                <line x1="150" y1="340" x2="310" y2="340" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+                <text x="230" y="333" text-anchor="middle" fill="#64748b" font-size="9">SELECT * FROM users WHERE id=3</text>
+                <line x1="310" y1="360" x2="150" y2="360" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrowBlue)"/>
 
                 <!-- Ellipsis -->
-                <text x="230" y="365" text-anchor="middle" fill="#64748b" font-size="16" font-weight="bold">...</text>
+                <text x="230" y="390" text-anchor="middle" fill="#64748b" font-size="16" font-weight="bold">...</text>
 
                 <!-- Query N+1 -->
-                <line x1="150" y1="395" x2="310" y2="395" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
-                <text x="230" y="388" text-anchor="middle" fill="#64748b" font-size="9">SELECT * FROM users WHERE id=N</text>
-                <line x1="310" y1="415" x2="150" y2="415" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrowBlue)"/>
+                <line x1="150" y1="420" x2="310" y2="420" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+                <text x="230" y="413" text-anchor="middle" fill="#64748b" font-size="9">SELECT * FROM users WHERE id=N</text>
+                <line x1="310" y1="440" x2="150" y2="440" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrowBlue)"/>
             </g>
 
             <!-- N+1 Stats Box -->
-            <g filter="url(#shadow)">
-                <rect x="60" y="450" width="360" height="90" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="2"/>
-                <text x="240" y="480" text-anchor="middle" fill="#dc2626" font-size="14" font-weight="700">Performance Impact</text>
-                <text x="240" y="505" text-anchor="middle" fill="#7f1d1d" font-size="12">Total queries: N + 1 = 101 (for 100 posts)</text>
-                <text x="240" y="525" text-anchor="middle" fill="#7f1d1d" font-size="12">Total time: 101 x 2-5ms = 200-500ms</text>
+            <g>
+                <rect x="60" y="475" width="360" height="90" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="2" filter="url(#shadow)"/>
+                <text x="240" y="505" text-anchor="middle" fill="#dc2626" font-size="14" font-weight="700">Performance Impact</text>
+                <text x="240" y="530" text-anchor="middle" fill="#7f1d1d" font-size="12">Total queries: N + 1 = 101 (for 100 posts)</text>
+                <text x="240" y="550" text-anchor="middle" fill="#7f1d1d" font-size="12">Total time: 101 x 2-5ms = 200-500ms</text>
             </g>
 
             <!-- RIGHT SIDE: JOIN Pattern (Good) -->
-            <text x="750" y="60" text-anchor="middle" fill="#059669" font-size="18" font-weight="700">JOIN Pattern (Efficient)</text>
+            <text x="750" y="85" text-anchor="middle" fill="#059669" font-size="18" font-weight="700">JOIN Pattern (Efficient)</text>
 
             <!-- Application Box -->
-            <g filter="url(#shadow)">
-                <rect x="540" y="90" width="120" height="50" rx="8" fill="url(#appGradient)"/>
-                <text x="600" y="120" text-anchor="middle" fill="white" font-size="13" font-weight="600">Application</text>
+            <g>
+                <rect x="540" y="115" width="120" height="50" rx="8" fill="url(#appGradient)" filter="url(#shadow)"/>
+                <text x="600" y="145" text-anchor="middle" fill="white" font-size="13" font-weight="600">Application</text>
             </g>
 
             <!-- Database Box -->
-            <g filter="url(#shadow)">
-                <rect x="820" y="90" width="140" height="50" rx="8" fill="url(#dbGradient)"/>
-                <text x="890" y="120" text-anchor="middle" fill="white" font-size="13" font-weight="600">Database</text>
+            <g>
+                <rect x="820" y="115" width="140" height="50" rx="8" fill="url(#dbGradient)" filter="url(#shadow)"/>
+                <text x="890" y="145" text-anchor="middle" fill="white" font-size="13" font-weight="600">Database</text>
             </g>
 
             <!-- Single JOIN query -->
-            <line x1="660" y1="115" x2="810" y2="115" stroke="#10b981" stroke-width="3" marker-end="url(#arrowGreen)"/>
-            <text x="735" y="102" text-anchor="middle" fill="#64748b" font-size="9">SELECT p.*, u.name</text>
-            <text x="735" y="113" text-anchor="middle" fill="#64748b" font-size="9">FROM posts p</text>
-            <text x="735" y="124" text-anchor="middle" fill="#64748b" font-size="9">JOIN users u ON p.author_id = u.id</text>
+            <line x1="660" y1="140" x2="810" y2="140" stroke="#10b981" stroke-width="3" marker-end="url(#arrowGreen)"/>
+            <text x="735" y="127" text-anchor="middle" fill="#64748b" font-size="9">SELECT p.*, u.name</text>
+            <text x="735" y="138" text-anchor="middle" fill="#64748b" font-size="9">FROM posts p</text>
+            <text x="735" y="149" text-anchor="middle" fill="#64748b" font-size="9">JOIN users u ON p.author_id = u.id</text>
 
             <!-- Single response with all data -->
             <g>
-                <line x1="810" y1="220" x2="660" y2="220" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowBlue)"/>
-                <text x="735" y="190" text-anchor="middle" fill="#64748b" font-size="10">Returns all posts</text>
-                <text x="735" y="205" text-anchor="middle" fill="#64748b" font-size="10">with author data</text>
+                <line x1="810" y1="245" x2="660" y2="245" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowBlue)"/>
+                <text x="735" y="215" text-anchor="middle" fill="#64748b" font-size="10">Returns all posts</text>
+                <text x="735" y="230" text-anchor="middle" fill="#64748b" font-size="10">with author data</text>
             </g>
 
             <!-- Visual representation of joined data -->
-            <g filter="url(#shadow)">
-                <rect x="560" y="260" width="180" height="140" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
-                <text x="650" y="285" text-anchor="middle" fill="#166534" font-size="12" font-weight="600">Result Set</text>
+            <g>
+                <rect x="560" y="285" width="180" height="140" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="2" filter="url(#shadow)"/>
+                <text x="650" y="310" text-anchor="middle" fill="#166534" font-size="12" font-weight="600">Result Set</text>
 
-                <text x="580" y="310" fill="#166534" font-size="10">post_1, author_name_1</text>
-                <text x="580" y="328" fill="#166534" font-size="10">post_2, author_name_2</text>
-                <text x="580" y="346" fill="#166534" font-size="10">post_3, author_name_3</text>
-                <text x="650" y="370" text-anchor="middle" fill="#166534" font-size="12">...</text>
-                <text x="580" y="392" fill="#166534" font-size="10">post_N, author_name_N</text>
+                <text x="580" y="335" fill="#166534" font-size="10">post_1, author_name_1</text>
+                <text x="580" y="353" fill="#166534" font-size="10">post_2, author_name_2</text>
+                <text x="580" y="371" fill="#166534" font-size="10">post_3, author_name_3</text>
+                <text x="650" y="395" text-anchor="middle" fill="#166534" font-size="12">...</text>
+                <text x="580" y="417" fill="#166534" font-size="10">post_N, author_name_N</text>
             </g>
 
             <!-- JOIN Stats Box -->
-            <g filter="url(#shadow)">
-                <rect x="560" y="450" width="360" height="90" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
-                <text x="740" y="480" text-anchor="middle" fill="#059669" font-size="14" font-weight="700">Performance Impact</text>
-                <text x="740" y="505" text-anchor="middle" fill="#166534" font-size="12">Total queries: 1 (single JOIN query)</text>
-                <text x="740" y="525" text-anchor="middle" fill="#166534" font-size="12">Total time: 1 x 5-15ms = 5-15ms</text>
+            <g>
+                <rect x="560" y="475" width="360" height="90" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="2" filter="url(#shadow)"/>
+                <text x="740" y="505" text-anchor="middle" fill="#059669" font-size="14" font-weight="700">Performance Impact</text>
+                <text x="740" y="530" text-anchor="middle" fill="#166534" font-size="12">Total queries: 1 (single JOIN query)</text>
+                <text x="740" y="550" text-anchor="middle" fill="#166534" font-size="12">Total time: 1 x 5-15ms = 5-15ms</text>
             </g>
 
             <!-- Improvement callout -->
-            <g filter="url(#shadow)">
-                <rect x="380" y="560" width="240" height="35" rx="17" fill="url(#goodGradient)"/>
-                <text x="500" y="583" text-anchor="middle" fill="white" font-size="13" font-weight="700">20-100x Performance Improvement</text>
+            <g>
+                <rect x="380" y="585" width="240" height="35" rx="17" fill="url(#goodGradient)" filter="url(#shadow)"/>
+                <text x="500" y="608" text-anchor="middle" fill="white" font-size="13" font-weight="700">20-100x Performance Improvement</text>
             </g>
         </svg>
     </div>

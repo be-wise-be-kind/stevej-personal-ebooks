@@ -61,10 +61,10 @@
             <rect width="900" height="815" fill="#ffffff" rx="12"/>
 
             <!-- Title -->
-            <text x="450" y="40" text-anchor="middle" fill="#1e293b" font-size="24" font-weight="600">
+            <text x="450" y="40" text-anchor="middle" fill="#1e293b" font-size="24" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
                 Little's Law: L = lambda x W
             </text>
-            <text x="450" y="65" text-anchor="middle" fill="#64748b" font-size="14">
+            <text x="450" y="65" text-anchor="middle" fill="#64748b" font-size="14" font-family="Liberation Sans, Arial, sans-serif">
                 The fundamental relationship between concurrency, throughput, and latency
             </text>
 
@@ -77,9 +77,9 @@
                 </text>
 
                 <!-- Variable labels -->
-                <text x="118" y="80" text-anchor="middle" fill="#0369a1" font-size="12">(Concurrency)</text>
-                <text x="200" y="80" text-anchor="middle" fill="#0369a1" font-size="12">(Arrival Rate)</text>
-                <text x="282" y="80" text-anchor="middle" fill="#0369a1" font-size="12">(Wait Time)</text>
+                <text x="118" y="80" text-anchor="middle" fill="#0369a1" font-size="12" font-family="Liberation Sans, Arial, sans-serif">(Concurrency)</text>
+                <text x="200" y="80" text-anchor="middle" fill="#0369a1" font-size="12" font-family="Liberation Sans, Arial, sans-serif">(Arrival Rate)</text>
+                <text x="282" y="80" text-anchor="middle" fill="#0369a1" font-size="12" font-family="Liberation Sans, Arial, sans-serif">(Wait Time)</text>
             </g>
 
             <!-- System Diagram -->
@@ -88,8 +88,8 @@
                 <g transform="translate(0, 50)">
                     <!-- Arrival rate label -->
                     <rect x="0" y="-30" width="120" height="60" fill="#dcfce7" rx="8" stroke="#22c55e" stroke-width="2"/>
-                    <text x="60" y="-5" text-anchor="middle" fill="#166534" font-size="14" font-weight="600">lambda</text>
-                    <text x="60" y="16" text-anchor="middle" fill="#15803d" font-size="12">Arrival Rate</text>
+                    <text x="60" y="-5" text-anchor="middle" fill="#166534" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">lambda</text>
+                    <text x="60" y="16" text-anchor="middle" fill="#15803d" font-size="12" font-family="Liberation Sans, Arial, sans-serif">Arrival Rate</text>
 
                     <!-- Incoming arrow with requests -->
                     <line x1="130" y1="0" x2="220" y2="0" stroke="#22c55e" stroke-width="4" marker-end="url(#arrowGreen)"/>
@@ -114,13 +114,13 @@
                     <rect width="400" height="180" fill="url(#queueGradient)" rx="12" stroke="#3b82f6" stroke-width="3"/>
 
                     <!-- System label -->
-                    <text x="200" y="30" text-anchor="middle" fill="#1e40af" font-size="16" font-weight="600">
+                    <text x="200" y="30" text-anchor="middle" fill="#1e40af" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
                         THE SYSTEM
                     </text>
 
                     <!-- Queue section -->
                     <rect x="20" y="48" width="180" height="110" fill="#eff6ff" rx="8" stroke="#93c5fd" stroke-width="1"/>
-                    <text x="110" y="70" text-anchor="middle" fill="#1e40af" font-size="12" font-weight="500">Queue</text>
+                    <text x="110" y="70" text-anchor="middle" fill="#1e40af" font-size="12" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Queue</text>
 
                     <!-- Queued requests -->
                     <circle cx="50" cy="102" r="10" fill="#3b82f6"/>
@@ -134,7 +134,7 @@
 
                     <!-- Processing section -->
                     <rect x="220" y="48" width="160" height="110" fill="#fef9c3" rx="8" stroke="#fcd34d" stroke-width="1"/>
-                    <text x="300" y="70" text-anchor="middle" fill="#854d0e" font-size="12" font-weight="500">Processing</text>
+                    <text x="300" y="70" text-anchor="middle" fill="#854d0e" font-size="12" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Processing</text>
 
                     <!-- Processing requests (active) -->
                     <circle cx="260" cy="108" r="14" fill="#f97316" stroke="#ea580c" stroke-width="2">
@@ -149,7 +149,7 @@
 
                     <!-- L label (items in system) -->
                     <rect x="150" y="165" width="100" height="40" fill="#dbeafe" rx="6" stroke="#3b82f6" stroke-width="2"/>
-                    <text x="200" y="192" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="700">L = 11</text>
+                    <text x="200" y="192" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">L = 11</text>
                 </g>
 
                 <!-- Outgoing completed requests -->
@@ -165,56 +165,56 @@
 
                     <!-- Completed label -->
                     <rect x="110" y="-30" width="100" height="60" fill="#fed7aa" rx="8" stroke="#f97316" stroke-width="2"/>
-                    <text x="160" y="-3" text-anchor="middle" fill="#c2410c" font-size="12" font-weight="600">Completed</text>
-                    <text x="160" y="18" text-anchor="middle" fill="#ea580c" font-size="11">Responses</text>
+                    <text x="160" y="-3" text-anchor="middle" fill="#c2410c" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Completed</text>
+                    <text x="160" y="18" text-anchor="middle" fill="#ea580c" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Responses</text>
                 </g>
 
                 <!-- W (Wait Time) bracket -->
                 <g transform="translate(230, 180)">
                     <path d="M20,0 L20,20 L380,20 L380,0" fill="none" stroke="#8b5cf6" stroke-width="2"/>
                     <rect x="150" y="28" width="100" height="40" fill="#f3e8ff" rx="6" stroke="#8b5cf6" stroke-width="2"/>
-                    <text x="200" y="55" text-anchor="middle" fill="#6b21a8" font-size="14" font-weight="700">W = 100ms</text>
+                    <text x="200" y="55" text-anchor="middle" fill="#6b21a8" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">W = 100ms</text>
                 </g>
             </g>
 
             <!-- Example Calculations -->
             <g transform="translate(45, 490)">
-                <text x="0" y="0" fill="#1e293b" font-size="18" font-weight="600">Practical Examples</text>
+                <text x="0" y="0" fill="#1e293b" font-size="18" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Practical Examples</text>
 
                 <!-- Example 1 -->
                 <g transform="translate(0, 35)">
                     <rect width="250" height="160" fill="#f0fdf4" rx="8" stroke="#22c55e" stroke-width="2"/>
-                    <text x="125" y="28" text-anchor="middle" fill="#166534" font-size="14" font-weight="600">Example 1: Normal Load</text>
+                    <text x="125" y="28" text-anchor="middle" fill="#166534" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Example 1: Normal Load</text>
 
-                    <text x="20" y="58" fill="#475569" font-size="12">lambda = 1000 req/sec</text>
-                    <text x="20" y="80" fill="#475569" font-size="12">W = 100ms = 0.1 sec</text>
+                    <text x="20" y="58" fill="#475569" font-size="12" font-family="Liberation Sans, Arial, sans-serif">lambda = 1000 req/sec</text>
+                    <text x="20" y="80" fill="#475569" font-size="12" font-family="Liberation Sans, Arial, sans-serif">W = 100ms = 0.1 sec</text>
                     <line x1="20" y1="95" x2="230" y2="95" stroke="#86efac" stroke-width="1"/>
-                    <text x="20" y="118" fill="#166534" font-size="14" font-weight="700">L = 1000 x 0.1 = 100</text>
-                    <text x="20" y="140" fill="#15803d" font-size="11">Need capacity for 100 concurrent requests</text>
+                    <text x="20" y="118" fill="#166534" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">L = 1000 x 0.1 = 100</text>
+                    <text x="20" y="140" fill="#15803d" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Need capacity for 100 concurrent requests</text>
                 </g>
 
                 <!-- Example 2 -->
                 <g transform="translate(280, 35)">
                     <rect width="250" height="160" fill="#fef9c3" rx="8" stroke="#eab308" stroke-width="2"/>
-                    <text x="125" y="28" text-anchor="middle" fill="#854d0e" font-size="14" font-weight="600">Example 2: Latency Doubles</text>
+                    <text x="125" y="28" text-anchor="middle" fill="#854d0e" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Example 2: Latency Doubles</text>
 
-                    <text x="20" y="58" fill="#475569" font-size="12">lambda = 1000 req/sec</text>
-                    <text x="20" y="80" fill="#475569" font-size="12">W = 200ms = 0.2 sec</text>
+                    <text x="20" y="58" fill="#475569" font-size="12" font-family="Liberation Sans, Arial, sans-serif">lambda = 1000 req/sec</text>
+                    <text x="20" y="80" fill="#475569" font-size="12" font-family="Liberation Sans, Arial, sans-serif">W = 200ms = 0.2 sec</text>
                     <line x1="20" y1="95" x2="230" y2="95" stroke="#fcd34d" stroke-width="1"/>
-                    <text x="20" y="118" fill="#854d0e" font-size="14" font-weight="700">L = 1000 x 0.2 = 200</text>
-                    <text x="20" y="140" fill="#a16207" font-size="11">Concurrency DOUBLES!</text>
+                    <text x="20" y="118" fill="#854d0e" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">L = 1000 x 0.2 = 200</text>
+                    <text x="20" y="140" fill="#a16207" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Concurrency DOUBLES!</text>
                 </g>
 
                 <!-- Example 3 -->
                 <g transform="translate(560, 35)">
                     <rect width="250" height="160" fill="#fef2f2" rx="8" stroke="#ef4444" stroke-width="2"/>
-                    <text x="125" y="28" text-anchor="middle" fill="#b91c1c" font-size="14" font-weight="600">Example 3: Degradation</text>
+                    <text x="125" y="28" text-anchor="middle" fill="#b91c1c" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Example 3: Degradation</text>
 
-                    <text x="20" y="58" fill="#475569" font-size="12">lambda = 1000 req/sec</text>
-                    <text x="20" y="80" fill="#475569" font-size="12">W = 1000ms = 1 sec</text>
+                    <text x="20" y="58" fill="#475569" font-size="12" font-family="Liberation Sans, Arial, sans-serif">lambda = 1000 req/sec</text>
+                    <text x="20" y="80" fill="#475569" font-size="12" font-family="Liberation Sans, Arial, sans-serif">W = 1000ms = 1 sec</text>
                     <line x1="20" y1="95" x2="230" y2="95" stroke="#fca5a5" stroke-width="1"/>
-                    <text x="20" y="118" fill="#b91c1c" font-size="14" font-weight="700">L = 1000 x 1 = 1000</text>
-                    <text x="20" y="140" fill="#dc2626" font-size="11">10x resources needed!</text>
+                    <text x="20" y="118" fill="#b91c1c" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">L = 1000 x 1 = 1000</text>
+                    <text x="20" y="140" fill="#dc2626" font-size="11" font-family="Liberation Sans, Arial, sans-serif">10x resources needed!</text>
                 </g>
             </g>
 
@@ -222,15 +222,15 @@
             <g transform="translate(50, 700)">
                 <rect width="800" height="100" fill="#eff6ff" rx="10" stroke="#3b82f6" stroke-width="2"/>
 
-                <text x="30" y="28" fill="#1e40af" font-size="14" font-weight="700">Key Insights from Little's Law:</text>
+                <text x="30" y="28" fill="#1e40af" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">Key Insights from Little's Law:</text>
 
                 <circle cx="50" cy="55" r="4" fill="#3b82f6"/>
-                <text x="65" y="59" fill="#1e3a8a" font-size="12">
+                <text x="65" y="59" fill="#1e3a8a" font-size="12" font-family="Liberation Sans, Arial, sans-serif">
                     When latency increases, concurrent connections increase proportionally (for same throughput)
                 </text>
 
                 <circle cx="50" cy="82" r="4" fill="#3b82f6"/>
-                <text x="65" y="86" fill="#1e3a8a" font-size="12">
+                <text x="65" y="86" fill="#1e3a8a" font-size="12" font-family="Liberation Sans, Arial, sans-serif">
                     Reducing latency allows higher throughput with the same connection pool / thread pool size
                 </text>
             </g>

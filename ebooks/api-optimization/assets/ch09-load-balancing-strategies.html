@@ -79,63 +79,63 @@
             <!-- Section 1: Round-Robin -->
             <g transform="translate(25, 20)">
                 <rect x="0" y="0" width="270" height="210" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-                <text x="135" y="28" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="600">Round-Robin</text>
+                <text x="135" y="28" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Round-Robin</text>
 
                 <!-- Load Balancer -->
                 <rect x="100" y="55" width="70" height="45" rx="4" fill="url(#lbGrad)" filter="url(#shadow)"/>
-                <text x="135" y="82" text-anchor="middle" fill="white" font-size="10" font-weight="600">LB</text>
+                <text x="135" y="82" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">LB</text>
 
                 <!-- Servers -->
                 <rect x="30" y="145" width="50" height="45" rx="4" fill="url(#serverGrad)" filter="url(#shadow)"/>
-                <text x="55" y="172" text-anchor="middle" fill="white" font-size="10">S1</text>
+                <text x="55" y="172" text-anchor="middle" fill="white" font-size="10" font-family="Liberation Sans, Arial, sans-serif">S1</text>
 
                 <rect x="110" y="145" width="50" height="45" rx="4" fill="url(#serverGrad)" filter="url(#shadow)"/>
-                <text x="135" y="172" text-anchor="middle" fill="white" font-size="10">S2</text>
+                <text x="135" y="172" text-anchor="middle" fill="white" font-size="10" font-family="Liberation Sans, Arial, sans-serif">S2</text>
 
                 <rect x="190" y="145" width="50" height="45" rx="4" fill="url(#serverGrad)" filter="url(#shadow)"/>
-                <text x="215" y="172" text-anchor="middle" fill="white" font-size="10">S3</text>
+                <text x="215" y="172" text-anchor="middle" fill="white" font-size="10" font-family="Liberation Sans, Arial, sans-serif">S3</text>
 
                 <!-- Arrows with sequence numbers -->
                 <line x1="115" y1="100" x2="65" y2="140" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
                 <circle cx="85" cy="117" r="10" fill="#3b82f6"/>
-                <text x="85" y="121" text-anchor="middle" fill="white" font-size="9" font-weight="600">1</text>
+                <text x="85" y="121" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">1</text>
 
                 <line x1="135" y1="100" x2="135" y2="140" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
                 <circle cx="135" cy="120" r="10" fill="#22c55e"/>
-                <text x="135" y="124" text-anchor="middle" fill="white" font-size="9" font-weight="600">2</text>
+                <text x="135" y="124" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">2</text>
 
                 <line x1="155" y1="100" x2="205" y2="140" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowOrange)"/>
                 <circle cx="185" cy="117" r="10" fill="#f59e0b"/>
-                <text x="185" y="121" text-anchor="middle" fill="white" font-size="9" font-weight="600">3</text>
+                <text x="185" y="121" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">3</text>
 
                 <!-- Description -->
-                <text x="135" y="202" text-anchor="middle" fill="#64748b" font-size="9">Sequential: 1, 2, 3, 1, 2, 3...</text>
+                <text x="135" y="202" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Sequential: 1, 2, 3, 1, 2, 3...</text>
             </g>
 
             <!-- Section 2: Least Connections -->
             <g transform="translate(315, 20)">
                 <rect x="0" y="0" width="270" height="210" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-                <text x="135" y="28" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="600">Least Connections</text>
+                <text x="135" y="28" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Least Connections</text>
 
                 <!-- Load Balancer -->
                 <rect x="100" y="55" width="70" height="45" rx="4" fill="url(#lbGrad)" filter="url(#shadow)"/>
-                <text x="135" y="82" text-anchor="middle" fill="white" font-size="10" font-weight="600">LB</text>
+                <text x="135" y="82" text-anchor="middle" fill="white" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">LB</text>
 
                 <!-- Servers with connection counts -->
                 <rect x="30" y="145" width="50" height="45" rx="4" fill="url(#serverGrad)" filter="url(#shadow)"/>
-                <text x="55" y="170" text-anchor="middle" fill="white" font-size="10">S1</text>
+                <text x="55" y="170" text-anchor="middle" fill="white" font-size="10" font-family="Liberation Sans, Arial, sans-serif">S1</text>
                 <circle cx="70" cy="150" r="12" fill="#ef4444"/>
-                <text x="70" y="154" text-anchor="middle" fill="white" font-size="9" font-weight="600">8</text>
+                <text x="70" y="154" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">8</text>
 
                 <rect x="110" y="145" width="50" height="45" rx="4" fill="url(#serverGrad)" filter="url(#shadow)"/>
-                <text x="135" y="170" text-anchor="middle" fill="white" font-size="10">S2</text>
+                <text x="135" y="170" text-anchor="middle" fill="white" font-size="10" font-family="Liberation Sans, Arial, sans-serif">S2</text>
                 <circle cx="150" cy="150" r="12" fill="#22c55e"/>
-                <text x="150" y="154" text-anchor="middle" fill="white" font-size="9" font-weight="600">2</text>
+                <text x="150" y="154" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">2</text>
 
                 <rect x="190" y="145" width="50" height="45" rx="4" fill="url(#serverGrad)" filter="url(#shadow)"/>
-                <text x="215" y="170" text-anchor="middle" fill="white" font-size="10">S3</text>
+                <text x="215" y="170" text-anchor="middle" fill="white" font-size="10" font-family="Liberation Sans, Arial, sans-serif">S3</text>
                 <circle cx="230" cy="150" r="12" fill="#f59e0b"/>
-                <text x="230" y="154" text-anchor="middle" fill="white" font-size="9" font-weight="600">5</text>
+                <text x="230" y="154" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">5</text>
 
                 <!-- Arrow to S2 (least connections) -->
                 <path d="M 135 100 L 135 140" stroke="#22c55e" stroke-width="3" marker-end="url(#arrowGreen)"/>
@@ -144,36 +144,36 @@
                 <rect x="105" y="140" width="60" height="55" rx="6" fill="none" stroke="#22c55e" stroke-width="2" stroke-dasharray="4,2"/>
 
                 <!-- Description -->
-                <text x="135" y="202" text-anchor="middle" fill="#64748b" font-size="9">Routes to server with fewest active</text>
+                <text x="135" y="202" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Routes to server with fewest active</text>
             </g>
 
             <!-- Section 3: Consistent Hashing -->
             <g transform="translate(605, 20)">
                 <rect x="0" y="0" width="270" height="210" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-                <text x="135" y="28" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="600">Consistent Hashing</text>
+                <text x="135" y="28" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Consistent Hashing</text>
 
                 <!-- Hash Ring -->
                 <circle cx="135" cy="120" r="60" fill="none" stroke="#e2e8f0" stroke-width="8"/>
 
                 <!-- Server positions on ring -->
                 <circle cx="135" cy="60" r="16" fill="url(#serverGrad)"/>
-                <text x="135" y="64" text-anchor="middle" fill="white" font-size="9">S1</text>
+                <text x="135" y="64" text-anchor="middle" fill="white" font-size="9" font-family="Liberation Sans, Arial, sans-serif">S1</text>
 
                 <circle cx="190" cy="140" r="16" fill="url(#serverGrad)"/>
-                <text x="190" y="144" text-anchor="middle" fill="white" font-size="9">S2</text>
+                <text x="190" y="144" text-anchor="middle" fill="white" font-size="9" font-family="Liberation Sans, Arial, sans-serif">S2</text>
 
                 <circle cx="95" cy="168" r="16" fill="url(#serverGrad)"/>
-                <text x="95" y="172" text-anchor="middle" fill="white" font-size="9">S3</text>
+                <text x="95" y="172" text-anchor="middle" fill="white" font-size="9" font-family="Liberation Sans, Arial, sans-serif">S3</text>
 
                 <!-- User hash positions -->
                 <circle cx="162" cy="62" r="8" fill="#3b82f6"/>
-                <text x="162" y="48" fill="#3b82f6" font-size="8">userA</text>
+                <text x="162" y="48" fill="#3b82f6" font-size="8" font-family="Liberation Sans, Arial, sans-serif">userA</text>
 
                 <circle cx="195" cy="100" r="8" fill="#22c55e"/>
-                <text x="215" y="98" fill="#22c55e" font-size="8">userB</text>
+                <text x="215" y="98" fill="#22c55e" font-size="8" font-family="Liberation Sans, Arial, sans-serif">userB</text>
 
                 <circle cx="72" cy="130" r="8" fill="#f59e0b"/>
-                <text x="50" y="128" fill="#f59e0b" font-size="8">userC</text>
+                <text x="50" y="128" fill="#f59e0b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">userC</text>
 
                 <!-- Arrows showing routing -->
                 <line x1="160" y1="62" x2="148" y2="62" stroke="#3b82f6" stroke-width="1" stroke-dasharray="2,2"/>
@@ -181,94 +181,94 @@
                 <line x1="80" y1="140" x2="88" y2="156" stroke="#f59e0b" stroke-width="1" stroke-dasharray="2,2"/>
 
                 <!-- Description -->
-                <text x="135" y="202" text-anchor="middle" fill="#64748b" font-size="9">Same key always routes to same server</text>
+                <text x="135" y="202" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Same key always routes to same server</text>
             </g>
 
             <!-- Section 4: Detailed Comparison Table -->
             <g transform="translate(25, 250)">
                 <rect x="0" y="0" width="850" height="450" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-                <text x="425" y="32" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="600">Strategy Comparison</text>
+                <text x="425" y="32" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Strategy Comparison</text>
 
                 <!-- Table Headers -->
                 <rect x="20" y="55" width="160" height="45" rx="4" fill="#1e293b"/>
-                <text x="100" y="82" text-anchor="middle" fill="white" font-size="11" font-weight="600">Strategy</text>
+                <text x="100" y="82" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Strategy</text>
 
                 <rect x="190" y="55" width="200" height="45" rx="4" fill="#1e293b"/>
-                <text x="290" y="82" text-anchor="middle" fill="white" font-size="11" font-weight="600">Best For</text>
+                <text x="290" y="82" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Best For</text>
 
                 <rect x="400" y="55" width="200" height="45" rx="4" fill="#1e293b"/>
-                <text x="500" y="82" text-anchor="middle" fill="white" font-size="11" font-weight="600">Trade-offs</text>
+                <text x="500" y="82" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Trade-offs</text>
 
                 <rect x="610" y="55" width="220" height="45" rx="4" fill="#1e293b"/>
-                <text x="720" y="82" text-anchor="middle" fill="white" font-size="11" font-weight="600">Use Cases</text>
+                <text x="720" y="82" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Use Cases</text>
 
                 <!-- Round-Robin Row -->
                 <rect x="20" y="110" width="160" height="85" rx="4" fill="#ede9fe"/>
-                <text x="100" y="142" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="600">Round-Robin</text>
-                <text x="100" y="164" text-anchor="middle" fill="#7c3aed" font-size="9">Simple, predictable</text>
+                <text x="100" y="142" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Round-Robin</text>
+                <text x="100" y="164" text-anchor="middle" fill="#7c3aed" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Simple, predictable</text>
 
                 <rect x="190" y="110" width="200" height="85" rx="4" fill="white" stroke="#e2e8f0"/>
-                <text x="290" y="142" text-anchor="middle" fill="#475569" font-size="10">Uniform request costs</text>
-                <text x="290" y="164" text-anchor="middle" fill="#475569" font-size="10">Equal server capacity</text>
+                <text x="290" y="142" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Uniform request costs</text>
+                <text x="290" y="164" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Equal server capacity</text>
 
                 <rect x="400" y="110" width="200" height="85" rx="4" fill="white" stroke="#e2e8f0"/>
-                <text x="500" y="142" text-anchor="middle" fill="#475569" font-size="10">Ignores server load</text>
-                <text x="500" y="164" text-anchor="middle" fill="#475569" font-size="10">No state required</text>
+                <text x="500" y="142" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Ignores server load</text>
+                <text x="500" y="164" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">No state required</text>
 
                 <rect x="610" y="110" width="220" height="85" rx="4" fill="#f0fdf4" stroke="#86efac"/>
-                <text x="720" y="142" text-anchor="middle" fill="#166534" font-size="10">Stateless APIs</text>
-                <text x="720" y="164" text-anchor="middle" fill="#166534" font-size="10">Homogeneous clusters</text>
+                <text x="720" y="142" text-anchor="middle" fill="#166534" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Stateless APIs</text>
+                <text x="720" y="164" text-anchor="middle" fill="#166534" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Homogeneous clusters</text>
 
                 <!-- Least Connections Row -->
                 <rect x="20" y="205" width="160" height="85" rx="4" fill="#dcfce7"/>
-                <text x="100" y="237" text-anchor="middle" fill="#166534" font-size="11" font-weight="600">Least Connections</text>
-                <text x="100" y="259" text-anchor="middle" fill="#15803d" font-size="9">Load-aware</text>
+                <text x="100" y="237" text-anchor="middle" fill="#166534" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Least Connections</text>
+                <text x="100" y="259" text-anchor="middle" fill="#15803d" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Load-aware</text>
 
                 <rect x="190" y="205" width="200" height="85" rx="4" fill="white" stroke="#e2e8f0"/>
-                <text x="290" y="237" text-anchor="middle" fill="#475569" font-size="10">Varying request durations</text>
-                <text x="290" y="259" text-anchor="middle" fill="#475569" font-size="10">Similar server specs</text>
+                <text x="290" y="237" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Varying request durations</text>
+                <text x="290" y="259" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Similar server specs</text>
 
                 <rect x="400" y="205" width="200" height="85" rx="4" fill="white" stroke="#e2e8f0"/>
-                <text x="500" y="237" text-anchor="middle" fill="#475569" font-size="10">Requires connection tracking</text>
-                <text x="500" y="259" text-anchor="middle" fill="#475569" font-size="10">Slight overhead</text>
+                <text x="500" y="237" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Requires connection tracking</text>
+                <text x="500" y="259" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Slight overhead</text>
 
                 <rect x="610" y="205" width="220" height="85" rx="4" fill="#f0fdf4" stroke="#86efac"/>
-                <text x="720" y="237" text-anchor="middle" fill="#166534" font-size="10">Database queries</text>
-                <text x="720" y="259" text-anchor="middle" fill="#166534" font-size="10">Long-running operations</text>
+                <text x="720" y="237" text-anchor="middle" fill="#166534" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Database queries</text>
+                <text x="720" y="259" text-anchor="middle" fill="#166534" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Long-running operations</text>
 
                 <!-- Weighted Row -->
                 <rect x="20" y="300" width="160" height="85" rx="4" fill="#fef3c7"/>
-                <text x="100" y="332" text-anchor="middle" fill="#92400e" font-size="11" font-weight="600">Weighted</text>
-                <text x="100" y="354" text-anchor="middle" fill="#a16207" font-size="9">Capacity-based</text>
+                <text x="100" y="332" text-anchor="middle" fill="#92400e" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Weighted</text>
+                <text x="100" y="354" text-anchor="middle" fill="#a16207" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Capacity-based</text>
 
                 <rect x="190" y="300" width="200" height="85" rx="4" fill="white" stroke="#e2e8f0"/>
-                <text x="290" y="332" text-anchor="middle" fill="#475569" font-size="10">Heterogeneous servers</text>
-                <text x="290" y="354" text-anchor="middle" fill="#475569" font-size="10">Gradual rollouts</text>
+                <text x="290" y="332" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Heterogeneous servers</text>
+                <text x="290" y="354" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Gradual rollouts</text>
 
                 <rect x="400" y="300" width="200" height="85" rx="4" fill="white" stroke="#e2e8f0"/>
-                <text x="500" y="332" text-anchor="middle" fill="#475569" font-size="10">Manual weight tuning</text>
-                <text x="500" y="354" text-anchor="middle" fill="#475569" font-size="10">Configuration overhead</text>
+                <text x="500" y="332" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Manual weight tuning</text>
+                <text x="500" y="354" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Configuration overhead</text>
 
                 <rect x="610" y="300" width="220" height="85" rx="4" fill="#f0fdf4" stroke="#86efac"/>
-                <text x="720" y="332" text-anchor="middle" fill="#166534" font-size="10">Canary deployments</text>
-                <text x="720" y="354" text-anchor="middle" fill="#166534" font-size="10">Mixed instance types</text>
+                <text x="720" y="332" text-anchor="middle" fill="#166534" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Canary deployments</text>
+                <text x="720" y="354" text-anchor="middle" fill="#166534" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Mixed instance types</text>
 
                 <!-- Consistent Hashing Row -->
                 <rect x="20" y="395" width="160" height="70" rx="4" fill="#dbeafe"/>
-                <text x="100" y="422" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="600">Consistent Hashing</text>
-                <text x="100" y="444" text-anchor="middle" fill="#2563eb" font-size="9">Session affinity</text>
+                <text x="100" y="422" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Consistent Hashing</text>
+                <text x="100" y="444" text-anchor="middle" fill="#2563eb" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Session affinity</text>
 
                 <rect x="190" y="395" width="200" height="70" rx="4" fill="white" stroke="#e2e8f0"/>
-                <text x="290" y="422" text-anchor="middle" fill="#475569" font-size="10">Cache locality</text>
-                <text x="290" y="444" text-anchor="middle" fill="#475569" font-size="10">Session stickiness</text>
+                <text x="290" y="422" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Cache locality</text>
+                <text x="290" y="444" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Session stickiness</text>
 
                 <rect x="400" y="395" width="200" height="70" rx="4" fill="white" stroke="#e2e8f0"/>
-                <text x="500" y="422" text-anchor="middle" fill="#475569" font-size="10">Uneven distribution possible</text>
-                <text x="500" y="444" text-anchor="middle" fill="#475569" font-size="10">Hash computation</text>
+                <text x="500" y="422" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Uneven distribution possible</text>
+                <text x="500" y="444" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Hash computation</text>
 
                 <rect x="610" y="395" width="220" height="70" rx="4" fill="#f0fdf4" stroke="#86efac"/>
-                <text x="720" y="422" text-anchor="middle" fill="#166534" font-size="10">Distributed caches</text>
-                <text x="720" y="444" text-anchor="middle" fill="#166534" font-size="10">User session routing</text>
+                <text x="720" y="422" text-anchor="middle" fill="#166534" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Distributed caches</text>
+                <text x="720" y="444" text-anchor="middle" fill="#166534" font-size="10" font-family="Liberation Sans, Arial, sans-serif">User session routing</text>
             </g>
         </svg>
     </div>

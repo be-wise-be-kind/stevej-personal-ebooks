@@ -31,7 +31,7 @@
 <body>
     <div class="diagram-container">
         
-        <svg viewBox="0 0 1000 780" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
             <!-- Title -->
             <text x="500.0" y="30" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="20" font-weight="600" fill="#1e293b">Message Queue Architecture Comparison</text>
 
@@ -214,7 +214,7 @@
             <text x="750" y="423" font-family="inherit" font-size="10" fill="#475569">At-least-once default</text>
 
             <!-- ==================== SQS SECTION ==================== -->
-            <rect x="20" y="530" width="960" height="230" rx="8" fill="#fefce8" stroke="#fef08a" stroke-width="1"/>
+            <rect x="20" y="530" width="960" height="250" rx="8" fill="#fefce8" stroke="#fef08a" stroke-width="1"/>
 
             <!-- SQS Title -->
             <rect x="40" y="548" width="120" height="35" rx="6" fill="url(#sqsGrad)" filter="url(#shadow)"/>
@@ -227,13 +227,8 @@
             <!-- Arrow to SQS -->
             <line x1="125" y1="647" x2="195" y2="647" stroke="#d97706" stroke-width="2" marker-end="url(#arrowBlack)"/>
 
-            <!-- SQS Queue (Cloud icon style) -->
+            <!-- SQS Queue -->
             <rect x="200" y="590" width="300" height="120" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
-
-            <!-- AWS Cloud decoration -->
-            <ellipse cx="250" cy="612" rx="30" ry="15" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
-            <ellipse cx="280" cy="602" rx="25" ry="12" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
-            <ellipse cx="310" cy="609" rx="28" ry="14" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
 
             <text x="350" y="628" font-family="inherit" font-size="12" font-weight="600" fill="#92400e" text-anchor="middle">SQS Queue</text>
             <text x="350" y="648" font-family="inherit" font-size="10" fill="#a16207" text-anchor="middle">Fully Managed</text>
@@ -257,9 +252,9 @@
             <rect x="580" y="620" width="100" height="55" rx="6" fill="url(#consumerGrad)" filter="url(#shadow)"/>
             <text x="630" y="653" font-family="inherit" font-size="11" font-weight="500" fill="white" text-anchor="middle">Consumer</text>
 
-            <!-- Delete arrow -->
-            <path d="M 630 615 Q 630 575 500 575 Q 400 575 400 595" stroke="#10b981" stroke-width="1.5" fill="none" stroke-dasharray="3,2" marker-end="url(#arrowBlack)"/>
-            <text x="530" y="567" font-family="inherit" font-size="9" fill="#059669">Delete after process</text>
+            <!-- Delete arrow (orthogonal) -->
+            <path d="M 630 615 L 630 565 L 400 565 L 400 590" stroke="#10b981" stroke-width="1.5" fill="none" stroke-dasharray="3,2" marker-end="url(#arrowBlack)"/>
+            <text x="515" y="557" font-family="inherit" font-size="9" fill="#059669">Delete after process</text>
 
             <!-- Visibility Timeout Box -->
             <rect x="700" y="595" width="140" height="110" rx="4" fill="#fef9c3" stroke="#fde047" stroke-width="1"/>

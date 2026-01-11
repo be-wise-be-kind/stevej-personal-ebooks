@@ -63,115 +63,115 @@
             <rect width="950" height="520" fill="#f8fafc" rx="8"/>
 
             <!-- Title -->
-            <text x="475" y="35" text-anchor="middle" font-size="22" font-weight="600" fill="#1e293b">
+            <text x="475" y="35" text-anchor="middle" font-size="22" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">
                 Hedged Requests for Tail Latency Reduction
             </text>
-            <text x="475" y="55" text-anchor="middle" font-size="13" fill="#64748b">
+            <text x="475" y="55" text-anchor="middle" font-size="13" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">
                 Send redundant requests after delay, use first response
             </text>
 
             <!-- Timeline axis -->
             <line x1="100" y1="130" x2="880" y2="130" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arrowhead)"/>
-            <text x="890" y="135" font-size="12" fill="#64748b">Time</text>
+            <text x="890" y="135" font-size="12" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Time</text>
 
             <!-- Time markers -->
             <line x1="150" y1="125" x2="150" y2="135" stroke="#94a3b8" stroke-width="2"/>
-            <text x="150" y="150" text-anchor="middle" font-size="10" fill="#64748b">0ms</text>
+            <text x="150" y="150" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">0ms</text>
 
             <line x1="350" y1="125" x2="350" y2="135" stroke="#94a3b8" stroke-width="2"/>
-            <text x="350" y="150" text-anchor="middle" font-size="10" fill="#64748b">50ms</text>
-            <text x="350" y="162" text-anchor="middle" font-size="9" fill="#f97316">(hedge delay)</text>
+            <text x="350" y="150" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">50ms</text>
+            <text x="350" y="162" text-anchor="middle" font-size="9" fill="#f97316" font-family="Liberation Sans, Arial, sans-serif">(hedge delay)</text>
 
             <line x1="550" y1="125" x2="550" y2="135" stroke="#94a3b8" stroke-width="2"/>
-            <text x="550" y="150" text-anchor="middle" font-size="10" fill="#64748b">100ms</text>
+            <text x="550" y="150" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">100ms</text>
 
             <line x1="750" y1="125" x2="750" y2="135" stroke="#94a3b8" stroke-width="2"/>
-            <text x="750" y="150" text-anchor="middle" font-size="10" fill="#64748b">150ms</text>
+            <text x="750" y="150" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">150ms</text>
 
             <!-- Scenario 1: Primary request is fast (no hedge needed) -->
             <g transform="translate(0, 170)">
                 <rect x="30" y="0" width="890" height="90" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
-                <text x="50" y="25" font-size="12" font-weight="600" fill="#1e293b">Scenario 1: Fast Primary Response</text>
-                <text x="50" y="42" font-size="10" fill="#64748b">Primary returns before hedge delay - no hedge sent</text>
+                <text x="50" y="25" font-size="12" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Scenario 1: Fast Primary Response</text>
+                <text x="50" y="42" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Primary returns before hedge delay - no hedge sent</text>
 
                 <!-- Primary request bar -->
                 <rect x="150" y="52" width="120" height="24" rx="4" fill="url(#primaryGradient)"/>
-                <text x="210" y="68" text-anchor="middle" font-size="10" fill="white" font-weight="500">Primary Request</text>
+                <text x="210" y="68" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Primary Request</text>
 
                 <!-- Success indicator -->
                 <circle cx="280" cy="64" r="10" fill="url(#successGradient)"/>
                 <path d="M275 64 L278 67 L285 60" stroke="white" stroke-width="2" fill="none"/>
 
                 <!-- Result label -->
-                <text x="310" y="68" font-size="10" fill="#059669" font-weight="500">Response at 30ms</text>
+                <text x="310" y="68" font-size="10" fill="#059669" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Response at 30ms</text>
             </g>
 
             <!-- Scenario 2: Hedge wins -->
             <g transform="translate(0, 275)">
                 <rect x="30" y="0" width="890" height="110" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
-                <text x="50" y="25" font-size="12" font-weight="600" fill="#1e293b">Scenario 2: Hedge Request Wins</text>
-                <text x="50" y="42" font-size="10" fill="#64748b">Primary is slow, hedge returns first - cancel primary</text>
+                <text x="50" y="25" font-size="12" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Scenario 2: Hedge Request Wins</text>
+                <text x="50" y="42" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Primary is slow, hedge returns first - cancel primary</text>
 
                 <!-- Primary request bar (slow, cancelled) -->
                 <rect x="150" y="52" width="350" height="24" rx="4" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,2"/>
-                <text x="325" y="68" text-anchor="middle" font-size="10" fill="#64748b">Primary Request (slow)</text>
+                <text x="325" y="68" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Primary Request (slow)</text>
 
                 <!-- Hedge request bar -->
                 <rect x="350" y="80" width="120" height="24" rx="4" fill="url(#hedgeGradient)"/>
-                <text x="410" y="96" text-anchor="middle" font-size="10" fill="white" font-weight="500">Hedge Request</text>
+                <text x="410" y="96" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Hedge Request</text>
 
                 <!-- Cancel X on primary -->
                 <circle cx="510" cy="64" r="10" fill="url(#cancelGradient)"/>
                 <path d="M505 59 L515 69 M515 59 L505 69" stroke="white" stroke-width="2"/>
-                <text x="540" y="68" font-size="9" fill="#dc2626">Cancelled</text>
+                <text x="540" y="68" font-size="9" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">Cancelled</text>
 
                 <!-- Success indicator on hedge -->
                 <circle cx="480" cy="92" r="10" fill="url(#successGradient)"/>
                 <path d="M475 92 L478 95 L485 88" stroke="white" stroke-width="2" fill="none"/>
-                <text x="510" y="96" font-size="10" fill="#059669" font-weight="500">Response at 80ms</text>
+                <text x="510" y="96" font-size="10" fill="#059669" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Response at 80ms</text>
 
                 <!-- Hedge trigger arrow -->
                 <path d="M350 55 L350 75" stroke="#f97316" stroke-width="1.5" stroke-dasharray="3,2"/>
-                <text x="355" y="65" font-size="8" fill="#f97316">Hedge sent</text>
+                <text x="355" y="65" font-size="8" fill="#f97316" font-family="Liberation Sans, Arial, sans-serif">Hedge sent</text>
             </g>
 
             <!-- Scenario 3: Primary wins after hedge -->
             <g transform="translate(0, 400)">
                 <rect x="30" y="0" width="890" height="110" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
-                <text x="50" y="25" font-size="12" font-weight="600" fill="#1e293b">Scenario 3: Primary Wins (Hedge Cancelled)</text>
-                <text x="50" y="42" font-size="10" fill="#64748b">Primary returns after hedge was sent but before hedge completes</text>
+                <text x="50" y="25" font-size="12" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Scenario 3: Primary Wins (Hedge Cancelled)</text>
+                <text x="50" y="42" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Primary returns after hedge was sent but before hedge completes</text>
 
                 <!-- Primary request bar -->
                 <rect x="150" y="52" width="180" height="24" rx="4" fill="url(#primaryGradient)"/>
-                <text x="240" y="68" text-anchor="middle" font-size="10" fill="white" font-weight="500">Primary Request</text>
+                <text x="240" y="68" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Primary Request</text>
 
                 <!-- Hedge request bar (cancelled) -->
                 <rect x="350" y="80" width="200" height="24" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,2"/>
-                <text x="450" y="96" text-anchor="middle" font-size="10" fill="#92400e">Hedge Request (in flight)</text>
+                <text x="450" y="96" text-anchor="middle" font-size="10" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">Hedge Request (in flight)</text>
 
                 <!-- Success indicator on primary -->
                 <circle cx="340" cy="64" r="10" fill="url(#successGradient)"/>
                 <path d="M335 64 L338 67 L345 60" stroke="white" stroke-width="2" fill="none"/>
-                <text x="370" y="68" font-size="10" fill="#059669" font-weight="500">Response at 70ms</text>
+                <text x="370" y="68" font-size="10" fill="#059669" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Response at 70ms</text>
 
                 <!-- Cancel X on hedge -->
                 <circle cx="560" cy="92" r="10" fill="url(#cancelGradient)"/>
                 <path d="M555 87 L565 97 M565 87 L555 97" stroke="white" stroke-width="2"/>
-                <text x="590" y="96" font-size="9" fill="#dc2626">Cancelled</text>
+                <text x="590" y="96" font-size="9" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">Cancelled</text>
 
                 <!-- Hedge trigger arrow -->
                 <path d="M350 55 L350 75" stroke="#f97316" stroke-width="1.5" stroke-dasharray="3,2"/>
             </g>
 
             <!-- Legend -->
-            <g transform="translate(600, 80)">
-                <rect x="0" y="0" width="280" height="40" rx="4" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+            <g transform="translate(570, 80)">
+                <rect x="0" y="0" width="340" height="40" rx="4" fill="white" stroke="#e2e8f0" stroke-width="1"/>
                 <rect x="15" y="12" width="40" height="16" rx="3" fill="url(#primaryGradient)"/>
-                <text x="65" y="24" font-size="10" fill="#64748b">Primary</text>
-                <rect x="115" y="12" width="40" height="16" rx="3" fill="url(#hedgeGradient)"/>
-                <text x="165" y="24" font-size="10" fill="#64748b">Hedge</text>
-                <rect x="205" y="12" width="40" height="16" rx="3" fill="#e2e8f0" stroke="#94a3b8" stroke-dasharray="3,2"/>
-                <text x="255" y="24" font-size="10" fill="#64748b">Slow/Cancelled</text>
+                <text x="65" y="24" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Primary</text>
+                <rect x="125" y="12" width="40" height="16" rx="3" fill="url(#hedgeGradient)"/>
+                <text x="175" y="24" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Hedge</text>
+                <rect x="225" y="12" width="40" height="16" rx="3" fill="#e2e8f0" stroke="#94a3b8" stroke-dasharray="3,2"/>
+                <text x="275" y="24" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Slow/Cancelled</text>
             </g>
         </svg>
     </div>

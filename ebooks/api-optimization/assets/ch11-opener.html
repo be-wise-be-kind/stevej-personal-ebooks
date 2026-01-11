@@ -76,11 +76,32 @@
                 Edge computing brings content to where your users are
             </text>
 
+            <!-- ===== ALL LINES FIRST (bottom layer) ===== -->
+
+            <!-- Connection lines from origin to edge nodes (gray dashed) -->
+            <line x1="400" y1="210" x2="180" y2="130" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <line x1="400" y1="210" x2="620" y2="130" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <line x1="400" y1="210" x2="140" y2="250" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <line x1="400" y1="210" x2="660" y2="250" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <line x1="400" y1="210" x2="220" y2="330" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <line x1="400" y1="210" x2="580" y2="330" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+            <!-- Latency comparison: Without edge (red dashed line) -->
+            <line x1="50" y1="258" x2="360" y2="210" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.7"/>
+
+            <!-- User to edge connection lines (green solid) -->
+            <line x1="107" y1="102" x2="162" y2="118" stroke="#22c55e" stroke-width="2.5"/>
+            <line x1="693" y1="105" x2="640" y2="122" stroke="#22c55e" stroke-width="2.5"/>
+            <line x1="62" y1="265" x2="120" y2="255" stroke="#22c55e" stroke-width="2.5"/>
+            <line x1="738" y1="232" x2="680" y2="245" stroke="#22c55e" stroke-width="2.5"/>
+            <line x1="155" y1="365" x2="205" y2="345" stroke="#22c55e" stroke-width="2.5"/>
+            <line x1="645" y1="370" x2="595" y2="345" stroke="#22c55e" stroke-width="2.5"/>
+
+            <!-- ===== SHAPES (middle layer) ===== -->
+
             <!-- Central origin server -->
             <g transform="translate(400, 210)">
-                <!-- Origin server circle -->
                 <circle cx="0" cy="0" r="40" fill="url(#originGradient)" filter="url(#shadow)"/>
-                <!-- Server icon (simplified) -->
                 <rect x="-15" y="-20" width="30" height="8" rx="2" fill="#ffffff" opacity="0.9"/>
                 <rect x="-15" y="-8" width="30" height="8" rx="2" fill="#ffffff" opacity="0.9"/>
                 <rect x="-15" y="4" width="30" height="8" rx="2" fill="#ffffff" opacity="0.9"/>
@@ -92,111 +113,77 @@
                 </text>
             </g>
 
-            <!-- Connection lines from origin to edge nodes (subtle) - drawn first so they appear behind edge nodes -->
-            <line x1="400" y1="210" x2="180" y2="130" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
-            <line x1="400" y1="210" x2="620" y2="130" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
-            <line x1="400" y1="210" x2="140" y2="250" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
-            <line x1="400" y1="210" x2="660" y2="250" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
-            <line x1="400" y1="210" x2="220" y2="330" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
-            <line x1="400" y1="210" x2="580" y2="330" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4,3"/>
-
-            <!-- Edge nodes positioned around origin -->
-            <!-- Edge 1: Top-left -->
+            <!-- Edge nodes -->
             <g transform="translate(180, 130)">
                 <circle cx="0" cy="0" r="22" fill="url(#edgeGradient)" filter="url(#edgeGlow)"/>
                 <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">EDGE</text>
             </g>
 
-            <!-- Edge 2: Top-right -->
             <g transform="translate(620, 130)">
                 <circle cx="0" cy="0" r="22" fill="url(#edgeGradient)" filter="url(#edgeGlow)"/>
                 <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">EDGE</text>
             </g>
 
-            <!-- Edge 3: Left -->
             <g transform="translate(140, 250)">
                 <circle cx="0" cy="0" r="22" fill="url(#edgeGradient)" filter="url(#edgeGlow)"/>
                 <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">EDGE</text>
             </g>
 
-            <!-- Edge 4: Right -->
             <g transform="translate(660, 250)">
                 <circle cx="0" cy="0" r="22" fill="url(#edgeGradient)" filter="url(#edgeGlow)"/>
                 <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">EDGE</text>
             </g>
 
-            <!-- Edge 5: Bottom-left -->
             <g transform="translate(220, 330)">
                 <circle cx="0" cy="0" r="22" fill="url(#edgeGradient)" filter="url(#edgeGlow)"/>
                 <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">EDGE</text>
             </g>
 
-            <!-- Edge 6: Bottom-right -->
             <g transform="translate(580, 330)">
                 <circle cx="0" cy="0" r="22" fill="url(#edgeGradient)" filter="url(#edgeGlow)"/>
                 <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">EDGE</text>
             </g>
 
-            <!-- Users connecting to nearby edge nodes -->
-            <!-- User 1: Near top-left edge -->
+            <!-- Users -->
             <g transform="translate(95, 95)">
                 <circle cx="0" cy="0" r="12" fill="url(#userGradient)" filter="url(#shadow)"/>
                 <circle cx="0" cy="-3" r="4" fill="#ffffff"/>
                 <path d="M-6,6 Q0,2 6,6" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
             </g>
-            <!-- Short green line: user to edge -->
-            <line x1="107" y1="102" x2="162" y2="118" stroke="#22c55e" stroke-width="2.5"/>
 
-            <!-- User 2: Near top-right edge -->
             <g transform="translate(705, 100)">
                 <circle cx="0" cy="0" r="12" fill="url(#userGradient)" filter="url(#shadow)"/>
                 <circle cx="0" cy="-3" r="4" fill="#ffffff"/>
                 <path d="M-6,6 Q0,2 6,6" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
             </g>
-            <!-- Short green line: user to edge -->
-            <line x1="693" y1="105" x2="640" y2="122" stroke="#22c55e" stroke-width="2.5"/>
 
-            <!-- User 3: Near left edge (with latency comparison) -->
             <g transform="translate(50, 270)">
                 <circle cx="0" cy="0" r="12" fill="url(#userGradient)" filter="url(#shadow)"/>
                 <circle cx="0" cy="-3" r="4" fill="#ffffff"/>
                 <path d="M-6,6 Q0,2 6,6" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
             </g>
-            <!-- Short green line: user to nearby edge (20ms) -->
-            <line x1="62" y1="265" x2="120" y2="255" stroke="#22c55e" stroke-width="2.5"/>
 
-            <!-- User 4: Near right edge -->
             <g transform="translate(750, 230)">
                 <circle cx="0" cy="0" r="12" fill="url(#userGradient)" filter="url(#shadow)"/>
                 <circle cx="0" cy="-3" r="4" fill="#ffffff"/>
                 <path d="M-6,6 Q0,2 6,6" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
             </g>
-            <!-- Short green line: user to edge -->
-            <line x1="738" y1="232" x2="680" y2="245" stroke="#22c55e" stroke-width="2.5"/>
 
-            <!-- User 5: Near bottom-left edge -->
             <g transform="translate(145, 375)">
                 <circle cx="0" cy="0" r="12" fill="url(#userGradient)" filter="url(#shadow)"/>
                 <circle cx="0" cy="-3" r="4" fill="#ffffff"/>
                 <path d="M-6,6 Q0,2 6,6" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
             </g>
-            <!-- Short green line: user to edge -->
-            <line x1="155" y1="365" x2="205" y2="345" stroke="#22c55e" stroke-width="2.5"/>
 
-            <!-- User 6: Near bottom-right edge -->
             <g transform="translate(655, 380)">
                 <circle cx="0" cy="0" r="12" fill="url(#userGradient)" filter="url(#shadow)"/>
                 <circle cx="0" cy="-3" r="4" fill="#ffffff"/>
                 <path d="M-6,6 Q0,2 6,6" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
             </g>
-            <!-- Short green line: user to edge -->
-            <line x1="645" y1="370" x2="595" y2="345" stroke="#22c55e" stroke-width="2.5"/>
 
-            <!-- Latency comparison: Without edge (long dotted line) -->
-            <line x1="50" y1="258" x2="360" y2="210" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.7"/>
+            <!-- ===== LABELS (top layer) ===== -->
 
-            <!-- Latency labels -->
-            <!-- "With edge: 20ms" label near short connection -->
+            <!-- "With edge: 20ms" label -->
             <g transform="translate(85, 235)">
                 <rect x="-35" y="-10" width="70" height="18" rx="4" fill="#dcfce7" stroke="#22c55e" stroke-width="1"/>
                 <text x="0" y="3" text-anchor="middle" fill="#166534" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
@@ -204,7 +191,7 @@
                 </text>
             </g>
 
-            <!-- "Without edge: 200ms" label near long dotted line -->
+            <!-- "Without edge: 200ms" label -->
             <g transform="translate(200, 220)">
                 <rect x="-40" y="-10" width="80" height="18" rx="4" fill="#fee2e2" stroke="#ef4444" stroke-width="1"/>
                 <text x="0" y="3" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">

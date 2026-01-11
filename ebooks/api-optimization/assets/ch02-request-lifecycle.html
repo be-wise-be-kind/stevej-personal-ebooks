@@ -68,59 +68,59 @@
             <rect width="900" height="590" fill="#ffffff" rx="12"/>
 
             <!-- Main Title -->
-            <text x="450" y="40" text-anchor="middle" fill="#1e293b" font-size="24" font-weight="600">
+            <text x="450" y="40" text-anchor="middle" fill="#1e293b" font-size="24" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
                 Request Lifecycle: Where Latency Accumulates
             </text>
 
             <!-- Timeline axis -->
             <line x1="50" y1="210" x2="850" y2="210" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arrowhead)"/>
-            <text x="450" y="245" text-anchor="middle" fill="#64748b" font-size="12">Time</text>
+            <text x="450" y="245" text-anchor="middle" fill="#64748b" font-size="12" font-family="Liberation Sans, Arial, sans-serif">Time</text>
 
             <!-- Stage boxes on timeline -->
             <!-- DNS Lookup -->
             <g transform="translate(70, 125)">
                 <rect width="100" height="70" rx="8" fill="url(#dnsGradient)"/>
-                <text x="50" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600">DNS</text>
-                <text x="50" y="52" text-anchor="middle" fill="#ffffff" font-size="11">Lookup</text>
+                <text x="50" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">DNS</text>
+                <text x="50" y="52" text-anchor="middle" fill="#ffffff" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Lookup</text>
             </g>
 
             <!-- TCP Handshake -->
             <g transform="translate(190, 125)">
                 <rect width="100" height="70" rx="8" fill="url(#tcpGradient)"/>
-                <text x="50" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600">TCP</text>
-                <text x="50" y="52" text-anchor="middle" fill="#ffffff" font-size="11">Handshake</text>
+                <text x="50" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">TCP</text>
+                <text x="50" y="52" text-anchor="middle" fill="#ffffff" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Handshake</text>
             </g>
 
             <!-- TLS Handshake -->
             <g transform="translate(310, 125)">
                 <rect width="120" height="70" rx="8" fill="url(#tlsGradient)"/>
-                <text x="60" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600">TLS</text>
-                <text x="60" y="52" text-anchor="middle" fill="#ffffff" font-size="11">Handshake</text>
+                <text x="60" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">TLS</text>
+                <text x="60" y="52" text-anchor="middle" fill="#ffffff" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Handshake</text>
             </g>
 
             <!-- TTFB (largest box) -->
             <g transform="translate(450, 125)">
                 <rect width="180" height="70" rx="8" fill="url(#ttfbGradient)"/>
-                <text x="90" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600">TTFB</text>
-                <text x="90" y="52" text-anchor="middle" fill="#ffffff" font-size="11">Server Processing</text>
+                <text x="90" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">TTFB</text>
+                <text x="90" y="52" text-anchor="middle" fill="#ffffff" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Server Processing</text>
             </g>
 
             <!-- Transfer -->
             <g transform="translate(650, 125)">
                 <rect width="80" height="70" rx="8" fill="url(#transferGradient)"/>
-                <text x="40" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600">Transfer</text>
-                <text x="40" y="52" text-anchor="middle" fill="#ffffff" font-size="11">Data</text>
+                <text x="40" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Transfer</text>
+                <text x="40" y="52" text-anchor="middle" fill="#ffffff" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Data</text>
             </g>
 
             <!-- Client Processing -->
             <g transform="translate(750, 125)">
                 <rect width="90" height="70" rx="8" fill="url(#processGradient)"/>
-                <text x="45" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600">Client</text>
-                <text x="45" y="52" text-anchor="middle" fill="#ffffff" font-size="11">Process</text>
+                <text x="45" y="30" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Client</text>
+                <text x="45" y="52" text-anchor="middle" fill="#ffffff" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Process</text>
             </g>
 
             <!-- Latency ranges section -->
-            <text x="450" y="295" text-anchor="middle" fill="#1e293b" font-size="16" font-weight="600">
+            <text x="450" y="295" text-anchor="middle" fill="#1e293b" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
                 Typical Latency Ranges (Cross-Continental Request)
             </text>
 
@@ -130,65 +130,65 @@
                 <g transform="translate(0, 0)">
                     <rect width="130" height="95" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
                     <rect width="130" height="30" rx="6" fill="url(#dnsGradient)"/>
-                    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600">DNS Lookup</text>
-                    <text x="65" y="58" text-anchor="middle" fill="#5b21b6" font-size="14" font-weight="700">0-100ms</text>
-                    <text x="65" y="80" text-anchor="middle" fill="#7c3aed" font-size="10">Cached: 0ms</text>
+                    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">DNS Lookup</text>
+                    <text x="65" y="58" text-anchor="middle" fill="#5b21b6" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">0-100ms</text>
+                    <text x="65" y="80" text-anchor="middle" fill="#7c3aed" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Cached: 0ms</text>
                 </g>
 
                 <!-- TCP -->
                 <g transform="translate(140, 0)">
                     <rect width="130" height="95" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
                     <rect width="130" height="30" rx="6" fill="url(#tcpGradient)"/>
-                    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600">TCP Handshake</text>
-                    <text x="65" y="58" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="700">50-150ms</text>
-                    <text x="65" y="80" text-anchor="middle" fill="#3b82f6" font-size="10">1 RTT required</text>
+                    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">TCP Handshake</text>
+                    <text x="65" y="58" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">50-150ms</text>
+                    <text x="65" y="80" text-anchor="middle" fill="#3b82f6" font-size="10" font-family="Liberation Sans, Arial, sans-serif">1 RTT required</text>
                 </g>
 
                 <!-- TLS -->
                 <g transform="translate(280, 0)">
                     <rect width="130" height="95" rx="6" fill="#ecfeff" stroke="#a5f3fc" stroke-width="1"/>
                     <rect width="130" height="30" rx="6" fill="url(#tlsGradient)"/>
-                    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600">TLS Handshake</text>
-                    <text x="65" y="58" text-anchor="middle" fill="#0e7490" font-size="14" font-weight="700">100-200ms</text>
-                    <text x="65" y="80" text-anchor="middle" fill="#06b6d4" font-size="10">1-2 RTTs (TLS 1.2/1.3)</text>
+                    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">TLS Handshake</text>
+                    <text x="65" y="58" text-anchor="middle" fill="#0e7490" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">100-200ms</text>
+                    <text x="65" y="80" text-anchor="middle" fill="#06b6d4" font-size="10" font-family="Liberation Sans, Arial, sans-serif">1-2 RTTs (TLS 1.2/1.3)</text>
                 </g>
 
                 <!-- TTFB -->
                 <g transform="translate(420, 0)">
                     <rect width="130" height="95" rx="6" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
                     <rect width="130" height="30" rx="6" fill="url(#ttfbGradient)"/>
-                    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600">TTFB</text>
-                    <text x="65" y="58" text-anchor="middle" fill="#c2410c" font-size="14" font-weight="700">50-500ms+</text>
-                    <text x="65" y="80" text-anchor="middle" fill="#f97316" font-size="10">Server + Network</text>
+                    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">TTFB</text>
+                    <text x="65" y="58" text-anchor="middle" fill="#c2410c" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">50-500ms+</text>
+                    <text x="65" y="80" text-anchor="middle" fill="#f97316" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Server + Network</text>
                 </g>
 
                 <!-- Transfer -->
                 <g transform="translate(560, 0)">
                     <rect width="130" height="95" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
                     <rect width="130" height="30" rx="6" fill="url(#transferGradient)"/>
-                    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600">Transfer</text>
-                    <text x="65" y="58" text-anchor="middle" fill="#166534" font-size="14" font-weight="700">1-100ms</text>
-                    <text x="65" y="80" text-anchor="middle" fill="#22c55e" font-size="10">Depends on size</text>
+                    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Transfer</text>
+                    <text x="65" y="58" text-anchor="middle" fill="#166534" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">1-100ms</text>
+                    <text x="65" y="80" text-anchor="middle" fill="#22c55e" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Depends on size</text>
                 </g>
 
                 <!-- Client Processing -->
                 <g transform="translate(700, 0)">
                     <rect width="130" height="95" rx="6" fill="#fdf2f8" stroke="#fbcfe8" stroke-width="1"/>
                     <rect width="130" height="30" rx="6" fill="url(#processGradient)"/>
-                    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600">Client Process</text>
-                    <text x="65" y="58" text-anchor="middle" fill="#be185d" font-size="14" font-weight="700">1-50ms</text>
-                    <text x="65" y="80" text-anchor="middle" fill="#ec4899" font-size="10">Parse + Deserialize</text>
+                    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Client Process</text>
+                    <text x="65" y="58" text-anchor="middle" fill="#be185d" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">1-50ms</text>
+                    <text x="65" y="80" text-anchor="middle" fill="#ec4899" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Parse + Deserialize</text>
                 </g>
             </g>
 
             <!-- Key insight box -->
             <g transform="translate(150, 450)">
                 <rect width="600" height="115" rx="8" fill="#fef3c7" stroke="#fcd34d" stroke-width="2"/>
-                <text x="300" y="32" text-anchor="middle" fill="#92400e" font-size="14" font-weight="700">Key Insight</text>
-                <text x="300" y="62" text-anchor="middle" fill="#78350f" font-size="12">
+                <text x="300" y="32" text-anchor="middle" fill="#92400e" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">Key Insight</text>
+                <text x="300" y="62" text-anchor="middle" fill="#78350f" font-size="12" font-family="Liberation Sans, Arial, sans-serif">
                     TTFB typically dominates for API calls. Connection overhead (TCP + TLS) is
                 </text>
-                <text x="300" y="85" text-anchor="middle" fill="#78350f" font-size="12">
+                <text x="300" y="85" text-anchor="middle" fill="#78350f" font-size="12" font-family="Liberation Sans, Arial, sans-serif">
                     eliminated with keep-alive/connection pooling. Focus optimization on server processing.
                 </text>
             </g>
@@ -196,7 +196,7 @@
             <!-- Total latency annotation -->
             <g transform="translate(70, 85)">
                 <line x1="0" y1="15" x2="770" y2="15" stroke="#ef4444" stroke-width="2" stroke-dasharray="5"/>
-                <text x="385" y="10" text-anchor="middle" fill="#dc2626" font-size="12" font-weight="600">
+                <text x="385" y="10" text-anchor="middle" fill="#dc2626" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
                     Total End-to-End Latency: 200-1000ms+ (first request)
                 </text>
             </g>

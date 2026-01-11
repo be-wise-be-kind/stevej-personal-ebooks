@@ -55,17 +55,17 @@
             <rect width="950" height="600" fill="#f8fafc" rx="8"/>
 
             <!-- Title -->
-            <text x="475" y="35" text-anchor="middle" font-size="22" font-weight="600" fill="#1e293b">
+            <text x="475" y="35" text-anchor="middle" font-size="22" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">
                 JSON vs Protocol Buffers Serialization
             </text>
-            <text x="475" y="55" text-anchor="middle" font-size="13" fill="#64748b">
+            <text x="475" y="55" text-anchor="middle" font-size="13" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">
                 Comparing payload size and encoding efficiency for the same data
             </text>
 
             <!-- Source Data Box -->
             <g transform="translate(300, 75)">
                 <rect x="0" y="0" width="350" height="100" rx="8" fill="url(#dataGradient)" filter="url(#shadow)"/>
-                <text x="175" y="25" text-anchor="middle" font-size="14" fill="white" font-weight="600">Source Data: User Object</text>
+                <text x="175" y="25" text-anchor="middle" font-size="14" fill="white" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Source Data: User Object</text>
                 <rect x="15" y="35" width="320" height="55" rx="4" fill="rgba(0,0,0,0.2)"/>
                 <text x="175" y="55" text-anchor="middle" font-size="11" fill="white" font-family="monospace">id: 12345</text>
                 <text x="175" y="70" text-anchor="middle" font-size="11" fill="white" font-family="monospace">name: "Alice Johnson"</text>
@@ -83,7 +83,7 @@
                 <!-- Header -->
                 <rect x="0" y="0" width="420" height="50" rx="8" fill="url(#jsonGradient)"/>
                 <rect x="0" y="40" width="420" height="10" fill="url(#jsonGradient)"/>
-                <text x="210" y="32" text-anchor="middle" font-size="16" fill="white" font-weight="600">JSON (Text-Based)</text>
+                <text x="210" y="32" text-anchor="middle" font-size="16" fill="white" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">JSON (Text-Based)</text>
 
                 <!-- JSON content -->
                 <rect x="15" y="65" width="390" height="140" rx="4" fill="#1e293b"/>
@@ -106,14 +106,14 @@
 
                 <!-- Size indicator -->
                 <rect x="15" y="215" width="390" height="50" rx="4" fill="#fff7ed"/>
-                <text x="210" y="240" text-anchor="middle" font-size="13" fill="#9a3412" font-weight="600">Total Size: ~75 bytes</text>
-                <text x="210" y="255" text-anchor="middle" font-size="10" fill="#c2410c">Field names + quotes + formatting</text>
+                <text x="210" y="240" text-anchor="middle" font-size="13" fill="#9a3412" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Total Size: ~75 bytes</text>
+                <text x="210" y="255" text-anchor="middle" font-size="10" fill="#c2410c" font-family="Liberation Sans, Arial, sans-serif">Field names + quotes + formatting</text>
 
                 <!-- Breakdown -->
-                <text x="25" y="285" font-size="11" fill="#64748b">Overhead breakdown:</text>
-                <text x="25" y="305" font-size="10" fill="#94a3b8">Field names ("id", "name", "email"): 14 bytes</text>
-                <text x="25" y="320" font-size="10" fill="#94a3b8">Quotes and colons: 12 bytes</text>
-                <text x="25" y="335" font-size="10" fill="#94a3b8">Braces and commas: 5 bytes</text>
+                <text x="25" y="285" font-size="11" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Overhead breakdown:</text>
+                <text x="25" y="305" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">Field names ("id", "name", "email"): 14 bytes</text>
+                <text x="25" y="320" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">Quotes and colons: 12 bytes</text>
+                <text x="25" y="335" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">Braces and commas: 5 bytes</text>
             </g>
 
             <!-- Protobuf Section -->
@@ -123,7 +123,7 @@
                 <!-- Header -->
                 <rect x="0" y="0" width="420" height="50" rx="8" fill="url(#protobufGradient)"/>
                 <rect x="0" y="40" width="420" height="10" fill="url(#protobufGradient)"/>
-                <text x="210" y="32" text-anchor="middle" font-size="16" fill="white" font-weight="600">Protocol Buffers (Binary)</text>
+                <text x="210" y="32" text-anchor="middle" font-size="16" fill="white" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Protocol Buffers (Binary)</text>
 
                 <!-- Binary representation -->
                 <rect x="15" y="65" width="390" height="140" rx="4" fill="#1e293b"/>
@@ -134,7 +134,7 @@
                 <text x="142" y="88" text-anchor="middle" font-size="9" fill="white" font-family="monospace">08</text>
                 <rect x="160" y="75" width="50" height="18" rx="2" fill="#60a5fa"/>
                 <text x="185" y="88" text-anchor="middle" font-size="9" fill="white" font-family="monospace">B9 60</text>
-                <text x="220" y="88" font-size="9" fill="#64748b">(varint: 12345)</text>
+                <text x="220" y="88" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">(varint: 12345)</text>
 
                 <!-- Field 2: name -->
                 <text x="25" y="115" font-size="10" fill="#94a3b8" font-family="monospace">Field 2 (name):</text>
@@ -156,28 +156,28 @@
 
                 <!-- Legend -->
                 <rect x="25" y="160" width="12" height="12" rx="2" fill="#3b82f6"/>
-                <text x="42" y="170" font-size="9" fill="#64748b">Tag (field # + type)</text>
+                <text x="42" y="170" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Tag (field # + type)</text>
                 <rect x="150" y="160" width="12" height="12" rx="2" fill="#818cf8"/>
-                <text x="167" y="170" font-size="9" fill="#64748b">Length</text>
+                <text x="167" y="170" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Length</text>
                 <rect x="230" y="160" width="12" height="12" rx="2" fill="#60a5fa"/>
-                <text x="247" y="170" font-size="9" fill="#64748b">Value</text>
+                <text x="247" y="170" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Value</text>
 
                 <!-- Size indicator -->
                 <rect x="15" y="215" width="390" height="50" rx="4" fill="#eff6ff"/>
-                <text x="210" y="240" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="600">Total Size: ~38 bytes</text>
-                <text x="210" y="255" text-anchor="middle" font-size="10" fill="#3b82f6">Field numbers + compact encoding</text>
+                <text x="210" y="240" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Total Size: ~38 bytes</text>
+                <text x="210" y="255" text-anchor="middle" font-size="10" fill="#3b82f6" font-family="Liberation Sans, Arial, sans-serif">Field numbers + compact encoding</text>
 
                 <!-- Breakdown -->
-                <text x="25" y="285" font-size="11" fill="#64748b">Efficiency gains:</text>
-                <text x="25" y="305" font-size="10" fill="#94a3b8">Field tags instead of names: 3 bytes</text>
-                <text x="25" y="320" font-size="10" fill="#94a3b8">Varint encoding for integers</text>
-                <text x="25" y="335" font-size="10" fill="#94a3b8">No quotes or formatting overhead</text>
+                <text x="25" y="285" font-size="11" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Efficiency gains:</text>
+                <text x="25" y="305" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">Field tags instead of names: 3 bytes</text>
+                <text x="25" y="320" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">Varint encoding for integers</text>
+                <text x="25" y="335" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">No quotes or formatting overhead</text>
             </g>
 
             <!-- Comparison Summary -->
             <g transform="translate(150, 570)">
                 <rect x="0" y="0" width="650" height="25" rx="4" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
-                <text x="325" y="17" text-anchor="middle" font-size="12" fill="#047857" font-weight="500">
+                <text x="325" y="17" text-anchor="middle" font-size="12" fill="#047857" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
                     Protocol Buffers: ~50% smaller payload + faster parsing (no text parsing needed)
                 </text>
             </g>

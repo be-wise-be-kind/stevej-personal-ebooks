@@ -30,13 +30,13 @@
 </head>
 <body>
     <div class="diagram-container">
-        <svg viewBox="0 0 800 780" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 800 620" xmlns="http://www.w3.org/2000/svg">
             <!-- Background -->
-            <rect width="800" height="780" fill="white"/>
+            <rect width="800" height="620" fill="white"/>
 
             <!-- Title -->
-            <text x="400" y="35" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;">Compression Decision Flowchart</text>
-            <text x="400" y="55" text-anchor="middle" style="font-size: 12px; fill: #64748b;">Determine when and how to compress API responses</text>
+            <text x="400" y="35" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Compression Decision Flowchart</text>
+            <text x="400" y="55" text-anchor="middle" style="font-size: 12px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Determine when and how to compress API responses</text>
 
             <!-- Arrow markers -->
             <defs>
@@ -52,150 +52,140 @@
             </defs>
 
             <!-- Start: Incoming Response -->
-            <g transform="translate(340, 80)">
-                <rect x="0" y="0" width="120" height="40" rx="20" style="fill: #e0e7ff; stroke: #6366f1; stroke-width: 2;"/>
-                <text x="60" y="24" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #1e293b;">Response Ready</text>
+            <g transform="translate(340, 70)">
+                <rect x="0" y="0" width="120" height="35" rx="18" style="fill: #e0e7ff; stroke: #6366f1; stroke-width: 2;"/>
+                <text x="60" y="22" text-anchor="middle" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Response Ready</text>
             </g>
 
             <!-- Arrow to first decision -->
-            <line x1="400" y1="120" x2="400" y2="145" marker-end="url(#arrowGray)" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
+            <line x1="400" y1="105" x2="400" y2="125" marker-end="url(#arrowGray)" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
 
             <!-- Decision 1: Is Content-Type compressible? -->
-            <g transform="translate(300, 150)">
-                <polygon points="100,0 200,50 100,100 0,50" style="fill: #fef3c7; stroke: #f59e0b; stroke-width: 2;"/>
-                <text x="100" y="42" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #1e293b;">Is Content-Type</text>
-                <text x="100" y="56" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #1e293b;">compressible?</text>
-                <text x="100" y="72" text-anchor="middle" style="font-size: 9px; fill: #64748b;">(JSON, HTML, XML, text)</text>
+            <g transform="translate(310, 130)">
+                <polygon points="90,0 180,45 90,90 0,45" style="fill: #fef3c7; stroke: #f59e0b; stroke-width: 2;"/>
+                <text x="90" y="38" text-anchor="middle" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Is Content-Type</text>
+                <text x="90" y="50" text-anchor="middle" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">compressible?</text>
+                <text x="90" y="64" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">(JSON, HTML, XML, text)</text>
             </g>
 
             <!-- No arrow from Decision 1 -->
-            <line x1="500" y1="200" x2="620" y2="200" marker-end="url(#arrowRed)" style="stroke: #ef4444; stroke-width: 2; fill: none;"/>
-            <text x="555" y="192" style="font-size: 10px; font-weight: 600; fill: #dc2626;">NO</text>
+            <line x1="490" y1="175" x2="600" y2="175" marker-end="url(#arrowRed)" style="stroke: #ef4444; stroke-width: 2; fill: none;"/>
+            <text x="540" y="168" style="font-size: 9px; font-weight: 600; fill: #dc2626;" font-family="Liberation Sans, Arial, sans-serif">NO</text>
 
             <!-- Skip compression result (right side) -->
-            <g transform="translate(625, 165)">
-                <rect x="0" y="0" width="145" height="70" rx="6" style="fill: #fee2e2; stroke: #ef4444; stroke-width: 2;"/>
-                <text x="72" y="24" text-anchor="middle" fill="#dc2626" style="font-size: 11px; font-weight: 500; fill: #1e293b;">Skip Compression</text>
-                <text x="72" y="44" text-anchor="middle" style="font-size: 9px; fill: #64748b;">Already compressed formats</text>
-                <text x="72" y="60" text-anchor="middle" style="font-size: 9px; fill: #64748b;">(JPEG, PNG, video, etc.)</text>
+            <g transform="translate(605, 145)">
+                <rect x="0" y="0" width="130" height="60" rx="5" style="fill: #fee2e2; stroke: #ef4444; stroke-width: 2;"/>
+                <text x="65" y="20" text-anchor="middle" fill="#dc2626" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Skip Compression</text>
+                <text x="65" y="36" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Already compressed formats</text>
+                <text x="65" y="50" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">(JPEG, PNG, video, etc.)</text>
             </g>
 
             <!-- Yes arrow from Decision 1 -->
-            <line x1="400" y1="250" x2="400" y2="305" marker-end="url(#arrowGreen)" style="stroke: #22c55e; stroke-width: 2; fill: none;"/>
-            <text x="415" y="280" style="font-size: 10px; font-weight: 600; fill: #15803d;">YES</text>
+            <line x1="400" y1="220" x2="400" y2="255" marker-end="url(#arrowGreen)" style="stroke: #22c55e; stroke-width: 2; fill: none;"/>
+            <text x="412" y="240" style="font-size: 9px; font-weight: 600; fill: #15803d;" font-family="Liberation Sans, Arial, sans-serif">YES</text>
 
             <!-- Decision 2: Is payload size > threshold? -->
-            <g transform="translate(300, 310)">
-                <polygon points="100,0 200,50 100,100 0,50" style="fill: #fef3c7; stroke: #f59e0b; stroke-width: 2;"/>
-                <text x="100" y="42" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #1e293b;">Is payload size</text>
-                <text x="100" y="58" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #1e293b;">> 1KB threshold?</text>
+            <g transform="translate(310, 260)">
+                <polygon points="90,0 180,45 90,90 0,45" style="fill: #fef3c7; stroke: #f59e0b; stroke-width: 2;"/>
+                <text x="90" y="38" text-anchor="middle" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Is payload size</text>
+                <text x="90" y="52" text-anchor="middle" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">> 1KB threshold?</text>
             </g>
 
             <!-- No arrow from Decision 2 -->
-            <line x1="500" y1="360" x2="620" y2="360" marker-end="url(#arrowRed)" style="stroke: #ef4444; stroke-width: 2; fill: none;"/>
-            <text x="555" y="352" style="font-size: 10px; font-weight: 600; fill: #dc2626;">NO</text>
+            <line x1="490" y1="305" x2="600" y2="305" marker-end="url(#arrowRed)" style="stroke: #ef4444; stroke-width: 2; fill: none;"/>
+            <text x="540" y="298" style="font-size: 9px; font-weight: 600; fill: #dc2626;" font-family="Liberation Sans, Arial, sans-serif">NO</text>
 
             <!-- Skip compression result 2 -->
-            <g transform="translate(625, 325)">
-                <rect x="0" y="0" width="145" height="70" rx="6" style="fill: #fee2e2; stroke: #ef4444; stroke-width: 2;"/>
-                <text x="72" y="24" text-anchor="middle" fill="#dc2626" style="font-size: 11px; font-weight: 500; fill: #1e293b;">Skip Compression</text>
-                <text x="72" y="44" text-anchor="middle" style="font-size: 9px; fill: #64748b;">Small payloads:</text>
-                <text x="72" y="60" text-anchor="middle" style="font-size: 9px; fill: #64748b;">overhead > savings</text>
+            <g transform="translate(605, 275)">
+                <rect x="0" y="0" width="130" height="60" rx="5" style="fill: #fee2e2; stroke: #ef4444; stroke-width: 2;"/>
+                <text x="65" y="20" text-anchor="middle" fill="#dc2626" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Skip Compression</text>
+                <text x="65" y="36" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Small payloads:</text>
+                <text x="65" y="50" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">overhead > savings</text>
             </g>
 
             <!-- Yes arrow from Decision 2 -->
-            <line x1="400" y1="410" x2="400" y2="465" marker-end="url(#arrowGreen)" style="stroke: #22c55e; stroke-width: 2; fill: none;"/>
-            <text x="415" y="440" style="font-size: 10px; font-weight: 600; fill: #15803d;">YES</text>
+            <line x1="400" y1="350" x2="400" y2="385" marker-end="url(#arrowGreen)" style="stroke: #22c55e; stroke-width: 2; fill: none;"/>
+            <text x="412" y="370" style="font-size: 9px; font-weight: 600; fill: #15803d;" font-family="Liberation Sans, Arial, sans-serif">YES</text>
 
             <!-- Decision 3: Client accepts compression? -->
-            <g transform="translate(300, 470)">
-                <polygon points="100,0 200,50 100,100 0,50" style="fill: #fef3c7; stroke: #f59e0b; stroke-width: 2;"/>
-                <text x="100" y="42" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #1e293b;">Client accepts</text>
-                <text x="100" y="58" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #1e293b;">compression?</text>
-                <text x="100" y="76" text-anchor="middle" style="font-size: 9px; fill: #64748b;">(Accept-Encoding header)</text>
+            <g transform="translate(310, 390)">
+                <polygon points="90,0 180,45 90,90 0,45" style="fill: #fef3c7; stroke: #f59e0b; stroke-width: 2;"/>
+                <text x="90" y="35" text-anchor="middle" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Client accepts</text>
+                <text x="90" y="49" text-anchor="middle" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">compression?</text>
+                <text x="90" y="65" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">(Accept-Encoding header)</text>
             </g>
 
             <!-- No arrow from Decision 3 -->
-            <line x1="500" y1="520" x2="620" y2="520" marker-end="url(#arrowRed)" style="stroke: #ef4444; stroke-width: 2; fill: none;"/>
-            <text x="555" y="512" style="font-size: 10px; font-weight: 600; fill: #dc2626;">NO</text>
+            <line x1="490" y1="435" x2="600" y2="435" marker-end="url(#arrowRed)" style="stroke: #ef4444; stroke-width: 2; fill: none;"/>
+            <text x="540" y="428" style="font-size: 9px; font-weight: 600; fill: #dc2626;" font-family="Liberation Sans, Arial, sans-serif">NO</text>
 
             <!-- Skip compression result 3 -->
-            <g transform="translate(625, 485)">
-                <rect x="0" y="0" width="145" height="70" rx="6" style="fill: #fee2e2; stroke: #ef4444; stroke-width: 2;"/>
-                <text x="72" y="24" text-anchor="middle" fill="#dc2626" style="font-size: 11px; font-weight: 500; fill: #1e293b;">Skip Compression</text>
-                <text x="72" y="44" text-anchor="middle" style="font-size: 9px; fill: #64748b;">Client cannot</text>
-                <text x="72" y="60" text-anchor="middle" style="font-size: 9px; fill: #64748b;">decompress</text>
+            <g transform="translate(605, 405)">
+                <rect x="0" y="0" width="130" height="60" rx="5" style="fill: #fee2e2; stroke: #ef4444; stroke-width: 2;"/>
+                <text x="65" y="20" text-anchor="middle" fill="#dc2626" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Skip Compression</text>
+                <text x="65" y="36" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Client cannot</text>
+                <text x="65" y="50" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">decompress</text>
             </g>
 
-            <!-- Yes arrow from Decision 3 - splits into two paths -->
-            <line x1="400" y1="570" x2="400" y2="605" marker-end="url(#arrowGreen)" style="stroke: #22c55e; stroke-width: 2; fill: none;"/>
-            <text x="415" y="590" style="font-size: 10px; font-weight: 600; fill: #15803d;">YES</text>
+            <!-- Yes arrow from Decision 3 -->
+            <line x1="400" y1="480" x2="400" y2="505" marker-end="url(#arrowGreen)" style="stroke: #22c55e; stroke-width: 2; fill: none;"/>
+            <text x="412" y="495" style="font-size: 9px; font-weight: 600; fill: #15803d;" font-family="Liberation Sans, Arial, sans-serif">YES</text>
 
             <!-- Algorithm selection box -->
-            <g transform="translate(295, 610)">
-                <rect x="0" y="0" width="210" height="50" rx="6" style="fill: #dbeafe; stroke: #3b82f6; stroke-width: 2;"/>
-                <text x="105" y="22" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #1e293b;">Choose Compression Algorithm</text>
-                <text x="105" y="40" text-anchor="middle" style="font-size: 9px; fill: #64748b;">Based on client support and use case</text>
+            <g transform="translate(300, 510)">
+                <rect x="0" y="0" width="200" height="40" rx="5" style="fill: #dbeafe; stroke: #3b82f6; stroke-width: 2;"/>
+                <text x="100" y="18" text-anchor="middle" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Choose Compression Algorithm</text>
+                <text x="100" y="32" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Based on client support and use case</text>
             </g>
 
             <!-- Split to Gzip and Brotli -->
-            <line x1="350" y1="660" x2="350" y2="680" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
-            <line x1="350" y1="680" x2="200" y2="680" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
-            <line x1="200" y1="680" x2="200" y2="700" marker-end="url(#arrowGray)" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
+            <line x1="350" y1="550" x2="350" y2="565" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
+            <line x1="350" y1="565" x2="200" y2="565" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
+            <line x1="200" y1="565" x2="200" y2="580" marker-end="url(#arrowGray)" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
 
-            <line x1="450" y1="660" x2="450" y2="680" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
-            <line x1="450" y1="680" x2="600" y2="680" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
-            <line x1="600" y1="680" x2="600" y2="700" marker-end="url(#arrowGray)" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
+            <line x1="450" y1="550" x2="450" y2="565" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
+            <line x1="450" y1="565" x2="600" y2="565" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
+            <line x1="600" y1="565" x2="600" y2="580" marker-end="url(#arrowGray)" style="stroke: #64748b; stroke-width: 2; fill: none;"/>
 
             <!-- Gzip result -->
-            <g transform="translate(85, 705)">
-                <rect x="0" y="-5" width="230" height="120" fill="#f0f9ff" rx="6" stroke="#0ea5e9" stroke-width="1"/>
-                <rect x="10" y="8" width="210" height="40" rx="4" style="fill: #dcfce7; stroke: #22c55e; stroke-width: 2;"/>
-                <text x="115" y="34" text-anchor="middle" fill="#15803d" style="font-size: 11px; font-weight: 500; fill: #1e293b;">Use GZIP</text>
-
-                <text x="15" y="70" style="font-size: 9px; fill: #64748b;">Best for: Dynamic content</text>
-                <text x="15" y="88" style="font-size: 9px; fill: #64748b;">Speed: Fast compression</text>
-                <text x="15" y="106" style="font-size: 9px; fill: #64748b;">Support: Universal</text>
+            <g transform="translate(130, 585)">
+                <rect x="0" y="0" width="140" height="30" rx="4" style="fill: #dcfce7; stroke: #22c55e; stroke-width: 2;"/>
+                <text x="70" y="19" text-anchor="middle" fill="#15803d" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Use GZIP</text>
             </g>
 
             <!-- Brotli result -->
-            <g transform="translate(485, 705)">
-                <rect x="0" y="-5" width="230" height="120" fill="#fdf4ff" rx="6" stroke="#d946ef" stroke-width="1"/>
-                <rect x="10" y="8" width="210" height="40" rx="4" style="fill: #dcfce7; stroke: #22c55e; stroke-width: 2;"/>
-                <text x="115" y="34" text-anchor="middle" fill="#15803d" style="font-size: 11px; font-weight: 500; fill: #1e293b;">Use Brotli</text>
-
-                <text x="15" y="70" style="font-size: 9px; fill: #64748b;">Best for: Static content, pre-compressed</text>
-                <text x="15" y="88" style="font-size: 9px; fill: #64748b;">Compression: 15-25% better than gzip</text>
-                <text x="15" y="106" style="font-size: 9px; fill: #64748b;">Support: Modern browsers</text>
+            <g transform="translate(530, 585)">
+                <rect x="0" y="0" width="140" height="30" rx="4" style="fill: #dcfce7; stroke: #22c55e; stroke-width: 2;"/>
+                <text x="70" y="19" text-anchor="middle" fill="#15803d" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Use Brotli</text>
             </g>
 
             <!-- Left side: compressible content types box -->
-            <g transform="translate(30, 150)">
-                <rect x="0" y="0" width="140" height="160" fill="#f0fdf4" rx="6" stroke="#86efac" stroke-width="1"/>
-                <text x="12" y="22" fill="#15803d" style="font-size: 11px; font-weight: 500; fill: #1e293b;">Compressible Types:</text>
-                <text x="12" y="45" style="font-size: 9px; fill: #64748b;">- application/json</text>
-                <text x="12" y="63" style="font-size: 9px; fill: #64748b;">- text/html</text>
-                <text x="12" y="81" style="font-size: 9px; fill: #64748b;">- text/plain</text>
-                <text x="12" y="99" style="font-size: 9px; fill: #64748b;">- text/css</text>
-                <text x="12" y="117" style="font-size: 9px; fill: #64748b;">- application/xml</text>
-                <text x="12" y="135" style="font-size: 9px; fill: #64748b;">- text/javascript</text>
-                <text x="12" y="153" style="font-size: 9px; fill: #64748b;">- application/javascript</text>
+            <g transform="translate(30, 130)">
+                <rect x="0" y="0" width="130" height="130" fill="#f0fdf4" rx="5" stroke="#86efac" stroke-width="1"/>
+                <text x="10" y="18" fill="#15803d" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Compressible Types:</text>
+                <text x="10" y="36" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- application/json</text>
+                <text x="10" y="50" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- text/html</text>
+                <text x="10" y="64" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- text/plain</text>
+                <text x="10" y="78" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- text/css</text>
+                <text x="10" y="92" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- application/xml</text>
+                <text x="10" y="106" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- text/javascript</text>
+                <text x="10" y="120" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- application/javascript</text>
             </g>
 
             <!-- Left side: skip compression types box -->
-            <g transform="translate(30, 330)">
-                <rect x="0" y="0" width="140" height="140" fill="#fef2f2" rx="6" stroke="#fecaca" stroke-width="1"/>
-                <text x="12" y="22" fill="#dc2626" style="font-size: 11px; font-weight: 500; fill: #1e293b;">Skip Compression:</text>
-                <text x="12" y="48" style="font-size: 9px; fill: #64748b;">- image/jpeg, image/png</text>
-                <text x="12" y="70" style="font-size: 9px; fill: #64748b;">- video/*, audio/*</text>
-                <text x="12" y="92" style="font-size: 9px; fill: #64748b;">- application/zip</text>
-                <text x="12" y="114" style="font-size: 9px; fill: #64748b;">- application/gzip</text>
-                <text x="12" y="136" style="font-size: 9px; fill: #64748b;">- Encrypted payloads</text>
+            <g transform="translate(30, 275)">
+                <rect x="0" y="0" width="130" height="110" fill="#fef2f2" rx="5" stroke="#fecaca" stroke-width="1"/>
+                <text x="10" y="18" fill="#dc2626" style="font-size: 10px; font-weight: 500; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Skip Compression:</text>
+                <text x="10" y="38" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- image/jpeg, image/png</text>
+                <text x="10" y="54" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- video/*, audio/*</text>
+                <text x="10" y="70" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- application/zip</text>
+                <text x="10" y="86" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- application/gzip</text>
+                <text x="10" y="102" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- Encrypted payloads</text>
             </g>
 
             <!-- Connection lines from info boxes -->
-            <line x1="170" y1="220" x2="295" y2="200" stroke="#86efac" stroke-width="1" stroke-dasharray="4,2"/>
-            <line x1="170" y1="400" x2="200" y2="360" stroke="#fecaca" stroke-width="1" stroke-dasharray="4,2"/>
+            <line x1="160" y1="190" x2="305" y2="175" stroke="#86efac" stroke-width="1" stroke-dasharray="4,2"/>
+            <line x1="160" y1="330" x2="200" y2="305" stroke="#fecaca" stroke-width="1" stroke-dasharray="4,2"/>
         </svg>
     </div>
 </body>

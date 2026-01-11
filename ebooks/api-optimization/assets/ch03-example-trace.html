@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example Distributed Trace</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 950 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="gatewayGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#818cf8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="orderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="productGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#38bdf8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="userGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="dbGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#fbbf24;stop-opacity:1" />
+                </linearGradient>
+                <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.1"/>
+                </filter>
+            </defs>
+
+            <!-- Title -->
+            <text x="475" y="35" text-anchor="middle" font-size="22" font-weight="600" fill="#1f2937" font-family="Liberation Sans, Arial, sans-serif">Example Distributed Trace: POST /checkout</text>
+
+            <!-- Trace ID header -->
+            <g transform="translate(30, 55)">
+                <rect x="0" y="0" width="890" height="35" rx="4" fill="#f1f5f9"/>
+                <text x="15" y="23" font-size="12" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Trace ID:</text>
+                <text x="80" y="23" font-size="12" fill="#6366f1" font-family="Liberation Mono, monospace">abc123def456789</text>
+                <text x="250" y="23" font-size="12" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Duration:</text>
+                <text x="320" y="23" font-size="12" fill="#1f2937" font-family="Liberation Sans, Arial, sans-serif">247ms</text>
+                <text x="400" y="23" font-size="12" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Spans:</text>
+                <text x="450" y="23" font-size="12" fill="#1f2937" font-family="Liberation Sans, Arial, sans-serif">7</text>
+                <text x="500" y="23" font-size="12" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Services:</text>
+                <text x="565" y="23" font-size="12" fill="#1f2937" font-family="Liberation Sans, Arial, sans-serif">4</text>
+            </g>
+
+            <!-- Timeline header -->
+            <g transform="translate(280, 100)">
+                <text x="0" y="15" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">0ms</text>
+                <text x="150" y="15" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">50ms</text>
+                <text x="300" y="15" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">100ms</text>
+                <text x="450" y="15" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">150ms</text>
+                <text x="600" y="15" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">200ms</text>
+                <line x1="0" y1="25" x2="640" y2="25" stroke="#e2e8f0" stroke-width="1"/>
+            </g>
+
+            <!-- Span rows -->
+            <!-- Row 1: API Gateway -->
+            <g transform="translate(30, 135)">
+                <rect x="0" y="0" width="250" height="45" rx="4" fill="#fafafa" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="15" y="20" font-size="11" font-weight="600" fill="#1f2937" font-family="Liberation Sans, Arial, sans-serif">api-gateway</text>
+                <text x="15" y="35" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">POST /checkout</text>
+
+                <!-- Span bar -->
+                <rect x="250" y="8" width="640" height="28" rx="4" fill="url(#gatewayGrad)" filter="url(#shadow)"/>
+                <text x="560" y="27" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">247ms</text>
+            </g>
+
+            <!-- Row 2: Order Service -->
+            <g transform="translate(30, 190)">
+                <rect x="0" y="0" width="250" height="45" rx="4" fill="#fafafa" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="30" y="20" font-size="11" font-weight="600" fill="#1f2937" font-family="Liberation Sans, Arial, sans-serif">order-service</text>
+                <text x="30" y="35" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">processCheckout</text>
+                <!-- Indent indicator -->
+                <rect x="12" y="10" width="3" height="25" rx="1" fill="#6366f1"/>
+
+                <!-- Span bar - starts at ~10ms, 220ms duration -->
+                <rect x="276" y="8" width="570" height="28" rx="4" fill="url(#orderGrad)" filter="url(#shadow)"/>
+                <text x="550" y="27" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">220ms</text>
+            </g>
+
+            <!-- Row 3: Product Service -->
+            <g transform="translate(30, 245)">
+                <rect x="0" y="0" width="250" height="45" rx="4" fill="#fafafa" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="45" y="20" font-size="11" font-weight="600" fill="#1f2937" font-family="Liberation Sans, Arial, sans-serif">product-service</text>
+                <text x="45" y="35" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">validateInventory</text>
+                <!-- Indent indicator -->
+                <rect x="12" y="10" width="3" height="25" rx="1" fill="#6366f1"/>
+                <rect x="22" y="10" width="3" height="25" rx="1" fill="#8b5cf6"/>
+
+                <!-- Span bar - starts at ~20ms, 85ms duration -->
+                <rect x="302" y="8" width="220" height="28" rx="4" fill="url(#productGrad)" filter="url(#shadow)"/>
+                <text x="410" y="27" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">85ms</text>
+            </g>
+
+            <!-- Row 4: User Service -->
+            <g transform="translate(30, 300)">
+                <rect x="0" y="0" width="250" height="45" rx="4" fill="#fafafa" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="45" y="20" font-size="11" font-weight="600" fill="#1f2937" font-family="Liberation Sans, Arial, sans-serif">user-service</text>
+                <text x="45" y="35" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">getPaymentMethods</text>
+                <!-- Indent indicator -->
+                <rect x="12" y="10" width="3" height="25" rx="1" fill="#6366f1"/>
+                <rect x="22" y="10" width="3" height="25" rx="1" fill="#8b5cf6"/>
+
+                <!-- Span bar - starts at ~110ms, 45ms duration -->
+                <rect x="536" y="8" width="116" height="28" rx="4" fill="url(#userGrad)" filter="url(#shadow)"/>
+                <text x="594" y="27" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">45ms</text>
+            </g>
+
+            <!-- Row 5: PostgreSQL query -->
+            <g transform="translate(30, 355)">
+                <rect x="0" y="0" width="250" height="45" rx="4" fill="#fafafa" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="45" y="20" font-size="11" font-weight="600" fill="#1f2937" font-family="Liberation Sans, Arial, sans-serif">postgresql</text>
+                <text x="45" y="35" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">INSERT orders</text>
+                <!-- Indent indicator -->
+                <rect x="12" y="10" width="3" height="25" rx="1" fill="#6366f1"/>
+                <rect x="22" y="10" width="3" height="25" rx="1" fill="#8b5cf6"/>
+
+                <!-- Span bar - starts at ~170ms, 55ms duration -->
+                <rect x="692" y="8" width="142" height="28" rx="4" fill="url(#dbGrad)" filter="url(#shadow)"/>
+                <text x="763" y="27" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">55ms</text>
+            </g>
+
+            <!-- Span details panel -->
+            <g transform="translate(30, 420)">
+                <rect x="0" y="0" width="890" height="85" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="15" y="22" font-size="12" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Selected Span: order-service / processCheckout</text>
+
+                <!-- Attributes -->
+                <g transform="translate(15, 35)">
+                    <text x="0" y="12" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">span_id:</text>
+                    <text x="60" y="12" font-size="10" fill="#1f2937" font-family="Liberation Mono, monospace">span_7890abc</text>
+
+                    <text x="180" y="12" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">parent_span_id:</text>
+                    <text x="275" y="12" font-size="10" fill="#1f2937" font-family="Liberation Mono, monospace">span_1234def</text>
+
+                    <text x="420" y="12" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">http.status_code:</text>
+                    <text x="525" y="12" font-size="10" fill="#22c55e" font-family="Liberation Mono, monospace">200</text>
+
+                    <text x="0" y="35" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">user.id:</text>
+                    <text x="50" y="35" font-size="10" fill="#1f2937" font-family="Liberation Mono, monospace">user_12345</text>
+
+                    <text x="180" y="35" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">order.id:</text>
+                    <text x="235" y="35" font-size="10" fill="#1f2937" font-family="Liberation Mono, monospace">ord_98765</text>
+
+                    <text x="420" y="35" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">order.total:</text>
+                    <text x="490" y="35" font-size="10" fill="#1f2937" font-family="Liberation Mono, monospace">$127.50</text>
+
+                    <text x="600" y="12" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">service.version:</text>
+                    <text x="700" y="12" font-size="10" fill="#1f2937" font-family="Liberation Mono, monospace">v2.3.1</text>
+                </g>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

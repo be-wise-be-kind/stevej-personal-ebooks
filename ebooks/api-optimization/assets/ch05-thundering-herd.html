@@ -78,66 +78,66 @@
             </defs>
 
             <!-- Title -->
-            <text x="475" y="35" text-anchor="middle" font-size="24" font-weight="600" fill="#1e293b">Thundering Herd Problem and Solution</text>
+            <text x="475" y="35" text-anchor="middle" font-size="24" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Thundering Herd Problem and Solution</text>
 
             <!-- Divider -->
             <line x1="475" y1="55" x2="475" y2="680" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="10,5"/>
 
             <!-- ==================== PROBLEM (Left side) ==================== -->
             <rect x="30" y="55" width="420" height="40" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
-            <text x="240" y="82" text-anchor="middle" font-size="16" font-weight="600" fill="#991b1b">THE PROBLEM</text>
+            <text x="240" y="82" text-anchor="middle" font-size="16" font-weight="600" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">THE PROBLEM</text>
 
             <!-- Step 1: Cache expires -->
             <rect x="160" y="115" width="140" height="65" rx="8" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
-            <text x="230" y="145" text-anchor="middle" font-size="12" font-weight="500" fill="#991b1b">Cache Entry</text>
-            <text x="230" y="165" text-anchor="middle" font-size="10" fill="#991b1b">EXPIRED</text>
+            <text x="230" y="145" text-anchor="middle" font-size="12" font-weight="500" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Cache Entry</text>
+            <text x="230" y="165" text-anchor="middle" font-size="10" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">EXPIRED</text>
 
-            <text x="70" y="145" font-size="11" font-weight="500" fill="#64748b">Step 1:</text>
-            <text x="70" y="160" font-size="10" fill="#64748b">Entry expires</text>
+            <text x="70" y="145" font-size="11" font-weight="500" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Step 1:</text>
+            <text x="70" y="160" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Entry expires</text>
 
             <!-- Step 2: Many requests arrive -->
-            <text x="70" y="220" font-size="11" font-weight="500" fill="#64748b">Step 2:</text>
-            <text x="70" y="238" font-size="10" fill="#64748b">100 requests</text>
-            <text x="70" y="254" font-size="10" fill="#64748b">arrive at once</text>
+            <text x="70" y="220" font-size="11" font-weight="500" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Step 2:</text>
+            <text x="70" y="238" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">100 requests</text>
+            <text x="70" y="254" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">arrive at once</text>
 
             <!-- Request icons (multiple) -->
             <g transform="translate(150, 200)">
                 <rect x="0" y="0" width="30" height="25" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
-                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white">R1</text>
+                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">R1</text>
             </g>
             <g transform="translate(185, 205)">
                 <rect x="0" y="0" width="30" height="25" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
-                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white">R2</text>
+                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">R2</text>
             </g>
             <g transform="translate(220, 200)">
                 <rect x="0" y="0" width="30" height="25" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
-                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white">R3</text>
+                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">R3</text>
             </g>
             <g transform="translate(255, 207)">
                 <rect x="0" y="0" width="30" height="25" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
-                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white">...</text>
+                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">...</text>
             </g>
             <g transform="translate(290, 203)">
                 <rect x="0" y="0" width="40" height="25" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
-                <text x="20" y="17" text-anchor="middle" font-size="10" fill="white">R100</text>
+                <text x="20" y="17" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">R100</text>
             </g>
 
             <!-- Step 3: All hit cache miss -->
-            <text x="70" y="295" font-size="11" font-weight="500" fill="#64748b">Step 3:</text>
-            <text x="70" y="313" font-size="10" fill="#64748b">All get cache</text>
-            <text x="70" y="329" font-size="10" fill="#64748b">miss</text>
+            <text x="70" y="295" font-size="11" font-weight="500" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Step 3:</text>
+            <text x="70" y="313" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">All get cache</text>
+            <text x="70" y="329" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">miss</text>
 
             <rect x="160" y="280" width="140" height="65" rx="8" fill="url(#cacheGrad)" filter="url(#shadow)"/>
-            <text x="230" y="310" text-anchor="middle" font-size="12" font-weight="500" fill="white">Cache</text>
-            <text x="230" y="330" text-anchor="middle" font-size="9" fill="white">100 MISSES!</text>
+            <text x="230" y="310" text-anchor="middle" font-size="12" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Cache</text>
+            <text x="230" y="330" text-anchor="middle" font-size="9" fill="white" font-family="Liberation Sans, Arial, sans-serif">100 MISSES!</text>
 
             <!-- Arrows from requests to cache -->
             <line x1="230" y1="235" x2="230" y2="275" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
 
             <!-- Step 4: All query database -->
-            <text x="70" y="385" font-size="11" font-weight="500" fill="#64748b">Step 4:</text>
-            <text x="70" y="403" font-size="10" fill="#64748b">All 100 query</text>
-            <text x="70" y="419" font-size="10" fill="#64748b">database</text>
+            <text x="70" y="385" font-size="11" font-weight="500" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Step 4:</text>
+            <text x="70" y="403" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">All 100 query</text>
+            <text x="70" y="419" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">database</text>
 
             <!-- Multiple arrows to database -->
             <line x1="180" y1="345" x2="180" y2="390" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowRed)"/>
@@ -149,89 +149,89 @@
 
             <!-- Database (overloaded) -->
             <rect x="145" y="400" width="170" height="75" rx="8" fill="url(#dbOverloadGrad)" filter="url(#shadow)"/>
-            <text x="230" y="435" text-anchor="middle" font-size="13" font-weight="600" fill="white">DATABASE</text>
-            <text x="230" y="458" text-anchor="middle" font-size="10" fill="white">OVERLOADED!</text>
+            <text x="230" y="435" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">DATABASE</text>
+            <text x="230" y="458" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">OVERLOADED!</text>
 
             <!-- Result box -->
             <rect x="100" y="495" width="260" height="90" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
-            <text x="230" y="525" text-anchor="middle" font-size="12" font-weight="600" fill="#991b1b">Result:</text>
-            <text x="230" y="548" text-anchor="middle" font-size="11" fill="#991b1b">Database overwhelmed</text>
-            <text x="230" y="570" text-anchor="middle" font-size="11" fill="#991b1b">Timeouts, failures, cascading issues</text>
+            <text x="230" y="525" text-anchor="middle" font-size="12" font-weight="600" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Result:</text>
+            <text x="230" y="548" text-anchor="middle" font-size="11" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Database overwhelmed</text>
+            <text x="230" y="570" text-anchor="middle" font-size="11" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Timeouts, failures, cascading issues</text>
 
             <!-- ==================== SOLUTION (Right side) ==================== -->
             <rect x="500" y="55" width="420" height="40" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
-            <text x="710" y="82" text-anchor="middle" font-size="16" font-weight="600" fill="#166534">THE SOLUTION: Single-Flight</text>
+            <text x="710" y="82" text-anchor="middle" font-size="16" font-weight="600" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">THE SOLUTION: Single-Flight</text>
 
             <!-- Step 1: Cache expires -->
             <rect x="630" y="115" width="140" height="65" rx="8" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
-            <text x="700" y="145" text-anchor="middle" font-size="12" font-weight="500" fill="#166534">Cache Entry</text>
-            <text x="700" y="165" text-anchor="middle" font-size="10" fill="#166534">EXPIRED</text>
+            <text x="700" y="145" text-anchor="middle" font-size="12" font-weight="500" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Cache Entry</text>
+            <text x="700" y="165" text-anchor="middle" font-size="10" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">EXPIRED</text>
 
-            <text x="540" y="145" font-size="11" font-weight="500" fill="#64748b">Step 1:</text>
-            <text x="540" y="163" font-size="10" fill="#64748b">Entry expires</text>
+            <text x="540" y="145" font-size="11" font-weight="500" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Step 1:</text>
+            <text x="540" y="163" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Entry expires</text>
 
             <!-- Step 2: Many requests arrive -->
-            <text x="540" y="220" font-size="11" font-weight="500" fill="#64748b">Step 2:</text>
-            <text x="540" y="238" font-size="10" fill="#64748b">100 requests</text>
-            <text x="540" y="254" font-size="10" fill="#64748b">arrive at once</text>
+            <text x="540" y="220" font-size="11" font-weight="500" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Step 2:</text>
+            <text x="540" y="238" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">100 requests</text>
+            <text x="540" y="254" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">arrive at once</text>
 
             <!-- Request icons -->
             <g transform="translate(620, 200)">
                 <rect x="0" y="0" width="30" height="25" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
-                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white">R1</text>
+                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">R1</text>
             </g>
             <g transform="translate(655, 205)">
                 <rect x="0" y="0" width="30" height="25" rx="4" fill="#94a3b8" filter="url(#shadow)"/>
-                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white">R2</text>
+                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">R2</text>
             </g>
             <g transform="translate(690, 200)">
                 <rect x="0" y="0" width="30" height="25" rx="4" fill="#94a3b8" filter="url(#shadow)"/>
-                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white">R3</text>
+                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">R3</text>
             </g>
             <g transform="translate(725, 207)">
                 <rect x="0" y="0" width="30" height="25" rx="4" fill="#94a3b8" filter="url(#shadow)"/>
-                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white">...</text>
+                <text x="15" y="17" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">...</text>
             </g>
             <g transform="translate(760, 203)">
                 <rect x="0" y="0" width="40" height="25" rx="4" fill="#94a3b8" filter="url(#shadow)"/>
-                <text x="20" y="17" text-anchor="middle" font-size="10" fill="white">R100</text>
+                <text x="20" y="17" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">R100</text>
             </g>
 
             <!-- Step 3: First request acquires lock -->
-            <text x="540" y="295" font-size="11" font-weight="500" fill="#64748b">Step 3:</text>
-            <text x="540" y="313" font-size="10" fill="#64748b">R1 acquires</text>
-            <text x="540" y="329" font-size="10" fill="#64748b">lock, others wait</text>
+            <text x="540" y="295" font-size="11" font-weight="500" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Step 3:</text>
+            <text x="540" y="313" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">R1 acquires</text>
+            <text x="540" y="329" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">lock, others wait</text>
 
             <!-- Lock icon -->
             <rect x="660" y="280" width="80" height="65" rx="8" fill="url(#lockGrad)" filter="url(#shadow)"/>
-            <text x="700" y="310" text-anchor="middle" font-size="11" font-weight="500" fill="white">Lock</text>
-            <text x="700" y="330" text-anchor="middle" font-size="9" fill="white">R1 holds</text>
+            <text x="700" y="310" text-anchor="middle" font-size="11" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Lock</text>
+            <text x="700" y="330" text-anchor="middle" font-size="9" fill="white" font-family="Liberation Sans, Arial, sans-serif">R1 holds</text>
 
             <!-- Arrow from R1 to lock -->
             <line x1="635" y1="230" x2="660" y2="290" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
 
             <!-- Waiting requests indicator -->
             <rect x="755" y="280" width="80" height="65" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
-            <text x="795" y="307" text-anchor="middle" font-size="10" fill="#64748b">99 requests</text>
-            <text x="795" y="327" text-anchor="middle" font-size="10" fill="#64748b">WAITING</text>
+            <text x="795" y="307" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">99 requests</text>
+            <text x="795" y="327" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">WAITING</text>
 
             <!-- Step 4: Only one database query -->
-            <text x="540" y="385" font-size="11" font-weight="500" fill="#64748b">Step 4:</text>
-            <text x="540" y="403" font-size="10" fill="#64748b">Only R1</text>
-            <text x="540" y="419" font-size="10" fill="#64748b">queries DB</text>
+            <text x="540" y="385" font-size="11" font-weight="500" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Step 4:</text>
+            <text x="540" y="403" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Only R1</text>
+            <text x="540" y="419" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">queries DB</text>
 
             <!-- Single arrow to database -->
             <line x1="700" y1="345" x2="700" y2="390" stroke="#10b981" stroke-width="3" marker-end="url(#arrowGreen)"/>
 
             <!-- Database (healthy) -->
             <rect x="615" y="400" width="170" height="75" rx="8" fill="url(#dbGrad)" filter="url(#shadow)"/>
-            <text x="700" y="435" text-anchor="middle" font-size="13" font-weight="600" fill="white">DATABASE</text>
-            <text x="700" y="458" text-anchor="middle" font-size="10" fill="white">1 query only</text>
+            <text x="700" y="435" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">DATABASE</text>
+            <text x="700" y="458" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">1 query only</text>
 
             <!-- Step 5: All receive result -->
-            <text x="540" y="510" font-size="11" font-weight="500" fill="#64748b">Step 5:</text>
-            <text x="540" y="528" font-size="10" fill="#64748b">All 100 receive</text>
-            <text x="540" y="544" font-size="10" fill="#64748b">same result</text>
+            <text x="540" y="510" font-size="11" font-weight="500" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Step 5:</text>
+            <text x="540" y="528" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">All 100 receive</text>
+            <text x="540" y="544" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">same result</text>
 
             <!-- Result distribution -->
             <line x1="700" y1="475" x2="620" y2="530" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
@@ -243,46 +243,46 @@
             <!-- Receiving requests -->
             <g transform="translate(600, 535)">
                 <rect x="0" y="0" width="30" height="20" rx="3" fill="url(#requestGrad)"/>
-                <text x="15" y="14" text-anchor="middle" font-size="10" fill="white">R1</text>
+                <text x="15" y="14" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">R1</text>
             </g>
             <g transform="translate(640, 535)">
                 <rect x="0" y="0" width="30" height="20" rx="3" fill="url(#requestGrad)"/>
-                <text x="15" y="14" text-anchor="middle" font-size="10" fill="white">R2</text>
+                <text x="15" y="14" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">R2</text>
             </g>
             <g transform="translate(680, 535)">
                 <rect x="0" y="0" width="30" height="20" rx="3" fill="url(#requestGrad)"/>
-                <text x="15" y="14" text-anchor="middle" font-size="10" fill="white">...</text>
+                <text x="15" y="14" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">...</text>
             </g>
             <g transform="translate(720, 535)">
                 <rect x="0" y="0" width="40" height="20" rx="3" fill="url(#requestGrad)"/>
-                <text x="20" y="14" text-anchor="middle" font-size="10" fill="white">R100</text>
+                <text x="20" y="14" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">R100</text>
             </g>
 
             <!-- Result box -->
             <rect x="570" y="575" width="260" height="90" rx="8" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
-            <text x="700" y="605" text-anchor="middle" font-size="12" font-weight="600" fill="#166534">Result:</text>
-            <text x="700" y="628" text-anchor="middle" font-size="11" fill="#166534">Database load: 1 query (not 100)</text>
-            <text x="700" y="650" text-anchor="middle" font-size="11" fill="#166534">All requests served successfully</text>
+            <text x="700" y="605" text-anchor="middle" font-size="12" font-weight="600" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Result:</text>
+            <text x="700" y="628" text-anchor="middle" font-size="11" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Database load: 1 query (not 100)</text>
+            <text x="700" y="650" text-anchor="middle" font-size="11" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">All requests served successfully</text>
 
             <!-- Bottom summary -->
             <rect x="50" y="685" width="850" height="150" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
-            <text x="475" y="715" text-anchor="middle" font-size="14" font-weight="600" fill="#1e293b">Additional Mitigation Strategies</text>
+            <text x="475" y="715" text-anchor="middle" font-size="14" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Additional Mitigation Strategies</text>
 
             <rect x="80" y="730" width="190" height="90" rx="6" fill="#e0e7ff" stroke="#6366f1" stroke-width="1"/>
-            <text x="175" y="762" text-anchor="middle" font-size="12" font-weight="500" fill="#4338ca">TTL with Jitter</text>
-            <text x="175" y="788" text-anchor="middle" font-size="10" fill="#4338ca">Randomize expiration times</text>
+            <text x="175" y="762" text-anchor="middle" font-size="12" font-weight="500" fill="#4338ca" font-family="Liberation Sans, Arial, sans-serif">TTL with Jitter</text>
+            <text x="175" y="788" text-anchor="middle" font-size="10" fill="#4338ca" font-family="Liberation Sans, Arial, sans-serif">Randomize expiration times</text>
 
             <rect x="285" y="730" width="190" height="90" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
-            <text x="380" y="762" text-anchor="middle" font-size="12" font-weight="500" fill="#92400e">Early Expiration</text>
-            <text x="380" y="788" text-anchor="middle" font-size="10" fill="#92400e">Probabilistic refresh before TTL</text>
+            <text x="380" y="762" text-anchor="middle" font-size="12" font-weight="500" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">Early Expiration</text>
+            <text x="380" y="788" text-anchor="middle" font-size="10" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">Probabilistic refresh before TTL</text>
 
             <rect x="490" y="730" width="190" height="90" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="1"/>
-            <text x="585" y="762" text-anchor="middle" font-size="12" font-weight="500" fill="#047857">Background Refresh</text>
-            <text x="585" y="788" text-anchor="middle" font-size="10" fill="#047857">Async pre-emptive updates</text>
+            <text x="585" y="762" text-anchor="middle" font-size="12" font-weight="500" fill="#047857" font-family="Liberation Sans, Arial, sans-serif">Background Refresh</text>
+            <text x="585" y="788" text-anchor="middle" font-size="10" fill="#047857" font-family="Liberation Sans, Arial, sans-serif">Async pre-emptive updates</text>
 
             <rect x="695" y="730" width="190" height="90" rx="6" fill="#fce7f3" stroke="#ec4899" stroke-width="1"/>
-            <text x="790" y="762" text-anchor="middle" font-size="12" font-weight="500" fill="#be185d">Stale-While-Revalidate</text>
-            <text x="790" y="788" text-anchor="middle" font-size="10" fill="#be185d">Serve stale, refresh in background</text>
+            <text x="790" y="762" text-anchor="middle" font-size="12" font-weight="500" fill="#be185d" font-family="Liberation Sans, Arial, sans-serif">Stale-While-Revalidate</text>
+            <text x="790" y="788" text-anchor="middle" font-size="10" fill="#be185d" font-family="Liberation Sans, Arial, sans-serif">Serve stale, refresh in background</text>
         </svg>
     </div>
 </body>

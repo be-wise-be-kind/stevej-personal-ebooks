@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telemetry Data Flow</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="appGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="collectorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0284c7;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="storageGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="vizGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                </linearGradient>
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
+                </filter>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="500" y="35" text-anchor="middle" font-size="22" font-weight="600" fill="#1f2937" font-family="Liberation Sans, Arial, sans-serif">Telemetry Data Flow</text>
+
+            <!-- Stage 1: Applications -->
+            <g transform="translate(30, 70)">
+                <text x="70" y="15" text-anchor="middle" font-size="12" font-weight="600" fill="#6366f1" font-family="Liberation Sans, Arial, sans-serif">1. INSTRUMENTATION</text>
+
+                <rect x="0" y="30" width="140" height="180" rx="8" fill="url(#appGrad)" filter="url(#shadow)"/>
+                <text x="70" y="55" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Application</text>
+
+                <rect x="10" y="70" width="120" height="130" rx="4" fill="white" fill-opacity="0.15"/>
+                <text x="70" y="90" text-anchor="middle" font-size="11" fill="white" font-family="Liberation Sans, Arial, sans-serif">OTel SDK</text>
+
+                <line x1="20" y1="100" x2="120" y2="100" stroke="white" stroke-opacity="0.3"/>
+
+                <!-- Signal types -->
+                <rect x="20" y="110" width="100" height="22" rx="3" fill="#3b82f6"/>
+                <text x="70" y="125" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Metrics</text>
+
+                <rect x="20" y="138" width="100" height="22" rx="3" fill="#8b5cf6"/>
+                <text x="70" y="153" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Traces</text>
+
+                <rect x="20" y="166" width="100" height="22" rx="3" fill="#10b981"/>
+                <text x="70" y="181" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Logs</text>
+            </g>
+
+            <!-- Arrow 1 -->
+            <g>
+                <path d="M 180 160 L 240 160" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                <text x="210" y="150" text-anchor="middle" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">OTLP</text>
+            </g>
+
+            <!-- Stage 2: Collector -->
+            <g transform="translate(250, 70)">
+                <text x="80" y="15" text-anchor="middle" font-size="12" font-weight="600" fill="#0ea5e9" font-family="Liberation Sans, Arial, sans-serif">2. COLLECTION</text>
+
+                <rect x="0" y="30" width="160" height="180" rx="8" fill="url(#collectorGrad)" filter="url(#shadow)"/>
+                <text x="80" y="55" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">OTel Collector</text>
+
+                <!-- Pipeline stages -->
+                <rect x="10" y="70" width="140" height="35" rx="4" fill="white" fill-opacity="0.2"/>
+                <text x="80" y="92" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Receivers</text>
+
+                <path d="M 80 108 L 80 118" stroke="white" stroke-width="1.5" stroke-opacity="0.6" marker-end="url(#arrowhead-white)"/>
+
+                <rect x="10" y="120" width="140" height="35" rx="4" fill="white" fill-opacity="0.2"/>
+                <text x="80" y="142" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Processors</text>
+
+                <path d="M 80 158 L 80 168" stroke="white" stroke-width="1.5" stroke-opacity="0.6"/>
+
+                <rect x="10" y="170" width="140" height="30" rx="4" fill="white" fill-opacity="0.2"/>
+                <text x="80" y="190" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Exporters</text>
+            </g>
+
+            <!-- Arrow 2 -->
+            <g>
+                <path d="M 420 160 L 480 160" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                <text x="450" y="150" text-anchor="middle" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Export</text>
+            </g>
+
+            <!-- Stage 3: Storage -->
+            <g transform="translate(490, 70)">
+                <text x="90" y="15" text-anchor="middle" font-size="12" font-weight="600" fill="#22c55e" font-family="Liberation Sans, Arial, sans-serif">3. STORAGE</text>
+
+                <rect x="0" y="30" width="180" height="180" rx="8" fill="url(#storageGrad)" filter="url(#shadow)"/>
+                <text x="90" y="55" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Backends</text>
+
+                <!-- Backend types -->
+                <rect x="10" y="70" width="160" height="32" rx="4" fill="white" fill-opacity="0.2"/>
+                <rect x="15" y="75" width="8" height="22" rx="2" fill="#3b82f6"/>
+                <text x="95" y="90" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Prometheus / Mimir</text>
+
+                <rect x="10" y="108" width="160" height="32" rx="4" fill="white" fill-opacity="0.2"/>
+                <rect x="15" y="113" width="8" height="22" rx="2" fill="#8b5cf6"/>
+                <text x="95" y="128" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Tempo</text>
+
+                <rect x="10" y="146" width="160" height="32" rx="4" fill="white" fill-opacity="0.2"/>
+                <rect x="15" y="151" width="8" height="22" rx="2" fill="#10b981"/>
+                <text x="95" y="166" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Loki</text>
+
+                <rect x="10" y="184" width="160" height="20" rx="4" fill="white" fill-opacity="0.1"/>
+                <text x="90" y="198" text-anchor="middle" font-size="9" fill="white" fill-opacity="0.8" font-family="Liberation Sans, Arial, sans-serif">+ Pyroscope (Profiles)</text>
+            </g>
+
+            <!-- Arrow 3 -->
+            <g>
+                <path d="M 680 160 L 740 160" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                <text x="710" y="150" text-anchor="middle" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Query</text>
+            </g>
+
+            <!-- Stage 4: Visualization -->
+            <g transform="translate(750, 70)">
+                <text x="100" y="15" text-anchor="middle" font-size="12" font-weight="600" fill="#f97316" font-family="Liberation Sans, Arial, sans-serif">4. VISUALIZATION</text>
+
+                <rect x="0" y="30" width="200" height="180" rx="8" fill="url(#vizGrad)" filter="url(#shadow)"/>
+                <text x="100" y="55" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Grafana</text>
+
+                <!-- Dashboard mockup -->
+                <rect x="10" y="70" width="180" height="130" rx="4" fill="white" fill-opacity="0.2"/>
+
+                <!-- Mini graphs -->
+                <rect x="20" y="80" width="75" height="50" rx="2" fill="white" fill-opacity="0.3"/>
+                <polyline points="30,115 45,100 55,110 65,95 85,105" stroke="white" stroke-width="1.5" fill="none"/>
+
+                <rect x="105" y="80" width="75" height="50" rx="2" fill="white" fill-opacity="0.3"/>
+                <rect x="115" y="100" width="10" height="25" fill="white" fill-opacity="0.6"/>
+                <rect x="130" y="95" width="10" height="30" fill="white" fill-opacity="0.6"/>
+                <rect x="145" y="105" width="10" height="20" fill="white" fill-opacity="0.6"/>
+                <rect x="160" y="90" width="10" height="35" fill="white" fill-opacity="0.6"/>
+
+                <rect x="20" y="140" width="160" height="50" rx="2" fill="white" fill-opacity="0.3"/>
+                <text x="100" y="170" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Dashboards + Alerts</text>
+            </g>
+
+            <!-- Processing details box -->
+            <g transform="translate(250, 280)">
+                <rect x="0" y="0" width="160" height="80" rx="6" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="80" y="20" text-anchor="middle" font-size="10" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Processing includes:</text>
+                <text x="80" y="38" text-anchor="middle" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Batching &amp; buffering</text>
+                <text x="80" y="52" text-anchor="middle" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Sampling decisions</text>
+                <text x="80" y="66" text-anchor="middle" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Attribute enrichment</text>
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(30, 400)">
+                <rect x="0" y="0" width="940" height="70" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="20" y="25" font-size="11" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Signal Types:</text>
+
+                <rect x="120" y="12" width="12" height="12" rx="2" fill="#3b82f6"/>
+                <text x="140" y="23" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Metrics (aggregated numbers)</text>
+
+                <rect x="320" y="12" width="12" height="12" rx="2" fill="#8b5cf6"/>
+                <text x="340" y="23" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Traces (request flows)</text>
+
+                <rect x="500" y="12" width="12" height="12" rx="2" fill="#10b981"/>
+                <text x="520" y="23" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Logs (discrete events)</text>
+
+                <text x="20" y="55" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">All signals share trace_id for correlation. Click a slow trace in Tempo to jump to related logs in Loki and metrics in Prometheus.</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

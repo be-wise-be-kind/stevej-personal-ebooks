@@ -67,84 +67,84 @@
             </defs>
 
             <!-- Title -->
-            <text x="500" y="35" text-anchor="middle" font-size="24" font-weight="600" fill="#1e293b">Write-Through vs Write-Behind Patterns</text>
+            <text x="500" y="35" text-anchor="middle" font-size="24" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Write-Through vs Write-Behind Patterns</text>
 
             <!-- Divider line -->
             <line x1="500" y1="70" x2="500" y2="595" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="8,4"/>
 
             <!-- ==================== WRITE-THROUGH (Left side) ==================== -->
-            <text x="225" y="75" text-anchor="middle" font-size="18" font-weight="600" fill="#1e293b">Write-Through</text>
-            <text x="225" y="95" text-anchor="middle" font-size="12" fill="#64748b">Synchronous writes to both</text>
+            <text x="225" y="75" text-anchor="middle" font-size="18" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Write-Through</text>
+            <text x="225" y="95" text-anchor="middle" font-size="12" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Synchronous writes to both</text>
 
             <!-- Application -->
             <rect x="150" y="130" width="100" height="70" rx="8" fill="url(#appGrad)" filter="url(#shadow)"/>
-            <text x="200" y="170" text-anchor="middle" font-size="13" font-weight="500" fill="white">Application</text>
+            <text x="200" y="170" text-anchor="middle" font-size="13" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Application</text>
 
             <!-- Cache -->
             <rect x="60" y="275" width="100" height="70" rx="8" fill="url(#cacheGrad)" filter="url(#shadow)"/>
-            <text x="110" y="315" text-anchor="middle" font-size="13" font-weight="500" fill="white">Cache</text>
+            <text x="110" y="315" text-anchor="middle" font-size="13" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Cache</text>
 
             <!-- Database -->
             <rect x="240" y="275" width="100" height="70" rx="8" fill="url(#dbGrad)" filter="url(#shadow)"/>
-            <text x="290" y="315" text-anchor="middle" font-size="13" font-weight="500" fill="white">Database</text>
+            <text x="290" y="315" text-anchor="middle" font-size="13" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Database</text>
 
             <!-- Arrows - Write-Through -->
             <!-- App to Cache -->
             <path d="M175 200 L130 265" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#arrowOrange)"/>
             <circle cx="145" cy="220" r="12" fill="#f59e0b"/>
-            <text x="145" y="224" text-anchor="middle" font-size="10" font-weight="600" fill="white">1</text>
+            <text x="145" y="224" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">1</text>
 
             <!-- App to DB -->
             <path d="M225 200 L270 265" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arrowGreen)"/>
             <circle cx="255" cy="220" r="12" fill="#10b981"/>
-            <text x="255" y="224" text-anchor="middle" font-size="10" font-weight="600" fill="white">2</text>
+            <text x="255" y="224" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">2</text>
 
             <!-- Sync indicator -->
             <rect x="155" y="230" width="90" height="25" rx="4" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
-            <text x="200" y="247" text-anchor="middle" font-size="10" font-weight="500" fill="#1e40af">SYNC</text>
+            <text x="200" y="247" text-anchor="middle" font-size="10" font-weight="500" fill="#1e40af" font-family="Liberation Sans, Arial, sans-serif">SYNC</text>
 
             <!-- Wait indicator -->
-            <text x="200" y="375" text-anchor="middle" font-size="11" fill="#64748b">App waits for both to complete</text>
+            <text x="200" y="375" text-anchor="middle" font-size="11" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">App waits for both to complete</text>
 
             <!-- Write-Through characteristics box -->
             <rect x="40" y="400" width="320" height="180" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
-            <text x="60" y="430" font-size="12" font-weight="600" fill="#166534">Characteristics:</text>
+            <text x="60" y="430" font-size="12" font-weight="600" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Characteristics:</text>
             <circle cx="60" cy="460" r="4" fill="#22c55e"/>
-            <text x="70" y="464" font-size="11" fill="#166534">Strong consistency guaranteed</text>
+            <text x="70" y="464" font-size="11" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Strong consistency guaranteed</text>
             <circle cx="60" cy="492" r="4" fill="#22c55e"/>
-            <text x="70" y="496" font-size="11" fill="#166534">Cache always matches database</text>
+            <text x="70" y="496" font-size="11" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Cache always matches database</text>
             <circle cx="60" cy="524" r="4" fill="#ef4444"/>
-            <text x="70" y="528" font-size="11" fill="#991b1b">Higher write latency (wait for both)</text>
+            <text x="70" y="528" font-size="11" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Higher write latency (wait for both)</text>
             <circle cx="60" cy="556" r="4" fill="#64748b"/>
-            <text x="70" y="560" font-size="11" fill="#475569">Best for: read-heavy, consistency-critical</text>
+            <text x="70" y="560" font-size="11" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Best for: read-heavy, consistency-critical</text>
 
             <!-- ==================== WRITE-BEHIND (Right side) ==================== -->
-            <text x="750" y="75" text-anchor="middle" font-size="18" font-weight="600" fill="#1e293b">Write-Behind</text>
-            <text x="750" y="95" text-anchor="middle" font-size="12" fill="#64748b">Async database persistence</text>
+            <text x="750" y="75" text-anchor="middle" font-size="18" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Write-Behind</text>
+            <text x="750" y="95" text-anchor="middle" font-size="12" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Async database persistence</text>
 
             <!-- Application -->
             <rect x="695" y="120" width="110" height="70" rx="8" fill="url(#appGrad)" filter="url(#shadow)"/>
-            <text x="750" y="160" text-anchor="middle" font-size="13" font-weight="500" fill="white">Application</text>
+            <text x="750" y="160" text-anchor="middle" font-size="13" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Application</text>
 
             <!-- Cache -->
             <rect x="560" y="295" width="100" height="70" rx="8" fill="url(#cacheGrad)" filter="url(#shadow)"/>
-            <text x="610" y="335" text-anchor="middle" font-size="13" font-weight="500" fill="white">Cache</text>
+            <text x="610" y="335" text-anchor="middle" font-size="13" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Cache</text>
 
             <!-- Queue indicator -->
             <rect x="700" y="295" width="60" height="70" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
-            <text x="730" y="320" text-anchor="middle" font-size="9" fill="#92400e">Write</text>
-            <text x="730" y="335" text-anchor="middle" font-size="9" fill="#92400e">Queue</text>
-            <text x="730" y="350" text-anchor="middle" font-size="9" fill="#92400e">...</text>
+            <text x="730" y="320" text-anchor="middle" font-size="9" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">Write</text>
+            <text x="730" y="335" text-anchor="middle" font-size="9" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">Queue</text>
+            <text x="730" y="350" text-anchor="middle" font-size="9" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">...</text>
 
             <!-- Database -->
             <rect x="850" y="295" width="100" height="70" rx="8" fill="url(#dbGrad)" filter="url(#shadow)"/>
-            <text x="900" y="335" text-anchor="middle" font-size="13" font-weight="500" fill="white">Database</text>
+            <text x="900" y="335" text-anchor="middle" font-size="13" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Database</text>
 
             <!-- Arrows - Write-Behind -->
             <!-- App to Cache -->
             <path d="M750 190 L610 285" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#arrowOrange)"/>
             <circle cx="680" cy="235" r="12" fill="#f59e0b"/>
-            <text x="680" y="239" text-anchor="middle" font-size="10" font-weight="600" fill="white">1</text>
+            <text x="680" y="239" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">1</text>
 
             <!-- Cache to Queue -->
             <path d="M660 330 L695 330" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowGray)"/>
@@ -152,45 +152,45 @@
             <!-- Queue to DB (async) -->
             <path d="M760 330 L845 330" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowGray)"/>
             <circle cx="800" cy="330" r="12" fill="#64748b"/>
-            <text x="800" y="334" text-anchor="middle" font-size="10" font-weight="600" fill="white">2</text>
+            <text x="800" y="334" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">2</text>
 
             <!-- Async indicator -->
             <rect x="795" y="265" width="60" height="22" rx="4" fill="#fef2f2" stroke="#ef4444" stroke-width="1"/>
-            <text x="825" y="280" text-anchor="middle" font-size="9" font-weight="500" fill="#991b1b">ASYNC</text>
+            <text x="825" y="280" text-anchor="middle" font-size="9" font-weight="500" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">ASYNC</text>
 
             <!-- Immediate return indicator -->
-            <text x="750" y="390" text-anchor="middle" font-size="11" fill="#64748b">App returns immediately</text>
+            <text x="750" y="390" text-anchor="middle" font-size="11" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">App returns immediately</text>
 
             <!-- Write-Behind characteristics box -->
             <rect x="560" y="400" width="380" height="180" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
-            <text x="580" y="430" font-size="12" font-weight="600" fill="#991b1b">Characteristics:</text>
+            <text x="580" y="430" font-size="12" font-weight="600" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Characteristics:</text>
             <circle cx="580" cy="460" r="4" fill="#22c55e"/>
-            <text x="590" y="464" font-size="11" fill="#166534">Lowest write latency</text>
+            <text x="590" y="464" font-size="11" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Lowest write latency</text>
             <circle cx="580" cy="492" r="4" fill="#22c55e"/>
-            <text x="590" y="496" font-size="11" fill="#166534">High write throughput</text>
+            <text x="590" y="496" font-size="11" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">High write throughput</text>
             <circle cx="580" cy="524" r="4" fill="#ef4444"/>
-            <text x="590" y="528" font-size="11" fill="#991b1b">Eventual consistency only</text>
+            <text x="590" y="528" font-size="11" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Eventual consistency only</text>
             <circle cx="580" cy="556" r="4" fill="#ef4444"/>
-            <text x="590" y="560" font-size="11" fill="#991b1b">Risk of data loss if cache fails</text>
+            <text x="590" y="560" font-size="11" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Risk of data loss if cache fails</text>
 
             <!-- Bottom comparison table -->
             <rect x="100" y="600" width="800" height="140" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 
-            <text x="500" y="630" text-anchor="middle" font-size="14" font-weight="600" fill="#1e293b">Comparison Summary</text>
+            <text x="500" y="630" text-anchor="middle" font-size="14" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Comparison Summary</text>
 
             <!-- Table headers -->
-            <text x="300" y="665" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">Write-Through</text>
-            <text x="700" y="665" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">Write-Behind</text>
+            <text x="300" y="665" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Write-Through</text>
+            <text x="700" y="665" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Write-Behind</text>
 
             <!-- Latency row -->
-            <text x="130" y="695" font-size="11" fill="#475569">Latency:</text>
-            <text x="300" y="695" text-anchor="middle" font-size="11" fill="#991b1b">Higher (waits for DB)</text>
-            <text x="700" y="695" text-anchor="middle" font-size="11" fill="#166534">Lower (cache only)</text>
+            <text x="130" y="695" font-size="11" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Latency:</text>
+            <text x="300" y="695" text-anchor="middle" font-size="11" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Higher (waits for DB)</text>
+            <text x="700" y="695" text-anchor="middle" font-size="11" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Lower (cache only)</text>
 
             <!-- Consistency row -->
-            <text x="130" y="720" font-size="11" fill="#475569">Consistency:</text>
-            <text x="300" y="720" text-anchor="middle" font-size="11" fill="#166534">Strong</text>
-            <text x="700" y="720" text-anchor="middle" font-size="11" fill="#991b1b">Eventual</text>
+            <text x="130" y="720" font-size="11" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Consistency:</text>
+            <text x="300" y="720" text-anchor="middle" font-size="11" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Strong</text>
+            <text x="700" y="720" text-anchor="middle" font-size="11" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Eventual</text>
         </svg>
     </div>
 </body>

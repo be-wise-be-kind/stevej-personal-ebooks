@@ -35,68 +35,68 @@
             <rect width="850" height="680" fill="white"/>
 
             <!-- Title -->
-            <text x="425" y="35" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;">HTTP/1.1 vs HTTP/2: Connection Efficiency</text>
-            <text x="425" y="55" text-anchor="middle" style="font-size: 12px; fill: #64748b;">HTTP/2 multiplexing enables multiple concurrent streams over a single connection</text>
+            <text x="425" y="35" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">HTTP/1.1 vs HTTP/2: Connection Efficiency</text>
+            <text x="425" y="55" text-anchor="middle" style="font-size: 12px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">HTTP/2 multiplexing enables multiple concurrent streams over a single connection</text>
 
             <!-- HTTP/1.1 Section -->
             <rect x="30" y="75" width="380" height="430" fill="#fef2f2" rx="8" stroke="#fecaca" stroke-width="1"/>
-            <text x="220" y="100" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: #1e293b;">HTTP/1.1: Multiple Connections Required</text>
+            <text x="220" y="100" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">HTTP/1.1: Multiple Connections Required</text>
 
             <!-- Client box HTTP/1.1 -->
             <rect x="50" y="120" width="80" height="50" fill="#dbeafe" rx="4" stroke="#3b82f6" stroke-width="2"/>
-            <text x="90" y="150" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #475569;">Client</text>
+            <text x="90" y="150" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">Client</text>
 
             <!-- Server box HTTP/1.1 -->
             <rect x="310" y="120" width="80" height="50" fill="#dcfce7" rx="4" stroke="#22c55e" stroke-width="2"/>
-            <text x="350" y="150" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #475569;">Server</text>
+            <text x="350" y="150" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">Server</text>
 
             <!-- 6 parallel connections for HTTP/1.1 -->
             <g transform="translate(0, 190)">
                 <!-- Connection 1 -->
                 <rect x="50" y="0" width="340" height="38" fill="#f8fafc" rx="4" stroke="#e2e8f0" stroke-width="1"/>
-                <text x="62" y="24" style="font-size: 9px; fill: #64748b;">Conn 1</text>
+                <text x="62" y="24" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Conn 1</text>
                 <rect x="115" y="8" width="90" height="22" rx="3" style="fill: #3b82f6;"/>
-                <text x="160" y="23" text-anchor="middle" fill="white" font-size="9" font-weight="500">Request 1</text>
+                <text x="160" y="23" text-anchor="middle" fill="white" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Request 1</text>
                 <rect x="210" y="8" width="40" height="22" rx="3" style="fill: #e2e8f0;"/>
                 <rect x="255" y="8" width="60" height="22" rx="3" opacity="0.6" style="fill: #3b82f6;"/>
 
                 <!-- Connection 2 -->
                 <rect x="50" y="45" width="340" height="38" fill="#f8fafc" rx="4" stroke="#e2e8f0" stroke-width="1"/>
-                <text x="62" y="69" style="font-size: 9px; fill: #64748b;">Conn 2</text>
+                <text x="62" y="69" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Conn 2</text>
                 <rect x="115" y="53" width="70" height="22" rx="3" style="fill: #10b981;"/>
-                <text x="150" y="68" text-anchor="middle" fill="white" font-size="9" font-weight="500">Request 2</text>
+                <text x="150" y="68" text-anchor="middle" fill="white" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Request 2</text>
                 <rect x="190" y="53" width="40" height="22" rx="3" style="fill: #e2e8f0;"/>
                 <rect x="235" y="53" width="90" height="22" rx="3" opacity="0.6" style="fill: #10b981;"/>
 
                 <!-- Connection 3 -->
                 <rect x="50" y="90" width="340" height="38" fill="#f8fafc" rx="4" stroke="#e2e8f0" stroke-width="1"/>
-                <text x="62" y="114" style="font-size: 9px; fill: #64748b;">Conn 3</text>
+                <text x="62" y="114" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Conn 3</text>
                 <rect x="115" y="98" width="110" height="22" rx="3" style="fill: #f59e0b;"/>
-                <text x="170" y="113" text-anchor="middle" fill="white" font-size="9" font-weight="500">Request 3</text>
+                <text x="170" y="113" text-anchor="middle" fill="white" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Request 3</text>
                 <rect x="230" y="98" width="40" height="22" rx="3" style="fill: #e2e8f0;"/>
                 <rect x="275" y="98" width="50" height="22" rx="3" opacity="0.6" style="fill: #f59e0b;"/>
 
                 <!-- Connection 4 -->
                 <rect x="50" y="135" width="340" height="38" fill="#f8fafc" rx="4" stroke="#e2e8f0" stroke-width="1"/>
-                <text x="62" y="159" style="font-size: 9px; fill: #64748b;">Conn 4</text>
+                <text x="62" y="159" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Conn 4</text>
                 <rect x="115" y="143" width="60" height="22" rx="3" style="fill: #ec4899;"/>
-                <text x="145" y="158" text-anchor="middle" fill="white" font-size="9" font-weight="500">Request 4</text>
+                <text x="145" y="158" text-anchor="middle" fill="white" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Request 4</text>
                 <rect x="180" y="143" width="40" height="22" rx="3" style="fill: #e2e8f0;"/>
                 <rect x="225" y="143" width="100" height="22" rx="3" opacity="0.6" style="fill: #ec4899;"/>
 
                 <!-- Connection 5 -->
                 <rect x="50" y="180" width="340" height="38" fill="#f8fafc" rx="4" stroke="#e2e8f0" stroke-width="1"/>
-                <text x="62" y="204" style="font-size: 9px; fill: #64748b;">Conn 5</text>
+                <text x="62" y="204" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Conn 5</text>
                 <rect x="115" y="188" width="80" height="22" rx="3" style="fill: #8b5cf6;"/>
-                <text x="155" y="203" text-anchor="middle" fill="white" font-size="9" font-weight="500">Request 5</text>
+                <text x="155" y="203" text-anchor="middle" fill="white" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Request 5</text>
                 <rect x="200" y="188" width="40" height="22" rx="3" style="fill: #e2e8f0;"/>
                 <rect x="245" y="188" width="75" height="22" rx="3" opacity="0.6" style="fill: #8b5cf6;"/>
 
                 <!-- Connection 6 -->
                 <rect x="50" y="225" width="340" height="38" fill="#f8fafc" rx="4" stroke="#e2e8f0" stroke-width="1"/>
-                <text x="62" y="249" style="font-size: 9px; fill: #64748b;">Conn 6</text>
+                <text x="62" y="249" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Conn 6</text>
                 <rect x="115" y="233" width="100" height="22" rx="3" style="fill: #06b6d4;"/>
-                <text x="165" y="248" text-anchor="middle" fill="white" font-size="9" font-weight="500">Request 6</text>
+                <text x="165" y="248" text-anchor="middle" fill="white" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Request 6</text>
                 <rect x="220" y="233" width="40" height="22" rx="3" style="fill: #e2e8f0;"/>
                 <rect x="265" y="233" width="60" height="22" rx="3" opacity="0.6" style="fill: #06b6d4;"/>
             </g>
@@ -104,31 +104,31 @@
             <!-- HTTP/1.1 downsides -->
             <g transform="translate(50, 470)">
                 <rect x="0" y="0" width="340" height="55" rx="4" style="fill: #fee2e2; stroke: #ef4444; stroke-width: 2;"/>
-                <text x="170" y="22" text-anchor="middle" fill="#dc2626" style="font-size: 11px; font-weight: 500; fill: #475569;">6 separate TCP connections</text>
-                <text x="170" y="42" text-anchor="middle" style="font-size: 9px; fill: #64748b;">6x handshake overhead, resource waste</text>
+                <text x="170" y="22" text-anchor="middle" fill="#dc2626" style="font-size: 11px; font-weight: 500; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">6 separate TCP connections</text>
+                <text x="170" y="42" text-anchor="middle" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">6x handshake overhead, resource waste</text>
             </g>
 
             <!-- HTTP/2 Section -->
             <rect x="440" y="75" width="380" height="430" fill="#f0fdf4" rx="8" stroke="#bbf7d0" stroke-width="1"/>
-            <text x="630" y="100" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: #1e293b;">HTTP/2: Single Multiplexed Connection</text>
+            <text x="630" y="100" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">HTTP/2: Single Multiplexed Connection</text>
 
             <!-- Client box HTTP/2 -->
             <rect x="460" y="120" width="80" height="50" fill="#dbeafe" rx="4" stroke="#3b82f6" stroke-width="2"/>
-            <text x="500" y="150" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #475569;">Client</text>
+            <text x="500" y="150" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">Client</text>
 
             <!-- Server box HTTP/2 -->
             <rect x="720" y="120" width="80" height="50" fill="#dcfce7" rx="4" stroke="#22c55e" stroke-width="2"/>
-            <text x="760" y="150" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #475569;">Server</text>
+            <text x="760" y="150" text-anchor="middle" style="font-size: 11px; font-weight: 500; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">Server</text>
 
             <!-- Single HTTP/2 connection with multiplexed streams -->
             <g transform="translate(410, 190)">
                 <rect x="50" y="0" width="340" height="260" fill="#f8fafc" rx="6" stroke="#22c55e" stroke-width="2"/>
-                <text x="220" y="24" text-anchor="middle" fill="#15803d" style="font-size: 11px; font-weight: 500; fill: #475569;">Single Connection - 6 Interleaved Streams</text>
+                <text x="220" y="24" text-anchor="middle" fill="#15803d" style="font-size: 11px; font-weight: 500; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">Single Connection - 6 Interleaved Streams</text>
 
                 <!-- Time axis -->
                 <line x1="70" y1="242" x2="370" y2="242" stroke="#cbd5e1" stroke-width="1"/>
-                <text x="70" y="256" style="font-size: 9px; fill: #64748b;">t=0</text>
-                <text x="370" y="256" text-anchor="end" style="font-size: 9px; fill: #64748b;">time</text>
+                <text x="70" y="256" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">t=0</text>
+                <text x="370" y="256" text-anchor="end" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">time</text>
 
                 <!-- Interleaved stream packets - Row 1 -->
                 <rect x="70" y="42" width="25" height="26" rx="2" style="fill: #3b82f6;"/>
@@ -169,62 +169,62 @@
                 <!-- Stream labels -->
                 <g transform="translate(60, 148)">
                     <rect x="0" y="0" width="320" height="80" fill="white" rx="4" stroke="#e2e8f0" stroke-width="1"/>
-                    <text x="12" y="20" style="font-size: 9px; fill: #64748b;">Streams (each color = one request):</text>
+                    <text x="12" y="20" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Streams (each color = one request):</text>
 
                     <rect x="12" y="36" width="14" height="14" rx="2" style="fill: #3b82f6;"/>
-                    <text x="32" y="48" style="font-size: 9px; fill: #64748b;">Stream 1</text>
+                    <text x="32" y="48" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Stream 1</text>
 
                     <rect x="100" y="36" width="14" height="14" rx="2" style="fill: #10b981;"/>
-                    <text x="120" y="48" style="font-size: 9px; fill: #64748b;">Stream 2</text>
+                    <text x="120" y="48" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Stream 2</text>
 
                     <rect x="188" y="36" width="14" height="14" rx="2" style="fill: #f59e0b;"/>
-                    <text x="208" y="48" style="font-size: 9px; fill: #64748b;">Stream 3</text>
+                    <text x="208" y="48" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Stream 3</text>
 
                     <rect x="12" y="58" width="14" height="14" rx="2" style="fill: #ec4899;"/>
-                    <text x="32" y="70" style="font-size: 9px; fill: #64748b;">Stream 4</text>
+                    <text x="32" y="70" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Stream 4</text>
 
                     <rect x="100" y="58" width="14" height="14" rx="2" style="fill: #8b5cf6;"/>
-                    <text x="120" y="70" style="font-size: 9px; fill: #64748b;">Stream 5</text>
+                    <text x="120" y="70" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Stream 5</text>
 
                     <rect x="188" y="58" width="14" height="14" rx="2" style="fill: #06b6d4;"/>
-                    <text x="208" y="70" style="font-size: 9px; fill: #64748b;">Stream 6</text>
+                    <text x="208" y="70" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Stream 6</text>
                 </g>
             </g>
 
             <!-- HTTP/2 benefits -->
             <g transform="translate(460, 470)">
                 <rect x="0" y="0" width="340" height="55" rx="4" style="fill: #dcfce7; stroke: #22c55e; stroke-width: 2;"/>
-                <text x="170" y="22" text-anchor="middle" fill="#15803d" style="font-size: 11px; font-weight: 500; fill: #475569;">1 connection, 6 concurrent streams</text>
-                <text x="170" y="42" text-anchor="middle" style="font-size: 9px; fill: #64748b;">Header compression, no blocking between streams</text>
+                <text x="170" y="22" text-anchor="middle" fill="#15803d" style="font-size: 11px; font-weight: 500; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">1 connection, 6 concurrent streams</text>
+                <text x="170" y="42" text-anchor="middle" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Header compression, no blocking between streams</text>
             </g>
 
             <!-- Comparison summary -->
             <g transform="translate(30, 545)">
                 <rect x="0" y="0" width="790" height="115" fill="#f1f5f9" rx="6" stroke="#cbd5e1" stroke-width="1"/>
-                <text x="395" y="26" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: #1e293b;">Key Differences</text>
+                <text x="395" y="26" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Key Differences</text>
 
                 <!-- HTTP/1.1 column -->
                 <g transform="translate(30, 42)">
-                    <text x="0" y="14" fill="#dc2626" style="font-size: 11px; font-weight: 500; fill: #475569;">HTTP/1.1:</text>
-                    <text x="0" y="34" style="font-size: 9px; fill: #64748b;">- 6 TCP connections = 6 handshakes</text>
-                    <text x="0" y="52" style="font-size: 9px; fill: #64748b;">- Head-of-line blocking per connection</text>
-                    <text x="0" y="70" style="font-size: 9px; fill: #64748b;">- Redundant headers on each request</text>
+                    <text x="0" y="14" fill="#dc2626" style="font-size: 11px; font-weight: 500; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">HTTP/1.1:</text>
+                    <text x="0" y="34" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- 6 TCP connections = 6 handshakes</text>
+                    <text x="0" y="52" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- Head-of-line blocking per connection</text>
+                    <text x="0" y="70" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- Redundant headers on each request</text>
                 </g>
 
                 <!-- HTTP/2 column -->
                 <g transform="translate(280, 42)">
-                    <text x="0" y="14" fill="#15803d" style="font-size: 11px; font-weight: 500; fill: #475569;">HTTP/2:</text>
-                    <text x="0" y="34" style="font-size: 9px; fill: #64748b;">- 1 TCP connection = 1 handshake</text>
-                    <text x="0" y="52" style="font-size: 9px; fill: #64748b;">- Multiplexed streams, no application blocking</text>
-                    <text x="0" y="70" style="font-size: 9px; fill: #64748b;">- HPACK header compression</text>
+                    <text x="0" y="14" fill="#15803d" style="font-size: 11px; font-weight: 500; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">HTTP/2:</text>
+                    <text x="0" y="34" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- 1 TCP connection = 1 handshake</text>
+                    <text x="0" y="52" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- Multiplexed streams, no application blocking</text>
+                    <text x="0" y="70" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- HPACK header compression</text>
                 </g>
 
                 <!-- Result -->
                 <g transform="translate(560, 42)">
-                    <text x="0" y="14" fill="#6366f1" style="font-size: 11px; font-weight: 500; fill: #475569;">Result:</text>
-                    <text x="0" y="34" style="font-size: 9px; fill: #64748b;">- Faster page loads</text>
-                    <text x="0" y="52" style="font-size: 9px; fill: #64748b;">- Lower server resource usage</text>
-                    <text x="0" y="70" style="font-size: 9px; fill: #64748b;">- Better mobile performance</text>
+                    <text x="0" y="14" fill="#6366f1" style="font-size: 11px; font-weight: 500; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">Result:</text>
+                    <text x="0" y="34" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- Faster page loads</text>
+                    <text x="0" y="52" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- Lower server resource usage</text>
+                    <text x="0" y="70" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">- Better mobile performance</text>
                 </g>
             </g>
         </svg>

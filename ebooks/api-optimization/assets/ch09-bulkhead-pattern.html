@@ -64,12 +64,12 @@
             </defs>
 
             <!-- Title and concept -->
-            <text x="450" y="35" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="600">Isolated Resource Pools Prevent Cascading Failures</text>
+            <text x="450" y="35" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Isolated Resource Pools Prevent Cascading Failures</text>
 
             <!-- Ship bulkhead analogy -->
             <g transform="translate(30, 55)">
                 <rect x="0" y="0" width="230" height="100" rx="6" fill="#f1f5f9" stroke="#cbd5e1"/>
-                <text x="115" y="22" text-anchor="middle" fill="#64748b" font-size="11" font-weight="600">Ship Bulkhead Analogy</text>
+                <text x="115" y="22" text-anchor="middle" fill="#64748b" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Ship Bulkhead Analogy</text>
 
                 <!-- Ship hull -->
                 <path d="M 20 80 Q 115 90 210 80 L 200 50 Q 115 40 30 50 Z" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
@@ -86,14 +86,14 @@
                 <line x1="87" y1="48" x2="87" y2="78" stroke="#475569" stroke-width="3"/>
                 <line x1="144" y1="48" x2="144" y2="78" stroke="#475569" stroke-width="3"/>
 
-                <text x="115" y="95" text-anchor="middle" fill="#64748b" font-size="9">Damage contained to one compartment</text>
+                <text x="115" y="95" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Damage contained to one compartment</text>
             </g>
 
             <!-- Main Application -->
             <g transform="translate(320, 70)">
                 <rect x="0" y="0" width="550" height="80" rx="8" fill="url(#serviceGrad)" filter="url(#shadow)"/>
-                <text x="275" y="35" text-anchor="middle" fill="white" font-size="16" font-weight="600">Your Application Service</text>
-                <text x="275" y="55" text-anchor="middle" fill="white" font-size="11" opacity="0.9">Incoming requests distributed across bulkheads</text>
+                <text x="275" y="35" text-anchor="middle" fill="white" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Your Application Service</text>
+                <text x="275" y="55" text-anchor="middle" fill="white" font-size="11" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Incoming requests distributed across bulkheads</text>
 
                 <!-- Request indicators -->
                 <g transform="translate(50, 65)">
@@ -101,7 +101,7 @@
                     <circle cx="30" cy="0" r="5" fill="white" opacity="0.8"/>
                     <circle cx="60" cy="0" r="5" fill="white" opacity="0.8"/>
                     <circle cx="90" cy="0" r="5" fill="white" opacity="0.8"/>
-                    <text x="130" y="4" fill="white" font-size="9" opacity="0.9">requests</text>
+                    <text x="130" y="4" fill="white" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">requests</text>
                 </g>
             </g>
 
@@ -113,35 +113,35 @@
 
                     <rect x="0" y="0" width="240" height="40" rx="8" fill="url(#healthyGrad)"/>
                     <rect x="0" y="30" width="240" height="10" fill="url(#healthyGrad)"/>
-                    <text x="120" y="27" text-anchor="middle" fill="white" font-size="12" font-weight="600">Payment Service Pool</text>
+                    <text x="120" y="27" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Payment Service Pool</text>
 
                     <!-- Connection slots visualization -->
-                    <text x="20" y="60" fill="#166534" font-size="10" font-weight="600">Connection Slots (5 max)</text>
+                    <text x="20" y="60" fill="#166534" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Connection Slots (5 max)</text>
 
                     <!-- Slot boxes -->
                     <g transform="translate(20, 70)">
                         <rect x="0" y="0" width="35" height="30" rx="3" fill="#22c55e"/>
-                        <text x="17" y="20" text-anchor="middle" fill="white" font-size="9">used</text>
+                        <text x="17" y="20" text-anchor="middle" fill="white" font-size="9" font-family="Liberation Sans, Arial, sans-serif">used</text>
 
                         <rect x="45" y="0" width="35" height="30" rx="3" fill="#22c55e"/>
-                        <text x="62" y="20" text-anchor="middle" fill="white" font-size="9">used</text>
+                        <text x="62" y="20" text-anchor="middle" fill="white" font-size="9" font-family="Liberation Sans, Arial, sans-serif">used</text>
 
                         <rect x="90" y="0" width="35" height="30" rx="3" fill="#22c55e"/>
-                        <text x="107" y="20" text-anchor="middle" fill="white" font-size="9">used</text>
+                        <text x="107" y="20" text-anchor="middle" fill="white" font-size="9" font-family="Liberation Sans, Arial, sans-serif">used</text>
 
                         <rect x="135" y="0" width="35" height="30" rx="3" fill="#22c55e"/>
-                        <text x="152" y="20" text-anchor="middle" fill="white" font-size="9">used</text>
+                        <text x="152" y="20" text-anchor="middle" fill="white" font-size="9" font-family="Liberation Sans, Arial, sans-serif">used</text>
 
                         <rect x="180" y="0" width="35" height="30" rx="3" fill="#dcfce7" stroke="#86efac"/>
-                        <text x="197" y="20" text-anchor="middle" fill="#166534" font-size="9">free</text>
+                        <text x="197" y="20" text-anchor="middle" fill="#166534" font-size="9" font-family="Liberation Sans, Arial, sans-serif">free</text>
                     </g>
 
                     <!-- Stats -->
-                    <text x="20" y="125" fill="#166534" font-size="10">Utilization: 80%</text>
+                    <text x="20" y="125" fill="#166534" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Utilization: 80%</text>
                     <rect x="20" y="130" width="200" height="8" rx="2" fill="#dcfce7"/>
                     <rect x="20" y="130" width="160" height="8" rx="2" fill="#22c55e"/>
 
-                    <text x="120" y="160" text-anchor="middle" fill="#15803d" font-size="10" font-weight="600">Status: Healthy</text>
+                    <text x="120" y="160" text-anchor="middle" fill="#15803d" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Status: Healthy</text>
                 </g>
 
                 <!-- Pool B: Inventory Service (EXHAUSTED) -->
@@ -150,10 +150,10 @@
 
                     <rect x="0" y="0" width="240" height="40" rx="8" fill="url(#exhaustedGrad)"/>
                     <rect x="0" y="30" width="240" height="10" fill="url(#exhaustedGrad)"/>
-                    <text x="120" y="27" text-anchor="middle" fill="white" font-size="12" font-weight="600">Inventory Service Pool</text>
+                    <text x="120" y="27" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Inventory Service Pool</text>
 
                     <!-- Connection slots visualization -->
-                    <text x="20" y="60" fill="#991b1b" font-size="10" font-weight="600">Connection Slots (10 max) - EXHAUSTED</text>
+                    <text x="20" y="60" fill="#991b1b" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Connection Slots (10 max) - EXHAUSTED</text>
 
                     <!-- All slots used -->
                     <g transform="translate(10, 70)">
@@ -174,15 +174,15 @@
                         <circle cx="0" cy="5" r="4" fill="#f59e0b"/>
                         <circle cx="15" cy="5" r="4" fill="#f59e0b"/>
                         <circle cx="30" cy="5" r="4" fill="#f59e0b"/>
-                        <text x="45" y="9" fill="#92400e" font-size="9">3 waiting...</text>
+                        <text x="45" y="9" fill="#92400e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">3 waiting...</text>
                     </g>
 
                     <!-- Stats -->
-                    <text x="20" y="125" fill="#991b1b" font-size="10">Utilization: 100% (BLOCKED)</text>
+                    <text x="20" y="125" fill="#991b1b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Utilization: 100% (BLOCKED)</text>
                     <rect x="20" y="130" width="200" height="8" rx="2" fill="#fecaca"/>
                     <rect x="20" y="130" width="200" height="8" rx="2" fill="#ef4444"/>
 
-                    <text x="120" y="160" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="600">Status: Exhausted - Blocking</text>
+                    <text x="120" y="160" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Status: Exhausted - Blocking</text>
                 </g>
 
                 <!-- Pool C: Notification Service (Healthy - Low usage) -->
@@ -191,29 +191,29 @@
 
                     <rect x="0" y="0" width="240" height="40" rx="8" fill="url(#healthyGrad)"/>
                     <rect x="0" y="30" width="240" height="10" fill="url(#healthyGrad)"/>
-                    <text x="120" y="27" text-anchor="middle" fill="white" font-size="12" font-weight="600">Notification Service Pool</text>
+                    <text x="120" y="27" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Notification Service Pool</text>
 
                     <!-- Connection slots visualization -->
-                    <text x="20" y="60" fill="#166534" font-size="10" font-weight="600">Connection Slots (3 max)</text>
+                    <text x="20" y="60" fill="#166534" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Connection Slots (3 max)</text>
 
                     <!-- Slot boxes -->
                     <g transform="translate(40, 70)">
                         <rect x="0" y="0" width="45" height="30" rx="3" fill="#22c55e"/>
-                        <text x="22" y="20" text-anchor="middle" fill="white" font-size="9">used</text>
+                        <text x="22" y="20" text-anchor="middle" fill="white" font-size="9" font-family="Liberation Sans, Arial, sans-serif">used</text>
 
                         <rect x="55" y="0" width="45" height="30" rx="3" fill="#dcfce7" stroke="#86efac"/>
-                        <text x="77" y="20" text-anchor="middle" fill="#166534" font-size="9">free</text>
+                        <text x="77" y="20" text-anchor="middle" fill="#166534" font-size="9" font-family="Liberation Sans, Arial, sans-serif">free</text>
 
                         <rect x="110" y="0" width="45" height="30" rx="3" fill="#dcfce7" stroke="#86efac"/>
-                        <text x="132" y="20" text-anchor="middle" fill="#166534" font-size="9">free</text>
+                        <text x="132" y="20" text-anchor="middle" fill="#166534" font-size="9" font-family="Liberation Sans, Arial, sans-serif">free</text>
                     </g>
 
                     <!-- Stats -->
-                    <text x="20" y="125" fill="#166534" font-size="10">Utilization: 33%</text>
+                    <text x="20" y="125" fill="#166534" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Utilization: 33%</text>
                     <rect x="20" y="130" width="200" height="8" rx="2" fill="#dcfce7"/>
                     <rect x="20" y="130" width="66" height="8" rx="2" fill="#22c55e"/>
 
-                    <text x="120" y="160" text-anchor="middle" fill="#15803d" font-size="10" font-weight="600">Status: Healthy</text>
+                    <text x="120" y="160" text-anchor="middle" fill="#15803d" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Status: Healthy</text>
                 </g>
             </g>
 
@@ -227,9 +227,9 @@
             <!-- Key insight callout -->
             <g transform="translate(270, 395)">
                 <rect x="0" y="0" width="360" height="70" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
-                <text x="180" y="25" text-anchor="middle" fill="#1e40af" font-size="12" font-weight="600">Key Insight: Failure Isolation</text>
-                <text x="180" y="45" text-anchor="middle" fill="#3b82f6" font-size="10">Inventory pool exhaustion does NOT affect</text>
-                <text x="180" y="60" text-anchor="middle" fill="#3b82f6" font-size="10">Payment or Notification service pools</text>
+                <text x="180" y="25" text-anchor="middle" fill="#1e40af" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Key Insight: Failure Isolation</text>
+                <text x="180" y="45" text-anchor="middle" fill="#3b82f6" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Inventory pool exhaustion does NOT affect</text>
+                <text x="180" y="60" text-anchor="middle" fill="#3b82f6" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Payment or Notification service pools</text>
             </g>
 
             <!-- Legend -->
@@ -237,16 +237,16 @@
                 <rect x="0" y="0" width="780" height="55" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
 
                 <rect x="20" y="15" width="20" height="20" rx="3" fill="#22c55e"/>
-                <text x="50" y="30" fill="#64748b" font-size="10">Active connection (healthy)</text>
+                <text x="50" y="30" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Active connection (healthy)</text>
 
                 <rect x="200" y="15" width="20" height="20" rx="3" fill="#ef4444"/>
-                <text x="230" y="30" fill="#64748b" font-size="10">Active connection (exhausted pool)</text>
+                <text x="230" y="30" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Active connection (exhausted pool)</text>
 
                 <rect x="430" y="15" width="20" height="20" rx="3" fill="#dcfce7" stroke="#86efac"/>
-                <text x="460" y="30" fill="#64748b" font-size="10">Available slot</text>
+                <text x="460" y="30" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Available slot</text>
 
                 <circle cx="610" cy="25" r="6" fill="#f59e0b"/>
-                <text x="625" y="30" fill="#64748b" font-size="10">Waiting request</text>
+                <text x="625" y="30" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Waiting request</text>
             </g>
         </svg>
     </div>
