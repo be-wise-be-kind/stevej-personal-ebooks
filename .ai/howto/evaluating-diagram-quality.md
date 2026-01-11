@@ -99,6 +99,46 @@ When reviewing SVG/HTML diagrams rendered as images, systematically check for th
 - **Elements at edges**: Anything touching or crossing container boundaries
 - **Partial visibility**: Elements only partially visible
 
+## CRITICAL: Commonly Missed Issues
+
+These issues are frequently overlooked during audits. Pay special attention:
+
+### 1. Internal Legend Padding
+- Legend boxes must have **30px minimum internal padding** from all edges
+- Text and colored squares inside legends should NOT touch the legend box border
+- Common mistake: placing legend items at x=10-15 when they need x=25-30
+
+### 2. Stacked Element Spacing
+- When boxes/bars are stacked vertically, there must be **40-50px minimum gap** between them
+- This applies to: timeline bars below process boxes, legends below diagrams, info boxes below flowcharts
+- The gap should be visually obvious - if elements look "close" they ARE too close
+- Common mistake: grace period bars, timeline indicators placed too close to content above
+
+### 3. Text Overlap in Sequence Diagrams
+- When multiple labels appear on parallel paths, verify EACH label for overlap
+- Check labels at: branch points, merge points, annotation positions
+- Render at multiple zoom levels - overlaps may only be visible at certain scales
+- Common mistake: "Hedge sent" labels overlapping "Primary Request (slow)" labels
+
+### 4. Box-Internal Text Centering
+- Text inside circular/rounded elements is often clipped or off-center
+- Circle text: verify the FULL text fits within the circle radius
+- Round-rect text: ensure text doesn't touch any edge
+- Common mistake: timeline circles with text like "Implementation" getting cut off
+
+### 5. PDF vs PNG Rendering Differences
+- Always check BOTH the PNG render AND the final PDF
+- PDF scaling can reveal issues not visible in PNG
+- Tight spacing that "looks ok" in PNG may collide in PDF
+- Common mistake: assuming PNG render is sufficient
+
+### 6. Double/Parallel Line Effects
+- When forward arrows and return arrows are close together, they create a "double line" visual
+- This is especially problematic in sequence diagrams and flow charts showing request/response
+- **Minimum separation**: 20px between parallel forward and return arrows
+- **Better approach**: Use distinctly different arrow styles (solid vs dashed) AND spatial separation
+- Common mistake: forward arrow at y=110, return arrow at y=118 (only 8px apart)
+
 ## Evaluation Checklist
 
 When reviewing each diagram, check:
@@ -109,13 +149,22 @@ When reviewing each diagram, check:
 [ ] No lines crossing through text (SVG z-order issue)
 [ ] Adequate padding from all edges (especially bottom)
 [ ] Annotation boxes don't overlap each other
-[ ] Clear spacing between all elements
+[ ] Clear spacing between all elements (40-50px between stacked sections)
 [ ] Text has breathing room inside boxes
 [ ] No unexpected black fills or artifacts
 [ ] Arrows/lines connect properly
 [ ] Overall layout is balanced and uncluttered
 [ ] Diagram content matches chapter/section topic
 [ ] SVG structure: connections before boxes (for proper layering)
+[ ] Legends have adequate clearance from content above (25-30px)
+[ ] Legend internal padding from box edges (30px minimum)
+[ ] All arrows have visible line bodies (not just arrowheads, min 15-20px)
+[ ] No empty boxes that should have labels
+[ ] No duplicate/double lines
+[ ] Labels clearly associated with their elements (proper spacing)
+[ ] Stacked timeline/bar elements have 40-50px gap from content above
+[ ] Text in circles/rounded boxes fits completely within bounds
+[ ] Forward/return arrow pairs separated by at least 20px (no double-line effect)
 ```
 
 ## Common Fixes
@@ -129,8 +178,44 @@ When reviewing each diagram, check:
 | Text through line | Move line or text, adjust path |
 | Crowded layout | Increase viewBox, spread elements out |
 | Black fill artifact | Add `fill="none"` to path elements |
+| Legend too close to content | Shift legend down, increase viewBox height if needed |
+| Arrow too short | Extend arrow path, ensure min 15-20px line before arrowhead |
+| Empty box | Add missing label text or remove box if unneeded |
+| Double/duplicate lines | Remove duplicate path/line elements from SVG |
+| Label too close to wrong element | Reposition label closer to its intended element |
 
-## 6. Content Matching
+## 6. Legend and Connection Issues
+
+### Legend Positioning
+- **Legend collision**: Legends must not touch or overlap diagram content above them
+- **Minimum clearance**: 25-30px between legend and nearest element above
+- **Bottom padding**: Legends need adequate space below them to the viewBox edge (15-20px)
+- **Fix**: Shift legend down, increase viewBox height if needed
+
+### Malformed Arrows
+- **Arrow too short**: Arrows must have a visible line body, not just an arrowhead
+- **Minimum line length**: 15-20px of visible line before the arrowhead
+- **Connection clarity**: Arrows should clearly connect source to destination
+- **Fix**: Extend arrow path, ensure marker-end is positioned after adequate line length
+
+### Empty/Missing Text
+- **Placeholder boxes**: Boxes that appear in the diagram must have a purpose
+- **Missing labels**: Every visible box/shape should contain text or be clearly decorative
+- **Fix**: Add missing label text or remove unnecessary placeholder elements
+
+### Duplicate Lines
+- **Double rendering**: Lines appearing twice (visible doubling/ghosting)
+- **Overlapping paths**: Identical paths layered on top of each other
+- **Check source**: Look for duplicate `<line>` or `<path>` elements with same coordinates
+- **Fix**: Remove duplicate path/line elements from SVG source
+
+### Element Proximity
+- **Label association**: Labels should be clearly associated with their elements
+- **Minimum spacing**: 15px between unrelated elements (labels shouldn't appear to belong to wrong box)
+- **Floating labels**: Text that appears disconnected or associated with wrong elements
+- **Fix**: Reposition labels closer to their intended elements, increase spacing from unrelated elements
+
+## 7. Content Matching
 
 ### Verify Diagram Matches Context
 - **Chapter opener**: Does the diagram title match the chapter title/theme?

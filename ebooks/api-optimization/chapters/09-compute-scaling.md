@@ -8,7 +8,7 @@
 
 As API traffic grows, we face a fundamental question: how do we handle more requests without degrading performance? The answer lies in scaling our compute resources effectively. However, scaling is not simply about adding more servers. It requires careful architectural decisions that determine whether our systems can grow gracefully or collapse under load.
 
-This chapter explores the two primary scaling strategies---horizontal and vertical scaling---and examines the architectural patterns that make each approach effective. We will investigate stateless service design as the foundation for horizontal scaling, auto-scaling strategies that respond to demand, serverless considerations including the often-overlooked cold start problem, and the critical importance of graceful shutdown and health checks.
+This chapter explores the two primary scaling strategies (horizontal and vertical scaling) and examines the architectural patterns that make each approach effective. We will investigate stateless service design as the foundation for horizontal scaling, auto-scaling strategies that respond to demand, serverless considerations including the often-overlooked cold start problem, and the critical importance of graceful shutdown and health checks.
 
 The key insight is that scalability is not an afterthought we bolt on later. It is an architectural property we design for from the beginning. Systems that scale well share common characteristics: they externalize state, they handle failures gracefully, and they communicate their health status accurately. Let us examine each of these principles in depth.
 
@@ -18,9 +18,9 @@ The key insight is that scalability is not an afterthought we bolt on later. It 
 
 When a service reaches its capacity limits, we have two fundamental options: make the existing instance bigger (vertical scaling) or add more instances (horizontal scaling).
 
-**Vertical scaling** (scaling up) involves adding more resources---CPU, memory, faster storage---to an existing server. This approach has the advantage of simplicity: the application code requires no changes, there is no distributed coordination, and debugging remains straightforward. However, vertical scaling has hard limits. Eventually, we cannot buy a bigger machine, or the cost becomes prohibitive. Single-machine architectures also create a single point of failure.
+**Vertical scaling** (scaling up) involves adding more resources (CPU, memory, faster storage) to an existing server. This approach has the advantage of simplicity: the application code requires no changes, there is no distributed coordination, and debugging remains straightforward. However, vertical scaling has hard limits. Eventually, we cannot buy a bigger machine, or the cost becomes prohibitive. Single-machine architectures also create a single point of failure.
 
-**Horizontal scaling** (scaling out) involves adding more instances of a service behind a load balancer. This approach offers near-linear capacity growth and improved fault tolerance---if one instance fails, others continue serving traffic. However, horizontal scaling introduces complexity: we must handle distributed state, coordinate between instances, and manage the load balancer itself.
+**Horizontal scaling** (scaling out) involves adding more instances of a service behind a load balancer. This approach offers near-linear capacity growth and improved fault tolerance: if one instance fails, others continue serving traffic. However, horizontal scaling introduces complexity: we must handle distributed state, coordinate between instances, and manage the load balancer itself.
 
 <!-- DIAGRAM: Horizontal vs Vertical scaling comparison: Vertical shows one server growing larger with added CPU/RAM; Horizontal shows multiple identical servers behind a load balancer, with requests distributed across them -->
 
@@ -40,7 +40,7 @@ In practice, most production systems use a hybrid approach: right-sized instance
 
 ### Stateless Service Design
 
-Horizontal scaling requires stateless services. A stateless service does not store any client-specific data between requests---each request can be handled by any instance without coordination.
+Horizontal scaling requires stateless services. A stateless service does not store any client-specific data between requests, so each request can be handled by any instance without coordination.
 
 This does not mean our applications have no state. Rather, we **externalize** state to dedicated storage systems:
 
@@ -58,7 +58,7 @@ Auto-scaling automatically adjusts the number of service instances based on dema
 
 **Reactive auto-scaling** responds to current metrics. When CPU utilization exceeds a threshold, more instances are added. The challenge is latency: by the time new instances are provisioned (typically one to several minutes), the traffic spike may have already caused degraded performance or failures.
 
-The Kubernetes Horizontal Pod Autoscaler (HPA) exemplifies reactive scaling. According to the Kubernetes documentation, HPA uses a stabilization window to prevent "thrashing"---rapid scaling fluctuations. The default scale-down stabilization is 300 seconds (5 minutes), while scale-up is immediate [Source: Kubernetes Documentation, 2024].
+The Kubernetes Horizontal Pod Autoscaler (HPA) exemplifies reactive scaling. According to the Kubernetes documentation, HPA uses a stabilization window to prevent "thrashing" (rapid scaling fluctuations). The default scale-down stabilization is 300 seconds (5 minutes), while scale-up is immediate [Source: Kubernetes Documentation, 2024].
 
 The core HPA scaling formula calculates desired replicas as the ceiling of current replicas multiplied by the ratio of current metric value to desired metric value. A 10% tolerance threshold prevents scaling for minor metric fluctuations.
 
@@ -90,13 +90,13 @@ KEDA is a graduated project under the Cloud Native Computing Foundation (CNCF), 
 
 ![KEDA Architecture](../assets/ch09-keda-architecture.html)
 
-The defining capability of KEDA is **scale-to-zero**: reducing replicas to zero when no events are pending, then scaling back up when work arrives. Standard HPA maintains at least one replica at all times. For workloads with intermittent traffic---batch processors, webhook handlers, or scheduled jobs---scale-to-zero can reduce compute costs by 70-90% compared to maintaining always-on capacity [Source: KEDA Blog, 2023].
+The defining capability of KEDA is **scale-to-zero**: reducing replicas to zero when no events are pending, then scaling back up when work arrives. Standard HPA maintains at least one replica at all times. For workloads with intermittent traffic (batch processors, webhook handlers, or scheduled jobs), scale-to-zero can reduce compute costs by 70-90% compared to maintaining always-on capacity [Source: KEDA Blog, 2023].
 
 KEDA uses two custom resource definitions (CRDs) to configure scaling behavior:
 
 - **ScaledObject**: Attaches to a Deployment, StatefulSet, or other workload controller. It defines which external metrics to monitor and how to translate those metrics into scaling decisions. ScaledObjects are appropriate for long-running services.
 
-- **ScaledJob**: Creates Kubernetes Jobs in response to events rather than scaling a persistent deployment. ScaledJobs are appropriate for discrete work items that should run to completion---processing uploaded files, handling webhooks, or executing scheduled tasks.
+- **ScaledJob**: Creates Kubernetes Jobs in response to events rather than scaling a persistent deployment. ScaledJobs are appropriate for discrete work items that should run to completion, such as processing uploaded files, handling webhooks, or executing scheduled tasks.
 
 When configuring KEDA, several parameters require careful tuning:
 
@@ -111,7 +111,7 @@ The choice between HPA and KEDA depends on your scaling signals. Use standard HP
 
 ### Vertical Pod Autoscaler (VPA)
 
-While HPA and KEDA adjust the number of pod replicas, the Vertical Pod Autoscaler (VPA) adjusts the resource requests and limits of individual pods. VPA analyzes historical resource consumption and recommends---or automatically applies---right-sized resource configurations.
+While HPA and KEDA adjust the number of pod replicas, the Vertical Pod Autoscaler (VPA) adjusts the resource requests and limits of individual pods. VPA analyzes historical resource consumption and recommends (or automatically applies) right-sized resource configurations.
 
 Resource requests in Kubernetes serve two purposes: they inform the scheduler about placement (a pod requesting 2 CPU needs a node with that capacity available) and they establish the baseline for resource guarantees. Setting requests too low causes throttling and performance degradation. Setting them too high wastes capacity and increases costs. VPA addresses this by observing actual usage and adjusting requests accordingly [Source: Kubernetes Documentation, 2024].
 
@@ -135,7 +135,7 @@ VPA supports multiple operating modes that control its behavior:
 | Initial | Applies recommendations only at pod creation | New pods get right-sized specs; running pods unchanged |
 | Auto | Continuously updates pods when recommendations change significantly | Fully automated right-sizing |
 
-The critical limitation of VPA is that it must evict pods to apply new resource requests---Kubernetes does not support modifying requests on running pods. In Auto mode, VPA will restart pods when resource recommendations change significantly. For applications sensitive to restarts, use Off mode to generate recommendations that operators can apply during maintenance windows.
+The critical limitation of VPA is that it must evict pods to apply new resource requests because Kubernetes does not support modifying requests on running pods. In Auto mode, VPA will restart pods when resource recommendations change significantly. For applications sensitive to restarts, use Off mode to generate recommendations that operators can apply during maintenance windows.
 
 **Combining HPA and VPA** requires care. Both autoscalers can conflict when scaling on CPU: HPA might add replicas while VPA increases CPU requests, leading to over-provisioning. The recommended pattern is to configure HPA to scale on custom metrics (requests per second, queue depth) rather than CPU, allowing VPA to manage resource sizing independently. Alternatively, use VPA in Off or Initial mode alongside HPA to get right-sizing recommendations without automatic updates.
 
@@ -149,7 +149,7 @@ Pod autoscaling (HPA, VPA, KEDA) operates within the constraints of available cl
 
 ![Two-Tier Scaling Architecture](../assets/ch09-two-tier-scaling.html)
 
-Cluster Autoscaler operates on node groups---predefined configurations of instance type, availability zone, and capacity. When scaling up, it adds nodes from an existing group; it cannot mix instance types or dynamically select the optimal configuration. This design requires operators to define node groups covering expected workload patterns in advance.
+Cluster Autoscaler operates on node groups, which are predefined configurations of instance type, availability zone, and capacity. When scaling up, it adds nodes from an existing group; it cannot mix instance types or dynamically select the optimal configuration. This design requires operators to define node groups covering expected workload patterns in advance.
 
 **Karpenter** takes a different approach, making per-pod provisioning decisions without predefined node groups. When pods are pending, Karpenter evaluates their requirements and provisions nodes that precisely fit the workload. A pod requesting 4 CPU and 8GB memory might get a c5.xlarge; a GPU workload might get a p3.2xlarge. Karpenter considers spot availability, pricing, and instance capabilities when selecting node types [Source: Karpenter Documentation, 2024].
 
@@ -209,7 +209,7 @@ Chapter 2 introduced the concept that different endpoints have different traffic
 
 Most B2B APIs exhibit diurnal (daily) patterns tied to business hours. Traffic rises when offices open, peaks mid-morning, dips during lunch, peaks again in the afternoon, and drops overnight. The ratio between peak and trough can be 10:1 or higher.
 
-Diurnal patterns are highly predictable, making them ideal for scheduled scaling. Scale up before the morning ramp begins, maintain capacity through business hours, and scale down after evening traffic subsides. Predictive auto-scaling excels here. Kubernetes CronJobs can trigger scaling commands before traffic arrives---for example, scaling to 20 replicas at 7:45 AM on weekdays, ahead of the morning rush.
+Diurnal patterns are highly predictable, making them ideal for scheduled scaling. Scale up before the morning ramp begins, maintain capacity through business hours, and scale down after evening traffic subsides. Predictive auto-scaling excels here. Kubernetes CronJobs can trigger scaling commands before traffic arrives. For example, scaling to 20 replicas at 7:45 AM on weekdays, ahead of the morning rush.
 
 #### Weekly Patterns
 
@@ -319,7 +319,7 @@ For implementation examples related to these concepts, see the [Appendix: Code E
 
 - **VPA in Auto mode without Pod Disruption Budgets**: VPA evicts pods to apply new resource requests. Without PDBs, all pods might be evicted simultaneously, causing downtime. Always configure PDBs when using VPA Auto mode.
 
-- **Conflicting HPA and VPA on CPU**: When both autoscalers optimize for CPU, they can fight---HPA adding replicas while VPA increases per-pod CPU. Configure HPA to scale on custom metrics (RPS, latency) and let VPA manage resource sizing.
+- **Conflicting HPA and VPA on CPU**: When both autoscalers optimize for CPU, they can fight, with HPA adding replicas while VPA increases per-pod CPU. Configure HPA to scale on custom metrics (RPS, latency) and let VPA manage resource sizing.
 
 - **Single instance type for spot instances**: Requesting only one spot instance type leads to capacity shortages and interruptions when that type is unavailable. Always diversify across multiple instance types, families, and availability zones.
 
@@ -347,7 +347,7 @@ For implementation examples related to these concepts, see the [Appendix: Code E
 
 - **Serverless cold starts** occur when platforms provision new execution environments. Mitigate with module-level initialization, provisioned concurrency, smaller packages, and appropriate runtime selection.
 
-- **Graceful shutdown** requires handling SIGTERM, stopping new request acceptance, completing in-flight requests, and cleaning up resources---all within the termination grace period.
+- **Graceful shutdown** requires handling SIGTERM, stopping new request acceptance, completing in-flight requests, and cleaning up resources, all within the termination grace period.
 
 - **Health checks** serve different purposes: liveness probes detect dead processes, readiness probes indicate traffic-serving capability. Incorrect health checks cause cascading failures.
 

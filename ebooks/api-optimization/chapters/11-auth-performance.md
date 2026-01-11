@@ -6,13 +6,13 @@
 
 ## Overview
 
-Authentication touches every protected API request. A single millisecond of overhead in token validation compounds across millions of daily requests—what seems negligible at the unit level becomes significant at scale. Yet authentication performance is often overlooked during optimization efforts because security concerns rightfully dominate the conversation. This chapter addresses that gap: we examine authentication not through the lens of security (though we note security trade-offs where relevant) but through the lens of latency, throughput, and scalability.
+Authentication touches every protected API request. A single millisecond of overhead in token validation compounds across millions of daily requests. What seems negligible at the unit level becomes significant at scale. Yet authentication performance is often overlooked during optimization efforts because security concerns rightfully dominate the conversation. This chapter addresses that gap: we examine authentication not through the lens of security (though we note security trade-offs where relevant) but through the lens of latency, throughput, and scalability.
 
-If you need a refresher on authentication fundamentals—the difference between sessions and tokens, OAuth 2.0 flows, or when to use API keys—see [Appendix: Auth Fundamentals](./15-appendix-auth-fundamentals.md) before proceeding. This chapter assumes familiarity with these concepts and focuses on their performance characteristics.
+If you need a refresher on authentication fundamentals (the difference between sessions and tokens, OAuth 2.0 flows, or when to use API keys), see [Appendix: Auth Fundamentals](./15-appendix-auth-fundamentals.md) before proceeding. This chapter assumes familiarity with these concepts and focuses on their performance characteristics.
 
 The patterns here connect directly to earlier chapters: token caching applies the strategies from Chapter 6, connection pooling to identity providers follows Chapter 5's network optimization principles, and protecting authentication under attack uses the circuit breakers and rate limiting from Chapter 10. Authentication is where these patterns converge on a critical path that affects every request.
 
-For edge-based authentication patterns—validating tokens at the CDN edge before requests reach your origin servers—see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md). Edge auth can eliminate origin load from invalid tokens and reduce latency for valid requests.
+For edge-based authentication patterns (validating tokens at the CDN edge before requests reach your origin servers), see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md). Edge auth can eliminate origin load from invalid tokens and reduce latency for valid requests.
 
 <!-- DIAGRAM: Request timeline showing: TLS handshake complete -> Extract token -> Validate signature -> Check claims -> Authorization check -> Business logic, with typical latency annotations at each step -->
 
@@ -48,9 +48,9 @@ JWT validation is CPU-bound work: parsing JSON, decoding Base64, and verifying c
 
 JWT signing algorithms fall into two categories with different performance characteristics:
 
-**Symmetric (HS256, HS384, HS512)**: Use a shared secret for both signing and verification. Verification is fast—HMAC operations complete in microseconds. The trade-off is key distribution: every service that validates tokens needs the secret, increasing the blast radius of key compromise.
+**Symmetric (HS256, HS384, HS512)**: Use a shared secret for both signing and verification. Verification is fast because HMAC operations complete in microseconds. The trade-off is key distribution: every service that validates tokens needs the secret, increasing the blast radius of key compromise.
 
-**Asymmetric (RS256, RS512, ES256, ES512)**: Use public/private key pairs. The issuer signs with a private key; validators verify with the public key. Verification is slower—RSA operations take single-digit milliseconds, ECDSA slightly less. The advantage is key distribution: public keys can be shared freely.
+**Asymmetric (RS256, RS512, ES256, ES512)**: Use public/private key pairs. The issuer signs with a private key; validators verify with the public key. Verification is slower because RSA operations take single-digit milliseconds, ECDSA slightly less. The advantage is key distribution: public keys can be shared freely.
 
 Benchmark data from the `jsonwebtoken` library (Node.js) and `pyjwt` (Python) shows typical verification times [Source: Library benchmarks, 2024]:
 
@@ -63,7 +63,7 @@ Benchmark data from the `jsonwebtoken` library (Node.js) and `pyjwt` (Python) sh
 | ES256 | 100-400 | ECDSA P-256, good balance |
 | ES512 | 150-500 | ECDSA P-521, strongest |
 
-These microseconds matter when multiplied across thousands of requests per second. A service handling 10,000 RPS spends 2-8 seconds per second on RS256 verification versus 50-150 milliseconds on HS256—a 15-50x difference in CPU time dedicated to auth.
+These microseconds matter when multiplied across thousands of requests per second. A service handling 10,000 RPS spends 2-8 seconds per second on RS256 verification versus 50-150 milliseconds on HS256, a 15-50x difference in CPU time dedicated to auth.
 
 <!-- DIAGRAM: JWT validation flow showing: Parse header -> Decode payload (base64) -> Extract algorithm -> Fetch signing key (if asymmetric) -> Verify signature -> Validate claims (exp, iss, aud) -> Decision, with typical latency for each step -->
 
@@ -104,7 +104,7 @@ For most applications, Redis provides the best balance of performance and featur
 
 #### Session Size Impact
 
-Session data is serialized on every write and deserialized on every read. Bloated sessions—storing shopping carts, preferences, or entire user profiles—multiply this overhead:
+Session data is serialized on every write and deserialized on every read. Bloated sessions (storing shopping carts, preferences, or entire user profiles) multiply this overhead:
 
 - 100-byte session: negligible serialization cost
 - 10 KB session: 0.5-2 ms serialization overhead
@@ -124,7 +124,7 @@ Token validation, whether local or remote, can be cached. The insight: the same 
 
 #### Cache Validation Results, Not Tokens
 
-Cache the output of validation—the user claims and validity status—keyed by a hash of the token. Never cache the raw token itself, as this creates a credential store that becomes an attack target. The caching pattern checks for a cached result first, records cache hit/miss metrics, validates on miss, and caches the result with a TTL shorter than token expiration. See Example 11.5 for a complete implementation.
+Cache the output of validation (the user claims and validity status) keyed by a hash of the token. Never cache the raw token itself, as this creates a credential store that becomes an attack target. The caching pattern checks for a cached result first, records cache hit/miss metrics, validates on miss, and caches the result with a TTL shorter than token expiration. See Example 11.5 for a complete implementation.
 
 <!-- DIAGRAM: Token cache-aside pattern: Request with token -> Hash token -> Check validation cache -> [hit: return cached user claims] or [miss: validate token, cache result with TTL, return claims] -->
 
@@ -148,7 +148,7 @@ The right choice depends on your revocation requirements. Most APIs tolerate 1-5
 
 #### Thundering Herd Prevention
 
-When a popular token's cache entry expires, multiple concurrent requests may all attempt validation simultaneously—the thundering herd problem. Apply the single-flight pattern from Chapter 6: track in-progress validations by token hash, and if a validation is already running, wait for its result rather than starting a duplicate. This ensures only one validation occurs per unique token, with other requests waiting on the result.
+When a popular token's cache entry expires, multiple concurrent requests may all attempt validation simultaneously. This is the thundering herd problem. Apply the single-flight pattern from Chapter 6: track in-progress validations by token hash, and if a validation is already running, wait for its result rather than starting a duplicate. This ensures only one validation occurs per unique token, with other requests waiting on the result.
 
 ### Stateless vs Stateful: Performance Trade-offs
 
@@ -216,7 +216,7 @@ The Authorization Code flow requires multiple round-trips:
 4. Backend validates ID token
 5. Backend creates session or issues application token
 
-Step 3—the token exchange—adds 50-200 ms depending on identity provider location and performance. This is acceptable for login flows but should not occur on every request.
+Step 3 (the token exchange) adds 50-200 ms depending on identity provider location and performance. This is acceptable for login flows but should not occur on every request.
 
 #### Proactive vs Reactive Token Refresh
 
@@ -306,7 +306,7 @@ The fallback strategy depends on your security requirements. Some systems can op
 
 #### Constant-Time Comparison
 
-When comparing secrets (API keys, password hashes), use constant-time comparison to prevent timing attacks. A timing attack measures response time differences to infer correct characters. Most languages provide constant-time comparison functions (such as Python's `hmac.compare_digest`). This security measure has negligible performance impact—comparison takes constant time regardless of input—but is critical for authentication endpoints.
+When comparing secrets (API keys, password hashes), use constant-time comparison to prevent timing attacks. A timing attack measures response time differences to infer correct characters. Most languages provide constant-time comparison functions (such as Python's `hmac.compare_digest`). This security measure has negligible performance impact (comparison takes constant time regardless of input) but is critical for authentication endpoints.
 
 ### Measuring and Monitoring Authentication
 
@@ -338,7 +338,7 @@ For a complete implementation of auth metrics middleware, see Example 11.4 in th
 
 - **Ignoring clock skew in token validation**: JWT expiration checks require synchronized clocks. Allow 30-60 seconds of leeway for clock drift, or validation will fail on valid tokens when server clocks drift.
 
-- **Cache invalidation gaps on logout**: Users expect logout to be immediate. If you cache validation results, implement a revocation mechanism—revocation list, versioned cache keys, or very short TTLs—to ensure logged-out tokens stop working promptly.
+- **Cache invalidation gaps on logout**: Users expect logout to be immediate. If you cache validation results, implement a revocation mechanism (revocation list, versioned cache keys, or very short TTLs) to ensure logged-out tokens stop working promptly.
 
 - **Not measuring auth overhead separately**: Authentication latency hidden in total request time makes optimization impossible. Instrument auth middleware specifically. Track validation time, cache hit rates, and error types as distinct metrics.
 
@@ -352,7 +352,7 @@ For a complete implementation of auth metrics middleware, see Example 11.4 in th
 
 - Session storage choice determines authentication latency. Redis provides sub-millisecond lookups; database-backed sessions add 5-20ms per request. Size connection pools appropriately.
 
-- Stateless (JWT) and stateful (session) authentication have different performance profiles. Neither is universally faster—choose based on revocation requirements, scaling needs, and existing infrastructure.
+- Stateless (JWT) and stateful (session) authentication have different performance profiles. Neither is universally faster. Choose based on revocation requirements, scaling needs, and existing infrastructure.
 
 - OAuth 2.0 token exchanges add latency to login flows. Proactive token refresh eliminates user-visible refresh latency. Cache JWKS for hours, not seconds.
 

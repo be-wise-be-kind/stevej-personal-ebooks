@@ -42,6 +42,9 @@
                 <marker id="arrowOrange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
                     <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
                 </marker>
+                <marker id="arrowRed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/>
+                </marker>
             </defs>
 
             <rect width="800" height="380" fill="#ffffff" rx="8"/>
@@ -96,6 +99,9 @@
             <!-- Arrow for hit -->
             <line x1="528" y1="120" x2="560" y2="120" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
             <text x="540" y="108" fill="#22c55e" font-size="10" font-weight="500">HIT</text>
+
+            <!-- Arrow from Return Cached User Claims to Return Claims -->
+            <path d="M 675 135 Q 750 135 750 210" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowRed)"/>
 
             <!-- Cache Miss Path -->
             <!-- Validate Token -->

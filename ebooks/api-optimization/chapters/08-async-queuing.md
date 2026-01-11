@@ -106,7 +106,7 @@ The solution is the **transactional outbox**: write events to an outbox table in
 
 1. Business logic updates the `orders` table
 2. Same transaction inserts a row into the `outbox` table with the event payload
-3. Transaction commits atomically—both writes succeed or both fail
+3. Transaction commits atomically: both writes succeed or both fail
 4. A separate process reads the outbox and publishes to the message broker
 5. After successful publish, the outbox row is marked as processed or deleted
 
@@ -188,7 +188,7 @@ Not all messages are equally urgent. **Priority queues** ensure critical work pr
 
 **Implementation approaches**:
 
-- **Broker-native priorities**: RabbitMQ supports message priorities (0-255). Higher-priority messages are delivered first. Use sparingly—more than a few priority levels adds complexity [Source: RabbitMQ Documentation, "Priority Queue Support"].
+- **Broker-native priorities**: RabbitMQ supports message priorities (0-255). Higher-priority messages are delivered first. Use sparingly because more than a few priority levels adds complexity [Source: RabbitMQ Documentation, "Priority Queue Support"].
 
 - **Separate queues by priority**: Route high-priority messages to a dedicated queue with more consumers or faster processing. This approach is simpler to reason about and monitor.
 
@@ -317,7 +317,7 @@ Message queues typically deliver each message once (to one consumer or one consu
 
 #### Stream Processing Frameworks
 
-**Apache Flink** is a distributed stream processor designed for stateful computations. Flink handles millions of events per second with millisecond latency, provides exactly-once processing guarantees, and supports complex event processing. The trade-off is operational complexity—Flink requires a cluster [Source: Apache Flink Documentation].
+**Apache Flink** is a distributed stream processor designed for stateful computations. Flink handles millions of events per second with millisecond latency, provides exactly-once processing guarantees, and supports complex event processing. The trade-off is operational complexity, as Flink requires a cluster [Source: Apache Flink Documentation].
 
 **Kafka Streams** is a library (not a cluster) for stream processing within your application. It leverages Kafka for storage and coordination, making it simpler to operate for teams already using Kafka. Throughput is lower than Flink but sufficient for many use cases [Source: Confluent Documentation, "Kafka Streams"].
 

@@ -6,7 +6,7 @@
 
 ## Overview
 
-Edge infrastructure represents a fundamental shift in API architecture: rather than processing every request at a centralized origin, we distribute computation, caching, and security enforcement to nodes positioned geographically close to users. This approach addresses a constraint that no amount of code optimization can overcome—the speed of light.
+Edge infrastructure represents a fundamental shift in API architecture: rather than processing every request at a centralized origin, we distribute computation, caching, and security enforcement to nodes positioned geographically close to users. This approach addresses a constraint that no amount of code optimization can overcome: the speed of light.
 
 When a user in Singapore makes an API request to a server in Virginia, the round trip traverses approximately 15,000 kilometers. Light through fiber travels at roughly two-thirds the speed of light in a vacuum, establishing a minimum latency floor of around 80ms for physics alone. Real-world latencies are substantially higher due to routing inefficiencies, network hops, and protocol overhead. Edge infrastructure eliminates this penalty by ensuring the nearest compute node is typically within 20ms of any user worldwide.
 
@@ -39,7 +39,7 @@ These platforms prioritize developer experience, comprehensive free tiers, and i
 
 **The Cloudflare Platform**
 
-This book uses Cloudflare for examples because it offers a comprehensive free tier, extensive documentation, and covers all edge capabilities—CDN, compute, data, and security—in one platform. The principles apply regardless of which platform you choose.
+This book uses Cloudflare for examples because it offers a comprehensive free tier, extensive documentation, and covers all edge capabilities (CDN, compute, data, and security) in one platform. The principles apply regardless of which platform you choose.
 
 Cloudflare's edge platform includes:
 
@@ -69,7 +69,7 @@ A typical cacheable API response might use `Cache-Control: public, max-age=60, s
 
 #### Cache Keys and the Vary Header
 
-The cache key determines when a cached response can be reused. By default, CDNs key on URL only. The `Vary` header adds request headers to the cache key. For example, `Vary: Accept-Encoding, Accept-Language` creates separate cache entries for different encodings and languages. Be intentional about `Vary` headers—each additional header fragments the cache, reducing hit rates. `Vary: Cookie` or `Vary: Authorization` effectively disable caching since each user gets unique responses.
+The cache key determines when a cached response can be reused. By default, CDNs key on URL only. The `Vary` header adds request headers to the cache key. For example, `Vary: Accept-Encoding, Accept-Language` creates separate cache entries for different encodings and languages. Be intentional about `Vary` headers because each additional header fragments the cache, reducing hit rates. `Vary: Cookie` or `Vary: Authorization` effectively disable caching since each user gets unique responses.
 
 For authenticated APIs, consider alternative patterns: validate authentication at the edge and forward a standardized user-id header, allowing the response to be cached per-user-id rather than per-cookie.
 
@@ -96,13 +96,13 @@ Monitor cache hit ratios in your observability stack. Low hit rates indicate cac
 
 A cache stampede (also called thundering herd) occurs when many concurrent requests arrive for the same expired cache entry. All requests simultaneously find the cache empty and attempt to refresh from origin, potentially overwhelming the backend.
 
-The impact can be severe: during a traffic spike, cache expiration at a specific moment might trigger 50,000 simultaneous origin requests, causing response times to spike to 10 seconds and generating 503 errors as the backend struggles to handle the load. With request coalescing enabled, the same expiration triggers exactly one origin request—the other 49,999 requests wait less than 50ms for the shared response.
+The impact can be severe: during a traffic spike, cache expiration at a specific moment might trigger 50,000 simultaneous origin requests, causing response times to spike to 10 seconds and generating 503 errors as the backend struggles to handle the load. With request coalescing enabled, the same expiration triggers exactly one origin request while the other 49,999 requests wait less than 50ms for the shared response.
 
 Edge platforms provide mechanisms to prevent stampedes:
 
 **Request coalescing (collapse forwarding)**: When multiple requests arrive for the same cache key during a cache miss, the CDN forwards only one request to origin. Subsequent requests wait for the first to complete, then all share the same response. Akamai and other enterprise CDNs provide this capability built-in [Source: Akamai, 2025].
 
-**Stale-while-revalidate**: The `stale-while-revalidate` directive allows serving stale cached content immediately while triggering a background refresh. This eliminates the stampede entirely—users get instant responses while only one background request fetches fresh content.
+**Stale-while-revalidate**: The `stale-while-revalidate` directive allows serving stale cached content immediately while triggering a background refresh. This eliminates the stampede entirely. Users get instant responses while only one background request fetches fresh content.
 
 **Probabilistic early expiration**: Rather than all cache entries expiring simultaneously, introduce jitter. Some requests randomly trigger refresh before expiration, spreading refresh load over time rather than concentrating it at expiration moments.
 
@@ -111,7 +111,7 @@ Edge platforms provide mechanisms to prevent stampedes:
 Each mechanism involves trade-offs:
 
 - **Request coalescing** adds slight latency for waiting requests (typically under 50ms) but requires no configuration
-- **Stale-while-revalidate** provides the best user experience—zero added latency—but serves potentially outdated data during the revalidation window
+- **Stale-while-revalidate** provides the best user experience (zero added latency) but serves potentially outdated data during the revalidation window
 - **Probabilistic early expiration** spreads load but introduces unpredictable refresh timing; with a 5-minute TTL and 10% early expiration probability, requests in the final 30 seconds have increasing chances of triggering refresh
 - **Lock-based refresh** via Durable Objects adds 20-100ms latency for distant users since all requests route to a single location, but provides the strongest consistency guarantee
 
@@ -135,7 +135,7 @@ Edge workers execute code at CDN nodes worldwide, enabling computation without o
 
 #### Execution Model
 
-Modern edge platforms use V8 isolates rather than containers. Each request runs in an isolated JavaScript context without the container startup overhead. Cloudflare Workers achieve cold starts under 5ms—effectively imperceptible—compared to 100-500ms for Lambda@Edge's container-based model [Source: Cloudflare, 2024].
+Modern edge platforms use V8 isolates rather than containers. Each request runs in an isolated JavaScript context without the container startup overhead. Cloudflare Workers achieve cold starts under 5ms (effectively imperceptible) compared to 100-500ms for Lambda@Edge's container-based model [Source: Cloudflare, 2024].
 
 Resource constraints are tighter than traditional serverless:
 
@@ -157,7 +157,7 @@ Validate JWT tokens at the edge to reject unauthorized requests before they reac
 
 **Response Transformation**
 
-Modify responses without origin changes—adding security headers, injecting analytics, or personalizing content. Fetch from origin, clone the response, add or modify headers as needed, and return the modified response.
+Modify responses without origin changes by adding security headers, injecting analytics, or personalizing content. Fetch from origin, clone the response, add or modify headers as needed, and return the modified response.
 
 #### When Not to Use Edge Compute
 
@@ -190,7 +190,7 @@ Cloudflare's rate limiting synchronizes state globally within seconds, making ev
 
 **API key limiting** provides per-customer quotas by keying on the API key header (e.g., 10,000 requests per hour per API key).
 
-**Path-based rules** apply different limits to different endpoints—stricter limits on authentication endpoints (e.g., 5 requests per 5 minutes to `/api/login`), more generous limits on read-only endpoints.
+**Path-based rules** apply different limits to different endpoints: stricter limits on authentication endpoints (e.g., 5 requests per 5 minutes to `/api/login`), more generous limits on read-only endpoints.
 
 #### Edge vs Origin Rate Limiting
 
@@ -207,7 +207,7 @@ Use edge limiting for coarse protection (IP-based, API key quotas) and origin li
 
 #### Advanced Rate Limiting Patterns
 
-**Sliding window vs fixed window**: Fixed window rate limits (100 requests per minute) have a boundary problem—a client can make 100 requests at 0:59 and 100 more at 1:01, effectively 200 requests in two seconds. Sliding window algorithms track requests over a rolling time period, providing smoother enforcement. Edge platforms increasingly support sliding window limits, though with higher state synchronization overhead.
+**Sliding window vs fixed window**: Fixed window rate limits (100 requests per minute) have a boundary problem: a client can make 100 requests at 0:59 and 100 more at 1:01, effectively 200 requests in two seconds. Sliding window algorithms track requests over a rolling time period, providing smoother enforcement. Edge platforms increasingly support sliding window limits, though with higher state synchronization overhead.
 
 **Token bucket for burst handling**: Token buckets allow controlled bursts while maintaining average rate limits. The bucket fills at a steady rate (e.g., 10 tokens/second) and drains when requests consume tokens. A bucket with 50 token capacity allows bursts of 50 requests while limiting sustained rate to 10 RPS. This pattern is more forgiving for legitimate traffic spikes while still protecting against sustained abuse.
 
@@ -233,7 +233,7 @@ Key-value stores like Cloudflare KV optimize for read-heavy, eventually consiste
 - **Capacity**: Megabytes to gigabytes of data
 - **Use cases**: Configuration, feature flags, session data, cached API responses
 
-Edge workers read configuration from KV and use it to make routing decisions—for example, checking a feature flag to route to a new checkout service version.
+Edge workers read configuration from KV and use it to make routing decisions. For example, checking a feature flag to route to a new checkout service version.
 
 KV limitations:
 - Write conflicts resolve via last-write-wins; not suitable for counters or inventories
@@ -305,7 +305,7 @@ Transform rules modify requests and responses without code:
 
 **Header injection** adds security headers (like `Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options`) to all responses through declarative rules.
 
-**URL rewriting** enables API versioning or migrations—for example, rewriting requests from `/v1/` to `/v2/` paths during a migration.
+**URL rewriting** enables API versioning or migrations. For example, rewriting requests from `/v1/` to `/v2/` paths during a migration.
 
 **Bot score routing** sends suspicious traffic (low bot management scores) to different backends like honeypots for analysis.
 
@@ -336,9 +336,9 @@ The edge worker extracts the token from the Authorization header, validates it, 
 
 #### Token Revocation at Edge
 
-JWT validation alone cannot handle revocation—tokens remain valid until expiration. Edge revocation patterns:
+JWT validation alone cannot handle revocation. Tokens remain valid until expiration. Edge revocation patterns:
 
-**Revocation list in KV**: Store revoked token IDs (jti claims) in KV store. Check against list during validation—if the token's jti exists in the revocation list, reject immediately. Eventual consistency means brief windows where revoked tokens work.
+**Revocation list in KV**: Store revoked token IDs (jti claims) in KV store. Check against list during validation. If the token's jti exists in the revocation list, reject immediately. Eventual consistency means brief windows where revoked tokens work.
 
 **Short-lived tokens with refresh**: Issue tokens valid for 5-15 minutes. Refresh tokens validate against origin. Limits revocation window without KV lookup on every request.
 
@@ -361,7 +361,7 @@ For comprehensive coverage of authentication performance patterns at origin, see
 
 ### Edge Aggregation and Composition
 
-One of the most powerful edge optimization patterns is aggregating responses from multiple origin services into a single response. Rather than having clients make multiple API calls—each incurring network latency—an edge worker can fetch from multiple backends in parallel and return a composed response.
+One of the most powerful edge optimization patterns is aggregating responses from multiple origin services into a single response. Rather than having clients make multiple API calls (each incurring network latency), an edge worker can fetch from multiple backends in parallel and return a composed response.
 
 #### Multi-Origin Response Assembly
 
@@ -393,7 +393,7 @@ Edge aggregation introduces a failure decision: what happens when one of three b
 
 #### Backend-for-Frontend at Edge
 
-The Backend-for-Frontend (BFF) pattern tailors API responses to specific client types. Mobile clients need compact payloads optimized for bandwidth; web clients can handle richer data structures. Rather than implementing BFF logic at origin—which still requires origin round trips—implement it at the edge.
+The Backend-for-Frontend (BFF) pattern tailors API responses to specific client types. Mobile clients need compact payloads optimized for bandwidth; web clients can handle richer data structures. Rather than implementing BFF logic at origin (which still requires origin round trips), implement it at the edge.
 
 An edge BFF examines the User-Agent or client hints, transforms responses appropriately, and serves optimized payloads. Mobile requests might receive only essential fields; web requests receive full responses. This reduces bandwidth for mobile users while avoiding origin changes.
 
@@ -416,7 +416,7 @@ GraphQL workloads benefit from edge processing in several ways:
 - **Field-level caching**: Cache individual resolved fields, composing responses from cached fragments
 - **Persisted queries**: Store approved query documents at edge, rejecting unknown queries
 
-For read-heavy GraphQL APIs, edge caching of query results—keyed by query hash and variables—can dramatically reduce origin load. Cloudflare's edge cache can store GraphQL responses with surrogate keys based on the data types involved, enabling targeted invalidation when underlying data changes.
+For read-heavy GraphQL APIs, edge caching of query results (keyed by query hash and variables) can dramatically reduce origin load. Cloudflare's edge cache can store GraphQL responses with surrogate keys based on the data types involved, enabling targeted invalidation when underlying data changes.
 
 ### Streaming and Real-Time at Edge
 
@@ -437,7 +437,7 @@ For AI response streaming, the perceived latency improvement is dramatic. Consid
 
 The Streams API also enables processing payloads that would otherwise exceed memory limits. Without streaming, a 500MB file download would fail at edge due to the 128MB memory constraint. With TransformStream, the worker processes 64KB chunks sequentially, never holding more than one chunk in memory. This enables use cases like log streaming, large JSON transformations, and video transcoding previews.
 
-When using SSE on edge platforms, there is typically no effective time limit on streaming duration—responses can stream for minutes without termination [Source: Cloudflare, 2025].
+When using SSE on edge platforms, there is typically no effective time limit on streaming duration. Responses can stream for minutes without termination [Source: Cloudflare, 2025].
 
 #### WebSocket Proxying
 
@@ -448,7 +448,7 @@ Edge workers accept WebSocket upgrades from clients and establish corresponding 
 - **Protocol handling**: Ping/pong keepalives, graceful closure
 - **Message transformation**: Filter, enrich, or route messages at edge
 
-For applications requiring coordination among multiple WebSocket connections—chat rooms, multiplayer games, collaborative editors—Durable Objects provide the single-point-of-coordination. Each Durable Object instance maintains WebSocket connections to multiple clients while ensuring consistent state [Source: Cloudflare, 2025].
+For applications requiring coordination among multiple WebSocket connections (chat rooms, multiplayer games, collaborative editors), Durable Objects provide the single-point-of-coordination. Each Durable Object instance maintains WebSocket connections to multiple clients while ensuring consistent state [Source: Cloudflare, 2025].
 
 For a collaborative editing application, a Durable Object maintains the document state and active cursor positions. Each client's WebSocket connects to the edge, which routes document-related messages to the single Durable Object instance. The Durable Object broadcasts changes to all connected clients. While this adds latency for users distant from the Durable Object's location (up to 100-200ms for cross-continental users), it guarantees consistency that eventually-consistent approaches cannot provide.
 
@@ -467,7 +467,7 @@ Both protocols have their place:
 | Edge overhead | Lower | Higher (connection state) |
 | Long connections | Good for minutes | Better for hours |
 
-For simple streaming scenarios—AI responses, event feeds—SSE is simpler and lower overhead. For bidirectional communication or connections lasting hours, WebSockets are more robust [Source: Cloudflare, 2025].
+For simple streaming scenarios (AI responses, event feeds), SSE is simpler and lower overhead. For bidirectional communication or connections lasting hours, WebSockets are more robust [Source: Cloudflare, 2025].
 
 ![Edge Streaming Architecture](../assets/ch12-edge-streaming-architecture.html)
 
@@ -483,7 +483,7 @@ Rather than routing to the geographically nearest origin, route to the fastest o
 - Route requests to origins with lowest recent latency
 - Fall back to geographic routing when latency data is unavailable
 
-This approach is particularly valuable when geographic proximity doesn't correlate with performance—for example, when an origin in a different region has lower load or better network paths.
+This approach is particularly valuable when geographic proximity doesn't correlate with performance. For example, when an origin in a different region has lower load or better network paths.
 
 #### Canary Deployments at Edge
 
@@ -495,7 +495,7 @@ Edge workers enable fine-grained canary deployments without infrastructure chang
 4. Gradually increase canary percentage if metrics are healthy
 5. Roll back instantly by updating edge routing, no DNS propagation delay
 
-Edge canary deployment offers sub-second rollback—critical when the alternative is waiting for DNS TTLs. Compare the rollback scenarios:
+Edge canary deployment offers sub-second rollback, critical when the alternative is waiting for DNS TTLs. Compare the rollback scenarios:
 
 - **Edge-based rollback**: Configuration update propagates globally in under 1 second. Users immediately route to stable version.
 - **DNS-based rollback**: TTL propagation delay of 5 minutes (aggressive TTL) to 24 hours (conservative TTL). During propagation, users continue hitting the problematic deployment.
@@ -504,11 +504,11 @@ The October 2025 Azure Front Door outage resulted from a configuration change th
 
 Best practices for edge canary deployment (see Example 12.8):
 - Start with 1-5% of traffic
-- Use sticky sessions to ensure consistent user experience—hash the session ID rather than randomly selecting per-request, so users stay on their assigned deployment throughout a session
+- Use sticky sessions to ensure consistent user experience by hashing the session ID rather than randomly selecting per-request, so users stay on their assigned deployment throughout a session
 - Set automated rollback triggers on anomalous metrics (e.g., canary error rate exceeding 2× stable error rate)
 - Employ per-region gating before global propagation
 
-Sticky sessions are particularly important when deployments involve state assumptions. Without stickiness, a user might see the stable version's checkout flow, then the canary version's confirmation page—potentially encountering bugs when state structures differ between versions.
+Sticky sessions are particularly important when deployments involve state assumptions. Without stickiness, a user might see the stable version's checkout flow, then the canary version's confirmation page, potentially encountering bugs when state structures differ between versions.
 
 ![Smart Routing and Canary Deployment](../assets/ch12-smart-routing-canary.html)
 
@@ -549,7 +549,7 @@ Edge infrastructure can optimize protocol-level performance, taking advantage of
 
 HTTP 103 Early Hints allows the edge to send a preliminary response before the final response is ready. When a client requests a page, the edge immediately sends hints about critical resources (stylesheets, scripts) while the origin computes the full response. Browsers begin fetching these resources during the origin's "think time" [Source: Chrome, 2024].
 
-Cloudflare automatically caches and sends Early Hints based on Link headers observed in previous responses. This works without origin changes—the edge learns which resources to hint from response patterns.
+Cloudflare automatically caches and sends Early Hints based on Link headers observed in previous responses. This works without origin changes because the edge learns which resources to hint from response patterns.
 
 Performance impact varies by scenario:
 - Shopify measured improvements on desktop, particularly for 1-3 preloaded resources [Source: Shopify, 2025]
@@ -570,7 +570,7 @@ Beyond Early Hints, edge workers can inject Link headers for resource hints:
 - **prefetch**: Fetch resource for likely future navigation
 - **preconnect**: Establish connection to origin before requests
 
-Edge workers can dynamically determine appropriate hints based on request context—user behavior patterns, page type, or device capabilities—rather than static hints configured at origin.
+Edge workers can dynamically determine appropriate hints based on request context (user behavior patterns, page type, or device capabilities) rather than static hints configured at origin.
 
 #### Protocol Transformation
 
@@ -607,7 +607,7 @@ Extend distributed tracing through the edge layer:
 3. Add edge-specific spans for cache lookup, worker execution, and origin fetch
 4. Include edge metadata (cache status, worker timing, geographic context)
 
-The edge span provides visibility into time spent before requests reach origin—critical for understanding total latency.
+The edge span provides visibility into time spent before requests reach origin, which is critical for understanding total latency.
 
 #### Cost Monitoring
 
@@ -643,7 +643,7 @@ Edge ML works best for lightweight models that execute within CPU and memory con
 - **Content moderation**: Flag potentially harmful content before origin processing
 - **Bot detection**: Classify requests as human or automated based on request patterns
 
-Cloudflare Workers AI provides access to embedding models (BGE series with 2x improved inference times in 2025), classification models (Llama Guard for content safety), and small language models—all running on edge infrastructure [Source: Cloudflare, 2025].
+Cloudflare Workers AI provides access to embedding models (BGE series with 2x improved inference times in 2025), classification models (Llama Guard for content safety), and small language models, all running on edge infrastructure [Source: Cloudflare, 2025].
 
 #### Edge ML Use Cases
 
@@ -720,7 +720,7 @@ For implementation examples related to these concepts, see the [Appendix: Code E
 
 - CDN caching for APIs requires intentional header configuration. Use `s-maxage` for CDN-specific TTLs, `stale-while-revalidate` for latency elimination, and surrogate keys for targeted invalidation.
 
-- Cache stampede prevention mechanisms—request coalescing, stale-while-revalidate, probabilistic early expiration, and lock-based refresh—prevent origin overload during cache expiration and traffic spikes. Without these protections, a single cache expiration can trigger 50,000 simultaneous origin requests; with request coalescing, the same event triggers exactly one.
+- Cache stampede prevention mechanisms (request coalescing, stale-while-revalidate, probabilistic early expiration, and lock-based refresh) prevent origin overload during cache expiration and traffic spikes. Without these protections, a single cache expiration can trigger 50,000 simultaneous origin requests; with request coalescing, the same event triggers exactly one.
 
 - Edge workers execute lightweight logic globally with sub-millisecond cold starts. Use for routing, authentication validation, and response transformation. Keep complex logic at origin.
 
@@ -728,7 +728,7 @@ For implementation examples related to these concepts, see the [Appendix: Code E
 
 - Streaming at edge enables memory-efficient handling of large payloads and real-time data. SSE works well for AI response streaming and event feeds; WebSockets are better for bidirectional communication and long-lived connections.
 
-- Smart routing at edge enables canary deployments with sub-second rollback, performance-based origin selection, and circuit breaking—all without DNS propagation delays. Edge configuration updates propagate globally in under 1 second; DNS-based rollback requires 5 minutes to 24 hours of TTL propagation during which users continue hitting problematic deployments.
+- Smart routing at edge enables canary deployments with sub-second rollback, performance-based origin selection, and circuit breaking, all without DNS propagation delays. Edge configuration updates propagate globally in under 1 second; DNS-based rollback requires 5 minutes to 24 hours of TTL propagation during which users continue hitting problematic deployments.
 
 - Protocol optimizations include HTTP Early Hints for preloading critical resources, Link header prefetching, and gRPC-to-REST transformation. Early Hints show best results with 1-3 preloaded resources on desktop.
 

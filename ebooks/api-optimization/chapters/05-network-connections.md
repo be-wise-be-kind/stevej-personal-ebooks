@@ -62,7 +62,7 @@ Different protocols excel at different communication patterns:
 
 **Request-Response** (HTTP/REST, gRPC unary): Client sends a request, server sends a response. This covers most API interactions: fetching data, submitting forms, CRUD operations. HTTP and gRPC both handle this well, with gRPC offering efficiency gains for high-throughput service-to-service communication.
 
-**Server Push** (SSE, gRPC server streaming): Server sends data to the client without explicit requests. Stock tickers, live scores, notification feeds—anywhere the server knows when data changes and clients need updates. SSE provides a simple HTTP-based solution; gRPC server streaming offers more structure for service-to-service use cases.
+**Server Push** (SSE, gRPC server streaming): Server sends data to the client without explicit requests. Stock tickers, live scores, and notification feeds all benefit from this pattern: anywhere the server knows when data changes and clients need updates. SSE provides a simple HTTP-based solution; gRPC server streaming offers more structure for service-to-service use cases.
 
 **Bidirectional** (WebSocket, gRPC bidirectional streaming): Both client and server send messages independently. Chat applications, collaborative editing, multiplayer games, and real-time dashboards with user interactions all benefit from true bidirectional communication.
 
@@ -95,7 +95,7 @@ A WebSocket connection begins with an HTTP upgrade handshake. The client sends a
 
 ![WebSocket Upgrade Handshake](../assets/ch05-websocket-upgrade.html)
 
-This upgrade handshake adds one round trip compared to a plain HTTP request, but subsequent messages have minimal overhead—just 2-14 bytes of framing per message compared to HTTP's headers on every request. For applications exchanging many small messages, this overhead reduction is substantial.
+This upgrade handshake adds one round trip compared to a plain HTTP request, but subsequent messages have minimal overhead (just 2-14 bytes of framing per message) compared to HTTP's headers on every request. For applications exchanging many small messages, this overhead reduction is substantial.
 
 After the handshake, the connection remains open indefinitely. Messages flow as WebSocket frames, which can carry text (UTF-8) or binary data. The protocol includes built-in ping/pong frames for connection health checking.
 
@@ -121,7 +121,7 @@ WebSocket servers must manage potentially thousands of concurrent connections, e
 
 **Graceful shutdown**: When restarting servers, notify clients before closing connections. Clients should implement reconnection with exponential backoff to avoid thundering herd problems when a server restarts.
 
-**State management**: WebSocket connections are stateful—clients connect to specific server instances. This complicates horizontal scaling since you cannot simply round-robin requests. Solutions include sticky sessions (routing reconnections to the same server), external state stores (Redis for subscription state), or pub/sub systems for broadcasting across server instances.
+**State management**: WebSocket connections are stateful, meaning clients connect to specific server instances. This complicates horizontal scaling since you cannot simply round-robin requests. Solutions include sticky sessions (routing reconnections to the same server), external state stores (Redis for subscription state), or pub/sub systems for broadcasting across server instances.
 
 <!-- DIAGRAM: WebSocket server architecture showing: Load balancer with sticky sessions -> Multiple WebSocket server instances -> Redis pub/sub for cross-instance messaging -> Application logic. Show client connections distributed across instances. -->
 
@@ -249,7 +249,7 @@ Streaming RPCs are particularly valuable when alternative implementations would 
 
 #### gRPC Connection Management
 
-gRPC clients maintain channels—logical connections to a service that may multiplex over one or more TCP connections. Proper channel management is essential for performance:
+gRPC clients maintain channels, which are logical connections to a service that may multiplex over one or more TCP connections. Proper channel management is essential for performance:
 
 **Reuse channels**: Create channels at application startup and reuse them across calls. Each channel maintains connection state, health checking, and load balancing. Creating a new channel per request wastes these resources.
 

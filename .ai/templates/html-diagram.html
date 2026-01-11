@@ -38,6 +38,13 @@
         4. Use inline styles only (no class= on SVG child elements)
         5. Minimum font sizes: 10px for labels, 14px+ for titles
         6. Run: just lint html <bookname> to verify compliance
+
+        CRITICAL - TITLE SPACING:
+        - Title at y=35 (standard position)
+        - Subtitle at y=55 (if used)
+        - Main content starts at y=80 (via translate or direct positioning)
+        - This ensures 25-30px gap between title and content
+        - NEVER place content closer than y=80 to avoid title overlap
         -->
         <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
             <defs>

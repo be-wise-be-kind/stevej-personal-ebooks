@@ -30,9 +30,9 @@
 </head>
 <body>
     <div class="diagram-container">
-        <svg viewBox="0 0 700 450" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg">
             <!-- Background -->
-            <rect width="700" height="450" fill="white"/>
+            <rect width="700" height="500" fill="white"/>
 
             <!-- Title -->
             <text x="350" y="30" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">WebSocket Upgrade Handshake</text>
@@ -104,10 +104,13 @@
                 <text x="350" y="108" text-anchor="middle" style="font-size: 10px; fill: #7c3aed;" font-family="Liberation Sans, Arial, sans-serif">Frame: pong</text>
             </g>
 
+            <!-- Invisible spacer to ensure gap before annotation -->
+            <rect x="0" y="400" width="1" height="50" fill="none"/>
+
             <!-- Overhead annotation -->
-            <rect x="80" y="395" width="250" height="35" fill="#fef3c7" rx="4"/>
-            <text x="205" y="410" text-anchor="middle" style="font-size: 10px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">After handshake: 2-14 bytes per frame</text>
-            <text x="205" y="422" text-anchor="middle" style="font-size: 10px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">vs HTTP headers on every request</text>
+            <rect x="80" y="450" width="250" height="35" fill="#fef3c7" rx="4"/>
+            <text x="205" y="465" text-anchor="middle" style="font-size: 10px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">After handshake: 2-14 bytes per frame</text>
+            <text x="205" y="477" text-anchor="middle" style="font-size: 10px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">vs HTTP headers on every request</text>
 
             <!-- Arrow markers -->
             <defs>

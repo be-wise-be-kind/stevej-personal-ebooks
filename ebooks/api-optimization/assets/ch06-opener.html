@@ -30,7 +30,7 @@
 </head>
 <body>
     <div class="diagram-container">
-        <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <!-- Green gradient for hot path (cache hit) -->
                 <linearGradient id="hotPathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -81,7 +81,7 @@
             </defs>
 
             <!-- Background -->
-            <rect width="800" height="400" fill="#ffffff" rx="8"/>
+            <rect width="800" height="450" fill="#ffffff" rx="8"/>
 
             <!-- Title -->
             <text x="400" y="35" text-anchor="middle" fill="#1e293b" font-size="20" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
@@ -102,13 +102,16 @@
                     </text>
                 </g>
 
+                <!-- Input line from Request to fork point -->
+                <line x1="90" y1="145" x2="122" y2="145" stroke="#64748b" stroke-width="3"/>
+
                 <!-- Fork point -->
                 <circle cx="130" cy="145" r="8" fill="#64748b"/>
 
                 <!-- === HOT PATH (TOP) === -->
 
-                <!-- Hot path line - short and direct -->
-                <path d="M 138 145 L 180 145 Q 200 145 200 115 L 200 95 Q 200 75 220 75 L 480 75"
+                <!-- Hot path line - branches up from fork point -->
+                <path d="M 138 145 Q 160 145 160 115 L 160 95 Q 160 75 180 75 L 480 75"
                       stroke="url(#hotPathGradient)" stroke-width="4" fill="none" filter="url(#glow)"/>
 
                 <!-- Cache Hit badge -->
@@ -140,8 +143,8 @@
 
                 <!-- === COLD PATH (BOTTOM) === -->
 
-                <!-- Cold path line - long and winding -->
-                <path d="M 138 145 L 180 145 Q 200 145 200 175 L 200 210 Q 200 230 220 230 L 280 230"
+                <!-- Cold path line - branches down from fork point -->
+                <path d="M 138 145 Q 160 145 160 175 L 160 210 Q 160 230 180 230 L 280 230"
                       stroke="url(#coldPathGradient)" stroke-width="3" fill="none" stroke-dasharray="8,4"/>
 
                 <!-- Cache Miss badge -->
@@ -173,7 +176,7 @@
                 </g>
 
                 <!-- Line from API to processing -->
-                <path d="M 520 260 L 560 260 Q 580 260 580 240 L 580 220 Q 580 210 600 210 L 620 210"
+                <path d="M 520 260 L 560 260 Q 580 260 580 240 L 580 210 L 620 210"
                       stroke="#dc2626" stroke-width="3" fill="none" stroke-dasharray="8,4" marker-end="url(#arrowOrange)"/>
 
                 <!-- 200ms timing badge -->
@@ -201,8 +204,11 @@
 
             </g>
 
+            <!-- Invisible spacer to ensure gap before legend -->
+            <rect x="0" y="360" width="1" height="50" fill="none"/>
+
             <!-- Legend -->
-            <g transform="translate(40, 360)">
+            <g transform="translate(40, 410)">
                 <rect x="0" y="0" width="720" height="30" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
                 <line x1="20" y1="15" x2="50" y2="15" stroke="#22c55e" stroke-width="3"/>
                 <text x="60" y="19" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Hot Path (cached)</text>

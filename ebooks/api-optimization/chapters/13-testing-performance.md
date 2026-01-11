@@ -10,7 +10,7 @@ Every optimization we have discussed in this book requires validation. We can im
 
 Performance testing serves two purposes: validation and prevention. Validation confirms that our optimizations actually improve the metrics we care about. Prevention catches regressions before they reach production, ensuring that new features or refactoring do not degrade the performance we have worked to achieve. The observability infrastructure we built in Chapters 3 and 4 gives us the ability to measure; performance testing gives us controlled conditions under which to measure.
 
-This chapter covers the full spectrum of performance testing: the types of tests we run, the tools available, the methodology for designing realistic tests, and the integration of testing into CI/CD pipelines. We also address the limitations of synthetic testing honestly. No test environment perfectly replicates production, and understanding these limitations helps us interpret results appropriately. The goal is not perfection but confidence—enough data to make informed decisions about production readiness.
+This chapter covers the full spectrum of performance testing: the types of tests we run, the tools available, the methodology for designing realistic tests, and the integration of testing into CI/CD pipelines. We also address the limitations of synthetic testing honestly. No test environment perfectly replicates production, and understanding these limitations helps us interpret results appropriately. The goal is not perfection but confidence: enough data to make informed decisions about production readiness.
 
 ## Key Concepts
 
@@ -48,7 +48,7 @@ The primary metrics to observe during load testing:
 | CPU utilization | Compute headroom | Sustained above 70% |
 | Memory utilization | Memory pressure | Continuous growth |
 
-A successful load test shows stable metrics throughout the steady-state phase. If p95 latency drifts upward during steady state, something is degrading—perhaps a memory leak, connection pool exhaustion, or garbage collection pressure.
+A successful load test shows stable metrics throughout the steady-state phase. If p95 latency drifts upward during steady state, something is degrading, perhaps a memory leak, connection pool exhaustion, or garbage collection pressure.
 
 **Example Load Test Scenario**
 
@@ -65,7 +65,7 @@ During the test, we verify that p95 latency stays under 200ms (our SLO), error r
 
 Stress testing pushes the system beyond expected limits to find breaking points. The question it answers is: "At what load does the system degrade unacceptably, and how does it fail?" Understanding failure modes is critical for capacity planning and resilience engineering [Source: Abstracta, 2025].
 
-Unlike load testing, stress testing deliberately exceeds normal capacity. We increase load continuously until response times become unacceptable, error rates spike, or the system becomes unresponsive. The value is not in proving the system fails—all systems fail eventually—but in understanding how it fails and at what threshold.
+Unlike load testing, stress testing deliberately exceeds normal capacity. We increase load continuously until response times become unacceptable, error rates spike, or the system becomes unresponsive. The value is not in proving the system fails (all systems fail eventually) but in understanding how it fails and at what threshold.
 
 **Failure Mode Categories**
 
@@ -78,7 +78,7 @@ Systems fail in different ways under stress, and the failure mode reveals archit
 | Complete collapse | System becomes unresponsive | Thread exhaustion, deadlock, OOM |
 | Partial failure | Some endpoints fail, others work | Bulkhead isolation working (or failing) |
 
-A system that degrades gracefully under stress—serving slower responses rather than crashing—is more resilient than one that collapses suddenly. Stress testing reveals whether our circuit breakers, rate limiters, and bulkheads from Chapter 10 actually protect the system under duress.
+A system that degrades gracefully under stress (serving slower responses rather than crashing) is more resilient than one that collapses suddenly. Stress testing reveals whether our circuit breakers, rate limiters, and bulkheads from Chapter 10 actually protect the system under duress.
 
 **Finding the Breaking Point**
 
@@ -148,7 +148,7 @@ Soak testing maintains moderate load over extended periods, typically 8-24 hours
 | Thread leaks | Thread count grows continuously | Threads not terminated properly |
 | Cache fragmentation | Gradual latency increase | Inefficient cache eviction |
 
-Memory leaks are the classic soak test discovery. A small leak might not matter during a 10-minute test but becomes critical after 8 hours of production traffic. If your service leaks 1MB per hour, that is 24MB per day—invisible in short tests but eventually fatal.
+Memory leaks are the classic soak test discovery. A small leak might not matter during a 10-minute test but becomes critical after 8 hours of production traffic. If your service leaks 1MB per hour, that is 24MB per day, invisible in short tests but eventually fatal.
 
 **Soak Test Configuration**
 
@@ -217,11 +217,11 @@ The architecture of a load testing tool determines how efficiently it generates 
 
 **Thread-per-user model (JMeter, older tools)**
 
-Each virtual user runs in a dedicated thread. This model is intuitive—the thread represents the user—but resource-intensive. Simulating 10,000 concurrent users requires 10,000 threads, each consuming memory for its stack (typically 512KB-1MB per thread). A machine with 8GB of RAM might only support 4,000-8,000 virtual users before exhausting memory.
+Each virtual user runs in a dedicated thread. This model is intuitive (the thread represents the user) but resource-intensive. Simulating 10,000 concurrent users requires 10,000 threads, each consuming memory for its stack (typically 512KB-1MB per thread). A machine with 8GB of RAM might only support 4,000-8,000 virtual users before exhausting memory.
 
 **Event-driven model (Locust, k6, Gatling)**
 
-A small number of threads (often matching CPU cores) handle many concurrent connections using asynchronous I/O. This is far more efficient—a single machine can simulate tens of thousands of virtual users. k6 written in Go and Gatling using Scala's async capabilities can generate 50,000+ RPS from a modest machine.
+A small number of threads (often matching CPU cores) handle many concurrent connections using asynchronous I/O. This is far more efficient, as a single machine can simulate tens of thousands of virtual users. k6 written in Go and Gatling using Scala's async capabilities can generate 50,000+ RPS from a modest machine.
 
 **Constant-throughput model (wrk2)**
 
@@ -546,9 +546,9 @@ Coordinated omission is a measurement artifact that causes most benchmarking too
 
 **The Problem**
 
-Consider a benchmarking tool that sends requests and waits for responses before sending the next request. When the server responds quickly (10ms), requests flow rapidly—100 requests per second. When the server slows down (1000ms), the tool sends fewer requests during that period—only 1 request per second.
+Consider a benchmarking tool that sends requests and waits for responses before sending the next request. When the server responds quickly (10ms), requests flow rapidly at 100 requests per second. When the server slows down (1000ms), the tool sends fewer requests during that period, only 1 request per second.
 
-The tool's measurement of "average response time" over-represents the fast periods (when more requests completed) and under-represents the slow periods (when fewer requests completed). It is as if the tool coordinates with the server to avoid measuring during slow periods—hence "coordinated omission."
+The tool's measurement of "average response time" over-represents the fast periods (when more requests completed) and under-represents the slow periods (when fewer requests completed). It is as if the tool coordinates with the server to avoid measuring during slow periods, hence "coordinated omission."
 
 **The Impact**
 
@@ -957,7 +957,7 @@ Shadow testing validates behavior under real traffic patterns without user impac
 
 - Performance testing validates optimization work and prevents regressions. Without testing, we are guessing at production behavior.
 
-- **Load testing** validates performance at expected traffic levels. **Stress testing** finds breaking points and failure modes. **Spike testing** evaluates sudden traffic bursts and recovery. **Soak testing** catches issues that emerge over extended operation—memory leaks, connection exhaustion, resource degradation.
+- **Load testing** validates performance at expected traffic levels. **Stress testing** finds breaking points and failure modes. **Spike testing** evaluates sudden traffic bursts and recovery. **Soak testing** catches issues that emerge over extended operation: memory leaks, connection exhaustion, resource degradation.
 
 - **Tool architecture matters**: Thread-per-user (JMeter) is resource-intensive; event-driven (k6, Locust, Gatling) is efficient; constant-throughput (wrk2) avoids coordinated omission.
 

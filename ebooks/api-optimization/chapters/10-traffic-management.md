@@ -50,13 +50,13 @@ Sliding window requires tracking requests across two windows, which increases me
 
 ![Rate Limiting Comparison](../assets/ch09-rate-limiting-comparison.html)
 
-For rate limiting at the CDN edge—including distributed state challenges and edge-specific configuration patterns—see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md).
+For rate limiting at the CDN edge, including distributed state challenges and edge-specific configuration patterns, see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md).
 
 ### Adaptive Concurrency Limits
 
-Static concurrency limits---hard-coded maximum connections or request rates---are educated guesses that rarely match actual system capacity. When traffic patterns change, deployments occur, or dependencies slow down, these fixed limits either reject valid requests unnecessarily or allow overload. Netflix pioneered an alternative: adaptive concurrency limits that automatically discover and adjust to the system's true capacity [Source: Netflix Tech Blog, 2018].
+Static concurrency limits (hard-coded maximum connections or request rates) are educated guesses that rarely match actual system capacity. When traffic patterns change, deployments occur, or dependencies slow down, these fixed limits either reject valid requests unnecessarily or allow overload. Netflix pioneered an alternative: adaptive concurrency limits that automatically discover and adjust to the system's true capacity [Source: Netflix Tech Blog, 2018].
 
-The foundation is Little's Law from queuing theory: at steady state, the number of requests in a system (L) equals the arrival rate (lambda) multiplied by the average time spent in the system (W). Rearranging: concurrency = arrival rate × latency. Any requests exceeding this concurrency cannot be immediately serviced---they must queue or be rejected. Without limits on this queue, systems accumulate requests until they exhaust memory or timeout, cascading into complete failure.
+The foundation is Little's Law from queuing theory: at steady state, the number of requests in a system (L) equals the arrival rate (lambda) multiplied by the average time spent in the system (W). Rearranging: concurrency = arrival rate × latency. Any requests exceeding this concurrency cannot be immediately serviced. They must queue or be rejected. Without limits on this queue, systems accumulate requests until they exhaust memory or timeout, cascading into complete failure.
 
 <!-- DIAGRAM: Adaptive concurrency feedback loop showing: Request arrives -> Check against current limit -> If under limit, process and measure latency -> Calculate new limit based on gradient algorithm (comparing sampleRTT to minRTT) -> Loop continues. Show reject path when over limit (HTTP 503) -->
 
@@ -127,7 +127,7 @@ Effective circuit breaker configuration requires understanding your service's fa
 
 ### Deadline Propagation
 
-Deadline propagation ensures that latency budgets flow through a distributed system. When a user-facing service has a 500ms SLO, downstream services need to know how much time remains—not just their individual timeout, but the overall deadline for the entire request chain.
+Deadline propagation ensures that latency budgets flow through a distributed system. When a user-facing service has a 500ms SLO, downstream services need to know how much time remains, not just their individual timeout, but the overall deadline for the entire request chain.
 
 #### The Problem with Independent Timeouts
 
@@ -410,7 +410,7 @@ LitmusChaos and Chaos Mesh both use Kubernetes Custom Resource Definitions (CRDs
 
 **Blast Radius Management**
 
-Chaos experiments must be controlled. The blast radius---the scope of potential impact---should start small and expand as confidence grows:
+Chaos experiments must be controlled. The blast radius (the scope of potential impact) should start small and expand as confidence grows:
 
 1. **Development environments**: Inject any fault, no blast radius limits
 2. **Staging with synthetic traffic**: Realistic faults, production-like conditions
@@ -476,7 +476,7 @@ Start simple: kill a non-critical pod and verify traffic shifts to remaining ins
 
 - **Service mesh without understanding overhead**: Service meshes add latency (typically 1-2ms per hop) and operational complexity. For simple topologies or extreme latency requirements, application-level resilience patterns may be more appropriate.
 
-- **No graceful degradation planning**: Systems that go from full functionality to complete failure provide poor user experience. Design degradation paths in advance---identify which features can be disabled and what fallbacks to use---so degradation is graceful rather than catastrophic.
+- **No graceful degradation planning**: Systems that go from full functionality to complete failure provide poor user experience. Design degradation paths in advance, identifying which features can be disabled and what fallbacks to use, so degradation is graceful rather than catastrophic.
 
 - **Chaos engineering without observability**: Injecting failures without the ability to observe their impact teaches nothing. Ensure monitoring, logging, and alerting are in place before running chaos experiments, or you will not detect whether hypotheses hold.
 
@@ -486,7 +486,7 @@ Start simple: kill a non-critical pod and verify traffic shifts to remaining ins
 
 - **Rate limiting algorithms** offer different trade-offs: token bucket allows bursts while enforcing average rates, leaky bucket smooths output at the cost of latency, and sliding window provides accurate limits without boundary issues.
 
-- **Adaptive concurrency limits** automatically discover system capacity by measuring actual latency. Unlike static limits, they adjust to changing conditions---deployments, traffic patterns, dependency performance---without manual tuning.
+- **Adaptive concurrency limits** automatically discover system capacity by measuring actual latency. Unlike static limits, they adjust to changing conditions (deployments, traffic patterns, dependency performance) without manual tuning.
 
 - **Circuit breakers** protect against cascading failures by failing fast when dependencies are unhealthy. The three states (closed, open, half-open) enable automatic recovery testing without overwhelming recovering services.
 

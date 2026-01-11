@@ -6,13 +6,13 @@
 
 ## Overview
 
-When an API performs poorly, developers often reach for database optimization techniques: adding indexes, tuning queries, adjusting connection pools. These techniques matter, but they assume we have already chosen the right database. The more fundamental question—one that shapes the entire system architecture—is whether we are using the appropriate type of data store for our access patterns in the first place.
+When an API performs poorly, developers often reach for database optimization techniques: adding indexes, tuning queries, adjusting connection pools. These techniques matter, but they assume we have already chosen the right database. The more fundamental question, one that shapes the entire system architecture, is whether we are using the appropriate type of data store for our access patterns in the first place.
 
 **A note on scope:** Database optimization is a deep discipline with excellent specialized resources. *High Performance MySQL*, *PostgreSQL 14 Internals*, and *MongoDB: The Definitive Guide* dedicate hundreds of pages to tuning specific database engines. This chapter takes a different approach: we focus on the strategic question of *which* database type fits *which* API interaction pattern. Optimizing your chosen database is important work, but it belongs to those specialized resources, not this book.
 
 The modern data landscape offers remarkable variety: relational databases for transactional integrity, document stores for flexible schemas, key-value stores for sub-millisecond lookups, wide-column databases for massive write throughput, vector databases for semantic similarity, and search engines for full-text queries. Each excels at specific access patterns and struggles with others. The API developer's job is to match the right tool to the right problem.
 
-This chapter provides a decision framework for storage selection. We will examine each major database category, understand where it shines, recognize its trade-offs, and learn when to combine multiple stores in a polyglot architecture. The goal is not to make you an expert in every database—that would require several books—but to help you ask the right questions and make informed architectural decisions.
+This chapter provides a decision framework for storage selection. We will examine each major database category, understand where it shines, recognize its trade-offs, and learn when to combine multiple stores in a polyglot architecture. The goal is not to make you an expert in every database (that would require several books) but to help you ask the right questions and make informed architectural decisions.
 
 ![Database Selection Decision Tree](../assets/ch07-access-pattern-decision-tree.html)
 
@@ -43,7 +43,7 @@ Relational databases remain the default choice for most applications, and for go
 
 - **ACID transactions are required.** Financial operations, inventory management, and order processing typically need guarantees that a transfer either fully completes or fully fails. No partial states.
 
-- **Data relationships are complex.** When entities relate to each other in multiple ways—users have orders, orders contain products, products belong to categories, categories form hierarchies—relational databases model these connections naturally with foreign keys and JOINs.
+- **Data relationships are complex.** When entities relate to each other in multiple ways (users have orders, orders contain products, products belong to categories, categories form hierarchies), relational databases model these connections naturally with foreign keys and JOINs.
 
 - **Query patterns are varied or unknown.** If you need ad-hoc reporting, complex aggregations, or the flexibility to query data in ways not anticipated at design time, SQL's expressive power helps.
 
@@ -59,7 +59,7 @@ For simple key-based lookups, relational databases add overhead. If every access
 
 ### Document Databases
 
-Document databases store data as self-contained documents—typically JSON or BSON—rather than rows in tables. Each document can have a different structure, and nested data lives naturally within the document rather than requiring JOIN operations.
+Document databases store data as self-contained documents (typically JSON or BSON) rather than rows in tables. Each document can have a different structure, and nested data lives naturally within the document rather than requiring JOIN operations.
 
 **When to choose document databases:**
 
@@ -73,7 +73,7 @@ Document databases store data as self-contained documents—typically JSON or BS
 
 **Trade-offs to consider:**
 
-Document databases sacrifice JOIN capabilities. When you need to combine data from multiple document types—"show me all orders for users in California"—you either denormalize (embed user state in each order), perform multiple queries and combine in application code, or use limited aggregation pipelines. None of these are as clean as a SQL JOIN.
+Document databases sacrifice JOIN capabilities. When you need to combine data from multiple document types ("show me all orders for users in California"), you either denormalize (embed user state in each order), perform multiple queries and combine in application code, or use limited aggregation pipelines. None of these are as clean as a SQL JOIN.
 
 Transaction support varies. MongoDB added multi-document transactions in version 4.0, but they carry performance overhead [Source: MongoDB Documentation, "Transactions"]. CouchDB provides document-level atomicity only. Design around the database's native capabilities rather than fighting them.
 
@@ -81,7 +81,7 @@ Consistency guarantees differ by product. Some document databases default to eve
 
 ### Key-Value Stores
 
-Key-value stores are the simplest database model: given a key, return the value. This simplicity enables remarkable performance—sub-millisecond reads are routine—and straightforward horizontal scaling. Every key hashes to a specific partition; no cross-partition coordination is needed.
+Key-value stores are the simplest database model: given a key, return the value. This simplicity enables remarkable performance (sub-millisecond reads are routine) and straightforward horizontal scaling. Every key hashes to a specific partition; no cross-partition coordination is needed.
 
 **When to choose key-value stores:**
 
@@ -103,13 +103,13 @@ Consistency models vary. Redis clustering provides eventual consistency for read
 
 ### Wide-Column Databases
 
-Wide-column databases—Cassandra, ScyllaDB, HBase—optimize for a specific access pattern: massive write throughput across many nodes, with reads by known partition keys. They organize data by row key and column family, allowing different rows to have different columns without schema changes.
+Wide-column databases (Cassandra, ScyllaDB, HBase) optimize for a specific access pattern: massive write throughput across many nodes, with reads by known partition keys. They organize data by row key and column family, allowing different rows to have different columns without schema changes.
 
 **When to choose wide-column databases:**
 
 - **Write throughput is extreme.** IoT sensor data arriving at millions of events per second, activity streams from social platforms, application logs at scale. Wide-column databases handle write-heavy workloads that would overwhelm relational databases.
 
-- **Data is time-series or append-mostly.** Events, metrics, logs—data that arrives chronologically and rarely updates. The append-optimized storage engine handles this pattern efficiently.
+- **Data is time-series or append-mostly.** Events, metrics, logs, and other data that arrives chronologically and rarely updates. The append-optimized storage engine handles this pattern efficiently.
 
 - **Horizontal scale is essential.** Wide-column databases scale linearly by adding nodes. Cassandra clusters routinely span hundreds of nodes and petabytes of data [Source: DataStax, "Cassandra Case Studies"].
 
@@ -135,7 +135,7 @@ For read-heavy workloads, we reduce database load by caching (covered in Chapter
 
 A database router directs write operations to the primary and distributes reads across available replicas. The router can use random selection or round-robin to balance load, falling back to primary if no replicas are available (see Example 7.7).
 
-Replication introduces eventual consistency. After a write to the primary, there is a delay before the data appears on replicas—typically milliseconds, but potentially seconds under heavy load [Source: PostgreSQL Documentation, "Streaming Replication"]. For read-after-write consistency (a user creating a post and immediately viewing it), either route that specific read to the primary, or track recent writes per session and route accordingly.
+Replication introduces eventual consistency. After a write to the primary, there is a delay before the data appears on replicas (typically milliseconds, but potentially seconds under heavy load) [Source: PostgreSQL Documentation, "Streaming Replication"]. For read-after-write consistency (a user creating a post and immediately viewing it), either route that specific read to the primary, or track recent writes per session and route accordingly.
 
 **Write-heavy optimization: Partitioning and batching**
 
@@ -145,7 +145,7 @@ Batching writes improves throughput by amortizing network and transaction overhe
 
 **Connection pooling fundamentals**
 
-Regardless of read/write ratio, connection pooling matters for any database. Opening a connection involves TCP handshake, authentication, TLS negotiation, and session setup—overhead that adds tens of milliseconds per request if done repeatedly. Connection pools maintain a cache of open connections for reuse.
+Regardless of read/write ratio, connection pooling matters for any database. Opening a connection involves TCP handshake, authentication, TLS negotiation, and session setup, overhead that adds tens of milliseconds per request if done repeatedly. Connection pools maintain a cache of open connections for reuse.
 
 The HikariCP documentation provides a useful formula for OLTP workloads: pool size equals core count times two, plus effective spindle count [Source: HikariCP Wiki, "About Pool Sizing"]. For modern SSDs, treat spindle count as 1. A 4-core server might use a pool of 9-10 connections. However, optimal sizing depends on query patterns and should be determined through measurement.
 
@@ -205,7 +205,7 @@ Queries over large WORM datasets can be expensive. Consider materialized views, 
 
 ### Vector Databases
 
-The rise of machine learning, particularly large language models, has driven adoption of vector databases. These stores optimize for similarity search over high-dimensional vectors—the numerical representations (embeddings) that ML models produce.
+The rise of machine learning, particularly large language models, has driven adoption of vector databases. These stores optimize for similarity search over high-dimensional vectors, the numerical representations (embeddings) that ML models produce.
 
 ![Vector Similarity Search](../assets/ch07-vector-similarity.html)
 
@@ -217,7 +217,7 @@ The rise of machine learning, particularly large language models, has driven ado
 
 - **RAG (Retrieval Augmented Generation) architectures.** Modern LLM applications often retrieve relevant context from a knowledge base before generating responses. Vector databases provide the retrieval layer [Source: Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"].
 
-- **Image, audio, or video similarity.** Content-based retrieval—finding similar images, songs, or video clips—uses embeddings and vector similarity.
+- **Image, audio, or video similarity.** Content-based retrieval (finding similar images, songs, or video clips) uses embeddings and vector similarity.
 
 **Product landscape:**
 
@@ -235,7 +235,7 @@ Vector similarity is one piece of retrieval. Hybrid approaches that combine vect
 
 ### Search Databases
 
-Search databases—Elasticsearch, OpenSearch, Typesense, Meilisearch—are optimized for full-text search, faceted navigation, and log analysis. They invert the traditional database model: rather than storing rows and querying by column, they build inverted indexes that map terms to documents containing those terms.
+Search databases (Elasticsearch, OpenSearch, Typesense, Meilisearch) are optimized for full-text search, faceted navigation, and log analysis. They invert the traditional database model: rather than storing rows and querying by column, they build inverted indexes that map terms to documents containing those terms.
 
 **When to choose search databases:**
 
@@ -277,7 +277,7 @@ Real-world systems often use multiple database types together. An e-commerce API
 
 **Source of truth:** Designate one database as authoritative for each piece of data. Other databases hold derived views. When data diverges (and it will), the source of truth wins.
 
-**Synchronization patterns:** Data flows from the source of truth to secondary databases. This can be synchronous (within the same transaction—adds latency and coupling), asynchronous via change data capture (CDC) or event streams (adds eventual consistency), or periodic batch jobs (adds latency, simpler implementation). See Example 7.10 for a coordination pattern.
+**Synchronization patterns:** Data flows from the source of truth to secondary databases. This can be synchronous (within the same transaction, which adds latency and coupling), asynchronous via change data capture (CDC) or event streams (adds eventual consistency), or periodic batch jobs (adds latency, simpler implementation). See Example 7.10 for a coordination pattern.
 
 **Failure handling:** When a secondary database is unavailable, should writes fail, succeed with degraded functionality, or queue for retry? Design explicit failure modes rather than discovering them in production.
 
@@ -313,7 +313,7 @@ For implementation examples related to these concepts, see the [Appendix: Code E
 
 - **Relational databases remain the default for good reason.** ACID transactions, flexible queries, and decades of reliability. Start here unless specific requirements point elsewhere.
 
-- **Key-value stores excel at simple lookups with aggressive latency requirements.** Sessions, caching, feature flags—when access is by known key and latency matters, key-value stores deliver sub-millisecond performance.
+- **Key-value stores excel at simple lookups with aggressive latency requirements.** Sessions, caching, feature flags: when access is by known key and latency matters, key-value stores deliver sub-millisecond performance.
 
 - **Write-heavy workloads need specialized solutions.** Wide-column databases (Cassandra, ScyllaDB) and time-series databases handle write volumes that would overwhelm traditional databases.
 

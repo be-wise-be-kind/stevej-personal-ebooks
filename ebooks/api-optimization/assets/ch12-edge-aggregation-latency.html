@@ -170,19 +170,18 @@
             <path d="M 575 115 L 595 115" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
             <text x="585" y="108" text-anchor="middle" fill="#10b981" font-size="9" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
 
-            <!-- Edge to Origins arrows (parallel) -->
-            <path d="M 705 110 L 745 110" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
-            <path d="M 705 120 L 745 165" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
-            <path d="M 705 130 L 745 220" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+            <!-- Edge to Origins arrows (parallel) - forward requests -->
+            <path d="M 705 105 L 745 105" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+            <path d="M 705 115 L 745 160" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+            <path d="M 705 125 L 745 215" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
 
-            <!-- Parallel indicator bracket -->
-            <path d="M 720 100 L 720 235" stroke="#3b82f6" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
-            <text x="725" y="180" fill="#3b82f6" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif" transform="rotate(90, 725, 180)">parallel: 80ms</text>
+            <!-- Response arrows back - separate from forward arrows -->
+            <path d="M 745 125 L 710 140" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+            <path d="M 745 180 L 710 150" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+            <path d="M 745 235 L 710 160" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
 
-            <!-- Response arrows back -->
-            <path d="M 745 118 L 710 125" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
-            <path d="M 745 175 L 710 135" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
-            <path d="M 745 230 L 710 145" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+            <!-- Parallel indicator bracket and label -->
+            <text x="728" y="265" fill="#3b82f6" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">parallel: 80ms</text>
 
             <!-- Edge assembly indicator -->
             <rect x="625" y="170" width="70" height="30" rx="4" fill="#fef3c7" stroke="#f59e0b"/>

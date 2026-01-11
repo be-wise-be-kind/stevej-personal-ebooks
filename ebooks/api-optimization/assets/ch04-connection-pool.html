@@ -30,9 +30,9 @@
 </head>
 <body>
     <div class="diagram-container">
-        <svg viewBox="0 0 850 620" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 850 660" xmlns="http://www.w3.org/2000/svg">
             <!-- Background -->
-            <rect width="850" height="620" fill="white"/>
+            <rect width="850" height="660" fill="white"/>
 
             <!-- Title -->
             <text x="425" y="35" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Connection Pool Architecture</text>
@@ -175,8 +175,11 @@
             <!-- Return arrow (release) -->
             <path d="M 695 310 Q 660 340 630 335 Q 440 410 400 290" stroke="#22c55e" stroke-width="2" fill="none" stroke-dasharray="5,3" marker-end="url(#arrowGreen)"/>
 
+            <!-- Invisible spacer to ensure gap before legend -->
+            <rect x="0" y="540" width="1" height="50" fill="none"/>
+
             <!-- Legend -->
-            <g transform="translate(30, 560)">
+            <g transform="translate(30, 600)">
                 <rect x="0" y="-12" width="790" height="32" fill="#f8fafc" rx="4"/>
 
                 <rect x="20" y="-2" width="16" height="12" rx="2" style="fill: #dbeafe; stroke: #3b82f6; stroke-width: 2;"/>

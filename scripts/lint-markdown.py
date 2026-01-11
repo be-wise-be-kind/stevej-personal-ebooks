@@ -4,6 +4,7 @@
 Rules checked:
 1. Code blocks must be preceded by a blank line
 2. Inline code must be preceded by whitespace or allowed punctuation
+3. No em-dashes allowed (—, --, or ---) - rewrite sentences instead
 """
 
 import sys
@@ -13,6 +14,20 @@ import glob
 # Pattern to find inline code spans (single backticks, not triple)
 # Matches: `code` but not ```code```
 INLINE_CODE_PATTERN = re.compile(r'(?<!`)(`[^`\n]+?`)(?!`)')
+
+# Patterns for em-dash violations in prose
+# Matches word---word or word--word (em-dash written as hyphens)
+EM_DASH_WORD_PATTERN = re.compile(r'\w---?\w')
+# Matches spaced em-dashes like " -- " or " --- "
+EM_DASH_SPACED_PATTERN = re.compile(r' ---? ')
+# Matches Unicode em-dash character (U+2014)
+EM_DASH_UNICODE_PATTERN = re.compile(r'—')
+
+# Pattern to detect table row separators (should not be flagged)
+TABLE_SEPARATOR_PATTERN = re.compile(r'^\|[-:|]+\|$')
+
+# Pattern to detect horizontal rules at start of line
+HORIZONTAL_RULE_PATTERN = re.compile(r'^---+$')
 
 # Characters allowed immediately before an opening backtick
 # Includes: whitespace, apostrophe, opening brackets/parens, quotes,
@@ -70,6 +85,47 @@ def lint_file(path: str) -> list[str]:
                 errors.append(
                     f"Line {line_num}: Missing space before inline code {inline_code}"
                 )
+
+        # Check for em-dash violations (-- or --- used instead of —)
+        # Skip horizontal rules (--- at start of line)
+        if HORIZONTAL_RULE_PATTERN.match(stripped):
+            continue
+
+        # Skip table separator rows
+        if TABLE_SEPARATOR_PATTERN.match(stripped):
+            continue
+
+        # Remove inline code spans before checking for em-dash violations
+        # This prevents flagging -- inside backticks (e.g., `--help`)
+        line_without_code = INLINE_CODE_PATTERN.sub('', stripped)
+
+        # Check for word---word or word--word patterns
+        for match in EM_DASH_WORD_PATTERN.finditer(line_without_code):
+            # Extract context around the match
+            start = max(0, match.start() - 10)
+            end = min(len(line_without_code), match.end() + 10)
+            context = line_without_code[start:end]
+            errors.append(
+                f"Line {line_num}: Em-dash not allowed (rewrite sentence): ...{context}..."
+            )
+
+        # Check for spaced em-dashes like " -- " or " --- "
+        for match in EM_DASH_SPACED_PATTERN.finditer(line_without_code):
+            start = max(0, match.start() - 10)
+            end = min(len(line_without_code), match.end() + 10)
+            context = line_without_code[start:end]
+            errors.append(
+                f"Line {line_num}: Em-dash not allowed (rewrite sentence): ...{context}..."
+            )
+
+        # Check for Unicode em-dash character
+        for match in EM_DASH_UNICODE_PATTERN.finditer(line_without_code):
+            start = max(0, match.start() - 15)
+            end = min(len(line_without_code), match.end() + 15)
+            context = line_without_code[start:end]
+            errors.append(
+                f"Line {line_num}: Em-dash not allowed (rewrite sentence): ...{context}..."
+            )
 
     return errors
 

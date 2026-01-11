@@ -143,7 +143,46 @@ Overlap if:
 
 ---
 
-## 5. Border and Edge Padding
+## 5. Title Spacing (Critical)
+
+Titles MUST have adequate space between them and the diagram content below.
+
+### Rules:
+- **Title position**: y=30-35 (from top of viewBox)
+- **Content start**: y=80 minimum (main diagram content)
+- **Minimum gap**: 25-30px between title bottom and first diagram element
+
+### Template Pattern:
+```html
+<!-- Title at y=35 -->
+<text x="450" y="35" text-anchor="middle" font-size="20">Diagram Title</text>
+
+<!-- Optional subtitle at y=55 -->
+<text x="450" y="55" font-size="12">Subtitle here</text>
+
+<!-- Content starts at y=80, giving 25px gap from subtitle or 45px from title -->
+<g transform="translate(50, 80)">
+    <!-- Main diagram content here -->
+</g>
+```
+
+### Common Mistake:
+```html
+<!-- BAD: Title at y=28, content at y=60 = only 14px gap -->
+<text y="28">Title</text>
+<g transform="translate(50, 60)">  <!-- Too close to title! -->
+```
+
+### Fix:
+```html
+<!-- GOOD: Title at y=35, content at y=80 = proper spacing -->
+<text y="35">Title</text>
+<g transform="translate(50, 80)">  <!-- 25px+ gap -->
+```
+
+---
+
+## 6. Border and Edge Padding
 
 Content near viewBox edges looks cramped and may clip on some renderers.
 

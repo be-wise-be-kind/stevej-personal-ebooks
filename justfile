@@ -408,3 +408,66 @@ check-deps:
         echo "Some dependencies missing. Install them to enable all features."
         exit 1
     fi
+
+# Publish all ebooks to a GitHub release
+release version="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    VERSION="{{ version }}"
+
+    # Prompt for version if not provided
+    if [[ -z "$VERSION" ]]; then
+        read -p "Enter release version (e.g., v1.0.0): " VERSION
+    fi
+
+    # Validate version format
+    if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "Error: Version must be in format v1.0.0"
+        exit 1
+    fi
+
+    # Check gh CLI is available
+    if ! command -v gh &> /dev/null; then
+        echo "Error: GitHub CLI (gh) is required. Install with: sudo apt install gh"
+        exit 1
+    fi
+
+    # Build all ebooks
+    echo "Building all ebooks..."
+    for book in ebooks/*/; do
+        bookname=$(basename "$book")
+        if [[ "$bookname" == "_template" ]]; then
+            continue
+        fi
+        echo "Building $bookname..."
+        just build-all "$bookname"
+    done
+
+    # Collect artifacts
+    ARTIFACTS=""
+    for book in ebooks/*/; do
+        bookname=$(basename "$book")
+        if [[ "$bookname" == "_template" ]]; then
+            continue
+        fi
+        builddir="build/$bookname"
+        if [[ -d "$builddir" ]]; then
+            for file in "$builddir"/*.pdf "$builddir"/*.epub "$builddir"/*.html; do
+                [[ -f "$file" ]] && ARTIFACTS="$ARTIFACTS $file"
+            done
+        fi
+    done
+
+    # Create git tag
+    echo "Creating git tag $VERSION..."
+    git tag -a "$VERSION" -m "Release $VERSION"
+    git push origin "$VERSION"
+
+    # Create GitHub release
+    echo "Creating GitHub release..."
+    gh release create "$VERSION" $ARTIFACTS \
+        --title "Release $VERSION" \
+        --generate-notes
+
+    echo "Release $VERSION published successfully!"

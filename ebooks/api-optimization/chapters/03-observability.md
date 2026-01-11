@@ -10,7 +10,7 @@ You cannot optimize what you cannot measure. This principle, while seemingly obv
 
 Observability provides the foundation for the empirical approach we advocate throughout this book. Before we can optimize database queries, tune connection pools, or implement caching strategies, we must first understand where time is being spent, which operations fail, and how our systems behave under real-world conditions. The instrumentation we build in this chapter will guide every optimization decision in subsequent chapters.
 
-The modern observability stack has converged around three complementary signal types—metrics, logs, and traces—plus a fourth pillar that is increasingly recognized as essential: continuous profiling. Together, these four pillars provide complete visibility into system behavior, from high-level service health down to individual function execution times. We will explore each pillar, understand when to use which signal type, and implement practical instrumentation using OpenTelemetry and the Grafana stack.
+The modern observability stack has converged around three complementary signal types (metrics, logs, and traces) plus a fourth pillar that is increasingly recognized as essential: continuous profiling. Together, these four pillars provide complete visibility into system behavior, from high-level service health down to individual function execution times. We will explore each pillar, understand when to use which signal type, and implement practical instrumentation using OpenTelemetry and the Grafana stack.
 
 <!-- DIAGRAM: The four pillars of observability showing Metrics (aggregated numbers over time), Logs (discrete timestamped events), Traces (request flow across services), and Profiling (code-level execution analysis) with arrows showing how trace_id correlates logs and traces -->
 
@@ -47,7 +47,7 @@ In practice, we correlate signals across pillars. A metric alert fires when p95 
 
 ### Distributed Tracing Concepts
 
-Distributed tracing originated at Google with their Dapper system, described in the foundational 2010 paper [Source: Sigelman et al., "Dapper, a Large-Scale Distributed Systems Tracing Infrastructure", 2010]. The concepts introduced—traces, spans, and context propagation—remain the foundation of modern tracing systems.
+Distributed tracing originated at Google with their Dapper system, described in the foundational 2010 paper [Source: Sigelman et al., "Dapper, a Large-Scale Distributed Systems Tracing Infrastructure", 2010]. The concepts introduced (traces, spans, and context propagation) remain the foundation of modern tracing systems.
 
 A **trace** represents the complete journey of a single request through your system. Each trace has a unique identifier (trace ID) that follows the request across service boundaries.
 
@@ -66,7 +66,7 @@ A **span** represents a single unit of work within a trace. Spans have:
 
 **How Spans Become Traces**
 
-Each service in your system independently sends its spans to the trace backend (Tempo, Jaeger, or similar). Services do not communicate with each other about tracing—they simply emit their spans as they complete work.
+Each service in your system independently sends its spans to the trace backend (Tempo, Jaeger, or similar). Services do not communicate with each other about tracing. They simply emit their spans as they complete work.
 
 The trace backend assembles complete traces from these independent span submissions. When the API Gateway processes a request, it creates a span and sends it to Tempo. When the User Service handles its portion, it creates its own span (with the same trace ID) and also sends it to Tempo. The backend uses the shared trace_id to group spans together, and the parent_span_id to reconstruct the tree structure.
 
@@ -134,7 +134,7 @@ Major cloud providers offer integrated observability:
 - **Google Cloud**: Cloud Monitoring, Cloud Logging, Cloud Trace
 - **Azure**: Azure Monitor, Application Insights, Log Analytics
 
-The key insight is that OpenTelemetry decouples instrumentation from backends. Instrument your code once with OpenTelemetry, and you can export to any supported backend—or switch backends later without changing application code.
+The key insight is that OpenTelemetry decouples instrumentation from backends. Instrument your code once with OpenTelemetry, and you can export to any supported backend or switch backends later without changing application code.
 
 ### The Grafana Stack
 
@@ -142,13 +142,13 @@ This book uses the Grafana stack for examples because it is open-source, self-ho
 
 Grafana Labs has assembled a comprehensive observability stack:
 
-- **Grafana**: Visualization and dashboarding—the central interface for exploring all telemetry types
+- **Grafana**: Visualization and dashboarding, serving as the central interface for exploring all telemetry types
 - **Prometheus/Mimir**: Metrics storage and querying using PromQL
 - **Loki**: Log aggregation and querying using LogQL, designed for cost-effective storage
 - **Tempo**: Distributed trace storage with no indexing required
 - **Pyroscope**: Continuous profiling with flame graph visualization
 
-This stack offers both open-source deployment and managed cloud options (Grafana Cloud). The tight integration between components enables seamless correlation—clicking a trace in Tempo can jump to related logs in Loki and metrics in Prometheus, all filtered by the same trace ID.
+This stack offers both open-source deployment and managed cloud options (Grafana Cloud). The tight integration between components enables seamless correlation: clicking a trace in Tempo can jump to related logs in Loki and metrics in Prometheus, all filtered by the same trace ID.
 
 ### How Telemetry Flows Through the System
 
@@ -192,7 +192,7 @@ Effective dashboards have:
 
 ### Instrumenting Your Stack
 
-Observability requires instrumentation at every layer. Application code is only part of the picture—databases, caches, message queues, and infrastructure all generate valuable telemetry.
+Observability requires instrumentation at every layer. Application code is only part of the picture. Databases, caches, message queues, and infrastructure all generate valuable telemetry.
 
 **Automatic vs. Manual Instrumentation**
 

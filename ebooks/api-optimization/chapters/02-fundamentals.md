@@ -8,7 +8,7 @@
 
 Before we can optimize an API, we need a shared vocabulary for discussing performance. What does it mean for an API to be "fast"? How do we quantify "fast enough"? And critically, how do we measure performance in a way that reflects real user experience rather than misleading us with incomplete data?
 
-This chapter establishes the foundational concepts that underpin all optimization work. We begin with the Four Golden Signals—the essential metrics framework for monitoring any production system. We then dive deep into each signal, exploring latency measurement, throughput and traffic patterns, error tracking, and saturation monitoring. Finally, we cover how to formalize these metrics into SLIs, SLOs, and SLAs, and how to benchmark systems without falling into common measurement traps.
+This chapter establishes the foundational concepts that underpin all optimization work. We begin with the Four Golden Signals, the essential metrics framework for monitoring any production system. We then dive deep into each signal, exploring latency measurement, throughput and traffic patterns, error tracking, and saturation monitoring. Finally, we cover how to formalize these metrics into SLIs, SLOs, and SLAs, and how to benchmark systems without falling into common measurement traps.
 
 These fundamentals are not merely academic. Every optimization decision we make in later chapters will rely on the measurement principles established here. As the Google SRE book emphasizes, "If you can't measure it, you can't improve it" [Source: Google SRE Book, 2016]. Our empirical approach demands rigorous measurement foundations.
 
@@ -250,11 +250,11 @@ The saturation curve shows what happens as **demand approaches capacity**:
 
 ![Throughput vs Latency: The Saturation Curve](../assets/ch02-throughput-latency-curve.html)
 
-At low utilization (demand far below capacity), the system handles requests immediately—latency stays low. As demand rises toward capacity, requests begin competing for resources. Queues form, and latency increases. Near saturation, small increases in demand cause dramatic latency spikes.
+At low utilization (demand far below capacity), the system handles requests immediately and latency stays low. As demand rises toward capacity, requests begin competing for resources. Queues form, and latency increases. Near saturation, small increases in demand cause dramatic latency spikes.
 
-This is not a trade-off you choose—it is a consequence of queuing theory. When demand exceeds capacity, performance degrades.
+This is not a trade-off you choose. It is a consequence of queuing theory. When demand exceeds capacity, performance degrades.
 
-**Optimizations increase capacity.** When we say "caching improves throughput," we mean it increases *capacity*—the system can now handle more demand before latency rises. Many optimizations improve both latency and capacity simultaneously:
+**Optimizations increase capacity.** When we say "caching improves throughput," we mean it increases *capacity*: the system can now handle more demand before latency rises. Many optimizations improve both latency and capacity simultaneously:
 
 - Fixing an N+1 query reduces latency (fewer round-trips) AND increases capacity (database handles more requests)
 - Caching improves latency (faster responses) AND increases capacity (backend serves fewer requests)
@@ -268,7 +268,7 @@ These are not trade-offs. They increase capacity, which means your current deman
 - **Request coalescing** trades latency for capacity. Multiple identical requests are combined into one; later requesters wait for the first request's response, but the backend handles fewer total requests.
 - **Compression** trades CPU for bandwidth. Whether this helps or hurts latency depends on whether your bottleneck is network or compute.
 
-**The practical implication:** When latency is high, ask: "Is demand exceeding capacity, or is there inefficiency reducing capacity?" If demand is below what the system should handle, the answer is usually inefficiency—a bug, a missing index, an N+1 query. Fixing it increases capacity, improving both throughput potential and latency. Only when demand genuinely exceeds capacity must you choose between scaling up, shedding load, or accepting degraded latency.
+**The practical implication:** When latency is high, ask: "Is demand exceeding capacity, or is there inefficiency reducing capacity?" If demand is below what the system should handle, the answer is usually inefficiency: a bug, a missing index, an N+1 query. Fixing it increases capacity, improving both throughput potential and latency. Only when demand genuinely exceeds capacity must you choose between scaling up, shedding load, or accepting degraded latency.
 
 ### Errors: The Third Golden Signal
 
@@ -305,11 +305,11 @@ Saturation measures how "full" a service is. Unlike utilization (current usage a
 
 Consider two scenarios:
 
-- **Utilized but not saturated**: A CPU at 100% utilization with no threads waiting. The system is working at full capacity, and work completes as fast as it arrives. Latency remains stable. This is efficient operation—the resource is fully used without degradation.
+- **Utilized but not saturated**: A CPU at 100% utilization with no threads waiting. The system is working at full capacity, and work completes as fast as it arrives. Latency remains stable. This is efficient operation: the resource is fully used without degradation.
 
 - **Saturated**: A CPU at 100% utilization with 10 threads waiting for CPU time. Demand exceeds capacity. Work is piling up faster than it can be processed. Each new request waits longer than the last.
 
-The distinction matters because saturated systems exhibit degraded behavior: queues grow, latency increases, and small traffic spikes cause cascading failures. High utilization alone is not a problem—queuing is.
+The distinction matters because saturated systems exhibit degraded behavior: queues grow, latency increases, and small traffic spikes cause cascading failures. High utilization alone is not a problem; queuing is.
 
 #### Key Saturation Indicators
 
@@ -346,21 +346,21 @@ The Four Golden Signals tell us what to measure. Before we formalize those measu
 
 The golden signals we measure must be stored and aggregated somehow. Understanding the three fundamental metric types helps you instrument systems correctly and interpret dashboards accurately.
 
-**Counters** are cumulative values that only increase (or reset to zero on restart). Total requests served, total errors, total bytes transferred—these are counters. You don't query a counter's current value directly; you query its *rate of change*. "Requests per second" is the rate of change of the request counter. Counters are ideal for the Traffic and Errors signals.
+**Counters** are cumulative values that only increase (or reset to zero on restart). Total requests served, total errors, total bytes transferred: these are counters. You don't query a counter's current value directly; you query its *rate of change*. "Requests per second" is the rate of change of the request counter. Counters are ideal for the Traffic and Errors signals.
 
-**Gauges** are point-in-time values that can increase or decrease. Current memory usage, active connections, queue depth—these are gauges. You query a gauge's current value directly. Gauges are ideal for Saturation metrics, where you need to know "how full is this resource right now?"
+**Gauges** are point-in-time values that can increase or decrease. Current memory usage, active connections, queue depth: these are gauges. You query a gauge's current value directly. Gauges are ideal for Saturation metrics, where you need to know "how full is this resource right now?"
 
-**Histograms** (and their cousins, summaries) capture the distribution of values. Rather than storing every latency measurement, histograms bucket values into ranges (0-10ms, 10-50ms, 50-100ms, etc.) and count how many observations fall into each bucket. This enables efficient percentile calculation—essential for the Latency signal. Without histograms, you could not compute p99 latency without storing every individual measurement.
+**Histograms** (and their cousins, summaries) capture the distribution of values. Rather than storing every latency measurement, histograms bucket values into ranges (0-10ms, 10-50ms, 50-100ms, etc.) and count how many observations fall into each bucket. This enables efficient percentile calculation, which is essential for the Latency signal. Without histograms, you could not compute p99 latency without storing every individual measurement.
 
 These metric types map naturally to the golden signals: latency uses histograms (for percentile distributions), traffic uses counters (for request rates), errors use counters (for error rates), and saturation uses gauges (for current utilization). Chapter 3 covers how to instrument your code to emit these metrics correctly.
 
 #### Consistency Models
 
-When data exists in multiple places—caches, replicas, distributed databases—you must understand consistency trade-offs. How quickly must all copies reflect the same value?
+When data exists in multiple places (caches, replicas, distributed databases), you must understand consistency trade-offs. How quickly must all copies reflect the same value?
 
 **Strong consistency** guarantees that once a write completes, all subsequent reads see that write. There is no window where different readers see different values. This is the simplest model to reason about but often requires coordination that adds latency. Traditional single-node databases provide strong consistency naturally.
 
-**Eventual consistency** guarantees that if no new writes occur, all replicas will *eventually* converge to the same value—but there is a window where readers might see stale data. This model enables better performance and availability by reducing coordination, but requires your application to tolerate temporary inconsistency.
+**Eventual consistency** guarantees that if no new writes occur, all replicas will *eventually* converge to the same value, but there is a window where readers might see stale data. This model enables better performance and availability by reducing coordination, but requires your application to tolerate temporary inconsistency.
 
 Understanding this spectrum matters because many optimization techniques introduce eventual consistency:
 
@@ -385,7 +385,7 @@ Idempotency enables safe retries, which are essential for reliability. Chapter 8
 
 #### Stateless vs Stateful Services
 
-A **stateless** service treats each request independently. No request depends on previous requests to the same instance. All state—user sessions, cached data, application state—lives in external stores (databases, Redis, distributed caches). Any instance can handle any request.
+A **stateless** service treats each request independently. No request depends on previous requests to the same instance. All state (user sessions, cached data, application state) lives in external stores (databases, Redis, distributed caches). Any instance can handle any request.
 
 A **stateful** service holds state between requests. A WebSocket connection, an in-memory cache, or a session stored in server memory creates statefulness. Specific requests may need to reach specific instances. Protocols like WebSocket and gRPC maintain persistent connections that require different scaling strategies than stateless HTTP; Chapter 5 covers these protocol choices and their performance implications in detail.
 
@@ -397,7 +397,7 @@ This distinction fundamentally affects how systems scale:
 
 The trade-off: stateless services need external state stores, which add latency and operational complexity. Reading session data from Redis adds milliseconds that an in-memory session store would not. But stateless services are dramatically easier to scale and operate.
 
-Chapter 9 (scaling) explores these trade-offs in depth. For most API optimization work, designing for statelessness—externalizing state to dedicated stores—enables the horizontal scaling patterns that handle traffic growth.
+Chapter 9 (scaling) explores these trade-offs in depth. For most API optimization work, designing for statelessness (externalizing state to dedicated stores) enables the horizontal scaling patterns that handle traffic growth.
 
 #### Failure Propagation and Cascading Failures
 
@@ -413,7 +413,7 @@ Consider a typical cascade:
 6. Upstream services timeout waiting for the API
 7. Users experience errors across multiple features
 
-This is a **cascading failure**: one component's degradation triggers failures across the system. Notice how saturation (connection pool exhaustion, queue growth) serves as a leading indicator before errors appear—connecting back to why we monitor the fourth golden signal.
+This is a **cascading failure**: one component's degradation triggers failures across the system. Notice how saturation (connection pool exhaustion, queue growth) serves as a leading indicator before errors appear, connecting back to why we monitor the fourth golden signal.
 
 Cascading failures are insidious because the root cause may be far from where symptoms appear. Users see errors in service A, but the problem originated in service D's database. Without distributed tracing (Chapter 3), finding the root cause requires detective work.
 
@@ -424,7 +424,7 @@ Several patterns prevent cascading failures:
 - **Bulkheads** isolate failures so one component's problems don't exhaust shared resources
 - **Load shedding** rejects requests when approaching capacity, preserving service for accepted requests
 
-Chapter 10 covers these resilience patterns in detail. The key insight here is that optimization isn't just about making things fast—it's about ensuring that when things go wrong (and they will), failures don't cascade into system-wide outages.
+Chapter 10 covers these resilience patterns in detail. The key insight here is that optimization isn't just about making things fast. It's about ensuring that when things go wrong (and they will), failures don't cascade into system-wide outages.
 
 ### Formalizing Metrics: SLIs, SLOs, and SLAs
 

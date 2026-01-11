@@ -152,9 +152,12 @@
                 <path d="M 610 290 Q 560 350 455 390"
                       fill="none" stroke="#d97706" stroke-width="3"
                       marker-end="url(#arrowOrange)"/>
-                <rect x="500" y="300" width="90" height="40" rx="4" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
-                <text x="545" y="318" text-anchor="middle" fill="#92400e" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Timeout</text>
-                <text x="545" y="331" text-anchor="middle" fill="#a16207" font-size="9" font-family="Liberation Sans, Arial, sans-serif">expires</text>
+            </g>
+            <!-- Timeout expires annotation - placed after arrow for proper z-order -->
+            <g>
+                <rect x="470" y="340" width="90" height="40" rx="4" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
+                <text x="515" y="358" text-anchor="middle" fill="#92400e" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Timeout</text>
+                <text x="515" y="371" text-anchor="middle" fill="#a16207" font-size="9" font-family="Liberation Sans, Arial, sans-serif">expires</text>
             </g>
 
             <!-- Transition: HALF-OPEN -> CLOSED (success) -->
@@ -172,9 +175,12 @@
                 <path d="M 455 370 Q 560 310 610 250"
                       fill="none" stroke="#dc2626" stroke-width="3"
                       marker-end="url(#arrowRed)"/>
-                <rect x="600" y="360" width="90" height="45" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
-                <text x="645" y="378" text-anchor="middle" fill="#991b1b" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Test</text>
-                <text x="645" y="393" text-anchor="middle" fill="#b91c1c" font-size="9" font-family="Liberation Sans, Arial, sans-serif">fails</text>
+            </g>
+            <!-- Test fails annotation - placed after arrow for proper z-order -->
+            <g>
+                <rect x="545" y="280" width="65" height="40" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+                <text x="577" y="298" text-anchor="middle" fill="#991b1b" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Test</text>
+                <text x="577" y="311" text-anchor="middle" fill="#b91c1c" font-size="9" font-family="Liberation Sans, Arial, sans-serif">fails</text>
             </g>
 
             <!-- Self-loop: CLOSED (success resets) -->

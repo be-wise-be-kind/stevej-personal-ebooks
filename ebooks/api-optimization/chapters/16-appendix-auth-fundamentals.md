@@ -8,7 +8,7 @@ This appendix provides background on authentication and authorization concepts f
 
 These terms are often conflated but serve distinct purposes:
 
-**Authentication** answers "Who are you?" It establishes identity through credentials—passwords, tokens, certificates, or biometrics. When a user logs in with username and password, they are authenticating.
+**Authentication** answers "Who are you?" It establishes identity through credentials such as passwords, tokens, certificates, or biometrics. When a user logs in with username and password, they are authenticating.
 
 **Authorization** answers "What can you do?" It determines permissions based on the authenticated identity. When an API checks whether a user can access a specific resource, it is authorizing.
 
@@ -36,7 +36,7 @@ Session-based authentication stores user state on the server. The flow:
 
 **Server-side state**: The session store maintains all session data. Clients hold only an opaque identifier.
 
-**Revocation**: Logout deletes the session from the store. Revocation is immediate—the session ID becomes invalid as soon as the session is deleted.
+**Revocation**: Logout deletes the session from the store. Revocation is immediate: the session ID becomes invalid as soon as the session is deleted.
 
 **Scaling considerations**: Horizontal scaling requires either session affinity (routing users to the same server) or shared session storage (all servers access the same session store).
 
@@ -185,7 +185,7 @@ API keys are the simplest authentication mechanism: a secret string that identif
 
 **Header-based** (recommended): Pass the API key in an `Authorization` header (such as `Authorization: Api-Key sk_live_abc123`) or a custom header like `X-API-Key`.
 
-**Query parameter** (discouraged—keys appear in logs): Passing the API key as a query parameter like `?api_key=sk_live_abc123` exposes the key in server logs, browser history, and referrer headers.
+**Query parameter** (discouraged because keys appear in logs): Passing the API key as a query parameter like `?api_key=sk_live_abc123` exposes the key in server logs, browser history, and referrer headers.
 
 ### Characteristics
 
@@ -224,7 +224,7 @@ API keys are not appropriate for:
 
 ## Security Considerations
 
-This section covers security briefly—enough context for performance decisions. For comprehensive security guidance, consult OWASP and specialized security resources.
+This section covers security briefly, providing enough context for performance decisions. For comprehensive security guidance, consult OWASP and specialized security resources.
 
 ### Token Storage
 
@@ -236,7 +236,7 @@ This section covers security briefly—enough context for performance decisions.
 
 ### Token Transmission
 
-Always transmit tokens over TLS (HTTPS). Tokens in URLs appear in logs, browser history, and referer headers—use headers instead.
+Always transmit tokens over TLS (HTTPS). Tokens in URLs appear in logs, browser history, and referer headers. Use headers instead.
 
 ### Token Lifetimes
 

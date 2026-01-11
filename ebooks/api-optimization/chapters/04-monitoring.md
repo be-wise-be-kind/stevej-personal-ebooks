@@ -76,7 +76,7 @@ Chapter 2 introduced throughput as requests per second (RPS), transactions per s
 
 #### Instrumenting Throughput
 
-Throughput is measured using **counters**—monotonically increasing values that track total requests. The monitoring system calculates rate (requests per second) by computing the delta over time windows.
+Throughput is measured using **counters**, which are monotonically increasing values that track total requests. The monitoring system calculates rate (requests per second) by computing the delta over time windows.
 
 The standard approach uses labeled counters. Define a counter metric with labels for method, endpoint, and status code. In each request handler, increment the counter with the appropriate labels. See Example 4.3 for a complete implementation.
 
@@ -406,7 +406,7 @@ For implementation examples related to these concepts, see the [Appendix: Code E
 
 - Throughput monitoring requires counters with appropriate labels (method, endpoint, status). Track per-endpoint RPS to avoid masking problems in aggregate metrics. Establish baselines that account for diurnal and weekly patterns.
 
-- Saturation measurement differs from utilization. Monitor queue depths, wait times, and pressure metrics—not just resource usage percentages. A connection pool at 90% utilization is fine; one with requests waiting is saturated regardless of utilization.
+- Saturation measurement differs from utilization. Monitor queue depths, wait times, and pressure metrics, not just resource usage percentages. A connection pool at 90% utilization is fine; one with requests waiting is saturated regardless of utilization.
 
 - SLO-based alerting focuses on error budget burn rate rather than arbitrary thresholds. Alert when user impact threatens SLO compliance, not when internal metrics cross arbitrary lines.
 
