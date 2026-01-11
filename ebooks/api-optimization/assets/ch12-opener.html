@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 11: The Optimization Toolbox</title>
+    <title>Chapter 12: Edge Infrastructure - The Global Network</title>
     <style>
         body {
             font-family: Liberation Sans, Arial, sans-serif;
@@ -30,200 +30,78 @@
 </head>
 <body>
     <div class="diagram-container">
-        <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg">
             <defs>
-                <!-- Toolbox gradient -->
-                <linearGradient id="toolboxGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#475569;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+                <linearGradient id="earthGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#1e3a5f;stop-opacity:1" />
+                    <stop offset="50%" style="stop-color:#0f172a;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
                 </linearGradient>
-
-                <!-- Toolbox lid gradient -->
-                <linearGradient id="lidGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#64748b;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#475569;stop-opacity:1" />
+                <linearGradient id="edgeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
                 </linearGradient>
-
-                <!-- Tool icon gradients -->
-                <linearGradient id="observabilityGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
-                </linearGradient>
-
-                <linearGradient id="databaseGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="originGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
                 </linearGradient>
-
-                <linearGradient id="cacheGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
-                </linearGradient>
-
-                <linearGradient id="networkGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
-                </linearGradient>
-
-                <linearGradient id="asyncGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
-                </linearGradient>
-
-                <linearGradient id="trafficGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
-                </linearGradient>
-
-                <linearGradient id="scalingGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#0891b2;stop-opacity:1" />
-                </linearGradient>
-
-                <!-- Drop shadow filter -->
-                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
                 </filter>
-
-                <!-- Subtle glow for tool icons -->
-                <filter id="iconGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                    <feMerge>
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                    </feMerge>
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.2"/>
                 </filter>
+                <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#f97316"/>
+                </marker>
             </defs>
-
-            <!-- Background -->
-            <rect width="800" height="400" fill="#ffffff" rx="8"/>
-
-            <!-- Title -->
-            <text x="400" y="40" text-anchor="middle" fill="#1e293b" font-size="22" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
-                The Optimization Toolbox
-            </text>
-            <text x="400" y="62" text-anchor="middle" fill="#64748b" font-size="13" font-family="Liberation Sans, Arial, sans-serif">
-                Your complete toolkit for API performance
-            </text>
-
-            <!-- Toolbox container -->
-            <g transform="translate(100, 90)">
-                <!-- Toolbox body -->
-                <rect x="0" y="40" width="600" height="220" rx="8" fill="url(#toolboxGradient)" filter="url(#shadow)"/>
-
-                <!-- Toolbox inner area (lighter) -->
-                <rect x="15" y="55" width="570" height="190" rx="4" fill="#f1f5f9"/>
-
-                <!-- Toolbox lid (open, tilted back) -->
-                <path d="M 0 40 L 600 40 L 580 10 L 20 10 Z" fill="url(#lidGradient)" filter="url(#shadow)"/>
-
-                <!-- Handle on lid -->
-                <rect x="260" y="18" width="80" height="12" rx="4" fill="#94a3b8"/>
-                <rect x="270" y="22" width="60" height="4" rx="2" fill="#64748b"/>
-
-                <!-- Tool icons grid - 7 tools arranged in a row -->
-                <g transform="translate(30, 75)">
-
-                    <!-- Tool 1: Observability (Magnifying Glass) -->
-                    <g transform="translate(0, 0)">
-                        <g filter="url(#iconGlow)">
-                            <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#observabilityGradient)"/>
-                            <!-- Magnifying glass -->
-                            <circle cx="32" cy="30" r="14" fill="none" stroke="#ffffff" stroke-width="3"/>
-                            <line x1="42" y1="40" x2="52" y2="50" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
-                        </g>
-                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Observability</text>
-                    </g>
-
-                    <!-- Tool 2: Database (Cylinder) -->
-                    <g transform="translate(80, 0)">
-                        <g filter="url(#iconGlow)">
-                            <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#databaseGradient)"/>
-                            <!-- Database cylinder -->
-                            <ellipse cx="35" cy="22" rx="16" ry="6" fill="none" stroke="#ffffff" stroke-width="2.5"/>
-                            <path d="M 19 22 L 19 48 Q 19 54 35 54 Q 51 54 51 48 L 51 22" fill="none" stroke="#ffffff" stroke-width="2.5"/>
-                            <ellipse cx="35" cy="48" rx="16" ry="6" fill="none" stroke="#ffffff" stroke-width="2.5"/>
-                        </g>
-                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Database</text>
-                    </g>
-
-                    <!-- Tool 3: Caching (Lightning bolt in box) -->
-                    <g transform="translate(160, 0)">
-                        <g filter="url(#iconGlow)">
-                            <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#cacheGradient)"/>
-                            <!-- Cache symbol - stacked layers with lightning -->
-                            <rect x="18" y="18" width="34" height="8" rx="2" fill="none" stroke="#ffffff" stroke-width="2"/>
-                            <rect x="18" y="30" width="34" height="8" rx="2" fill="none" stroke="#ffffff" stroke-width="2"/>
-                            <rect x="18" y="42" width="34" height="8" rx="2" fill="none" stroke="#ffffff" stroke-width="2"/>
-                            <path d="M 38 20 L 32 32 L 38 32 L 32 48" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </g>
-                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Caching</text>
-                    </g>
-
-                    <!-- Tool 4: Network (Connected nodes) -->
-                    <g transform="translate(240, 0)">
-                        <g filter="url(#iconGlow)">
-                            <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#networkGradient)"/>
-                            <!-- Network nodes -->
-                            <circle cx="35" cy="20" r="6" fill="#ffffff"/>
-                            <circle cx="20" cy="45" r="6" fill="#ffffff"/>
-                            <circle cx="50" cy="45" r="6" fill="#ffffff"/>
-                            <line x1="35" y1="26" x2="22" y2="40" stroke="#ffffff" stroke-width="2"/>
-                            <line x1="35" y1="26" x2="48" y2="40" stroke="#ffffff" stroke-width="2"/>
-                            <line x1="26" y1="45" x2="44" y2="45" stroke="#ffffff" stroke-width="2"/>
-                        </g>
-                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Network</text>
-                    </g>
-
-                    <!-- Tool 5: Async (Queue/Arrow) -->
-                    <g transform="translate(320, 0)">
-                        <g filter="url(#iconGlow)">
-                            <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#asyncGradient)"/>
-                            <!-- Queue with arrow -->
-                            <rect x="15" y="25" width="12" height="20" rx="2" fill="none" stroke="#ffffff" stroke-width="2"/>
-                            <rect x="29" y="25" width="12" height="20" rx="2" fill="none" stroke="#ffffff" stroke-width="2"/>
-                            <rect x="43" y="25" width="12" height="20" rx="2" fill="none" stroke="#ffffff" stroke-width="2"/>
-                            <path d="M 20 50 L 35 58 L 50 50" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </g>
-                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Async</text>
-                    </g>
-
-                    <!-- Tool 6: Traffic Management (Shield) -->
-                    <g transform="translate(400, 0)">
-                        <g filter="url(#iconGlow)">
-                            <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#trafficGradient)"/>
-                            <!-- Shield -->
-                            <path d="M 35 15 L 52 22 L 52 38 Q 52 52 35 58 Q 18 52 18 38 L 18 22 Z" fill="none" stroke="#ffffff" stroke-width="2.5"/>
-                            <path d="M 26 35 L 32 41 L 44 29" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </g>
-                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Traffic</text>
-                    </g>
-
-                    <!-- Tool 7: Scaling (Expanding nodes) -->
-                    <g transform="translate(480, 0)">
-                        <g filter="url(#iconGlow)">
-                            <rect x="0" y="0" width="70" height="70" rx="8" fill="url(#scalingGradient)"/>
-                            <!-- Scaling nodes (expanding pattern) -->
-                            <rect x="28" y="28" width="14" height="14" rx="2" fill="#ffffff"/>
-                            <rect x="15" y="15" width="10" height="10" rx="1" fill="none" stroke="#ffffff" stroke-width="2"/>
-                            <rect x="45" y="15" width="10" height="10" rx="1" fill="none" stroke="#ffffff" stroke-width="2"/>
-                            <rect x="15" y="45" width="10" height="10" rx="1" fill="none" stroke="#ffffff" stroke-width="2"/>
-                            <rect x="45" y="45" width="10" height="10" rx="1" fill="none" stroke="#ffffff" stroke-width="2"/>
-                            <!-- Connecting lines -->
-                            <line x1="28" y1="28" x2="25" y2="25" stroke="#ffffff" stroke-width="1.5"/>
-                            <line x1="42" y1="28" x2="45" y2="25" stroke="#ffffff" stroke-width="1.5"/>
-                            <line x1="28" y1="42" x2="25" y2="45" stroke="#ffffff" stroke-width="1.5"/>
-                            <line x1="42" y1="42" x2="45" y2="45" stroke="#ffffff" stroke-width="1.5"/>
-                        </g>
-                        <text x="35" y="85" text-anchor="middle" fill="#475569" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Scaling</text>
-                    </g>
-                </g>
+            <rect width="800" height="450" fill="#ffffff" rx="8"/>
+            <text x="400" y="32" text-anchor="middle" fill="#1e293b" font-size="18" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Edge Infrastructure: Closer to Users</text>
+            <ellipse cx="400" cy="240" rx="200" ry="150" fill="url(#earthGradient)" filter="url(#shadow)"/>
+            <ellipse cx="400" cy="240" rx="200" ry="150" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
+            <ellipse cx="400" cy="240" rx="200" ry="50" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
+            <ellipse cx="400" cy="240" rx="200" ry="100" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
+            <line x1="400" y1="90" x2="400" y2="390" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
+            <ellipse cx="400" cy="240" rx="100" ry="150" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
+            <g transform="translate(370, 210)">
+                <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#originGradient)" filter="url(#shadow)"/>
+                <rect x="12" y="12" width="36" height="8" rx="2" fill="#ffffff" opacity="0.4"/>
+                <rect x="12" y="25" width="28" height="8" rx="2" fill="#ffffff" opacity="0.4"/>
+                <rect x="12" y="38" width="32" height="8" rx="2" fill="#ffffff" opacity="0.4"/>
+                <text x="30" y="75" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">ORIGIN</text>
             </g>
-
-            <!-- Bottom tagline -->
-            <text x="400" y="375" text-anchor="middle" fill="#94a3b8" font-size="12" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
-                Every tool you need to optimize your API, in one place
-            </text>
+            <g transform="translate(220, 160)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">SF</text></g>
+            <line x1="236" y1="165" x2="365" y2="225" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(280, 130)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">NYC</text></g>
+            <line x1="290" y1="140" x2="370" y2="215" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(450, 120)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">LDN</text></g>
+            <line x1="445" y1="135" x2="415" y2="210" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(500, 150)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">FRA</text></g>
+            <line x1="490" y1="160" x2="430" y2="220" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(560, 180)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">TYO</text></g>
+            <line x1="548" y1="188" x2="435" y2="230" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(540, 280)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">SIN</text></g>
+            <line x1="525" y1="278" x2="435" y2="255" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(580, 340)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">SYD</text></g>
+            <line x1="565" y1="335" x2="430" y2="265" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(310, 330)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">GRU</text></g>
+            <line x1="318" y1="318" x2="380" y2="265" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(160, 140)"><circle cx="0" cy="0" r="10" fill="#22c55e"/><circle cx="0" cy="-3" r="4" fill="#ffffff"/><ellipse cx="0" cy="4" rx="5" ry="3" fill="#ffffff"/></g>
+            <line x1="172" y1="145" x2="202" y2="157" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <g transform="translate(430, 70)"><circle cx="0" cy="0" r="10" fill="#22c55e"/><circle cx="0" cy="-3" r="4" fill="#ffffff"/><ellipse cx="0" cy="4" rx="5" ry="3" fill="#ffffff"/></g>
+            <line x1="438" y1="82" x2="448" y2="102" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <g transform="translate(620, 160)"><circle cx="0" cy="0" r="10" fill="#22c55e"/><circle cx="0" cy="-3" r="4" fill="#ffffff"/><ellipse cx="0" cy="4" rx="5" ry="3" fill="#ffffff"/></g>
+            <line x1="608" y1="165" x2="578" y2="175" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <g transform="translate(640, 360)"><circle cx="0" cy="0" r="10" fill="#22c55e"/><circle cx="0" cy="-3" r="4" fill="#ffffff"/><ellipse cx="0" cy="4" rx="5" ry="3" fill="#ffffff"/></g>
+            <line x1="628" y1="355" x2="598" y2="345" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <rect x="50" y="395" width="700" height="45" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+            <circle cx="100" cy="417" r="10" fill="url(#edgeGradient)"/>
+            <text x="115" y="421" fill="#1e293b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Edge Node (~10-50ms from users)</text>
+            <rect x="320" y="407" width="20" height="20" rx="4" fill="url(#originGradient)"/>
+            <text x="345" y="421" fill="#1e293b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Origin Server (centralized)</text>
+            <circle cx="550" cy="417" r="10" fill="#22c55e"/>
+            <text x="565" y="421" fill="#1e293b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">User Request</text>
         </svg>
     </div>
 </body>

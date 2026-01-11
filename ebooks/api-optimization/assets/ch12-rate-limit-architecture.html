@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed Edge Rate Limiting Architecture</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="syncGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="originGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="clientGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+
+                <marker id="arrowGray" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+                </marker>
+                <marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#8b5cf6"/>
+                </marker>
+                <marker id="arrowRed" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#ef4444"/>
+                </marker>
+                <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#22c55e"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="400" y="35" text-anchor="middle" font-size="20" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Distributed Edge Rate Limiting</text>
+            <text x="400" y="55" text-anchor="middle" font-size="12" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Per-location enforcement with global synchronization</text>
+
+            <!-- Three Edge Locations -->
+            <!-- Edge Location 1: San Francisco -->
+            <g transform="translate(80, 100)">
+                <rect x="0" y="0" width="180" height="140" rx="10" fill="url(#edgeGrad)" filter="url(#shadow)"/>
+                <text x="90" y="25" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Edge: San Francisco</text>
+
+                <!-- Local counter -->
+                <rect x="15" y="40" width="150" height="40" rx="6" fill="#ffffff" opacity="0.2"/>
+                <text x="90" y="58" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Local Counter</text>
+                <text x="90" y="73" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">IP 1.2.3.4: 45/100</text>
+
+                <!-- Rate limit check -->
+                <rect x="15" y="90" width="150" height="35" rx="6" fill="#ffffff" opacity="0.2"/>
+                <text x="90" y="112" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Enforce immediately</text>
+            </g>
+
+            <!-- Edge Location 2: London -->
+            <g transform="translate(310, 100)">
+                <rect x="0" y="0" width="180" height="140" rx="10" fill="url(#edgeGrad)" filter="url(#shadow)"/>
+                <text x="90" y="25" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Edge: London</text>
+
+                <rect x="15" y="40" width="150" height="40" rx="6" fill="#ffffff" opacity="0.2"/>
+                <text x="90" y="58" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Local Counter</text>
+                <text x="90" y="73" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">IP 1.2.3.4: 30/100</text>
+
+                <rect x="15" y="90" width="150" height="35" rx="6" fill="#ffffff" opacity="0.2"/>
+                <text x="90" y="112" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Enforce immediately</text>
+            </g>
+
+            <!-- Edge Location 3: Tokyo -->
+            <g transform="translate(540, 100)">
+                <rect x="0" y="0" width="180" height="140" rx="10" fill="url(#edgeGrad)" filter="url(#shadow)"/>
+                <text x="90" y="25" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Edge: Tokyo</text>
+
+                <rect x="15" y="40" width="150" height="40" rx="6" fill="#ffffff" opacity="0.2"/>
+                <text x="90" y="58" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Local Counter</text>
+                <text x="90" y="73" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">IP 1.2.3.4: 35/100</text>
+
+                <rect x="15" y="90" width="150" height="35" rx="6" fill="#ffffff" opacity="0.2"/>
+                <text x="90" y="112" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Enforce immediately</text>
+            </g>
+
+            <!-- Global Sync Service -->
+            <g transform="translate(280, 290)">
+                <rect x="0" y="0" width="240" height="90" rx="10" fill="url(#syncGrad)" filter="url(#shadow)"/>
+                <text x="120" y="25" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Global Sync Service</text>
+                <text x="120" y="45" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Aggregates counts across locations</text>
+
+                <rect x="20" y="55" width="200" height="25" rx="4" fill="#ffffff" opacity="0.2"/>
+                <text x="120" y="72" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">IP 1.2.3.4: 110/100 (OVER!)</text>
+            </g>
+
+            <!-- Sync arrows between edges and global -->
+            <line x1="170" y1="245" x2="280" y2="295" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowPurple)"/>
+            <line x1="400" y1="245" x2="400" y2="285" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowPurple)"/>
+            <line x1="630" y1="245" x2="520" y2="295" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowPurple)"/>
+
+            <!-- Sync timing annotation -->
+            <text x="400" y="265" text-anchor="middle" fill="#8b5cf6" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Sync every few seconds</text>
+
+            <!-- Broadcast back arrows -->
+            <line x1="290" y1="335" x2="180" y2="385" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <line x1="400" y1="385" x2="400" y2="405" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <line x1="510" y1="335" x2="620" y2="385" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+            <!-- Updated counters at edges -->
+            <g transform="translate(100, 395)">
+                <rect x="0" y="0" width="140" height="35" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="1"/>
+                <text x="70" y="15" text-anchor="middle" fill="#dc2626" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Updated: BLOCKED</text>
+                <text x="70" y="28" text-anchor="middle" fill="#dc2626" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Global: 110/100</text>
+            </g>
+
+            <g transform="translate(330, 410)">
+                <rect x="0" y="0" width="140" height="35" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="1"/>
+                <text x="70" y="15" text-anchor="middle" fill="#dc2626" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Updated: BLOCKED</text>
+                <text x="70" y="28" text-anchor="middle" fill="#dc2626" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Global: 110/100</text>
+            </g>
+
+            <g transform="translate(560, 395)">
+                <rect x="0" y="0" width="140" height="35" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="1"/>
+                <text x="70" y="15" text-anchor="middle" fill="#dc2626" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Updated: BLOCKED</text>
+                <text x="70" y="28" text-anchor="middle" fill="#dc2626" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Global: 110/100</text>
+            </g>
+
+            <!-- Legend / Key points -->
+            <rect x="50" y="455" width="700" height="35" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+            <circle cx="90" cy="472" r="8" fill="#f97316"/>
+            <text x="105" y="476" fill="#1e293b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Local enforcement (instant)</text>
+            <circle cx="290" cy="472" r="8" fill="#8b5cf6"/>
+            <text x="305" y="476" fill="#1e293b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Global sync (seconds delay)</text>
+            <circle cx="490" cy="472" r="8" fill="#ef4444"/>
+            <text x="505" y="476" fill="#1e293b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Distributed attack detection</text>
+
+        </svg>
+    </div>
+</body>
+</html>

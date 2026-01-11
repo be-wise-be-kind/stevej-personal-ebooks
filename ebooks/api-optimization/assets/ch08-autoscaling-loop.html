@@ -82,7 +82,7 @@
             </g>
 
             <!-- Metrics detail box -->
-            <g transform="translate(580, 55)">
+            <g transform="translate(560, 45)">
                 <rect x="0" y="0" width="150" height="105" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
                 <text x="75" y="24" text-anchor="middle" font-size="10" font-weight="500" fill="#1d4ed8" font-family="Liberation Sans, Arial, sans-serif">Current Metrics</text>
                 <text x="15" y="48" font-size="9" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">CPU: 78%</text>
@@ -93,8 +93,8 @@
             </g>
 
             <!-- Arrow from Metrics to Controller -->
-            <path d="M 550 120 Q 620 170 620 220" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
-            <text x="615" y="185" font-size="10" fill="#3b82f6" transform="rotate(50 615 185)" font-family="Liberation Sans, Arial, sans-serif">Send metrics</text>
+            <path d="M 550 130 L 620 130 L 620 220" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <text x="565" y="122" font-size="10" fill="#3b82f6" font-family="Liberation Sans, Arial, sans-serif">Send metrics</text>
 
             <!-- 2. Scaling Controller (Right) -->
             <g transform="translate(580, 230)">
@@ -116,8 +116,8 @@
             </g>
 
             <!-- Arrow from Controller to Decision -->
-            <path d="M 680 360 Q 680 410 620 450" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
-            <text x="685" y="410" font-size="10" fill="#8b5cf6" transform="rotate(55 685 410)" font-family="Liberation Sans, Arial, sans-serif">Decide action</text>
+            <path d="M 680 360 L 680 420 L 630 420 L 630 450" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+            <text x="688" y="395" font-size="10" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">Decide action</text>
 
             <!-- 3. Scaling Decision (Bottom Right) -->
             <g transform="translate(450, 450)">
@@ -144,8 +144,8 @@
             </g>
 
             <!-- Arrow from Decision to Instance Adjustment -->
-            <path d="M 450 505 Q 350 530 280 490" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowOrange)"/>
-            <text x="350" y="540" font-size="10" fill="#f59e0b" font-family="Liberation Sans, Arial, sans-serif">Execute scaling</text>
+            <path d="M 450 505 L 350 505 L 350 485 L 280 485" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <text x="355" y="520" font-size="10" fill="#f59e0b" font-family="Liberation Sans, Arial, sans-serif">Execute scaling</text>
 
             <!-- 4. Instance Adjustment (Bottom Left) -->
             <g transform="translate(100, 420)">
@@ -164,11 +164,11 @@
             </g>
 
             <!-- Arrow from Instance Adjustment back to Metrics -->
-            <path d="M 190 420 Q 190 300 250 200 Q 300 120 340 100" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
-            <text x="200" y="265" font-size="10" fill="#10b981" transform="rotate(-70 200 265)" font-family="Liberation Sans, Arial, sans-serif">Metrics change</text>
+            <path d="M 190 420 L 190 100 L 340 100" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <text x="200" y="265" font-size="10" fill="#10b981" transform="rotate(-90 200 265)" font-family="Liberation Sans, Arial, sans-serif">Metrics change</text>
 
             <!-- Timing annotations -->
-            <g transform="translate(30, 50)">
+            <g transform="translate(30, 90)">
                 <rect x="0" y="0" width="140" height="115" rx="6" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
                 <text x="70" y="22" text-anchor="middle" font-size="10" font-weight="600" fill="#b45309" font-family="Liberation Sans, Arial, sans-serif">Timing</text>
                 <text x="12" y="44" font-size="9" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">Metric collection: 15s</text>
@@ -178,7 +178,7 @@
             </g>
 
             <!-- Legend -->
-            <g transform="translate(30, 180)">
+            <g transform="translate(30, 220)">
                 <rect x="0" y="0" width="140" height="120" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
                 <text x="70" y="22" text-anchor="middle" font-size="10" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Thresholds</text>
                 <line x1="12" y1="34" x2="128" y2="34" stroke="#e2e8f0" stroke-width="1"/>

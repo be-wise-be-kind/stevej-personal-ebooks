@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cache-Aside Pattern</title>
+    <style>
+        body { font-family: Liberation Sans, Arial, sans-serif; margin: 0; padding: 20px; background: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .diagram-container { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); padding: 24px; max-width: 100%; }
+        svg { display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 800 360" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="appGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="cacheGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="dbGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+                </linearGradient>
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+                </marker>
+                <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#22c55e"/>
+                </marker>
+                <marker id="arrowOrange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
+                </marker>
+            </defs>
+
+            <rect width="800" height="360" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="400" y="30" text-anchor="middle" fill="#1e293b" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Cache-Aside Pattern (Lazy Loading)</text>
+
+            <!-- Client -->
+            <g transform="translate(80, 180)">
+                <rect x="-50" y="-30" width="100" height="60" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+                <text x="0" y="5" text-anchor="middle" fill="#475569" font-size="11" font-weight="500">Client</text>
+            </g>
+
+            <!-- Application -->
+            <g transform="translate(250, 180)">
+                <rect x="-65" y="-40" width="130" height="80" rx="8" fill="url(#appGrad)" filter="url(#shadow)"/>
+                <text x="0" y="5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="500">Application</text>
+            </g>
+
+            <!-- Cache -->
+            <g transform="translate(450, 100)">
+                <rect x="-60" y="-35" width="120" height="70" rx="8" fill="url(#cacheGrad)" filter="url(#shadow)"/>
+                <text x="0" y="-5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="500">Cache</text>
+                <text x="0" y="12" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9">(Redis)</text>
+            </g>
+
+            <!-- Database -->
+            <g transform="translate(450, 260)">
+                <rect x="-60" y="-35" width="120" height="70" rx="8" fill="url(#dbGrad)" filter="url(#shadow)"/>
+                <text x="0" y="5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="500">Database</text>
+            </g>
+
+            <!-- Arrows and flow -->
+            <!-- 1. Client to App -->
+            <line x1="135" y1="180" x2="180" y2="180" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <text x="155" y="170" fill="#64748b" font-size="9">1. Request</text>
+
+            <!-- 2. App to Cache -->
+            <line x1="290" y1="145" x2="385" y2="110" stroke="#f97316" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <text x="325" y="115" fill="#ea580c" font-size="9">2. Check cache</text>
+
+            <!-- Decision -->
+            <g transform="translate(600, 100)">
+                <polygon points="0,-25 35,0 0,25 -35,0" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                <text x="0" y="5" text-anchor="middle" fill="#92400e" font-size="9" font-weight="500">Hit?</text>
+            </g>
+
+            <!-- Hit path -->
+            <line x1="515" y1="100" x2="560" y2="100" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <g transform="translate(700, 100)">
+                <rect x="-45" y="-20" width="90" height="40" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+                <text x="0" y="-3" text-anchor="middle" fill="#166534" font-size="10" font-weight="500">Return</text>
+                <text x="0" y="12" text-anchor="middle" fill="#166534" font-size="10" font-weight="500">cached data</text>
+            </g>
+            <line x1="638" y1="100" x2="650" y2="100" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+            <!-- Miss path - to database -->
+            <line x1="600" y1="128" x2="600" y2="180" stroke="#ef4444" stroke-width="2"/>
+            <text x="610" y="155" fill="#ef4444" font-size="9">Miss</text>
+            <line x1="600" y1="180" x2="600" y2="220" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <text x="620" y="200" fill="#64748b" font-size="9">3. Query DB</text>
+
+            <!-- DB returns data -->
+            <line x1="515" y1="260" x2="600" y2="260" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+            <!-- Store in cache -->
+            <path d="M515,245 Q550,200 490,150" fill="none" stroke="#f97316" stroke-width="2" stroke-dasharray="4,2" marker-end="url(#arrowOrange)"/>
+            <text x="540" y="195" fill="#ea580c" font-size="9">4. Store</text>
+
+            <!-- Return to client -->
+            <path d="M385,270 Q320,290 150,210" fill="none" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <text x="260" y="290" fill="#16a34a" font-size="9">5. Return data</text>
+
+            <!-- Key points -->
+            <g transform="translate(140, 320)">
+                <rect x="-100" y="-18" width="200" height="36" rx="4" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+                <text x="0" y="-2" text-anchor="middle" fill="#1e40af" font-size="9" font-weight="500">Application manages cache</text>
+                <text x="0" y="12" text-anchor="middle" fill="#1e40af" font-size="9">Cache fills with hot data</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

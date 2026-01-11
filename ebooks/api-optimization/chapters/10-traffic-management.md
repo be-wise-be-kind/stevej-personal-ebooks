@@ -1,4 +1,4 @@
-# Chapter 9: Traffic Management and Resilience
+# Chapter 10: Traffic Management and Resilience
 
 ![Chapter 10 Opener](../assets/ch10-opener.html)
 
@@ -49,6 +49,8 @@ Sliding window requires tracking requests across two windows, which increases me
 <!-- DIAGRAM: Comparison of fixed window vs sliding window rate limiting showing: Fixed window with boundary spike (requests clustered at window boundaries), Sliding window with smooth enforcement (consistent rate across boundaries) -->
 
 ![Rate Limiting Comparison](../assets/ch09-rate-limiting-comparison.html)
+
+For rate limiting at the CDN edge—including distributed state challenges and edge-specific configuration patterns—see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md).
 
 ### Circuit Breaker Pattern
 

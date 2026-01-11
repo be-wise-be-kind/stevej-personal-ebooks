@@ -3,11 +3,21 @@
 
 Rules checked:
 1. Code blocks must be preceded by a blank line
+2. Inline code must be preceded by whitespace or allowed punctuation
 """
 
 import sys
 import re
 import glob
+
+# Pattern to find inline code spans (single backticks, not triple)
+# Matches: `code` but not ```code```
+INLINE_CODE_PATTERN = re.compile(r'(?<!`)(`[^`\n]+?`)(?!`)')
+
+# Characters allowed immediately before an opening backtick
+# Includes: whitespace, apostrophe, opening brackets/parens, quotes,
+# and markdown emphasis characters (* and _)
+ALLOWED_BEFORE_BACKTICK = set(" \t'\"([{<*_")
 
 
 def lint_file(path: str) -> list[str]:
@@ -37,6 +47,29 @@ def lint_file(path: str) -> list[str]:
             else:
                 # Closing code fence
                 in_code_block = False
+            continue
+
+        # Skip inline code checks inside code blocks
+        if in_code_block:
+            continue
+
+        # Check for inline code spacing violations
+        for match in INLINE_CODE_PATTERN.finditer(stripped):
+            pos = match.start()
+            if pos == 0:
+                # Start of line is fine
+                continue
+
+            char_before = stripped[pos - 1]
+            if char_before not in ALLOWED_BEFORE_BACKTICK:
+                # Found a violation - letter/digit directly before backtick
+                inline_code = match.group(1)
+                # Truncate long inline code for readability
+                if len(inline_code) > 20:
+                    inline_code = inline_code[:17] + '...'
+                errors.append(
+                    f"Line {line_num}: Missing space before inline code {inline_code}"
+                )
 
     return errors
 

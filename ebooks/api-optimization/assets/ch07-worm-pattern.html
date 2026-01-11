@@ -40,6 +40,15 @@
             <!-- Append-only log visualization -->
             <text x="50" y="70" style="font-size: 12px; fill: #374151; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Append-Only Log Structure</text>
 
+            <!-- Cold storage (drawn first so line appears behind cards) -->
+            <rect x="600" y="110" width="120" height="60" fill="#f3e8ff" rx="6" stroke="#a855f7" stroke-width="1"/>
+            <text x="660" y="135" text-anchor="middle" style="font-size: 10px; fill: #7c3aed; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Cold Storage</text>
+            <text x="660" y="150" text-anchor="middle" style="font-size: 9px; fill: #a855f7;" font-family="Liberation Sans, Arial, sans-serif">S3, GCS</text>
+            <text x="660" y="163" text-anchor="middle" style="font-size: 8px; fill: #a855f7;" font-family="Liberation Sans, Arial, sans-serif">(Object Lock)</text>
+
+            <path d="M 200 195 Q 400 230, 595 145" stroke="#a855f7" stroke-width="1.5" fill="none" stroke-dasharray="4,2" marker-end="url(#arrowPurple)"/>
+            <text x="400" y="225" text-anchor="middle" style="font-size: 9px; fill: #a855f7;" font-family="Liberation Sans, Arial, sans-serif">Sealed segments replicate to cold storage</text>
+
             <!-- Sealed Segment 1 -->
             <rect x="50" y="90" width="150" height="100" fill="#e0f2fe" rx="6" stroke="#0284c7" stroke-width="2"/>
             <rect x="55" y="95" width="140" height="20" fill="#0284c7" rx="3"/>
@@ -96,16 +105,6 @@
             <!-- Write arrow -->
             <line x1="465" y1="55" x2="465" y2="85" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
             <text x="465" y="50" text-anchor="middle" style="font-size: 10px; fill: #22c55e; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Writes append here only</text>
-
-            <!-- Cold storage arrow -->
-            <rect x="600" y="110" width="120" height="60" fill="#f3e8ff" rx="6" stroke="#a855f7" stroke-width="1"/>
-            <text x="660" y="135" text-anchor="middle" style="font-size: 10px; fill: #7c3aed; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Cold Storage</text>
-            <text x="660" y="150" text-anchor="middle" style="font-size: 9px; fill: #a855f7;" font-family="Liberation Sans, Arial, sans-serif">S3, GCS</text>
-            <text x="660" y="163" text-anchor="middle" style="font-size: 8px; fill: #a855f7;" font-family="Liberation Sans, Arial, sans-serif">(Object Lock)</text>
-
-            <line x1="200" y1="140" x2="560" y2="140" stroke="transparent"/>
-            <path d="M 200 145 Q 280 200, 595 140" stroke="#a855f7" stroke-width="1.5" fill="none" stroke-dasharray="4,2" marker-end="url(#arrowPurple)"/>
-            <text x="400" y="210" text-anchor="middle" style="font-size: 9px; fill: #a855f7;" font-family="Liberation Sans, Arial, sans-serif">Sealed segments replicate to cold storage</text>
 
             <!-- Read path -->
             <text x="50" y="245" style="font-size: 12px; fill: #374151; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Read Path</text>

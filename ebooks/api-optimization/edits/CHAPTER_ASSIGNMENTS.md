@@ -582,7 +582,7 @@ This document provides detailed assignments for each chapter author. Follow thes
 
 ## General Notes for All Authors
 
-1. **Word Count**: Target 2000-4000 words per chapter. Prioritize clarity over length.
+1. **Word Count**: Target 3000-8000 words per chapter. Complex or technical chapters may exceed 8000 words if the content warrants it. Prioritize depth and clarity over arbitrary limits.
 
 2. **Code Quality**: All code must be syntactically correct and runnable. Test your examples.
 

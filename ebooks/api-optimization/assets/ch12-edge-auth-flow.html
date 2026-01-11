@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Authentication Flow</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 800 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="clientGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="kvGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="originGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="decisionGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+                </linearGradient>
+
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+
+                <marker id="arrowBlack" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+                </marker>
+                <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#22c55e"/>
+                </marker>
+                <marker id="arrowRed" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#ef4444"/>
+                </marker>
+                <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="400" y="35" text-anchor="middle" font-size="20" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Edge Authentication Decision Flow</text>
+
+            <!-- Client -->
+            <g transform="translate(40, 80)">
+                <rect x="0" y="0" width="90" height="70" rx="8" fill="url(#clientGrad)" filter="url(#shadow)"/>
+                <circle cx="45" cy="22" r="12" fill="#ffffff" opacity="0.3"/>
+                <circle cx="45" cy="20" r="6" fill="#ffffff"/>
+                <ellipse cx="45" cy="35" rx="10" ry="6" fill="#ffffff"/>
+                <text x="45" y="60" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Client</text>
+            </g>
+
+            <!-- Arrow: Client to Edge -->
+            <line x1="135" y1="115" x2="195" y2="115" stroke="#64748b" stroke-width="2" marker-end="url(#arrowBlack)"/>
+            <text x="165" y="105" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">JWT Token</text>
+
+            <!-- Edge Worker -->
+            <g transform="translate(205, 70)">
+                <rect x="0" y="0" width="170" height="90" rx="10" fill="url(#edgeGrad)" filter="url(#shadow)"/>
+                <text x="85" y="22" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Edge Worker</text>
+                <text x="85" y="42" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">1. Parse JWT</text>
+                <text x="85" y="58" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">2. Validate Signature</text>
+                <text x="85" y="74" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">3. Check Claims (exp, iss)</text>
+            </g>
+
+            <!-- KV Store for JWKS -->
+            <g transform="translate(420, 60)">
+                <rect x="0" y="0" width="130" height="55" rx="6" fill="url(#kvGrad)" filter="url(#shadow)"/>
+                <text x="65" y="22" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">KV Store</text>
+                <text x="65" y="40" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">JWKS Public Keys</text>
+            </g>
+            <line x1="378" y1="95" x2="415" y2="85" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+            <!-- Decision: Valid Token? -->
+            <g transform="translate(230, 200)">
+                <polygon points="60,0 120,45 60,90 0,45" fill="url(#decisionGrad)" filter="url(#shadow)"/>
+                <text x="60" y="40" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Valid</text>
+                <text x="60" y="54" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Token?</text>
+            </g>
+
+            <!-- Arrow: Edge to Decision -->
+            <line x1="290" y1="165" x2="290" y2="195" stroke="#64748b" stroke-width="2" marker-end="url(#arrowBlack)"/>
+
+            <!-- Invalid Token Path (Left) - 401 -->
+            <line x1="230" y1="245" x2="130" y2="245" stroke="#ef4444" stroke-width="2"/>
+            <line x1="130" y1="245" x2="130" y2="175" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+            <text x="180" y="235" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">NO</text>
+
+            <g transform="translate(60, 300)">
+                <rect x="0" y="0" width="140" height="50" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="1"/>
+                <text x="70" y="22" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">401 Unauthorized</text>
+                <text x="70" y="40" text-anchor="middle" fill="#dc2626" font-size="9" font-family="Liberation Sans, Arial, sans-serif">No origin request</text>
+            </g>
+            <line x1="130" y1="295" x2="130" y2="255" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+            <!-- Valid Token Path - Check Revocation -->
+            <line x1="350" y1="245" x2="420" y2="245" stroke="#22c55e" stroke-width="2"/>
+            <text x="385" y="235" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">YES</text>
+
+            <!-- Revocation Check Decision -->
+            <g transform="translate(430, 200)">
+                <polygon points="55,0 110,45 55,90 0,45" fill="url(#decisionGrad)" filter="url(#shadow)"/>
+                <text x="55" y="40" text-anchor="middle" fill="#1e293b" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Token</text>
+                <text x="55" y="54" text-anchor="middle" fill="#1e293b" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Revoked?</text>
+            </g>
+
+            <!-- KV Store for Revocation List -->
+            <g transform="translate(580, 170)">
+                <rect x="0" y="0" width="130" height="55" rx="6" fill="url(#kvGrad)" filter="url(#shadow)"/>
+                <text x="65" y="22" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">KV Store</text>
+                <text x="65" y="40" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Revocation List (jti)</text>
+            </g>
+            <line x1="540" y1="225" x2="575" y2="205" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+            <!-- Revoked Path -->
+            <line x1="540" y1="245" x2="620" y2="245" stroke="#ef4444" stroke-width="2"/>
+            <line x1="620" y1="245" x2="620" y2="310" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+            <text x="580" y="235" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">YES</text>
+
+            <g transform="translate(550, 320)">
+                <rect x="0" y="0" width="140" height="50" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="1"/>
+                <text x="70" y="22" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">401 Token Revoked</text>
+                <text x="70" y="40" text-anchor="middle" fill="#dc2626" font-size="9" font-family="Liberation Sans, Arial, sans-serif">No origin request</text>
+            </g>
+
+            <!-- Not Revoked - Forward to Origin -->
+            <line x1="485" y1="295" x2="485" y2="365" stroke="#22c55e" stroke-width="2"/>
+            <text x="510" y="330" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">NO</text>
+
+            <!-- Forward with Claims -->
+            <g transform="translate(380, 375)">
+                <rect x="0" y="0" width="210" height="65" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+                <text x="105" y="20" text-anchor="middle" fill="#16a34a" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Forward to Origin with:</text>
+                <text x="105" y="38" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">X-User-ID: {sub claim}</text>
+                <text x="105" y="52" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">X-User-Roles: {roles claim}</text>
+            </g>
+
+            <!-- Arrow to Origin -->
+            <line x1="595" y1="405" x2="665" y2="405" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+            <!-- Origin Server -->
+            <g transform="translate(675, 365)">
+                <rect x="0" y="0" width="100" height="80" rx="8" fill="url(#originGrad)" filter="url(#shadow)"/>
+                <text x="50" y="25" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Origin</text>
+                <text x="50" y="42" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Server</text>
+                <text x="50" y="62" text-anchor="middle" fill="#ffffff" font-size="8" opacity="0.85" font-family="Liberation Sans, Arial, sans-serif">Trusts edge auth</text>
+            </g>
+
+            <!-- Benefits annotation -->
+            <rect x="40" y="460" width="720" height="50" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+            <text x="400" y="480" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Benefits: Invalid tokens rejected at edge (10-50ms) | Origin only receives validated requests | Reduced auth load on origin</text>
+            <text x="400" y="498" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Tradeoff: Revocation list in KV has eventual consistency (~60s delay for new revocations)</text>
+
+        </svg>
+    </div>
+</body>
+</html>

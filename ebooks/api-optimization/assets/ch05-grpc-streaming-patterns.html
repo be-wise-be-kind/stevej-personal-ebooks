@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gRPC Streaming Patterns</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background -->
+            <rect width="800" height="500" fill="white"/>
+
+            <!-- Title -->
+            <text x="400" y="30" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">gRPC Streaming Patterns</text>
+            <text x="400" y="50" text-anchor="middle" style="font-size: 12px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Four communication patterns over HTTP/2</text>
+
+            <!-- Unary RPC -->
+            <g transform="translate(50, 80)">
+                <rect x="0" y="0" width="160" height="180" fill="#dbeafe" rx="8" stroke="#3b82f6" stroke-width="2"/>
+                <text x="80" y="25" text-anchor="middle" style="font-size: 13px; font-weight: 600; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">Unary RPC</text>
+
+                <!-- Client/Server -->
+                <rect x="20" y="45" width="50" height="25" fill="#3b82f6" rx="4"/>
+                <text x="45" y="62" text-anchor="middle" style="font-size: 10px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Client</text>
+
+                <rect x="90" y="45" width="50" height="25" fill="#1e40af" rx="4"/>
+                <text x="115" y="62" text-anchor="middle" style="font-size: 10px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Server</text>
+
+                <!-- Single request arrow -->
+                <line x1="45" y1="80" x2="115" y2="100" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+                <text x="80" y="85" text-anchor="middle" style="font-size: 9px; fill: #3b82f6;" font-family="Liberation Sans, Arial, sans-serif">request</text>
+
+                <!-- Single response arrow -->
+                <line x1="115" y1="115" x2="45" y2="135" stroke="#1e40af" stroke-width="2" marker-end="url(#arrowNavy)"/>
+                <text x="80" y="130" text-anchor="middle" style="font-size: 9px; fill: #1e40af;" font-family="Liberation Sans, Arial, sans-serif">response</text>
+
+                <!-- Use case -->
+                <text x="80" y="160" text-anchor="middle" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">GetUser, CreateOrder</text>
+                <text x="80" y="172" text-anchor="middle" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Standard API calls</text>
+            </g>
+
+            <!-- Server Streaming -->
+            <g transform="translate(250, 80)">
+                <rect x="0" y="0" width="160" height="180" fill="#dcfce7" rx="8" stroke="#22c55e" stroke-width="2"/>
+                <text x="80" y="25" text-anchor="middle" style="font-size: 13px; font-weight: 600; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">Server Streaming</text>
+
+                <!-- Client/Server -->
+                <rect x="20" y="45" width="50" height="25" fill="#22c55e" rx="4"/>
+                <text x="45" y="62" text-anchor="middle" style="font-size: 10px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Client</text>
+
+                <rect x="90" y="45" width="50" height="25" fill="#15803d" rx="4"/>
+                <text x="115" y="62" text-anchor="middle" style="font-size: 10px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Server</text>
+
+                <!-- Single request arrow -->
+                <line x1="45" y1="80" x2="115" y2="85" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+                <!-- Multiple response arrows -->
+                <line x1="115" y1="95" x2="45" y2="100" stroke="#15803d" stroke-width="2" marker-end="url(#arrowDarkGreen)"/>
+                <line x1="115" y1="110" x2="45" y2="115" stroke="#15803d" stroke-width="2" marker-end="url(#arrowDarkGreen)"/>
+                <line x1="115" y1="125" x2="45" y2="130" stroke="#15803d" stroke-width="2" marker-end="url(#arrowDarkGreen)"/>
+                <text x="130" y="112" style="font-size: 9px; fill: #15803d;" font-family="Liberation Sans, Arial, sans-serif">stream</text>
+
+                <!-- Use case -->
+                <text x="80" y="160" text-anchor="middle" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">ListOrders, SearchResults</text>
+                <text x="80" y="172" text-anchor="middle" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Large result sets</text>
+            </g>
+
+            <!-- Client Streaming -->
+            <g transform="translate(450, 80)">
+                <rect x="0" y="0" width="160" height="180" fill="#fef3c7" rx="8" stroke="#f59e0b" stroke-width="2"/>
+                <text x="80" y="25" text-anchor="middle" style="font-size: 13px; font-weight: 600; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">Client Streaming</text>
+
+                <!-- Client/Server -->
+                <rect x="20" y="45" width="50" height="25" fill="#f59e0b" rx="4"/>
+                <text x="45" y="62" text-anchor="middle" style="font-size: 10px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Client</text>
+
+                <rect x="90" y="45" width="50" height="25" fill="#b45309" rx="4"/>
+                <text x="115" y="62" text-anchor="middle" style="font-size: 10px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Server</text>
+
+                <!-- Multiple request arrows -->
+                <line x1="45" y1="80" x2="115" y2="85" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
+                <line x1="45" y1="95" x2="115" y2="100" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
+                <line x1="45" y1="110" x2="115" y2="115" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
+                <text x="30" y="97" style="font-size: 9px; fill: #f59e0b;" font-family="Liberation Sans, Arial, sans-serif">stream</text>
+
+                <!-- Single response arrow -->
+                <line x1="115" y1="130" x2="45" y2="135" stroke="#b45309" stroke-width="2" marker-end="url(#arrowBrown)"/>
+
+                <!-- Use case -->
+                <text x="80" y="160" text-anchor="middle" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">UploadFile, BulkInsert</text>
+                <text x="80" y="172" text-anchor="middle" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Chunked uploads</text>
+            </g>
+
+            <!-- Bidirectional Streaming -->
+            <g transform="translate(650, 80)">
+                <rect x="0" y="0" width="160" height="180" fill="#fce7f3" rx="8" stroke="#ec4899" stroke-width="2"/>
+                <text x="80" y="25" text-anchor="middle" style="font-size: 13px; font-weight: 600; fill: #9d174d;" font-family="Liberation Sans, Arial, sans-serif">Bidirectional</text>
+
+                <!-- Client/Server -->
+                <rect x="20" y="45" width="50" height="25" fill="#ec4899" rx="4"/>
+                <text x="45" y="62" text-anchor="middle" style="font-size: 10px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Client</text>
+
+                <rect x="90" y="45" width="50" height="25" fill="#be185d" rx="4"/>
+                <text x="115" y="62" text-anchor="middle" style="font-size: 10px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Server</text>
+
+                <!-- Interleaved arrows -->
+                <line x1="45" y1="80" x2="115" y2="85" stroke="#ec4899" stroke-width="2" marker-end="url(#arrowPink)"/>
+                <line x1="115" y1="95" x2="45" y2="100" stroke="#be185d" stroke-width="2" marker-end="url(#arrowMagenta)"/>
+                <line x1="45" y1="105" x2="115" y2="110" stroke="#ec4899" stroke-width="2" marker-end="url(#arrowPink)"/>
+                <line x1="115" y1="115" x2="45" y2="120" stroke="#be185d" stroke-width="2" marker-end="url(#arrowMagenta)"/>
+                <line x1="45" y1="125" x2="115" y2="130" stroke="#ec4899" stroke-width="2" marker-end="url(#arrowPink)"/>
+
+                <!-- Use case -->
+                <text x="80" y="160" text-anchor="middle" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Chat, Collaboration</text>
+                <text x="80" y="172" text-anchor="middle" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Real-time sync</text>
+            </g>
+
+            <!-- Proto definitions -->
+            <g transform="translate(50, 290)">
+                <rect x="0" y="0" width="750" height="100" fill="#f8fafc" rx="6"/>
+                <text x="20" y="20" style="font-size: 11px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Proto Definitions:</text>
+
+                <text x="40" y="45" style="font-size: 10px; font-family: monospace; fill: #4b5563;">rpc GetUser(Request) returns (User);</text>
+                <text x="40" y="60" style="font-size: 10px; font-family: monospace; fill: #4b5563;">rpc ListOrders(Request) returns (stream Order);</text>
+                <text x="40" y="75" style="font-size: 10px; font-family: monospace; fill: #4b5563;">rpc UploadFile(stream Chunk) returns (Result);</text>
+                <text x="40" y="90" style="font-size: 10px; font-family: monospace; fill: #4b5563;">rpc Chat(stream Message) returns (stream Message);</text>
+
+                <!-- Labels -->
+                <text x="380" y="45" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">// Unary</text>
+                <text x="380" y="60" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">// Server streaming</text>
+                <text x="380" y="75" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">// Client streaming</text>
+                <text x="380" y="90" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">// Bidirectional</text>
+            </g>
+
+            <!-- Performance comparison -->
+            <g transform="translate(50, 410)">
+                <rect x="0" y="0" width="750" height="70" fill="#fff7ed" rx="6" stroke="#fb923c" stroke-width="1"/>
+                <text x="20" y="20" style="font-size: 11px; font-weight: 600; fill: #9a3412;" font-family="Liberation Sans, Arial, sans-serif">Performance Advantage:</text>
+
+                <text x="40" y="42" style="font-size: 10px; fill: #78350f;" font-family="Liberation Sans, Arial, sans-serif">Fetching 1000 records via Unary RPC = 1000 round trips</text>
+                <text x="40" y="58" style="font-size: 10px; fill: #78350f;" font-family="Liberation Sans, Arial, sans-serif">Fetching 1000 records via Server Streaming = 1 connection, records flow as they're ready</text>
+            </g>
+
+            <!-- Arrow markers -->
+            <defs>
+                <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L8,3 z" fill="#3b82f6"/>
+                </marker>
+                <marker id="arrowNavy" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L8,3 z" fill="#1e40af"/>
+                </marker>
+                <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L8,3 z" fill="#22c55e"/>
+                </marker>
+                <marker id="arrowDarkGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L8,3 z" fill="#15803d"/>
+                </marker>
+                <marker id="arrowAmber" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/>
+                </marker>
+                <marker id="arrowBrown" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L8,3 z" fill="#b45309"/>
+                </marker>
+                <marker id="arrowPink" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L8,3 z" fill="#ec4899"/>
+                </marker>
+                <marker id="arrowMagenta" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L8,3 z" fill="#be185d"/>
+                </marker>
+            </defs>
+        </svg>
+    </div>
+</body>
+</html>

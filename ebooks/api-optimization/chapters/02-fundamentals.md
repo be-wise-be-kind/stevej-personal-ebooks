@@ -446,7 +446,7 @@ Idempotency enables safe retries, which are essential for reliability. Chapter 8
 
 A **stateless** service treats each request independently. No request depends on previous requests to the same instance. All state—user sessions, cached data, application state—lives in external stores (databases, Redis, distributed caches). Any instance can handle any request.
 
-A **stateful** service holds state between requests. A WebSocket connection, an in-memory cache, or a session stored in server memory creates statefulness. Specific requests may need to reach specific instances.
+A **stateful** service holds state between requests. A WebSocket connection, an in-memory cache, or a session stored in server memory creates statefulness. Specific requests may need to reach specific instances. Protocols like WebSocket and gRPC maintain persistent connections that require different scaling strategies than stateless HTTP; Chapter 5 covers these protocol choices and their performance implications in detail.
 
 This distinction fundamentally affects how systems scale:
 

@@ -9,7 +9,7 @@
 - Maintain WORKS_CITED.md with proper citations for external sources
 - Use the `ebooks/_template/` when creating new ebooks
 - Run `just validate <book>` before building to check structure
-- Run `just lint md <book>` to check markdown formatting (blank lines before code blocks)
+- Run `just lint md <book>` to check markdown formatting (blank lines before code blocks, spacing before inline code)
 - Test all output formats after making build system changes
 
 ## Don't

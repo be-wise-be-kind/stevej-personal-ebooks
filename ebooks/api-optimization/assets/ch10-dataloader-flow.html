@@ -159,6 +159,11 @@
             <!-- Arrow from database to results -->
             <path d="M740 210 L770 210" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowheadBlue)" fill="none"/>
 
+            <!-- Return arrows to resolvers (drawn before Results Map so they appear behind it) -->
+            <path d="M780 175 C 600 175, 400 120, 215 135" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowheadGreen)" fill="none"/>
+            <path d="M780 210 C 600 210, 400 190, 215 190" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowheadGreen)" fill="none"/>
+            <path d="M780 245 C 600 245, 400 260, 215 250" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowheadGreen)" fill="none"/>
+
             <!-- Step 4: Results distributed -->
             <g transform="translate(780, 130)">
                 <rect x="0" y="0" width="140" height="160" rx="8" fill="url(#successGradient)" filter="url(#shadow)"/>
@@ -178,11 +183,6 @@
             <!-- Step number badge 4 -->
             <circle cx="800" cy="127" r="12" fill="#10b981"/>
             <text x="800" y="131" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">4</text>
-
-            <!-- Return arrows to resolvers -->
-            <path d="M780 175 C 600 175, 400 120, 215 135" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowheadGreen)" fill="none"/>
-            <path d="M780 210 C 600 210, 400 190, 215 190" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowheadGreen)" fill="none"/>
-            <path d="M780 245 C 600 245, 400 260, 215 250" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowheadGreen)" fill="none"/>
 
             <!-- Comparison box: Without vs With DataLoader -->
             <g transform="translate(50, 320)">

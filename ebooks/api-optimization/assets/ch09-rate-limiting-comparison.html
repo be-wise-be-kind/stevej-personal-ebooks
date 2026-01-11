@@ -31,7 +31,7 @@
 <body>
     <div class="diagram-container">
         
-        <svg viewBox="0 0 850 580" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 900 580" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <linearGradient id="requestGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
@@ -164,17 +164,18 @@
 
             <!-- Formula box -->
             <g transform="translate(50, 510)">
-                <rect x="0" y="0" width="750" height="60" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+                <rect x="0" y="0" width="800" height="60" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
                 <text x="22" y="26" fill="#475569" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Sliding Window Formula:</text>
                 <text x="22" y="48" fill="#64748b" font-size="11" font-family="monospace">weighted_count = current_window_count + (previous_window_count x overlap_percentage)</text>
             </g>
 
             <!-- Legend -->
-            <g transform="translate(550, 508)">
-                <rect x="0" y="4" width="16" height="16" rx="2" fill="url(#requestGrad)"/>
-                <text x="24" y="17" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Request count</text>
-                <rect x="120" y="4" width="16" height="16" rx="2" fill="#dcfce7" stroke="#22c55e" stroke-width="1" stroke-dasharray="2,1"/>
-                <text x="144" y="17" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Sliding window</text>
+            <g transform="translate(580, 510)">
+                <rect x="-10" y="0" width="260" height="40" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <rect x="8" y="12" width="16" height="16" rx="2" fill="url(#requestGrad)"/>
+                <text x="32" y="25" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Request count</text>
+                <rect x="128" y="12" width="16" height="16" rx="2" fill="#dcfce7" stroke="#22c55e" stroke-width="1" stroke-dasharray="2,1"/>
+                <text x="152" y="25" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Sliding window</text>
             </g>
         </svg>
     </div>

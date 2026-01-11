@@ -1,4 +1,4 @@
-# Chapter 8: Compute and Scaling Patterns
+# Chapter 9: Compute and Scaling Patterns
 
 ![Chapter 9 Opener](../assets/ch09-opener.html)
 

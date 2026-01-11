@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT Structure</title>
+    <style>
+        body { font-family: Liberation Sans, Arial, sans-serif; margin: 0; padding: 20px; background: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .diagram-container { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); padding: 24px; max-width: 100%; }
+        svg { display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 800 380" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="headerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="payloadGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="signatureGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+            </defs>
+
+            <rect width="800" height="380" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="400" y="30" text-anchor="middle" fill="#1e293b" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">JWT Structure</text>
+
+            <!-- JWT Token representation -->
+            <text x="400" y="60" text-anchor="middle" fill="#64748b" font-size="11" font-family="monospace">header.payload.signature</text>
+
+            <!-- Three sections side by side -->
+            <!-- Header -->
+            <g transform="translate(140, 150)">
+                <rect x="-100" y="-60" width="200" height="120" rx="8" fill="url(#headerGrad)" filter="url(#shadow)"/>
+                <text x="0" y="-40" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600">Header</text>
+                <rect x="-85" y="-25" width="170" height="70" rx="4" fill="#ffffff" opacity="0.15"/>
+                <text x="0" y="-5" text-anchor="middle" fill="#ffffff" font-size="10" font-family="monospace">{</text>
+                <text x="0" y="12" text-anchor="middle" fill="#ffffff" font-size="10" font-family="monospace">"alg": "RS256",</text>
+                <text x="0" y="29" text-anchor="middle" fill="#ffffff" font-size="10" font-family="monospace">"typ": "JWT"</text>
+                <text x="0" y="46" text-anchor="middle" fill="#ffffff" font-size="10" font-family="monospace">}</text>
+            </g>
+
+            <!-- Dot separator -->
+            <text x="265" y="150" text-anchor="middle" fill="#94a3b8" font-size="24" font-weight="bold">.</text>
+
+            <!-- Payload -->
+            <g transform="translate(400, 150)">
+                <rect x="-110" y="-60" width="220" height="120" rx="8" fill="url(#payloadGrad)" filter="url(#shadow)"/>
+                <text x="0" y="-40" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600">Payload</text>
+                <rect x="-95" y="-25" width="190" height="70" rx="4" fill="#ffffff" opacity="0.15"/>
+                <text x="0" y="-5" text-anchor="middle" fill="#ffffff" font-size="10" font-family="monospace">{</text>
+                <text x="0" y="10" text-anchor="middle" fill="#ffffff" font-size="9" font-family="monospace">"sub": "user123",</text>
+                <text x="0" y="23" text-anchor="middle" fill="#ffffff" font-size="9" font-family="monospace">"exp": 1704067200,</text>
+                <text x="0" y="36" text-anchor="middle" fill="#ffffff" font-size="9" font-family="monospace">"roles": ["admin"]</text>
+                <text x="0" y="49" text-anchor="middle" fill="#ffffff" font-size="10" font-family="monospace">}</text>
+            </g>
+
+            <!-- Dot separator -->
+            <text x="535" y="150" text-anchor="middle" fill="#94a3b8" font-size="24" font-weight="bold">.</text>
+
+            <!-- Signature -->
+            <g transform="translate(660, 150)">
+                <rect x="-100" y="-60" width="200" height="120" rx="8" fill="url(#signatureGrad)" filter="url(#shadow)"/>
+                <text x="0" y="-40" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600">Signature</text>
+                <rect x="-85" y="-25" width="170" height="70" rx="4" fill="#ffffff" opacity="0.15"/>
+                <text x="0" y="0" text-anchor="middle" fill="#ffffff" font-size="9" font-family="monospace">RSASHA256(</text>
+                <text x="0" y="15" text-anchor="middle" fill="#ffffff" font-size="9" font-family="monospace">base64(header) + "."</text>
+                <text x="0" y="30" text-anchor="middle" fill="#ffffff" font-size="9" font-family="monospace">+ base64(payload),</text>
+                <text x="0" y="45" text-anchor="middle" fill="#ffffff" font-size="9" font-family="monospace">privateKey)</text>
+            </g>
+
+            <!-- Arrows showing flow -->
+            <g transform="translate(140, 250)">
+                <line x1="0" y1="0" x2="0" y2="30" stroke="#ef4444" stroke-width="2"/>
+                <polygon points="-6,30 6,30 0,40" fill="#ef4444"/>
+            </g>
+            <g transform="translate(400, 250)">
+                <line x1="0" y1="0" x2="0" y2="30" stroke="#8b5cf6" stroke-width="2"/>
+                <polygon points="-6,30 6,30 0,40" fill="#8b5cf6"/>
+            </g>
+            <g transform="translate(660, 250)">
+                <line x1="0" y1="0" x2="0" y2="30" stroke="#3b82f6" stroke-width="2"/>
+                <polygon points="-6,30 6,30 0,40" fill="#3b82f6"/>
+            </g>
+
+            <!-- Descriptions -->
+            <g transform="translate(140, 310)">
+                <rect x="-90" y="-15" width="180" height="50" rx="4" fill="#fee2e2" stroke="#ef4444" stroke-width="1"/>
+                <text x="0" y="2" text-anchor="middle" fill="#991b1b" font-size="9" font-weight="500">Token type & algorithm</text>
+                <text x="0" y="18" text-anchor="middle" fill="#991b1b" font-size="9">Base64URL encoded</text>
+            </g>
+
+            <g transform="translate(400, 310)">
+                <rect x="-100" y="-15" width="200" height="50" rx="4" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1"/>
+                <text x="0" y="2" text-anchor="middle" fill="#5b21b6" font-size="9" font-weight="500">Claims about user & token</text>
+                <text x="0" y="18" text-anchor="middle" fill="#5b21b6" font-size="9">Base64URL encoded</text>
+            </g>
+
+            <g transform="translate(660, 310)">
+                <rect x="-90" y="-15" width="180" height="50" rx="4" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+                <text x="0" y="2" text-anchor="middle" fill="#1e40af" font-size="9" font-weight="500">Cryptographic signature</text>
+                <text x="0" y="18" text-anchor="middle" fill="#1e40af" font-size="9">Prevents tampering</text>
+            </g>
+
+            <!-- Note -->
+            <text x="400" y="375" text-anchor="middle" fill="#64748b" font-size="10">All three parts are concatenated with dots to form the complete JWT token</text>
+        </svg>
+    </div>
+</body>
+</html>

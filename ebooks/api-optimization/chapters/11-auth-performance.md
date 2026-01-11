@@ -12,6 +12,8 @@ If you need a refresher on authentication fundamentals—the difference between 
 
 The patterns here connect directly to earlier chapters: token caching applies the strategies from Chapter 6, connection pooling to identity providers follows Chapter 5's network optimization principles, and protecting authentication under attack uses the circuit breakers and rate limiting from Chapter 10. Authentication is where these patterns converge on a critical path that affects every request.
 
+For edge-based authentication patterns—validating tokens at the CDN edge before requests reach your origin servers—see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md). Edge auth can eliminate origin load from invalid tokens and reduce latency for valid requests.
+
 <!-- DIAGRAM: Request timeline showing: TLS handshake complete -> Extract token -> Validate signature -> Check claims -> Authorization check -> Business logic, with typical latency annotations at each step -->
 
 ![Request Auth Timeline](../assets/ch11-request-auth-timeline.html)
@@ -68,7 +70,7 @@ JWT signing algorithms fall into two categories with different performance chara
 
 Benchmark data from the `jsonwebtoken` library (Node.js) and `pyjwt` (Python) shows typical verification times [Source: Library benchmarks, 2024]:
 
-| Algorithm | Verification Time (μs) | Notes |
+| Algorithm | Verification Time (us) | Notes |
 |-----------|----------------------|-------|
 | HS256 | 5-15 | Fastest, shared secret required |
 | HS512 | 8-20 | Slightly slower, stronger hash |
@@ -93,8 +95,8 @@ The latency difference is substantial:
 
 | Approach | Typical Latency | Notes |
 |----------|----------------|-------|
-| Local (HS256) | 10-50 μs | Fastest, no network |
-| Local (RS256) | 200-800 μs | CPU-bound crypto |
+| Local (HS256) | 10-50 us | Fastest, no network |
+| Local (RS256) | 200-800 us | CPU-bound crypto |
 | Remote (same region) | 5-20 ms | Network + processing |
 | Remote (cross-region) | 50-150 ms | Geographic latency |
 
@@ -108,7 +110,7 @@ Session-based authentication stores user state server-side, with clients sending
 
 | Storage | Read Latency | Write Latency | Scaling | Notes |
 |---------|--------------|---------------|---------|-------|
-| In-memory | < 1 μs | < 1 μs | None | Lost on restart, no horizontal scaling |
+| In-memory | < 1 us | < 1 us | None | Lost on restart, no horizontal scaling |
 | Redis | 0.5-2 ms | 0.5-2 ms | Excellent | Most common choice |
 | Memcached | 0.5-2 ms | 0.5-2 ms | Excellent | Simpler, less features |
 | PostgreSQL | 2-10 ms | 5-20 ms | Good | Persistent, ACID guarantees |
@@ -330,7 +332,7 @@ API key validation is a lookup: given a key, return the associated permissions a
 
 | Approach | Lookup Time | Notes |
 |----------|-------------|-------|
-| In-memory hash map | < 1 μs | Fast, but requires restart to update |
+| In-memory hash map | < 1 us | Fast, but requires restart to update |
 | Redis | 0.5-2 ms | Good balance, supports revocation |
 | Database | 2-10 ms | Persistent, ACID, slower |
 
@@ -467,6 +469,6 @@ For a complete implementation of auth metrics middleware, see Example 11.4 in th
 
 7. **Curity** (2023). "JWT Performance." https://curity.io/resources/learn/jwt-performance/
 
-## Next: [Chapter 12: Advanced Optimization Techniques](./12-advanced-techniques.md)
+## Next: [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md)
 
-With authentication performance optimized, the next chapter explores advanced techniques including edge computing, GraphQL optimization with DataLoader, gRPC and Protocol Buffers, and hedged requests for tail latency mitigation.
+With authentication performance optimized, the next chapter explores edge infrastructure including CDN strategies, edge computing patterns, and how to push optimization closer to your users.

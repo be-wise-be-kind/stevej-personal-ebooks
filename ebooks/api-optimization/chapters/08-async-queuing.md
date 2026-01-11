@@ -1,4 +1,4 @@
-# Chapter 7: Asynchronous Processing and Queuing
+# Chapter 8: Asynchronous Processing and Queuing
 
 ![Chapter 8 Opener](../assets/ch08-opener.html)
 

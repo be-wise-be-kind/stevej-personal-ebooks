@@ -183,6 +183,7 @@ class CacheAside:
 5. **Handle errors appropriately**: Show proper error handling, not just the happy path
 6. **Use modern idioms**: async/await, type hints (Python), proper typing (TypeScript)
 7. **Blank line before code blocks**: Always include a blank line before opening code fences (```) to ensure proper spacing in rendered output. Enforced by `just lint md`.
+8. **Space before inline code**: Always include a space before opening backticks for inline code. Write `the `Cache-Control` header` not `the`Cache-Control` header`. Exceptions: possessives (`Python's `lru_cache``), opening brackets/parentheses, markdown emphasis (`**`bold code`**`), and start of line. Enforced by `just lint md`.
 
 ---
 
@@ -343,7 +344,7 @@ Before submitting a chapter, verify:
 - [ ] Terminology matches this style guide exactly
 - [ ] Chapter follows the required structure
 - [ ] Diagram placeholders are descriptive and specific
-- [ ] Word count is within 2000-4000 words
+- [ ] Word count is within 3000-8000 words (more allowed for complex/technical chapters)
 - [ ] Common pitfalls section is included
 - [ ] References section is complete
 - [ ] "Next" link points to the correct chapter
