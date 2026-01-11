@@ -84,25 +84,11 @@ PostgreSQL uses `shared_buffers` as its primary data cache. When a query request
 
 The default shared_buffers value of 128 MB is intentionally conservative. For dedicated database servers, PostgreSQL documentation recommends setting shared_buffers to approximately 25% of total system memory. A server with 64 GB RAM might use 16 GB for shared_buffers [Source: PostgreSQL Documentation, 2024].
 
-Monitor your buffer cache hit ratio to determine if shared_buffers is sized appropriately:
-
-```sql
-SELECT
-  sum(heap_blks_hit) / nullif(sum(heap_blks_hit) + sum(heap_blks_read), 0) AS hit_ratio
-FROM pg_statio_user_tables;
-```
-
-A hit ratio below 90% suggests either shared_buffers is too small or your working set exceeds available memory. Aim for hit ratios above 99% for frequently accessed tables (see Example 6.5).
+Monitor your buffer cache hit ratio to determine if shared_buffers is sized appropriately. A hit ratio below 90% suggests either shared_buffers is too small or your working set exceeds available memory. Aim for hit ratios above 99% for frequently accessed tables (see Example 6.5).
 
 **MySQL InnoDB Buffer Pool**
 
 MySQL's InnoDB storage engine uses a buffer pool that serves a similar purpose. The `innodb_buffer_pool_size` parameter controls the cache size, with a common recommendation of 70-80% of available memory for dedicated database servers [Source: MySQL Documentation, 2024].
-
-Monitor buffer pool efficiency with:
-
-```sql
-SHOW STATUS LIKE 'Innodb_buffer_pool_read%';
-```
 
 The ratio of `Innodb_buffer_pool_read_requests` to `Innodb_buffer_pool_reads` indicates cache effectiveness. A ratio of 1000:1 or higher indicates excellent caching—nearly all reads are served from memory.
 
@@ -142,13 +128,7 @@ The `Cache-Control` header is the primary mechanism for controlling caching beha
 | `stale-while-revalidate=N` | Serve stale content immediately while fetching fresh content in background |
 | `stale-if-error=N` | Serve stale content if origin returns error |
 
-A typical cacheable API response:
-
-```
-Cache-Control: public, max-age=60, s-maxage=300, stale-while-revalidate=600
-```
-
-This configuration caches in browsers for 60 seconds, in CDN for 5 minutes, and allows serving stale content for up to 10 minutes while revalidating in the background.
+A typical cacheable API response might use `Cache-Control: public, max-age=60, s-maxage=300, stale-while-revalidate=600`. This configuration caches in browsers for 60 seconds, in CDN for 5 minutes, and allows serving stale content for up to 10 minutes while revalidating in the background.
 
 **ETags and Conditional Requests**
 
@@ -169,46 +149,19 @@ The flow works as follows:
 
 For API responses, generate ETags from a hash of the response body or from version timestamps. The key is consistency—the same data must always produce the same ETag (see Example 6.6).
 
-```python
-import hashlib
-import json
-
-def generate_etag(data: dict) -> str:
-    content = json.dumps(data, sort_keys=True).encode()
-    return hashlib.sha256(content).hexdigest()[:16]
-```
-
 **stale-while-revalidate: The Hidden Performance Gem**
 
 The `stale-while-revalidate` directive is one of the most underutilized caching features for APIs. It instructs caches to serve stale content immediately while fetching fresh content in the background.
 
-Without stale-while-revalidate, when cached content expires, users wait for the full round trip to the origin. With it, users receive an immediate response while the cache refreshes asynchronously.
-
-```
-Cache-Control: max-age=60, stale-while-revalidate=600
-```
-
-This configuration provides a 60-second "fresh" window where cached content is served directly. After 60 seconds, content is "stale but usable" for 10 minutes. Requests during this window receive the stale content immediately while the cache fetches fresh content for subsequent requests [Source: RFC 5861, 2010].
+Without stale-while-revalidate, when cached content expires, users wait for the full round trip to the origin. With it, users receive an immediate response while the cache refreshes asynchronously. A configuration like `Cache-Control: max-age=60, stale-while-revalidate=600` provides a 60-second "fresh" window where cached content is served directly. After 60 seconds, content is "stale but usable" for 10 minutes. Requests during this window receive the stale content immediately while the cache fetches fresh content for subsequent requests [Source: RFC 5861, 2010].
 
 **stale-if-error: Resilience Through Caching**
 
-The `stale-if-error` directive provides resilience when your origin is unavailable. If the origin returns an error (5xx status codes), the cache can serve stale content rather than forwarding the error to users.
-
-```
-Cache-Control: max-age=60, stale-if-error=86400
-```
-
-This allows serving day-old content if the origin fails—often preferable to showing users an error page. Combined with stale-while-revalidate, this creates a robust caching strategy that degrades gracefully under origin failures [Source: MDN Web Docs, 2024].
+The `stale-if-error` directive provides resilience when your origin is unavailable. If the origin returns an error (5xx status codes), the cache can serve stale content rather than forwarding the error to users. Using `Cache-Control: max-age=60, stale-if-error=86400` allows serving day-old content if the origin fails—often preferable to showing users an error page. Combined with stale-while-revalidate, this creates a robust caching strategy that degrades gracefully under origin failures [Source: MDN Web Docs, 2024].
 
 **The Vary Header**
 
-The `Vary` header tells caches which request headers affect the response. Without proper Vary configuration, caches may serve incorrect responses.
-
-```
-Vary: Accept-Encoding, Accept-Language
-```
-
-This creates separate cache entries for different encodings and languages. A gzip-compressed English response is cached separately from an uncompressed Spanish response.
+The `Vary` header tells caches which request headers affect the response. Without proper Vary configuration, caches may serve incorrect responses. For example, `Vary: Accept-Encoding, Accept-Language` creates separate cache entries for different encodings and languages. A gzip-compressed English response is cached separately from an uncompressed Spanish response.
 
 Be intentional about Vary headers. Each additional header value fragments the cache, reducing hit rates. `Vary: Cookie` or `Vary: Authorization` effectively disable CDN caching since each user gets unique cache entries.
 
@@ -220,83 +173,17 @@ Application-layer caching operates within your service code, providing fine-grai
 
 **Request-Scoped Caching (Memoization)**
 
-Request-scoped caching stores computed values for the duration of a single request. This is particularly valuable when the same data is needed multiple times during request processing—for example, checking user permissions in multiple middleware layers.
-
-```python
-from functools import lru_cache
-from contextvars import ContextVar
-
-# Request-scoped cache using context variables
-_request_cache: ContextVar[dict] = ContextVar('request_cache', default=None)
-
-def get_request_cache() -> dict:
-    cache = _request_cache.get()
-    if cache is None:
-        cache = {}
-        _request_cache.set(cache)
-    return cache
-
-async def get_user_permissions(user_id: str) -> list[str]:
-    cache = get_request_cache()
-    cache_key = f"permissions:{user_id}"
-
-    if cache_key in cache:
-        return cache[cache_key]
-
-    permissions = await db.fetch_permissions(user_id)
-    cache[cache_key] = permissions
-    return permissions
-```
+Request-scoped caching stores computed values for the duration of a single request. This is particularly valuable when the same data is needed multiple times during request processing—for example, checking user permissions in multiple middleware layers. Using context variables, you can create a per-request cache dictionary that automatically discards when the request completes.
 
 Request-scoped caching is safe because the cache is automatically discarded when the request completes. There is no risk of serving stale data to other users (see Example 6.7).
 
 **Function Memoization**
 
-For expensive pure functions—those that always return the same output for the same input—memoization caches results indefinitely.
-
-Python's `functools.lru_cache` provides simple memoization:
-
-```python
-from functools import lru_cache
-
-@lru_cache(maxsize=1000)
-def parse_complex_configuration(config_string: str) -> dict:
-    # Expensive parsing that produces deterministic output
-    return expensive_parse(config_string)
-```
-
-Rust's `moka` crate provides thread-safe, bounded caching with TTL support:
-
-```rust
-use moka::sync::Cache;
-use std::time::Duration;
-
-let cache: Cache<String, ParsedConfig> = Cache::builder()
-    .max_capacity(1000)
-    .time_to_live(Duration::from_secs(3600))
-    .build();
-```
+For expensive pure functions—those that always return the same output for the same input—memoization caches results indefinitely. Python's `functools.lru_cache` provides simple memoization with configurable size limits. Rust's `moka` crate provides thread-safe, bounded caching with TTL support.
 
 **The DataLoader Pattern**
 
-The DataLoader pattern, popularized by Facebook for GraphQL, combines batching and caching to solve the N+1 query problem. It collects all data requests during a single tick of the event loop, then executes one batched query.
-
-```typescript
-const userLoader = new DataLoader(async (userIds: string[]) => {
-  const users = await db.users.findMany({
-    where: { id: { in: userIds } }
-  });
-  // Return in same order as requested
-  return userIds.map(id => users.find(u => u.id === id));
-});
-
-// These calls are batched into a single database query
-const [user1, user2, user3] = await Promise.all([
-  userLoader.load("user-1"),
-  userLoader.load("user-2"),
-  userLoader.load("user-3"),
-]);
-```
+The DataLoader pattern, popularized by Facebook for GraphQL, combines batching and caching to solve the N+1 query problem. It collects all data requests during a single tick of the event loop, then executes one batched query. When multiple loads are called concurrently, DataLoader batches them into a single database query and returns results in the same order as requested.
 
 DataLoader provides per-request caching: if user-1 is requested twice during the same request, the second call returns the cached result. This eliminates duplicate queries without risking stale data across requests [Source: DataLoader Documentation, 2024].
 
@@ -348,40 +235,13 @@ Redis Pub/Sub provides a lightweight solution. When data changes, publish an inv
 
 ![Redis Pub/Sub Cache Invalidation](../assets/ch06-redis-pubsub-invalidation.html)
 
-```python
-import redis.asyncio as redis
-
-# Publisher: after updating user data
-async def invalidate_user_cache(user_id: str):
-    await redis_client.publish('cache:invalidate', f'user:{user_id}')
-
-# Subscriber: running in each service instance
-async def cache_invalidation_listener():
-    pubsub = redis_client.pubsub()
-    await pubsub.subscribe('cache:invalidate')
-    async for message in pubsub.listen():
-        if message['type'] == 'message':
-            key = message['data'].decode()
-            local_cache.delete(key)
-```
+When data changes, the publisher broadcasts an invalidation message to a Redis channel. Each service instance subscribes to the channel and invalidates its local cache entry when a message arrives.
 
 Note that Pub/Sub is best-effort and non-persistent. If a service is restarted during a publish, it may miss the message. Combine Pub/Sub invalidation with TTL-based expiration as a fallback (see Example 6.8).
 
 **Redis 6+ Client-Side Caching**
 
-Redis 6 introduced server-assisted client-side caching. The server tracks which keys each client has accessed and sends invalidation messages when those keys change.
-
-```python
-# Redis 6+ client-side caching with tracking
-client = redis.Redis(host='localhost', port=6379)
-client.client_tracking_on()  # Enable server-side tracking
-
-# When you GET a key, Redis remembers you accessed it
-value = client.get('user:123')
-
-# If another client modifies 'user:123', Redis sends an invalidation
-# to all clients that accessed it
-```
+Redis 6 introduced server-assisted client-side caching. The server tracks which keys each client has accessed and sends invalidation messages when those keys change. When client tracking is enabled and you access a key, Redis remembers the access. If another client modifies that key, Redis automatically sends an invalidation to all clients that accessed it.
 
 This provides the benefits of local caching with automatic, server-driven invalidation. The trade-off is increased memory usage on the Redis server to track client access patterns [Source: Redis Documentation, 2024].
 
@@ -404,26 +264,13 @@ Naive CDN caching of API responses can serve incorrect data to users. Intentiona
 
 The cache key determines when a cached response can be reused. By default, CDNs key on URL only. This is insufficient for APIs where the same URL may return different responses based on headers or authentication.
 
-Configure cache keys to include relevant request characteristics:
-
-```
-# Cloudflare Cache Rule (pseudo-code)
-Match: URL path starts with /api/products
-Cache Key Includes: URL, Accept-Language header, query string
-Cache-Control: s-maxage=300
-```
+Configure cache keys to include relevant request characteristics. For example, a CDN cache rule might match API product endpoints and include the URL, Accept-Language header, and query string in the cache key while setting a 5-minute shared cache duration.
 
 Be intentional about what is included. Each additional cache key component fragments the cache. Including `Cookie` in the cache key effectively disables caching.
 
 **Surrogate Keys for Targeted Invalidation**
 
-Surrogate keys (also called cache tags) enable invalidation by logical entity rather than URL pattern. Tag responses with the entities they contain:
-
-```
-Surrogate-Key: product-123 category-electronics user-456
-```
-
-When product 123's data changes, purge all responses tagged with `product-123` across all edge locations. This is far more precise than attempting to guess all URL patterns that might include product 123.
+Surrogate keys (also called cache tags) enable invalidation by logical entity rather than URL pattern. Tag responses with the entities they contain using a header like `Surrogate-Key: product-123 category-electronics user-456`. When product 123's data changes, purge all responses tagged with `product-123` across all edge locations. This is far more precise than attempting to guess all URL patterns that might include product 123.
 
 Cloudflare's Cache Tags, Fastly's Surrogate-Key, and Akamai's Edge-Cache-Tag provide this capability.
 
@@ -472,28 +319,13 @@ Implement event-based invalidation using:
 
 **Version-Based Invalidation**
 
-Version-based caching embeds a version identifier in the cache key. When data changes, the version increments, effectively creating a new cache key.
-
-```python
-def get_user_cache_key(user_id: str, version: int) -> str:
-    return f"user:{user_id}:v{version}"
-
-# When user data changes, increment version in database
-# Old cache entries naturally expire via TTL
-```
+Version-based caching embeds a version identifier in the cache key. When data changes, the version increments, effectively creating a new cache key (e.g., `user:123:v1` becomes `user:123:v2`). Old cache entries naturally expire via TTL.
 
 This pattern is particularly useful for configuration data or feature flags where you want an immediate switch across all instances. Changing the version causes all instances to fetch fresh data, achieving coordinated invalidation without explicit communication.
 
 **Surrogate Key Purging**
 
-For CDN caches, surrogate keys enable targeted invalidation. When product data changes, purge by tag:
-
-```bash
-# Purge all responses tagged with product-123
-curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" \
-  -H "Authorization: Bearer {api_token}" \
-  -d '{"tags":["product-123"]}'
-```
+For CDN caches, surrogate keys enable targeted invalidation. When product data changes, purge by tag using the CDN provider's API.
 
 This invalidates all cached responses that contain product 123, regardless of URL structure. Surrogate key purging is typically fast (sub-second) across global CDN networks [Source: Cloudflare Documentation, 2024].
 
@@ -519,137 +351,29 @@ This pattern is implemented in Go's `golang.org/x/sync/singleflight` package and
 - **Lock scope**: Use distributed locks (Redis-based) for multi-instance deployments. Process-local locks only prevent stampedes within a single instance.
 - **Error handling**: If the first request fails, the lock should be released immediately so another request can retry.
 
-```python
-import asyncio
-from typing import Callable, TypeVar, Awaitable
-
-T = TypeVar('T')
-
-class SingleFlight:
-    def __init__(self):
-        self._in_flight: dict[str, asyncio.Future] = {}
-        self._locks: dict[str, asyncio.Lock] = {}
-
-    async def do(self, key: str, fn: Callable[[], Awaitable[T]], timeout: float = 30.0) -> T:
-        # Check if request is already in flight
-        if key in self._in_flight:
-            return await asyncio.wait_for(self._in_flight[key], timeout)
-
-        # Create a lock for this key
-        if key not in self._locks:
-            self._locks[key] = asyncio.Lock()
-
-        async with self._locks[key]:
-            # Double-check after acquiring lock
-            if key in self._in_flight:
-                return await asyncio.wait_for(self._in_flight[key], timeout)
-
-            # We're the first - create future and execute
-            future = asyncio.get_event_loop().create_future()
-            self._in_flight[key] = future
-
-            try:
-                result = await fn()
-                future.set_result(result)
-                return result
-            except Exception as e:
-                future.set_exception(e)
-                raise
-            finally:
-                del self._in_flight[key]
-```
-
 **Probabilistic Early Expiration (XFetch)**
 
 Probabilistic early expiration, formalized as the XFetch algorithm, spreads cache regeneration over time by having requests probabilistically refresh the cache before TTL expiration. The probability increases as the TTL approaches.
 
-The algorithm works as follows: when a request accesses a cache entry, it calculates the probability of early refresh based on remaining TTL and a configurable "beta" parameter. A random value determines whether this request should refresh the cache.
-
-```python
-import math
-import random
-import time
-
-def should_refresh_xfetch(
-    expiry_time: float,
-    delta: float,  # Time to recompute the value
-    beta: float = 1.0  # Higher beta = more aggressive early refresh
-) -> bool:
-    """
-    XFetch algorithm for probabilistic early expiration.
-    Returns True if this request should refresh the cache.
-    """
-    now = time.time()
-    time_to_expiry = expiry_time - now
-
-    if time_to_expiry <= 0:
-        return True  # Already expired
-
-    # Probability increases as expiry approaches
-    # Uses exponential distribution scaled by delta and beta
-    random_value = random.random()
-    threshold = delta * beta * math.log(random_value)
-
-    return time_to_expiry + threshold <= 0
-```
+The algorithm works as follows: when a request accesses a cache entry, it calculates the probability of early refresh based on remaining TTL and a configurable "beta" parameter. A random value determines whether this request should refresh the cache. The probability increases as expiry approaches, using an exponential distribution scaled by the recomputation time (delta) and the beta parameter.
 
 With beta = 1 and a delta of 1 second (time to recompute), the probability of early refresh begins to increase significantly about 2-3 seconds before expiration. This spreads load over time rather than concentrating it at the expiration moment [Source: Vattani et al., "Optimal Probabilistic Cache Stampede Prevention," VLDB 2015].
 
 **TTL with Jitter**
 
-Adding randomized jitter to TTL values prevents synchronized expiration across cache entries. Instead of all entries expiring at exactly 300 seconds, they expire between 270 and 330 seconds.
-
-```python
-import random
-
-def ttl_with_jitter(base_ttl: int, jitter_percent: float = 0.1) -> int:
-    """
-    Calculate TTL with random jitter to prevent thundering herd.
-
-    Args:
-        base_ttl: Base TTL in seconds
-        jitter_percent: Maximum jitter as percentage (0.1 = +/-10%)
-    """
-    jitter_range = int(base_ttl * jitter_percent)
-    jitter = random.randint(-jitter_range, jitter_range)
-    return max(1, base_ttl + jitter)  # Ensure positive TTL
-
-# Usage: TTL of 300s +/- 30s
-ttl = ttl_with_jitter(300, jitter_percent=0.1)  # Returns 270-330
-```
+Adding randomized jitter to TTL values prevents synchronized expiration across cache entries. Instead of all entries expiring at exactly 300 seconds, they expire between 270 and 330 seconds. A typical implementation adds or subtracts a random percentage (e.g., ±10%) from the base TTL.
 
 This technique is particularly effective when populating caches in bulk (such as during startup or cache warming) to prevent all entries from expiring simultaneously (see Example 6.2).
 
 **stale-while-revalidate**
 
-At the HTTP layer, `stale-while-revalidate` provides thundering herd protection at CDNs and reverse proxies. When a cache entry expires, the CDN serves the stale content immediately while fetching fresh content in the background. Only one background fetch occurs regardless of concurrent requests.
-
-```
-Cache-Control: max-age=60, stale-while-revalidate=600
-```
+At the HTTP layer, `stale-while-revalidate` provides thundering herd protection at CDNs and reverse proxies. When a cache entry expires, the CDN serves the stale content immediately while fetching fresh content in the background. Only one background fetch occurs regardless of concurrent requests. Using `Cache-Control: max-age=60, stale-while-revalidate=600` enables this behavior.
 
 This approach is powerful because it eliminates user-visible latency during cache refresh. Users always receive an immediate response, even when the cache is refreshing.
 
 **Background Refresh / Cache Warming**
 
-Proactive background refresh eliminates cache misses entirely by refreshing entries before they expire. A background process periodically identifies entries approaching expiration and refreshes them.
-
-```python
-async def cache_warming_loop():
-    """Background task that refreshes entries approaching expiration."""
-    while True:
-        # Find entries expiring within the next 5 minutes
-        expiring_keys = await redis.zrangebyscore(
-            'cache:expiry_index',
-            min=time.time(),
-            max=time.time() + 300
-        )
-
-        for key in expiring_keys:
-            await refresh_cache_entry(key)
-
-        await asyncio.sleep(60)  # Check every minute
-```
+Proactive background refresh eliminates cache misses entirely by refreshing entries before they expire. A background process periodically identifies entries approaching expiration (e.g., using a Redis sorted set to track expiry times) and refreshes them before users experience cache misses.
 
 This pattern is appropriate for high-value, predictable access patterns where cache misses are particularly costly.
 
@@ -659,32 +383,7 @@ Beyond the fundamental patterns, several advanced techniques address specific ca
 
 **Negative Caching**
 
-Negative caching stores the absence of data. When a query returns no results (a 404 or empty set), cache that fact to prevent repeated database queries for nonexistent data.
-
-```typescript
-async function getUserById(userId: string): Promise<User | null> {
-  const cached = await cache.get(`user:${userId}`);
-
-  if (cached === 'NOT_FOUND') {
-    return null;  // Cached negative result
-  }
-
-  if (cached) {
-    return JSON.parse(cached);
-  }
-
-  const user = await db.findUser(userId);
-
-  if (user) {
-    await cache.set(`user:${userId}`, JSON.stringify(user), 'EX', 3600);
-  } else {
-    // Cache the negative result with shorter TTL
-    await cache.set(`user:${userId}`, 'NOT_FOUND', 'EX', 300);
-  }
-
-  return user;
-}
-```
+Negative caching stores the absence of data. When a query returns no results (a 404 or empty set), cache that fact to prevent repeated database queries for nonexistent data. The implementation stores a sentinel value (like "NOT_FOUND") in the cache for missing entries, with a shorter TTL than positive results.
 
 Use shorter TTLs for negative results. If data is created later, you do not want to cache "not found" for hours (see Example 6.10).
 
@@ -694,14 +393,7 @@ Request coalescing combines multiple identical concurrent requests into a single
 
 CDNs like Cloudflare and Fastly implement request coalescing automatically. When multiple requests for the same resource arrive simultaneously, only one request goes to origin. Other requests wait and receive the same response.
 
-At the application level, implement coalescing using the same single-flight pattern:
-
-```python
-# Multiple concurrent calls for the same user are coalesced
-user_1 = await single_flight.do(f'user:{user_id}', lambda: fetch_user(user_id))
-user_2 = await single_flight.do(f'user:{user_id}', lambda: fetch_user(user_id))
-# Only one fetch_user call actually executes
-```
+At the application level, implement coalescing using the same single-flight pattern. Multiple concurrent calls for the same key are coalesced into a single backend fetch, with all callers receiving the same result.
 
 **Multi-Tier Cache Coordination**
 
@@ -718,35 +410,7 @@ The pattern:
 3. **L1 TTL**: Keep short (seconds to minutes) to limit stale data exposure
 4. **L2 TTL**: Can be longer since invalidation is explicit
 
-```python
-async def get_with_multi_tier(key: str) -> Optional[dict]:
-    # L1: In-process cache (fastest)
-    if key in local_cache:
-        return local_cache[key]
-
-    # L2: Redis (shared across instances)
-    value = await redis.get(key)
-    if value:
-        local_cache[key] = json.loads(value)
-        return local_cache[key]
-
-    # L3: Database (slowest)
-    value = await db.fetch(key)
-    if value:
-        await redis.setex(key, 3600, json.dumps(value))
-        local_cache[key] = value
-
-    return value
-
-async def invalidate_multi_tier(key: str):
-    # Delete from L2
-    await redis.delete(key)
-
-    # Broadcast L1 invalidation to all instances
-    await redis.publish('cache:invalidate', key)
-```
-
-(see Example 6.9 for a complete Rust implementation).
+The read path cascades through cache tiers: check the in-process cache first (fastest), then the distributed cache like Redis, and finally the database if both miss. On write, invalidate the distributed cache and broadcast the invalidation to all instances for their local caches (see Example 6.9 for a complete Rust implementation).
 
 **Proxy Caching**
 
@@ -778,36 +442,11 @@ Regardless of which caching pattern or invalidation strategy we choose, measurin
 
 **Database Cache Monitoring**
 
-Monitor your database buffer cache hit ratio. For PostgreSQL (see Example 6.5):
-
-```sql
--- Overall buffer cache hit ratio
-SELECT
-  sum(blks_hit) / nullif(sum(blks_hit) + sum(blks_read), 0) AS hit_ratio
-FROM pg_stat_database;
-
--- Per-table hit ratios (identify hot tables)
-SELECT
-  schemaname, relname,
-  heap_blks_hit / nullif(heap_blks_hit + heap_blks_read, 0) AS heap_hit_ratio,
-  idx_blks_hit / nullif(idx_blks_hit + idx_blks_read, 0) AS index_hit_ratio
-FROM pg_statio_user_tables
-ORDER BY heap_blks_read DESC
-LIMIT 20;
-```
+Monitor your database buffer cache hit ratio. For PostgreSQL, query `pg_stat_database` for overall hit ratios and `pg_statio_user_tables` for per-table hit ratios to identify hot tables (see Example 6.5).
 
 **Redis Cache Monitoring**
 
-Redis provides built-in metrics via the INFO command:
-
-```bash
-$ redis-cli INFO stats | grep -E 'keyspace_hits|keyspace_misses'
-keyspace_hits:1234567
-keyspace_misses:12345
-
-# Calculate hit rate: hits / (hits + misses)
-# 1234567 / (1234567 + 12345) = 99.0%
-```
+Redis provides built-in metrics via the INFO command. The `keyspace_hits` and `keyspace_misses` values let you calculate hit rate (hits divided by total requests).
 
 Also monitor:
 

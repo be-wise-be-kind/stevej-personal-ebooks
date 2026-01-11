@@ -6,11 +6,11 @@
 
 ## Overview
 
-Not every operation in an API request needs to complete before we return a response to the client. Email notifications, analytics tracking, image processing, audit logging--these tasks can often happen after we have acknowledged the user's request. By moving work off the critical path, we reduce latency for the client while improving overall system throughput and resilience.
+Not every operation in an API request needs to complete before we return a response to the client. Email notifications, analytics tracking, image processing, and audit logging can often happen after we have acknowledged the user's request. By moving work off the critical path, we reduce latency for the client while improving overall system throughput and resilience.
 
 This chapter explores the patterns and technologies that enable asynchronous processing. We will examine the fundamental trade-offs between synchronous and asynchronous approaches, dive into message queue technologies like RabbitMQ, Kafka, and SQS, and learn how to build reliable systems with backpressure, retry strategies, and dead letter queues. These patterns form the foundation of event-driven architecture, enabling systems that scale gracefully under load.
 
-The empirical approach applies here as well: we measure queue depth, consumer lag, processing latency, and error rates. Asynchronous systems introduce new failure modes--messages can be lost, duplicated, or processed out of order--and our observability must account for these possibilities.
+The empirical approach applies here as well: we measure queue depth, consumer lag, processing latency, and error rates. Asynchronous systems introduce new failure modes (messages can be lost, duplicated, or processed out of order) and our observability must account for these possibilities.
 
 <!-- DIAGRAM: Synchronous vs Asynchronous request flow: Sync shows client waiting for full processing (200ms total); Async shows client getting immediate acknowledgment (20ms) while work happens in background (180ms), with job status available via polling endpoint -->
 
@@ -22,7 +22,7 @@ The empirical approach applies here as well: we measure queue depth, consumer la
 
 The decision between synchronous and asynchronous processing depends on several factors: latency requirements, consistency needs, failure handling complexity, and user experience expectations.
 
-**Synchronous processing** provides immediate feedback. When a user submits an order, they know instantly whether it succeeded or failed. The response includes all relevant data. The implementation is straightforward--errors propagate naturally, transactions maintain consistency, and debugging follows a linear request path.
+**Synchronous processing** provides immediate feedback. When a user submits an order, they know instantly whether it succeeded or failed. The response includes all relevant data. The implementation is straightforward: errors propagate naturally, transactions maintain consistency, and debugging follows a linear request path.
 
 **Asynchronous processing** decouples the request from the work. The API accepts the request, validates it, enqueues the work, and returns immediately. This approach excels when:
 
@@ -31,7 +31,7 @@ The decision between synchronous and asynchronous processing depends on several 
 - The work can be retried independently of the original request
 - Load spikes would otherwise overwhelm downstream systems
 
-The trade-off is complexity. Asynchronous systems require additional infrastructure (queues, workers), introduce eventual consistency, and complicate error handling. A failed background job cannot return an error to the original HTTP request--it has already completed. For a practical implementation of this pattern, including job enqueueing and reliable consumer processing (see Example 8.1).
+The trade-off is complexity. Asynchronous systems require additional infrastructure (queues, workers), introduce eventual consistency, and complicate error handling. A failed background job cannot return an error to the original HTTP request, which has already completed. For a practical implementation of this pattern, including job enqueueing and reliable consumer processing (see Example 8.1).
 
 LinkedIn's engineering team documented their experience moving notification processing from synchronous to asynchronous paths, noting substantial reductions in API response times while maintaining delivery reliability through robust retry mechanisms [Source: LinkedIn Engineering Blog, 2019].
 
@@ -57,7 +57,7 @@ Message systems offer different delivery semantics:
 
 Different queue technologies optimize for different use cases:
 
-**Apache Kafka** excels at high-throughput, ordered event streaming. Kafka stores messages in partitioned, replicated logs. Consumers track their position (offset) and can replay messages. Kafka's design enables throughput measured in millions of messages per second per cluster for well-tuned deployments [Source: Apache Kafka Documentation]. The trade-off is operational complexity--Kafka requires ZooKeeper (or the newer KRaft mode), careful partition planning, and tuning for your workload.
+**Apache Kafka** excels at high-throughput, ordered event streaming. Kafka stores messages in partitioned, replicated logs. Consumers track their position (offset) and can replay messages. Kafka's design enables throughput measured in millions of messages per second per cluster for well-tuned deployments [Source: Apache Kafka Documentation]. The trade-off is operational complexity: Kafka requires ZooKeeper (or the newer KRaft mode), careful partition planning, and tuning for your workload.
 
 **RabbitMQ** provides flexible routing with traditional message queue semantics. Messages flow through exchanges to queues based on routing rules. RabbitMQ supports multiple protocols (AMQP, MQTT, STOMP), offers sophisticated routing patterns, and provides per-message acknowledgments. It handles tens of thousands of messages per second per node, scaling through clustering and federation [Source: RabbitMQ Documentation].
 
@@ -107,7 +107,7 @@ Messages fail for various reasons: malformed data, transient downstream failures
 3. Add random jitter to prevent synchronized retry storms
 4. Cap the maximum delay and total retry count
 
-The jitter is essential. Without it, all failed messages retry simultaneously, potentially overwhelming a recovering downstream service--the "thundering herd" problem. A production-ready implementation of exponential backoff with jitter is shown in (see Example 8.3).
+The jitter is essential. Without it, all failed messages retry simultaneously, potentially overwhelming a recovering downstream service (the "thundering herd" problem). A production-ready implementation of exponential backoff with jitter is shown in (see Example 8.3).
 
 **Dead letter queues (DLQ)** capture messages that exceed retry limits. Rather than losing the message or blocking the queue, we move it to a separate queue for inspection. DLQs enable:
 
@@ -116,7 +116,7 @@ The jitter is essential. Without it, all failed messages retry simultaneously, p
 - Manual replay after fixing issues
 - Analysis of failure patterns
 
-Configure DLQ handling carefully. Set appropriate retry limits--enough to handle transient failures, not so many that a poison message blocks processing for hours. Monitor DLQ depth and alert on growth.
+Configure DLQ handling carefully. Set appropriate retry limits: enough to handle transient failures, not so many that a poison message blocks processing for hours. Monitor DLQ depth and alert on growth.
 
 <!-- DIAGRAM: Retry and DLQ flow: Message arrives -> Process attempt -> [Success: acknowledge] or [Failure: check retry count] -> [Under limit: exponential backoff, re-queue] or [Over limit: move to DLQ, alert] -->
 
@@ -138,7 +138,7 @@ For implementation examples related to these concepts, see the [Appendix: Code E
 
 ## Common Pitfalls
 
-- **Ignoring idempotency**: At-least-once delivery means consumers may process the same message multiple times. Design handlers to be idempotent--processing the same message twice should have the same effect as processing it once. Use idempotency keys or check for duplicate work before processing.
+- **Ignoring idempotency**: At-least-once delivery means consumers may process the same message multiple times. Design handlers to be idempotent, meaning processing the same message twice should have the same effect as processing it once. Use idempotency keys or check for duplicate work before processing.
 
 - **Missing dead letter queue monitoring**: Configuring a DLQ is not enough. Without alerts on DLQ growth, poison messages accumulate unnoticed. Monitor DLQ depth and set alerts for any growth, as DLQs should remain empty in healthy systems.
 
@@ -160,7 +160,7 @@ For implementation examples related to these concepts, see the [Appendix: Code E
 
 - Message queues provide temporal decoupling between producers and consumers, enabling load leveling during traffic spikes and failure isolation between components
 
-- Delivery guarantees (at-most-once, at-least-once, exactly-once) involve trade-offs between reliability, performance, and complexity--at-least-once with idempotent consumers is often the practical choice
+- Delivery guarantees (at-most-once, at-least-once, exactly-once) involve trade-offs between reliability, performance, and complexity; at-least-once with idempotent consumers is often the practical choice
 
 - Backpressure mechanisms prevent queue overflow by signaling producers to slow down when consumers cannot keep pace; monitor queue depth as the primary indicator
 
@@ -168,7 +168,7 @@ For implementation examples related to these concepts, see the [Appendix: Code E
 
 - Dead letter queues isolate failing messages for debugging without blocking the main processing flow; monitor DLQ depth and alert on growth
 
-- Event-driven architecture patterns like event sourcing and CQRS enable sophisticated decoupling but introduce complexity and eventual consistency--use them when benefits outweigh costs
+- Event-driven architecture patterns like event sourcing and CQRS enable sophisticated decoupling but introduce complexity and eventual consistency; use them when benefits outweigh costs
 
 - Consumer idempotency is essential in at-least-once systems; design handlers to produce the same result regardless of how many times they process a message
 
@@ -190,4 +190,4 @@ For implementation examples related to these concepts, see the [Appendix: Code E
 
 ## Next: [Chapter 9: Compute and Scaling](./09-compute-scaling.md)
 
-With asynchronous patterns in place, we need to scale our compute resources to handle the workload. The next chapter covers horizontal and vertical scaling strategies, stateless service design, auto-scaling policies, and container orchestration--ensuring our async consumers and API servers can grow with demand.
+With asynchronous patterns in place, we need to scale our compute resources to handle the workload. The next chapter covers horizontal and vertical scaling strategies, stateless service design, auto-scaling policies, and container orchestration to ensure our async consumers and API servers can grow with demand.
