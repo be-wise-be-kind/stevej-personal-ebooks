@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CI/CD Performance Pipeline</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+
+        <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="stageGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="perfGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="deployGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                </linearGradient>
+                <!-- Shadow filter -->
+                <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+                <!-- Arrow markers -->
+                <marker id="arrowGray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+                </marker>
+                <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#10b981" />
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="28" text-anchor="middle" font-size="18" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">CI/CD Pipeline with Performance Gates</text>
+
+            <!-- Pipeline stages -->
+
+            <!-- Stage 1: Code Commit -->
+            <g transform="translate(30, 70)">
+                <rect x="0" y="0" width="100" height="60" rx="6" fill="url(#stageGradient)" filter="url(#dropShadow)"/>
+                <text x="50" y="28" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Code</text>
+                <text x="50" y="42" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Commit</text>
+            </g>
+
+            <!-- Arrow -->
+            <path d="M 130 100 L 155 100" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+            <!-- Stage 2: Build -->
+            <g transform="translate(160, 70)">
+                <rect x="0" y="0" width="80" height="60" rx="6" fill="url(#stageGradient)" filter="url(#dropShadow)"/>
+                <text x="40" y="35" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Build</text>
+            </g>
+
+            <!-- Arrow -->
+            <path d="M 240 100 L 265 100" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+            <!-- Stage 3: Unit Tests -->
+            <g transform="translate(270, 70)">
+                <rect x="0" y="0" width="80" height="60" rx="6" fill="url(#stageGradient)" filter="url(#dropShadow)"/>
+                <text x="40" y="28" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Unit</text>
+                <text x="40" y="42" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Tests</text>
+            </g>
+
+            <!-- Arrow -->
+            <path d="M 350 100 L 375 100" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+            <!-- Stage 4: Smoke Perf Test (highlighted) -->
+            <g transform="translate(380, 55)">
+                <rect x="0" y="0" width="120" height="90" rx="6" fill="url(#perfGradient)" filter="url(#dropShadow)"/>
+                <text x="60" y="22" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Smoke</text>
+                <text x="60" y="36" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Perf Test</text>
+                <line x1="10" y1="45" x2="110" y2="45" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <text x="60" y="60" text-anchor="middle" font-size="8" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Duration: 2 min</text>
+
+                <!-- Pass/Fail gate indicator -->
+                <rect x="25" y="68" width="70" height="18" rx="3" fill="#d1fae5" stroke="#10b981" stroke-width="1"/>
+                <text x="60" y="80" text-anchor="middle" font-size="7" font-weight="500" fill="#047857" font-family="Liberation Sans, Arial, sans-serif">PASS / FAIL</text>
+            </g>
+
+            <!-- Arrow -->
+            <path d="M 500 100 L 525 100" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+            <!-- Stage 5: Deploy to Staging -->
+            <g transform="translate(530, 70)">
+                <rect x="0" y="0" width="100" height="60" rx="6" fill="url(#deployGradient)" filter="url(#dropShadow)"/>
+                <text x="50" y="28" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Deploy to</text>
+                <text x="50" y="42" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Staging</text>
+            </g>
+
+            <!-- Arrow -->
+            <path d="M 630 100 L 655 100" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+            <!-- Stage 6: Load Test (highlighted) -->
+            <g transform="translate(660, 55)">
+                <rect x="0" y="0" width="120" height="90" rx="6" fill="url(#perfGradient)" filter="url(#dropShadow)"/>
+                <text x="60" y="22" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Load</text>
+                <text x="60" y="36" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Test</text>
+                <line x1="10" y1="45" x2="110" y2="45" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <text x="60" y="60" text-anchor="middle" font-size="8" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Duration: 15 min</text>
+
+                <!-- Pass/Fail gate indicator -->
+                <rect x="25" y="68" width="70" height="18" rx="3" fill="#d1fae5" stroke="#10b981" stroke-width="1"/>
+                <text x="60" y="80" text-anchor="middle" font-size="7" font-weight="500" fill="#047857" font-family="Liberation Sans, Arial, sans-serif">PASS / FAIL</text>
+            </g>
+
+            <!-- Arrow -->
+            <path d="M 780 100 L 805 100" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+            <!-- Stage 7: Deploy to Production -->
+            <g transform="translate(810, 70)">
+                <rect x="0" y="0" width="70" height="60" rx="6" fill="url(#deployGradient)" filter="url(#dropShadow)"/>
+                <text x="35" y="28" text-anchor="middle" font-size="9" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Deploy</text>
+                <text x="35" y="42" text-anchor="middle" font-size="9" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Prod</text>
+            </g>
+
+            <!-- Quality Gate Details -->
+
+            <!-- Smoke Test Thresholds -->
+            <g transform="translate(340, 175)">
+                <rect x="0" y="0" width="200" height="120" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1" filter="url(#dropShadow)"/>
+                <text x="100" y="20" text-anchor="middle" font-size="10" font-weight="600" fill="#6d28d9" font-family="Liberation Sans, Arial, sans-serif">Smoke Test Thresholds</text>
+                <line x1="15" y1="30" x2="185" y2="30" stroke="#c4b5fd" stroke-width="1"/>
+
+                <text x="20" y="50" font-size="9" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">p95 latency &lt; 500ms</text>
+                <text x="20" y="68" font-size="9" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">Error rate &lt; 1%</text>
+                <text x="20" y="86" font-size="9" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">Zero 5xx errors</text>
+
+                <rect x="15" y="95" width="170" height="18" rx="3" fill="#ede9fe"/>
+                <text x="100" y="107" text-anchor="middle" font-size="8" fill="#6d28d9" font-family="Liberation Sans, Arial, sans-serif">Lenient (catch obvious issues)</text>
+
+                <!-- Connection line -->
+                <line x1="100" y1="0" x2="100" y2="-20" stroke="#c4b5fd" stroke-width="1" stroke-dasharray="4,2"/>
+            </g>
+
+            <!-- Load Test Thresholds -->
+            <g transform="translate(620, 175)">
+                <rect x="0" y="0" width="200" height="120" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1" filter="url(#dropShadow)"/>
+                <text x="100" y="20" text-anchor="middle" font-size="10" font-weight="600" fill="#6d28d9" font-family="Liberation Sans, Arial, sans-serif">Load Test Thresholds</text>
+                <line x1="15" y1="30" x2="185" y2="30" stroke="#c4b5fd" stroke-width="1"/>
+
+                <text x="20" y="50" font-size="9" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">p95 latency &lt; 200ms</text>
+                <text x="20" y="68" font-size="9" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">p99 latency &lt; 400ms</text>
+                <text x="20" y="86" font-size="9" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">Error rate &lt; 0.1%</text>
+
+                <rect x="15" y="95" width="170" height="18" rx="3" fill="#ede9fe"/>
+                <text x="100" y="107" text-anchor="middle" font-size="8" fill="#6d28d9" font-family="Liberation Sans, Arial, sans-serif">Strict (match SLOs)</text>
+
+                <!-- Connection line -->
+                <line x1="100" y1="0" x2="100" y2="-20" stroke="#c4b5fd" stroke-width="1" stroke-dasharray="4,2"/>
+            </g>
+
+            <!-- Legend / Additional Tests -->
+            <g transform="translate(30, 320)">
+                <rect x="0" y="0" width="840" height="85" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="420" y="22" text-anchor="middle" font-size="11" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Additional Scheduled Performance Tests</text>
+
+                <!-- Nightly soak test -->
+                <g transform="translate(50, 38)">
+                    <rect x="0" y="0" width="220" height="38" rx="4" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+                    <text x="110" y="16" text-anchor="middle" font-size="9" font-weight="500" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">Nightly Soak Test</text>
+                    <text x="110" y="30" text-anchor="middle" font-size="8" fill="#b45309" font-family="Liberation Sans, Arial, sans-serif">8 hours | Memory leaks, degradation</text>
+                </g>
+
+                <!-- Weekly stress test -->
+                <g transform="translate(310, 38)">
+                    <rect x="0" y="0" width="220" height="38" rx="4" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+                    <text x="110" y="16" text-anchor="middle" font-size="9" font-weight="500" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Weekly Stress Test</text>
+                    <text x="110" y="30" text-anchor="middle" font-size="8" fill="#b91c1c" font-family="Liberation Sans, Arial, sans-serif">Variable | Verify capacity limits</text>
+                </g>
+
+                <!-- Pre-release full suite -->
+                <g transform="translate(570, 38)">
+                    <rect x="0" y="0" width="220" height="38" rx="4" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1"/>
+                    <text x="110" y="16" text-anchor="middle" font-size="9" font-weight="500" fill="#047857" font-family="Liberation Sans, Arial, sans-serif">Pre-Release Full Suite</text>
+                    <text x="110" y="30" text-anchor="middle" font-size="8" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">2-4 hours | Comprehensive validation</text>
+                </g>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

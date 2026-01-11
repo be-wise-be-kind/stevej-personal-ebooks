@@ -65,37 +65,15 @@ JSON Web Tokens (JWTs) are self-contained tokens that carry identity and claims 
 
 ### JWT Structure
 
-A JWT consists of three Base64-encoded parts separated by dots:
-
-```
-header.payload.signature
-```
+A JWT consists of three Base64-encoded parts separated by dots: the header, the payload, and the signature.
 
 <!-- DIAGRAM: JWT structure showing three parts: Header ({"alg": "RS256", "typ": "JWT"}) | Payload ({"sub": "user123", "exp": 1704067200, "roles": ["admin"]}) | Signature (RSASHA256(header + "." + payload, privateKey)), with arrows showing how each part is encoded and combined -->
 
 ![JWT Structure](../assets/ch15-jwt-structure.html)
 
-**Header**: Specifies the token type and signing algorithm.
+**Header**: Specifies the token type and signing algorithm. Contains fields like `alg` (the signing algorithm, such as RS256) and `typ` (the token type, typically "JWT").
 
-```json
-{
-  "alg": "RS256",
-  "typ": "JWT"
-}
-```
-
-**Payload**: Contains claims about the user and token metadata.
-
-```json
-{
-  "sub": "user123",
-  "iss": "https://auth.example.com",
-  "aud": "https://api.example.com",
-  "exp": 1704067200,
-  "iat": 1704063600,
-  "roles": ["user", "admin"]
-}
-```
+**Payload**: Contains claims about the user and token metadata, including the subject identifier (`sub`), issuer (`iss`), audience (`aud`), expiration time (`exp`), issued-at time (`iat`), and any custom claims like roles.
 
 **Signature**: Cryptographic signature preventing tampering.
 
@@ -205,18 +183,9 @@ API keys are the simplest authentication mechanism: a secret string that identif
 
 ### Common Patterns
 
-**Header-based** (recommended):
+**Header-based** (recommended): Pass the API key in an `Authorization` header (such as `Authorization: Api-Key sk_live_abc123`) or a custom header like `X-API-Key`.
 
-```
-Authorization: Api-Key sk_live_abc123...
-X-API-Key: sk_live_abc123...
-```
-
-**Query parameter** (discouraged—keys appear in logs):
-
-```
-GET /api/resource?api_key=sk_live_abc123
-```
+**Query parameter** (discouraged—keys appear in logs): Passing the API key as a query parameter like `?api_key=sk_live_abc123` exposes the key in server logs, browser history, and referrer headers.
 
 ### Characteristics
 

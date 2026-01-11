@@ -22,7 +22,7 @@ A practical guide to API performance optimization, from foundational concepts to
 10. [Traffic Management & Resilience](chapters/10-traffic-management.md)
 11. [Authentication Performance](chapters/11-auth-performance.md)
 12. [Edge Infrastructure](chapters/12-edge-infrastructure.md)
-13. [Advanced Optimization Techniques](chapters/13-advanced-techniques.md)
+13. [Testing Performance](chapters/13-testing-performance.md)
 14. [Putting It All Together](chapters/14-putting-it-all-together.md)
 
 ### Appendices

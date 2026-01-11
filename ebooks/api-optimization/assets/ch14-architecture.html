@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collab Docs Architecture</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background -->
+            <rect width="900" height="600" fill="white"/>
+
+            <!-- Title -->
+            <text x="450" y="30" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Collab Docs Architecture</text>
+
+            <!-- Arrow markers -->
+            <defs>
+                <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#3b82f6"/>
+                </marker>
+                <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#22c55e"/>
+                </marker>
+                <marker id="arrowPurple" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#8b5cf6"/>
+                </marker>
+                <marker id="arrowOrange" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"/>
+                </marker>
+                <marker id="arrowGray" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
+                </marker>
+                <marker id="arrowRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#dc2626"/>
+                </marker>
+            </defs>
+
+            <!-- ============================================ -->
+            <!-- CONNECTIONS FIRST (so they render underneath) -->
+            <!-- ============================================ -->
+
+            <!-- Client to Edge -->
+            <line x1="80" y1="120" x2="80" y2="145" stroke="#0284c7" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+            <!-- Edge to Gateway -->
+            <line x1="135" y1="175" x2="175" y2="165" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+            <!-- Gateway to Services -->
+            <line x1="300" y1="145" x2="355" y2="110" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <line x1="300" y1="165" x2="355" y2="190" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+            <line x1="300" y1="155" x2="525" y2="110" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowOrange)"/>
+
+            <!-- WebSocket connection -->
+            <line x1="80" y1="250" x2="80" y2="280" stroke="#8b5cf6" stroke-width="1.5"/>
+            <line x1="80" y1="280" x2="355" y2="190" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+
+            <!-- Services to PostgreSQL -->
+            <line x1="420" y1="150" x2="415" y2="350" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <line x1="590" y1="150" x2="430" y2="350" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrowGreen)"/>
+
+            <!-- Services to Redis -->
+            <line x1="430" y1="230" x2="565" y2="350" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowRed)"/>
+            <line x1="600" y1="230" x2="605" y2="350" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrowRed)"/>
+
+            <!-- Services to Queue -->
+            <line x1="420" y1="280" x2="450" y2="440" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+            <line x1="600" y1="280" x2="570" y2="440" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+
+            <!-- Metrics flow to Observability -->
+            <line x1="665" y1="265" x2="730" y2="200" stroke="#e65525" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrowOrange)"/>
+
+            <!-- Service to Service auth check -->
+            <path d="M 490 120 Q 510 85 530 120" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrowGray)"/>
+
+            <!-- ============================================ -->
+            <!-- BOXES AND LABELS (render on top of lines) -->
+            <!-- ============================================ -->
+
+            <!-- Users/Clients -->
+            <text x="80" y="65" text-anchor="middle" style="font-size: 11px; fill: #64748b; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Clients</text>
+            <rect x="30" y="80" width="100" height="40" fill="#e0f2fe" rx="6" stroke="#0284c7" stroke-width="1.5"/>
+            <text x="80" y="105" text-anchor="middle" style="font-size: 11px; fill: #0369a1; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Web / Mobile</text>
+
+            <!-- Edge/CDN Layer -->
+            <rect x="30" y="150" width="100" height="50" fill="#06b6d4" rx="6"/>
+            <text x="80" y="175" text-anchor="middle" style="font-size: 11px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Cloudflare</text>
+            <text x="80" y="190" text-anchor="middle" style="font-size: 9px; fill: #cffafe;" font-family="Liberation Sans, Arial, sans-serif">CDN + Edge Auth</text>
+
+            <!-- WebSocket indicator -->
+            <rect x="30" y="220" width="100" height="30" fill="#8b5cf6" rx="4"/>
+            <text x="80" y="240" text-anchor="middle" style="font-size: 9px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">WebSocket</text>
+
+            <!-- API Gateway -->
+            <rect x="180" y="130" width="120" height="70" fill="#3b82f6" rx="8"/>
+            <text x="240" y="160" text-anchor="middle" style="font-size: 12px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">API Gateway</text>
+            <text x="240" y="178" text-anchor="middle" style="font-size: 9px; fill: #bfdbfe;" font-family="Liberation Sans, Arial, sans-serif">Routing, Auth</text>
+            <text x="240" y="192" text-anchor="middle" style="font-size: 9px; fill: #bfdbfe;" font-family="Liberation Sans, Arial, sans-serif">Rate Limiting</text>
+
+            <!-- Services Container -->
+            <rect x="340" y="55" width="340" height="240" fill="#f8fafc" rx="8" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="5,3"/>
+            <text x="510" y="75" text-anchor="middle" style="font-size: 10px; fill: #64748b; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Application Services (Stateless)</text>
+
+            <!-- Document Service -->
+            <rect x="360" y="90" width="130" height="60" fill="#22c55e" rx="6"/>
+            <text x="425" y="115" text-anchor="middle" style="font-size: 11px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Document Service</text>
+            <text x="425" y="132" text-anchor="middle" style="font-size: 9px; fill: #bbf7d0;" font-family="Liberation Sans, Arial, sans-serif">CRUD, Export</text>
+
+            <!-- Auth Service -->
+            <rect x="530" y="90" width="130" height="60" fill="#f59e0b" rx="6"/>
+            <text x="595" y="115" text-anchor="middle" style="font-size: 11px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Auth Service</text>
+            <text x="595" y="132" text-anchor="middle" style="font-size: 9px; fill: #fef3c7;" font-family="Liberation Sans, Arial, sans-serif">Permissions, JWT</text>
+
+            <!-- Auth check label (above the curve) -->
+            <text x="510" y="78" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">auth check</text>
+
+            <!-- Sync Service -->
+            <rect x="360" y="170" width="130" height="60" fill="#8b5cf6" rx="6"/>
+            <text x="425" y="195" text-anchor="middle" style="font-size: 11px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Sync Service</text>
+            <text x="425" y="212" text-anchor="middle" style="font-size: 9px; fill: #ddd6fe;" font-family="Liberation Sans, Arial, sans-serif">WebSocket, Presence</text>
+
+            <!-- Export Workers -->
+            <rect x="530" y="170" width="130" height="60" fill="#ec4899" rx="6"/>
+            <text x="595" y="195" text-anchor="middle" style="font-size: 11px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Export Workers</text>
+            <text x="595" y="212" text-anchor="middle" style="font-size: 9px; fill: #fbcfe8;" font-family="Liberation Sans, Arial, sans-serif">PDF, Word Gen</text>
+
+            <!-- OpenTelemetry badge -->
+            <rect x="360" y="250" width="300" height="30" fill="#1e293b" rx="4"/>
+            <text x="510" y="270" text-anchor="middle" style="font-size: 10px; fill: #94a3b8; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">OpenTelemetry Instrumentation (all services)</text>
+
+            <!-- Data Stores Section -->
+            <text x="510" y="340" text-anchor="middle" style="font-size: 10px; fill: #64748b; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Data Stores</text>
+
+            <!-- PostgreSQL -->
+            <rect x="340" y="355" width="150" height="70" fill="#22c55e" rx="8"/>
+            <text x="415" y="380" text-anchor="middle" style="font-size: 12px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">PostgreSQL</text>
+            <text x="415" y="398" text-anchor="middle" style="font-size: 9px; fill: #bbf7d0;" font-family="Liberation Sans, Arial, sans-serif">Users, Docs, Permissions</text>
+            <text x="415" y="413" text-anchor="middle" style="font-size: 8px; fill: #dcfce7;" font-family="Liberation Sans, Arial, sans-serif">ACID • Source of Truth</text>
+
+            <!-- Redis -->
+            <rect x="530" y="355" width="150" height="70" fill="#dc2626" rx="8"/>
+            <text x="605" y="380" text-anchor="middle" style="font-size: 12px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Redis</text>
+            <text x="605" y="398" text-anchor="middle" style="font-size: 9px; fill: #fecaca;" font-family="Liberation Sans, Arial, sans-serif">Sessions, Presence, Cache</text>
+            <text x="605" y="413" text-anchor="middle" style="font-size: 8px; fill: #fee2e2;" font-family="Liberation Sans, Arial, sans-serif">Pub/Sub • &lt;1ms latency</text>
+
+            <!-- Message Queue -->
+            <rect x="340" y="445" width="340" height="45" fill="#6366f1" rx="6"/>
+            <text x="510" y="470" text-anchor="middle" style="font-size: 11px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Message Queue (Export Jobs, Invalidation Events)</text>
+            <text x="510" y="483" text-anchor="middle" style="font-size: 8px; fill: #c7d2fe;" font-family="Liberation Sans, Arial, sans-serif">Transactional Outbox Pattern</text>
+
+            <!-- Observability Stack -->
+            <rect x="720" y="90" width="150" height="160" fill="#f8fafc" rx="8" stroke="#e2e8f0" stroke-width="2"/>
+            <text x="795" y="115" text-anchor="middle" style="font-size: 11px; fill: #374151; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Observability</text>
+
+            <!-- Prometheus -->
+            <rect x="735" y="130" width="120" height="35" fill="#e65525" rx="4"/>
+            <text x="795" y="152" text-anchor="middle" style="font-size: 10px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Prometheus</text>
+
+            <!-- Grafana -->
+            <rect x="735" y="175" width="120" height="35" fill="#f46800" rx="4"/>
+            <text x="795" y="197" text-anchor="middle" style="font-size: 10px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Grafana</text>
+
+            <!-- Jaeger/Tempo -->
+            <rect x="735" y="220" width="120" height="25" fill="#1e293b" rx="4"/>
+            <text x="795" y="237" text-anchor="middle" style="font-size: 9px; fill: #94a3b8; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Distributed Traces</text>
+
+            <!-- Metrics label -->
+            <text x="700" y="220" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">metrics</text>
+
+            <!-- Latency annotations -->
+            <rect x="30" y="510" width="840" height="70" fill="#f1f5f9" rx="6"/>
+            <text x="450" y="530" text-anchor="middle" style="font-size: 11px; fill: #374151; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Latency Budget (p95 &lt; 200ms)</text>
+            <text x="140" y="555" text-anchor="middle" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Edge: 20ms</text>
+            <text x="300" y="555" text-anchor="middle" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Gateway: 20ms</text>
+            <text x="480" y="555" text-anchor="middle" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Auth: 30ms</text>
+            <text x="620" y="555" text-anchor="middle" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Business Logic + DB: 100ms</text>
+            <text x="780" y="555" text-anchor="middle" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Response: 30ms</text>
+        </svg>
+    </div>
+</body>
+</html>

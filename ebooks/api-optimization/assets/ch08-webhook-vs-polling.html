@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Async Results: Webhooks vs Polling</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Blue gradient for client -->
+                <linearGradient id="clientGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Purple gradient for API -->
+                <linearGradient id="apiGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#9333ea;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Green gradient for success -->
+                <linearGradient id="successGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Orange gradient for worker -->
+                <linearGradient id="workerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Arrow markers -->
+                <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/>
+                </marker>
+
+                <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#16a34a"/>
+                </marker>
+
+                <marker id="arrowGray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+                </marker>
+
+                <marker id="arrowOrange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#d97706"/>
+                </marker>
+
+                <!-- Drop shadow -->
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="900" height="520" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="450" y="35" text-anchor="middle" fill="#1e293b" font-size="22" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                Async Results: Webhooks vs Polling
+            </text>
+
+            <!-- Divider -->
+            <line x1="450" y1="55" x2="450" y2="400" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="8,4"/>
+
+            <!-- ============== POLLING (Left Side) ============== -->
+            <g transform="translate(20, 55)">
+                <!-- Section header -->
+                <rect x="0" y="0" width="410" height="35" fill="#fef3c7" rx="6"/>
+                <text x="205" y="24" text-anchor="middle" fill="#92400e" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Polling Pattern
+                </text>
+
+                <!-- Timeline labels -->
+                <text x="70" y="60" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Client
+                </text>
+                <text x="205" y="60" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    API
+                </text>
+                <text x="340" y="60" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Worker
+                </text>
+
+                <!-- Vertical lines (timelines) -->
+                <line x1="70" y1="70" x2="70" y2="320" stroke="#64748b" stroke-width="2"/>
+                <line x1="205" y1="70" x2="205" y2="320" stroke="#64748b" stroke-width="2"/>
+                <line x1="340" y1="70" x2="340" y2="320" stroke="#64748b" stroke-width="2"/>
+
+                <!-- 1. Submit job -->
+                <line x1="75" y1="85" x2="195" y2="85" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowBlue)"/>
+                <text x="135" y="78" text-anchor="middle" fill="#2563eb" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    POST /jobs
+                </text>
+
+                <!-- 2. Return job ID -->
+                <line x1="200" y1="105" x2="80" y2="105" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+                <rect x="100" y="92" width="80" height="16" fill="#dcfce7" rx="3"/>
+                <text x="140" y="103" text-anchor="middle" fill="#166534" font-size="8" font-family="Liberation Sans, Arial, sans-serif">
+                    202 {job_id: 123}
+                </text>
+
+                <!-- 3. Queue job -->
+                <line x1="210" y1="115" x2="330" y2="115" stroke="#d97706" stroke-width="2" marker-end="url(#arrowOrange)"/>
+                <text x="270" y="110" text-anchor="middle" fill="#d97706" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    Queue job
+                </text>
+
+                <!-- Worker processing bar -->
+                <rect x="325" y="125" width="30" height="90" fill="#fef3c7" rx="4" stroke="#f59e0b" stroke-width="1"/>
+                <text x="340" y="175" text-anchor="middle" fill="#92400e" font-size="8" font-family="Liberation Sans, Arial, sans-serif" transform="rotate(-90, 340, 175)">
+                    Processing...
+                </text>
+
+                <!-- 4. Poll attempt 1 (pending) -->
+                <line x1="75" y1="140" x2="195" y2="140" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowGray)"/>
+                <text x="135" y="135" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    GET /jobs/123
+                </text>
+                <line x1="200" y1="155" x2="80" y2="155" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowGray)"/>
+                <rect x="100" y="145" width="80" height="14" fill="#f1f5f9" rx="3"/>
+                <text x="140" y="155" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">
+                    {status: pending}
+                </text>
+
+                <!-- Wait indicator -->
+                <text x="55" y="175" text-anchor="end" fill="#94a3b8" font-size="8" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                    wait 5s
+                </text>
+
+                <!-- 5. Poll attempt 2 (still pending) -->
+                <line x1="75" y1="185" x2="195" y2="185" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowGray)"/>
+                <text x="135" y="180" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    GET /jobs/123
+                </text>
+                <line x1="200" y1="200" x2="80" y2="200" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowGray)"/>
+                <rect x="100" y="190" width="80" height="14" fill="#f1f5f9" rx="3"/>
+                <text x="140" y="200" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">
+                    {status: pending}
+                </text>
+
+                <!-- Wait indicator -->
+                <text x="55" y="220" text-anchor="end" fill="#94a3b8" font-size="8" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                    wait 5s
+                </text>
+
+                <!-- Job complete -->
+                <line x1="335" y1="225" x2="215" y2="225" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+                <text x="275" y="220" text-anchor="middle" fill="#16a34a" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    Complete
+                </text>
+
+                <!-- 6. Poll attempt 3 (success!) -->
+                <line x1="75" y1="250" x2="195" y2="250" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowBlue)"/>
+                <text x="135" y="245" text-anchor="middle" fill="#2563eb" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    GET /jobs/123
+                </text>
+                <line x1="200" y1="270" x2="80" y2="270" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+                <rect x="95" y="258" width="90" height="16" fill="#dcfce7" rx="3"/>
+                <text x="140" y="269" text-anchor="middle" fill="#166534" font-size="8" font-family="Liberation Sans, Arial, sans-serif">
+                    {status: complete}
+                </text>
+
+                <!-- Wasted requests callout -->
+                <rect x="5" y="285" width="150" height="30" fill="#fef2f2" rx="4" stroke="#fecaca" stroke-width="1"/>
+                <text x="80" y="302" text-anchor="middle" fill="#dc2626" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    2 wasted API calls
+                </text>
+            </g>
+
+            <!-- ============== WEBHOOKS (Right Side) ============== -->
+            <g transform="translate(470, 55)">
+                <!-- Section header -->
+                <rect x="0" y="0" width="410" height="35" fill="#f0fdf4" rx="6"/>
+                <text x="205" y="24" text-anchor="middle" fill="#166534" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Webhook Pattern
+                </text>
+
+                <!-- Timeline labels -->
+                <text x="70" y="60" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Client
+                </text>
+                <text x="205" y="60" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    API
+                </text>
+                <text x="340" y="60" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Worker
+                </text>
+
+                <!-- Vertical lines (timelines) -->
+                <line x1="70" y1="70" x2="70" y2="320" stroke="#64748b" stroke-width="2"/>
+                <line x1="205" y1="70" x2="205" y2="320" stroke="#64748b" stroke-width="2"/>
+                <line x1="340" y1="70" x2="340" y2="320" stroke="#64748b" stroke-width="2"/>
+
+                <!-- 1. Submit job with callback URL -->
+                <line x1="75" y1="85" x2="195" y2="85" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowBlue)"/>
+                <rect x="82" y="70" width="110" height="20" fill="#dbeafe" rx="3"/>
+                <text x="137" y="82" text-anchor="middle" fill="#1d4ed8" font-size="8" font-family="Liberation Sans, Arial, sans-serif">
+                    POST /jobs + callback_url
+                </text>
+
+                <!-- 2. Return job ID -->
+                <line x1="200" y1="105" x2="80" y2="105" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+                <rect x="100" y="92" width="80" height="16" fill="#dcfce7" rx="3"/>
+                <text x="140" y="103" text-anchor="middle" fill="#166534" font-size="8" font-family="Liberation Sans, Arial, sans-serif">
+                    202 {job_id: 123}
+                </text>
+
+                <!-- 3. Queue job -->
+                <line x1="210" y1="115" x2="330" y2="115" stroke="#d97706" stroke-width="2" marker-end="url(#arrowOrange)"/>
+                <text x="270" y="110" text-anchor="middle" fill="#d97706" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    Queue job
+                </text>
+
+                <!-- Client free to do other work -->
+                <rect x="35" y="120" width="70" height="100" fill="#f8fafc" rx="4" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,2"/>
+                <text x="70" y="175" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">
+                    Client free
+                </text>
+                <text x="70" y="187" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">
+                    to do
+                </text>
+                <text x="70" y="199" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">
+                    other work
+                </text>
+
+                <!-- Worker processing bar -->
+                <rect x="325" y="125" width="30" height="90" fill="#fef3c7" rx="4" stroke="#f59e0b" stroke-width="1"/>
+                <text x="340" y="175" text-anchor="middle" fill="#92400e" font-size="8" font-family="Liberation Sans, Arial, sans-serif" transform="rotate(-90, 340, 175)">
+                    Processing...
+                </text>
+
+                <!-- Job complete -->
+                <line x1="335" y1="225" x2="215" y2="225" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+                <text x="275" y="220" text-anchor="middle" fill="#16a34a" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    Complete
+                </text>
+
+                <!-- 4. Webhook callback -->
+                <line x1="200" y1="250" x2="80" y2="250" stroke="#16a34a" stroke-width="3" marker-end="url(#arrowGreen)"/>
+                <rect x="95" y="235" width="100" height="20" fill="#dcfce7" rx="3" stroke="#16a34a" stroke-width="1"/>
+                <text x="145" y="248" text-anchor="middle" fill="#166534" font-size="8" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    POST to callback_url
+                </text>
+
+                <!-- Client ACKs -->
+                <line x1="75" y1="270" x2="195" y2="270" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowBlue)"/>
+                <text x="135" y="283" text-anchor="middle" fill="#2563eb" font-size="8" font-family="Liberation Sans, Arial, sans-serif">
+                    200 OK (ack)
+                </text>
+
+                <!-- Efficiency callout -->
+                <rect x="5" y="285" width="150" height="30" fill="#dcfce7" rx="4" stroke="#86efac" stroke-width="1"/>
+                <text x="80" y="302" text-anchor="middle" fill="#166534" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    Zero wasted requests!
+                </text>
+            </g>
+
+            <!-- ============== COMPARISON TABLE ============== -->
+            <g transform="translate(30, 415)">
+                <rect x="0" y="0" width="840" height="85" fill="#f8fafc" rx="8" stroke="#e2e8f0" stroke-width="1"/>
+
+                <!-- Headers -->
+                <text x="140" y="20" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Polling
+                </text>
+                <text x="420" y="20" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Webhooks
+                </text>
+                <text x="700" y="20" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Best For
+                </text>
+
+                <!-- Dividers -->
+                <line x1="280" y1="5" x2="280" y2="80" stroke="#e2e8f0" stroke-width="1"/>
+                <line x1="560" y1="5" x2="560" y2="80" stroke="#e2e8f0" stroke-width="1"/>
+
+                <!-- Polling characteristics -->
+                <text x="20" y="40" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">+ Simple to implement</text>
+                <text x="20" y="55" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">+ Client controls timing</text>
+                <text x="20" y="70" fill="#dc2626" font-size="10" font-family="Liberation Sans, Arial, sans-serif">- Wastes API calls</text>
+
+                <!-- Webhook characteristics -->
+                <text x="300" y="40" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">+ Real-time notification</text>
+                <text x="300" y="55" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">+ No wasted requests</text>
+                <text x="300" y="70" fill="#dc2626" font-size="10" font-family="Liberation Sans, Arial, sans-serif">- Client needs public endpoint</text>
+
+                <!-- Best for -->
+                <text x="580" y="40" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Polling: Browser clients, simple integrations</text>
+                <text x="580" y="55" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Webhooks: Server-to-server, real-time needs</text>
+                <text x="580" y="70" fill="#7e22ce" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Hybrid: Support both for flexibility</text>
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(30, 505)">
+                <rect x="0" y="-5" width="840" height="20" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <line x1="15" y1="5" x2="55" y2="5" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowBlue)"/>
+                <text x="65" y="9" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    Client request
+                </text>
+                <line x1="175" y1="5" x2="215" y2="5" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+                <text x="225" y="9" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    Success response
+                </text>
+                <line x1="355" y1="5" x2="395" y2="5" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowGray)"/>
+                <text x="405" y="9" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    Pending response
+                </text>
+                <line x1="535" y1="5" x2="575" y2="5" stroke="#d97706" stroke-width="2" marker-end="url(#arrowOrange)"/>
+                <text x="585" y="9" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    Internal (queue/complete)
+                </text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

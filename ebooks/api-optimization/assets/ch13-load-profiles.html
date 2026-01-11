@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Test Load Profiles</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+
+        <svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="loadGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="stressGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="spikeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="soakGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                </linearGradient>
+                <!-- Shadow filter -->
+                <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Performance Test Load Profiles</text>
+
+            <!-- Load Test (top left) -->
+            <g transform="translate(30, 60)">
+                <rect x="0" y="0" width="400" height="190" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" filter="url(#dropShadow)"/>
+
+                <!-- Title bar -->
+                <rect x="0" y="0" width="400" height="32" rx="8" fill="url(#loadGradient)"/>
+                <rect x="0" y="24" width="400" height="8" fill="url(#loadGradient)"/>
+                <text x="200" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Load Test</text>
+
+                <!-- Graph area -->
+                <g transform="translate(50, 50)">
+                    <!-- Y axis -->
+                    <line x1="0" y1="0" x2="0" y2="110" stroke="#94a3b8" stroke-width="1"/>
+                    <text x="-10" y="10" text-anchor="end" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">VUs</text>
+
+                    <!-- X axis -->
+                    <line x1="0" y1="110" x2="300" y2="110" stroke="#94a3b8" stroke-width="1"/>
+                    <text x="300" y="125" text-anchor="end" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Time</text>
+
+                    <!-- Load profile: ramp-up -> plateau -> ramp-down -->
+                    <path d="M 0 110 L 60 110 L 100 30 L 200 30 L 240 110 L 300 110"
+                          fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+                    <!-- Fill under curve -->
+                    <path d="M 0 110 L 60 110 L 100 30 L 200 30 L 240 110 L 300 110 L 300 110 L 0 110 Z"
+                          fill="#3b82f6" fill-opacity="0.15"/>
+
+                    <!-- Phase labels -->
+                    <text x="80" y="85" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Ramp-up</text>
+                    <text x="150" y="20" text-anchor="middle" font-size="7" fill="#1d4ed8" font-family="Liberation Sans, Arial, sans-serif">Steady State</text>
+                    <text x="220" y="85" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Ramp-down</text>
+                </g>
+
+                <!-- Description -->
+                <text x="200" y="178" text-anchor="middle" font-size="9" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Validates expected traffic levels with gradual transitions</text>
+            </g>
+
+            <!-- Stress Test (top right) -->
+            <g transform="translate(470, 60)">
+                <rect x="0" y="0" width="400" height="190" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" filter="url(#dropShadow)"/>
+
+                <!-- Title bar -->
+                <rect x="0" y="0" width="400" height="32" rx="8" fill="url(#stressGradient)"/>
+                <rect x="0" y="24" width="400" height="8" fill="url(#stressGradient)"/>
+                <text x="200" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Stress Test</text>
+
+                <!-- Graph area -->
+                <g transform="translate(50, 50)">
+                    <!-- Y axis -->
+                    <line x1="0" y1="0" x2="0" y2="110" stroke="#94a3b8" stroke-width="1"/>
+                    <text x="-10" y="10" text-anchor="end" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">VUs</text>
+
+                    <!-- X axis -->
+                    <line x1="0" y1="110" x2="300" y2="110" stroke="#94a3b8" stroke-width="1"/>
+                    <text x="300" y="125" text-anchor="end" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Time</text>
+
+                    <!-- Stress profile: continuous increase until failure -->
+                    <path d="M 0 110 L 200 15"
+                          fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+
+                    <!-- Fill under curve -->
+                    <path d="M 0 110 L 200 15 L 200 110 Z"
+                          fill="#ef4444" fill-opacity="0.15"/>
+
+                    <!-- Failure point X -->
+                    <circle cx="200" cy="15" r="8" fill="white" stroke="#dc2626" stroke-width="2"/>
+                    <text x="200" y="19" text-anchor="middle" font-size="10" font-weight="bold" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">X</text>
+
+                    <!-- Failure annotation -->
+                    <line x1="210" y1="15" x2="260" y2="15" stroke="#dc2626" stroke-width="1" stroke-dasharray="3,2"/>
+                    <text x="265" y="18" font-size="7" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">Breaking point</text>
+
+                    <!-- Step indicators -->
+                    <line x1="50" y1="85" x2="50" y2="110" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2"/>
+                    <line x1="100" y1="60" x2="100" y2="110" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2"/>
+                    <line x1="150" y1="37" x2="150" y2="110" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,2"/>
+                </g>
+
+                <!-- Description -->
+                <text x="200" y="178" text-anchor="middle" font-size="9" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Finds breaking points by continuously increasing load</text>
+            </g>
+
+            <!-- Spike Test (bottom left) -->
+            <g transform="translate(30, 275)">
+                <rect x="0" y="0" width="400" height="190" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" filter="url(#dropShadow)"/>
+
+                <!-- Title bar -->
+                <rect x="0" y="0" width="400" height="32" rx="8" fill="url(#spikeGradient)"/>
+                <rect x="0" y="24" width="400" height="8" fill="url(#spikeGradient)"/>
+                <text x="200" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Spike Test</text>
+
+                <!-- Graph area -->
+                <g transform="translate(50, 50)">
+                    <!-- Y axis -->
+                    <line x1="0" y1="0" x2="0" y2="110" stroke="#94a3b8" stroke-width="1"/>
+                    <text x="-10" y="10" text-anchor="end" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">VUs</text>
+
+                    <!-- X axis -->
+                    <line x1="0" y1="110" x2="300" y2="110" stroke="#94a3b8" stroke-width="1"/>
+                    <text x="300" y="125" text-anchor="end" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Time</text>
+
+                    <!-- Spike profile: baseline -> sudden jump -> plateau -> sudden drop -> recovery -->
+                    <path d="M 0 95 L 60 95 L 60 20 L 160 20 L 160 95 L 300 95"
+                          fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+                    <!-- Fill under curve -->
+                    <path d="M 0 95 L 60 95 L 60 20 L 160 20 L 160 95 L 300 95 L 300 110 L 0 110 Z"
+                          fill="#f59e0b" fill-opacity="0.15"/>
+
+                    <!-- Baseline indicator -->
+                    <line x1="0" y1="95" x2="300" y2="95" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,3"/>
+
+                    <!-- Labels -->
+                    <text x="30" y="108" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Baseline</text>
+                    <text x="110" y="12" text-anchor="middle" font-size="7" fill="#d97706" font-family="Liberation Sans, Arial, sans-serif">Spike (10x)</text>
+                    <text x="230" y="108" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Recovery</text>
+                </g>
+
+                <!-- Description -->
+                <text x="200" y="178" text-anchor="middle" font-size="9" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Tests sudden traffic surges and recovery behavior</text>
+            </g>
+
+            <!-- Soak Test (bottom right) -->
+            <g transform="translate(470, 275)">
+                <rect x="0" y="0" width="400" height="190" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" filter="url(#dropShadow)"/>
+
+                <!-- Title bar -->
+                <rect x="0" y="0" width="400" height="32" rx="8" fill="url(#soakGradient)"/>
+                <rect x="0" y="24" width="400" height="8" fill="url(#soakGradient)"/>
+                <text x="200" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Soak Test (Endurance)</text>
+
+                <!-- Graph area -->
+                <g transform="translate(50, 50)">
+                    <!-- Y axis -->
+                    <line x1="0" y1="0" x2="0" y2="110" stroke="#94a3b8" stroke-width="1"/>
+                    <text x="-10" y="10" text-anchor="end" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">VUs</text>
+
+                    <!-- X axis -->
+                    <line x1="0" y1="110" x2="300" y2="110" stroke="#94a3b8" stroke-width="1"/>
+                    <text x="300" y="125" text-anchor="end" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Time</text>
+
+                    <!-- Soak profile: sustained flat load -->
+                    <path d="M 0 110 L 20 110 L 30 50 L 290 50 L 300 110"
+                          fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+                    <!-- Fill under curve -->
+                    <path d="M 0 110 L 20 110 L 30 50 L 290 50 L 300 110 L 300 110 L 0 110 Z"
+                          fill="#10b981" fill-opacity="0.15"/>
+
+                    <!-- Time markers -->
+                    <line x1="75" y1="48" x2="75" y2="55" stroke="#059669" stroke-width="1"/>
+                    <text x="75" y="70" text-anchor="middle" font-size="6" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">2h</text>
+
+                    <line x1="150" y1="48" x2="150" y2="55" stroke="#059669" stroke-width="1"/>
+                    <text x="150" y="70" text-anchor="middle" font-size="6" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">4h</text>
+
+                    <line x1="225" y1="48" x2="225" y2="55" stroke="#059669" stroke-width="1"/>
+                    <text x="225" y="70" text-anchor="middle" font-size="6" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">6h</text>
+
+                    <!-- Duration label -->
+                    <text x="160" y="40" text-anchor="middle" font-size="8" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">8-24 hours sustained</text>
+                </g>
+
+                <!-- Description -->
+                <text x="200" y="178" text-anchor="middle" font-size="9" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Catches memory leaks and degradation over extended periods</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 13: Advanced Optimization Techniques</title>
+    <title>Chapter 13: Testing Performance</title>
     <style>
         body { font-family: Liberation Sans, Arial, sans-serif; margin: 0; padding: 20px; background: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .diagram-container { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); padding: 24px; max-width: 100%; }
@@ -14,56 +14,56 @@
     <div class="diagram-container">
         <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
             <defs>
-                <linearGradient id="graphqlGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#e535ab;stop-opacity:1" /><stop offset="100%" style="stop-color:#c026d3;stop-opacity:1" /></linearGradient>
-                <linearGradient id="grpcGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" /><stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" /></linearGradient>
-                <linearGradient id="hedgeGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#f97316;stop-opacity:1" /><stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" /></linearGradient>
+                <linearGradient id="loadGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#10b981;stop-opacity:1" /><stop offset="100%" style="stop-color:#059669;stop-opacity:1" /></linearGradient>
+                <linearGradient id="benchGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" /><stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" /></linearGradient>
+                <linearGradient id="ciGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" /><stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" /></linearGradient>
                 <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.2"/></filter>
             </defs>
             <rect width="800" height="400" fill="#ffffff" rx="8"/>
-            <text x="400" y="40" text-anchor="middle" fill="#1e293b" font-size="20" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Advanced Optimization Techniques</text>
-            <text x="400" y="65" text-anchor="middle" fill="#64748b" font-size="12" font-family="Liberation Sans, Arial, sans-serif">Protocol optimization and speculative execution</text>
-            
-            <!-- GraphQL pillar -->
+            <text x="400" y="40" text-anchor="middle" fill="#1e293b" font-size="20" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Testing Performance</text>
+            <text x="400" y="65" text-anchor="middle" fill="#64748b" font-size="12" font-family="Liberation Sans, Arial, sans-serif">Validating optimization work and preventing regressions</text>
+
+            <!-- Load Testing pillar -->
             <g transform="translate(120, 100)">
-                <rect x="0" y="0" width="160" height="220" rx="12" fill="url(#graphqlGrad)" filter="url(#shadow)"/>
-                <text x="80" y="35" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">GraphQL</text>
-                <text x="80" y="55" text-anchor="middle" fill="#ffffff" font-size="11" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Query Optimization</text>
+                <rect x="0" y="0" width="160" height="220" rx="12" fill="url(#loadGrad)" filter="url(#shadow)"/>
+                <text x="80" y="35" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Load Testing</text>
+                <text x="80" y="55" text-anchor="middle" fill="#ffffff" font-size="11" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Strategies &amp; Tools</text>
                 <rect x="20" y="75" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="95" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">DataLoader Pattern</text>
+                <text x="80" y="95" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Capacity Planning</text>
                 <rect x="20" y="115" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="135" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Query Batching</text>
+                <text x="80" y="135" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Stress Testing</text>
                 <rect x="20" y="155" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="175" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Complexity Analysis</text>
+                <text x="80" y="175" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Soak Testing</text>
             </g>
-            
-            <!-- gRPC pillar -->
+
+            <!-- Benchmarking pillar -->
             <g transform="translate(320, 100)">
-                <rect x="0" y="0" width="160" height="220" rx="12" fill="url(#grpcGrad)" filter="url(#shadow)"/>
-                <text x="80" y="35" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">gRPC</text>
-                <text x="80" y="55" text-anchor="middle" fill="#ffffff" font-size="11" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Protocol Buffers</text>
+                <rect x="0" y="0" width="160" height="220" rx="12" fill="url(#benchGrad)" filter="url(#shadow)"/>
+                <text x="80" y="35" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Benchmarking</text>
+                <text x="80" y="55" text-anchor="middle" fill="#ffffff" font-size="11" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Best Practices</text>
                 <rect x="20" y="75" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="95" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Binary Serialization</text>
+                <text x="80" y="95" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Microbenchmarks</text>
                 <rect x="20" y="115" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="135" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">HTTP/2 Streaming</text>
+                <text x="80" y="135" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Reproducibility</text>
                 <rect x="20" y="155" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="175" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Schema Contracts</text>
+                <text x="80" y="175" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Statistical Rigor</text>
             </g>
-            
-            <!-- Hedged Requests pillar -->
+
+            <!-- CI/CD Integration pillar -->
             <g transform="translate(520, 100)">
-                <rect x="0" y="0" width="160" height="220" rx="12" fill="url(#hedgeGrad)" filter="url(#shadow)"/>
-                <text x="80" y="35" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Hedged</text>
-                <text x="80" y="55" text-anchor="middle" fill="#ffffff" font-size="11" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Requests</text>
+                <rect x="0" y="0" width="160" height="220" rx="12" fill="url(#ciGrad)" filter="url(#shadow)"/>
+                <text x="80" y="35" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">CI/CD</text>
+                <text x="80" y="55" text-anchor="middle" fill="#ffffff" font-size="11" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Integration</text>
                 <rect x="20" y="75" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="95" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Tail Latency</text>
+                <text x="80" y="95" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Regression Tests</text>
                 <rect x="20" y="115" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="135" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Speculative Exec</text>
+                <text x="80" y="135" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Performance Gates</text>
                 <rect x="20" y="155" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="175" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Request Budgets</text>
+                <text x="80" y="175" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Trend Analysis</text>
             </g>
-            
+
             <rect x="100" y="345" width="600" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
-            <text x="400" y="370" text-anchor="middle" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Techniques that fundamentally change how requests are processed</text>
+            <text x="400" y="370" text-anchor="middle" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Practices that validate optimization work and prevent regressions</text>
         </svg>
     </div>
 </body>

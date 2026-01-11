@@ -15,6 +15,8 @@ if [ ! -d "$ASSETS_DIR" ]; then
     exit 0
 fi
 
+# Clean old assets to prevent stale files from accumulating
+rm -rf "$BUILD_ASSETS"
 mkdir -p "$BUILD_ASSETS"
 
 # Convert each HTML diagram to SVG, then to PDF for high-quality embedding

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactional Outbox Pattern</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Blue gradient for application -->
+                <linearGradient id="appGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Green gradient for success/database -->
+                <linearGradient id="dbGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Orange gradient for outbox -->
+                <linearGradient id="outboxGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Purple gradient for CDC -->
+                <linearGradient id="cdcGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#9333ea;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Red gradient for broker -->
+                <linearGradient id="brokerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Arrow markers -->
+                <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/>
+                </marker>
+
+                <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#16a34a"/>
+                </marker>
+
+                <marker id="arrowPurple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#9333ea"/>
+                </marker>
+
+                <marker id="arrowGray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+                </marker>
+
+                <!-- Drop shadow -->
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+
+                <!-- Transaction boundary pattern -->
+                <pattern id="transactionPattern" patternUnits="userSpaceOnUse" width="10" height="10">
+                    <path d="M-1,1 l2,-2 M0,10 l10,-10 M9,11 l2,-2" stroke="#16a34a" stroke-width="1" opacity="0.3"/>
+                </pattern>
+            </defs>
+
+            <!-- Background -->
+            <rect width="900" height="480" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="450" y="35" text-anchor="middle" fill="#1e293b" font-size="22" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                Transactional Outbox Pattern
+            </text>
+            <text x="450" y="57" text-anchor="middle" fill="#64748b" font-size="13" font-family="Liberation Sans, Arial, sans-serif">
+                Reliable message publishing with atomic database transactions
+            </text>
+
+            <!-- Transaction Boundary Box -->
+            <rect x="130" y="100" width="340" height="260" fill="#f0fdf4" stroke="#22c55e" stroke-width="2" stroke-dasharray="8,4" rx="12"/>
+            <text x="300" y="125" text-anchor="middle" fill="#16a34a" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                SINGLE DATABASE TRANSACTION
+            </text>
+
+            <!-- Application Box -->
+            <g transform="translate(40, 180)">
+                <rect x="0" y="0" width="100" height="60" fill="url(#appGradient)" rx="8" filter="url(#shadow)"/>
+                <text x="50" y="35" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Application
+                </text>
+            </g>
+
+            <!-- Arrow from App to Transaction -->
+            <line x1="145" y1="210" x2="175" y2="210" stroke="#2563eb" stroke-width="3" marker-end="url(#arrowBlue)"/>
+
+            <!-- Business Data Table -->
+            <g transform="translate(180, 150)">
+                <rect x="0" y="0" width="130" height="70" fill="url(#dbGradient)" rx="8" filter="url(#shadow)"/>
+                <text x="65" y="25" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Business Data
+                </text>
+                <rect x="10" y="35" width="110" height="25" fill="#dcfce7" rx="4"/>
+                <text x="65" y="52" text-anchor="middle" fill="#166534" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    orders, users...
+                </text>
+            </g>
+
+            <!-- Outbox Table -->
+            <g transform="translate(180, 250)">
+                <rect x="0" y="0" width="130" height="90" fill="url(#outboxGradient)" rx="8" filter="url(#shadow)"/>
+                <text x="65" y="25" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Outbox Table
+                </text>
+                <!-- Table rows -->
+                <rect x="10" y="35" width="110" height="18" fill="#fef3c7" rx="3"/>
+                <text x="65" y="48" text-anchor="middle" fill="#92400e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    id | event | payload
+                </text>
+                <rect x="10" y="56" width="110" height="14" fill="#fefce8" rx="2"/>
+                <rect x="10" y="72" width="110" height="14" fill="#fefce8" rx="2"/>
+            </g>
+
+            <!-- Write arrows within transaction -->
+            <g transform="translate(195, 150)">
+                <!-- Arrow down to business data -->
+                <path d="M 50,-25 L 50,0" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+                <!-- Arrow down to outbox -->
+                <path d="M 50,70 L 50,100" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+            </g>
+
+            <!-- "1. Write" labels -->
+            <text x="350" y="180" text-anchor="start" fill="#16a34a" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                1. Write data
+            </text>
+            <text x="350" y="295" text-anchor="start" fill="#d97706" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                2. Write event
+            </text>
+
+            <!-- CDC / Relay Process -->
+            <g transform="translate(500, 220)">
+                <rect x="0" y="0" width="130" height="70" fill="url(#cdcGradient)" rx="8" filter="url(#shadow)"/>
+                <text x="65" y="28" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    CDC / Relay
+                </text>
+                <text x="65" y="48" text-anchor="middle" fill="#e9d5ff" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    (Debezium, Poller)
+                </text>
+            </g>
+
+            <!-- Arrow from Outbox to CDC -->
+            <line x1="310" y1="295" x2="495" y2="260" stroke="#9333ea" stroke-width="2" marker-end="url(#arrowPurple)"/>
+            <text x="400" y="265" text-anchor="middle" fill="#9333ea" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                3. Read events
+            </text>
+
+            <!-- Message Broker -->
+            <g transform="translate(700, 220)">
+                <rect x="0" y="0" width="140" height="70" fill="url(#brokerGradient)" rx="8" filter="url(#shadow)"/>
+                <text x="70" y="28" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Message Broker
+                </text>
+                <text x="70" y="48" text-anchor="middle" fill="#fecaca" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    (Kafka, RabbitMQ)
+                </text>
+            </g>
+
+            <!-- Arrow from CDC to Broker -->
+            <line x1="635" y1="255" x2="695" y2="255" stroke="#9333ea" stroke-width="2" marker-end="url(#arrowPurple)"/>
+            <text x="665" y="243" text-anchor="middle" fill="#9333ea" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                4. Publish
+            </text>
+
+            <!-- Key Benefits Box -->
+            <g transform="translate(500, 340)">
+                <rect x="0" y="0" width="340" height="100" fill="#f8fafc" rx="8" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="170" y="22" text-anchor="middle" fill="#1e293b" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Why This Works
+                </text>
+                <text x="15" y="45" fill="#475569" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    - Data + event written atomically (same transaction)
+                </text>
+                <text x="15" y="62" fill="#475569" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    - If DB fails, both writes roll back
+                </text>
+                <text x="15" y="79" fill="#475569" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    - If CDC fails, events remain for retry
+                </text>
+                <text x="15" y="96" fill="#475569" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    - No dual-write consistency issues
+                </text>
+            </g>
+
+            <!-- Problem callout (top right) -->
+            <g transform="translate(550, 85)">
+                <rect x="0" y="0" width="290" height="60" fill="#fef2f2" rx="6" stroke="#fecaca" stroke-width="1"/>
+                <text x="145" y="20" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    The Problem: Dual Writes
+                </text>
+                <text x="145" y="38" text-anchor="middle" fill="#991b1b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    DB write succeeds, but message publish fails
+                </text>
+                <text x="145" y="52" text-anchor="middle" fill="#991b1b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    = inconsistent state between systems
+                </text>
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(40, 435)">
+                <rect x="0" y="0" width="820" height="32" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <rect x="15" y="10" width="14" height="14" fill="url(#dbGradient)" rx="2"/>
+                <text x="35" y="21" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    Business data
+                </text>
+                <rect x="145" y="10" width="14" height="14" fill="url(#outboxGradient)" rx="2"/>
+                <text x="165" y="21" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    Outbox table
+                </text>
+                <rect x="275" y="10" width="14" height="14" fill="url(#cdcGradient)" rx="2"/>
+                <text x="295" y="21" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    CDC/Relay process
+                </text>
+                <rect x="435" y="10" width="14" height="14" fill="url(#brokerGradient)" rx="2"/>
+                <text x="455" y="21" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    Message broker
+                </text>
+                <rect x="585" y="10" width="60" height="14" fill="#f0fdf4" stroke="#22c55e" stroke-width="1" stroke-dasharray="4,2" rx="2"/>
+                <text x="655" y="21" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    Transaction boundary
+                </text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

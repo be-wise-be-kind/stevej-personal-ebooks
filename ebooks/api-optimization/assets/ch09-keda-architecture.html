@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KEDA Architecture</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+
+        <svg viewBox="0 0 900 550" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="eventSourceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="kedaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="hpaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="deploymentGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                </linearGradient>
+                <!-- Shadow filter -->
+                <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+                <!-- Arrow markers -->
+                <marker id="arrowOrange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#f59e0b" />
+                </marker>
+                <marker id="arrowPurple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#8b5cf6" />
+                </marker>
+                <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" />
+                </marker>
+                <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#10b981" />
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">KEDA Architecture</text>
+
+            <!-- Event Sources (Left side) -->
+            <g transform="translate(30, 100)">
+                <rect x="0" y="0" width="150" height="280" rx="8" fill="#fef3c7" stroke="#fcd34d" stroke-width="2"/>
+                <text x="75" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">Event Sources</text>
+
+                <!-- Kafka -->
+                <rect x="15" y="45" width="120" height="50" rx="6" fill="url(#eventSourceGradient)" filter="url(#dropShadow)"/>
+                <text x="75" y="70" text-anchor="middle" font-size="11" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Kafka</text>
+                <text x="75" y="85" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Consumer Lag: 1,250</text>
+
+                <!-- SQS -->
+                <rect x="15" y="110" width="120" height="50" rx="6" fill="url(#eventSourceGradient)" filter="url(#dropShadow)"/>
+                <text x="75" y="135" text-anchor="middle" font-size="11" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">AWS SQS</text>
+                <text x="75" y="150" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Messages: 500</text>
+
+                <!-- Prometheus -->
+                <rect x="15" y="175" width="120" height="50" rx="6" fill="url(#eventSourceGradient)" filter="url(#dropShadow)"/>
+                <text x="75" y="200" text-anchor="middle" font-size="11" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Prometheus</text>
+                <text x="75" y="215" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Custom Query</text>
+
+                <!-- More sources indicator -->
+                <text x="75" y="250" text-anchor="middle" font-size="10" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">+ 65 more scalers</text>
+            </g>
+
+            <!-- Arrows from Event Sources to KEDA -->
+            <path d="M 180 240 L 230 240" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <text x="205" y="230" text-anchor="middle" font-size="9" fill="#d97706" font-family="Liberation Sans, Arial, sans-serif">Poll metrics</text>
+
+            <!-- KEDA Components (Center) -->
+            <g transform="translate(240, 70)">
+                <rect x="0" y="0" width="200" height="340" rx="8" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+                <text x="100" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="#6d28d9" font-family="Liberation Sans, Arial, sans-serif">KEDA</text>
+
+                <!-- Scaler -->
+                <rect x="20" y="50" width="160" height="70" rx="6" fill="url(#kedaGradient)" filter="url(#dropShadow)"/>
+                <text x="100" y="78" text-anchor="middle" font-size="11" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Scalers</text>
+                <text x="100" y="98" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Connect to event sources</text>
+                <text x="100" y="112" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Read external metrics</text>
+
+                <!-- Metrics Adapter -->
+                <rect x="20" y="135" width="160" height="70" rx="6" fill="url(#kedaGradient)" filter="url(#dropShadow)"/>
+                <text x="100" y="163" text-anchor="middle" font-size="11" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Metrics Adapter</text>
+                <text x="100" y="183" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Exposes metrics to HPA</text>
+                <text x="100" y="197" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">as custom.metrics.k8s.io</text>
+
+                <!-- Admission Webhooks -->
+                <rect x="20" y="220" width="160" height="55" rx="6" fill="url(#kedaGradient)" filter="url(#dropShadow)"/>
+                <text x="100" y="248" text-anchor="middle" font-size="11" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Admission Webhooks</text>
+                <text x="100" y="266" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Validates ScaledObjects</text>
+
+                <!-- ScaledObject CRD annotation -->
+                <rect x="20" y="290" width="160" height="40" rx="4" fill="#ede9fe" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,2"/>
+                <text x="100" y="315" text-anchor="middle" font-size="10" fill="#6d28d9" font-family="Liberation Sans, Arial, sans-serif">ScaledObject CRD</text>
+            </g>
+
+            <!-- Arrow from KEDA to HPA -->
+            <path d="M 440 240 L 490 240" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+            <text x="465" y="230" text-anchor="middle" font-size="9" fill="#6d28d9" font-family="Liberation Sans, Arial, sans-serif">External</text>
+            <text x="465" y="242" text-anchor="middle" font-size="9" fill="#6d28d9" font-family="Liberation Sans, Arial, sans-serif">metrics</text>
+
+            <!-- HPA (Center-Right) -->
+            <g transform="translate(500, 160)">
+                <rect x="0" y="0" width="140" height="160" rx="8" fill="url(#hpaGradient)" filter="url(#dropShadow)"/>
+                <text x="70" y="30" text-anchor="middle" font-size="13" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">HPA</text>
+                <line x1="15" y1="42" x2="125" y2="42" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <text x="70" y="65" text-anchor="middle" font-size="10" fill="#bfdbfe" font-family="Liberation Sans, Arial, sans-serif">Evaluates metrics</text>
+                <text x="70" y="85" text-anchor="middle" font-size="10" fill="#bfdbfe" font-family="Liberation Sans, Arial, sans-serif">Calculates replicas</text>
+                <text x="70" y="105" text-anchor="middle" font-size="10" fill="#bfdbfe" font-family="Liberation Sans, Arial, sans-serif">Applies scaling</text>
+
+                <!-- Formula -->
+                <rect x="15" y="115" width="110" height="35" rx="4" fill="rgba(255,255,255,0.15)"/>
+                <text x="70" y="135" text-anchor="middle" font-size="9" fill="white" font-family="Liberation Sans, Arial, sans-serif">desired = ceil(</text>
+                <text x="70" y="147" text-anchor="middle" font-size="9" fill="white" font-family="Liberation Sans, Arial, sans-serif">current * ratio)</text>
+            </g>
+
+            <!-- Arrow from HPA to Deployment -->
+            <path d="M 640 240 L 690 240" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <text x="665" y="230" text-anchor="middle" font-size="9" fill="#1d4ed8" font-family="Liberation Sans, Arial, sans-serif">Scale</text>
+
+            <!-- Deployment (Right side) -->
+            <g transform="translate(700, 100)">
+                <rect x="0" y="0" width="170" height="280" rx="8" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="2"/>
+                <text x="85" y="28" text-anchor="middle" font-size="13" font-weight="600" fill="#047857" font-family="Liberation Sans, Arial, sans-serif">Deployment</text>
+
+                <!-- Pods -->
+                <g transform="translate(25, 50)">
+                    <rect x="0" y="0" width="50" height="50" rx="4" fill="url(#deploymentGradient)" filter="url(#dropShadow)"/>
+                    <text x="25" y="30" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Pod 1</text>
+
+                    <rect x="60" y="0" width="50" height="50" rx="4" fill="url(#deploymentGradient)" filter="url(#dropShadow)"/>
+                    <text x="85" y="30" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Pod 2</text>
+
+                    <rect x="0" y="60" width="50" height="50" rx="4" fill="url(#deploymentGradient)" filter="url(#dropShadow)"/>
+                    <text x="25" y="90" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Pod 3</text>
+
+                    <rect x="60" y="60" width="50" height="50" rx="4" fill="url(#deploymentGradient)" filter="url(#dropShadow)" stroke="#fef08a" stroke-width="2" stroke-dasharray="4,2"/>
+                    <text x="85" y="90" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Pod 4</text>
+                </g>
+
+                <text x="85" y="185" text-anchor="middle" font-size="10" fill="#047857" font-family="Liberation Sans, Arial, sans-serif">3 running + 1 starting</text>
+
+                <!-- Scale to zero indicator -->
+                <rect x="15" y="205" width="140" height="60" rx="4" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1"/>
+                <text x="85" y="225" text-anchor="middle" font-size="10" font-weight="500" fill="#047857" font-family="Liberation Sans, Arial, sans-serif">Scale-to-Zero</text>
+                <text x="85" y="242" text-anchor="middle" font-size="9" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">When queue empty:</text>
+                <text x="85" y="256" text-anchor="middle" font-size="9" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">replicas = 0</text>
+            </g>
+
+            <!-- Key features annotation -->
+            <g transform="translate(240, 430)">
+                <rect x="0" y="0" width="420" height="90" rx="6" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+                <text x="210" y="22" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">KEDA Key Capabilities</text>
+                <text x="15" y="45" font-size="10" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">Scale-to-zero: Reduce replicas to 0 when no events pending</text>
+                <text x="15" y="62" font-size="10" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">ScaledObject: For Deployments/StatefulSets (long-running)</text>
+                <text x="15" y="79" font-size="10" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">ScaledJob: Creates Jobs per event (discrete work items)</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

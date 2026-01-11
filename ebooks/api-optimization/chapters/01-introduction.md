@@ -152,7 +152,7 @@ This book takes you from measurement fundamentals through advanced optimization 
 
 **Chapter 12: Edge Infrastructure** covers the middleware layer between users and origin servers. You'll learn CDN caching patterns for APIs, edge workers and compute, distributed rate limiting, edge data stores (KV, databases, coordination primitives), and edge authentication. Edge infrastructure offloads many optimization problems discussed in earlier chapters to the network edge, reducing latency and origin load.
 
-**Chapter 13: Advanced Techniques** explores GraphQL optimization with DataLoader, gRPC and Protocol Buffers, and hedged requests for tail latency mitigation.
+**Chapter 13: Testing Performance** covers load testing, benchmarking, and performance regression testing - the practices that validate our optimization work and prevent regressions.
 
 **Chapter 14: Putting It All Together** synthesizes everything into a coherent methodology. You'll work through real-world case studies, learn decision frameworks for choosing techniques, and develop a systematic approach to performance optimization.
 

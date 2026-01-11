@@ -161,17 +161,7 @@ Server-Sent Events (SSE) provides a simpler alternative to WebSocket for server-
 
 #### How SSE Works
 
-An SSE connection is a long-lived HTTP response with `Content-Type: text/event-stream`. The server keeps the response open and writes events as they occur. Each event is a text block with optional fields:
-
-```
-event: price-update
-data: {"symbol": "AAPL", "price": 178.50}
-id: 12345
-
-event: price-update
-data: {"symbol": "GOOGL", "price": 141.25}
-id: 12346
-```
+An SSE connection is a long-lived HTTP response with `Content-Type: text/event-stream`. The server keeps the response open and writes events as they occur. Each event is a text block with optional fields: an event type (such as "price-update"), a data payload containing JSON or other content, and an optional ID for resumption tracking.
 
 The `id` field enables resumption. If the connection drops, the browser automatically reconnects and sends the last received ID in the `Last-Event-ID` header. The server can resume from that point, preventing duplicate or missed events.
 
@@ -243,29 +233,13 @@ The trade-off is debuggability. JSON is human-readable; protobuf is not. You can
 
 gRPC supports four communication patterns:
 
-**Unary RPC**: One request, one response. Equivalent to a standard HTTP request. Use for most API calls.
+**Unary RPC**: One request, one response. Equivalent to a standard HTTP request. Use for most API calls. In protobuf, this is defined as a simple RPC method that takes a request message and returns a response message.
 
-```protobuf
-rpc GetUser (GetUserRequest) returns (User);
-```
+**Server streaming**: One request, multiple responses. The client sends a request and receives a stream of responses. Use for fetching large result sets, real-time updates, or progress reporting. In protobuf, the response type is prefixed with `stream`.
 
-**Server streaming**: One request, multiple responses. The client sends a request and receives a stream of responses. Use for fetching large result sets, real-time updates, or progress reporting.
+**Client streaming**: Multiple requests, one response. The client sends a stream of messages and receives a single response. Use for uploading large payloads in chunks or aggregating client data. In protobuf, the request type is prefixed with `stream`.
 
-```protobuf
-rpc ListOrders (ListOrdersRequest) returns (stream Order);
-```
-
-**Client streaming**: Multiple requests, one response. The client sends a stream of messages and receives a single response. Use for uploading large payloads in chunks or aggregating client data.
-
-```protobuf
-rpc UploadFile (stream FileChunk) returns (UploadResult);
-```
-
-**Bidirectional streaming**: Multiple requests and responses flowing independently. Use for real-time bidirectional communication, chat, or collaborative applications.
-
-```protobuf
-rpc Chat (stream ChatMessage) returns (stream ChatMessage);
-```
+**Bidirectional streaming**: Multiple requests and responses flowing independently. Use for real-time bidirectional communication, chat, or collaborative applications. In protobuf, both request and response types are prefixed with `stream`.
 
 <!-- DIAGRAM: Four gRPC streaming patterns side by side: Unary (single arrow each way), Server streaming (one arrow right, multiple arrows left), Client streaming (multiple arrows right, one arrow left), Bidirectional (multiple arrows both ways). -->
 

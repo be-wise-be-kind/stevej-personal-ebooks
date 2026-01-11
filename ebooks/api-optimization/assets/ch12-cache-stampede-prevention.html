@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cache Stampede Prevention Mechanisms</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 650" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="requestGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="originGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="cacheGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="staleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="lockGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0891b2;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="successGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+
+                <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+                </marker>
+                <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#22c55e"/>
+                </marker>
+                <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#f59e0b"/>
+                </marker>
+                <marker id="arrowGray" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="30" text-anchor="middle" font-size="20" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Cache Stampede Prevention Mechanisms</text>
+
+            <!-- Grid dividers -->
+            <line x1="450" y1="50" x2="450" y2="600" stroke="#e2e8f0" stroke-width="2"/>
+            <line x1="20" y1="320" x2="880" y2="320" stroke="#e2e8f0" stroke-width="2"/>
+
+            <!-- ============================================ -->
+            <!-- QUADRANT 1: Request Coalescing (Top Left) -->
+            <!-- ============================================ -->
+            <rect x="30" y="55" width="400" height="255" rx="8" fill="#fefce8" stroke="#fde047" stroke-width="1"/>
+            <text x="230" y="80" text-anchor="middle" font-size="14" font-weight="600" fill="#854d0e" font-family="Liberation Sans, Arial, sans-serif">Request Coalescing</text>
+            <text x="230" y="98" text-anchor="middle" font-size="10" fill="#a16207" font-family="Liberation Sans, Arial, sans-serif">(Collapse Forwarding)</text>
+
+            <!-- Multiple incoming requests -->
+            <g transform="translate(50, 115)">
+                <rect x="0" y="0" width="60" height="25" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
+                <text x="30" y="17" text-anchor="middle" fill="#ffffff" font-size="9" font-family="Liberation Sans, Arial, sans-serif">100 reqs</text>
+            </g>
+
+            <!-- Funnel shape -->
+            <polygon points="130,115 200,115 180,175 150,175" fill="#e2e8f0" stroke="#94a3b8"/>
+            <text x="165" y="150" text-anchor="middle" fill="#475569" font-size="9" font-family="Liberation Sans, Arial, sans-serif">CDN</text>
+
+            <!-- Single request to origin -->
+            <line x1="180" y1="155" x2="250" y2="155" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <text x="215" y="145" text-anchor="middle" fill="#3b82f6" font-size="9" font-family="Liberation Sans, Arial, sans-serif">1 req</text>
+
+            <!-- Origin -->
+            <g transform="translate(260, 130)">
+                <rect x="0" y="0" width="70" height="50" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
+                <text x="35" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin</text>
+                <text x="35" y="38" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Server</text>
+            </g>
+
+            <!-- Response back -->
+            <line x1="260" y1="175" x2="180" y2="200" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+            <!-- Waiting requests -->
+            <g transform="translate(50, 185)">
+                <rect x="0" y="0" width="60" height="25" rx="4" fill="#fef3c7" stroke="#f59e0b"/>
+                <text x="30" y="17" text-anchor="middle" fill="#92400e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">99 wait</text>
+            </g>
+
+            <!-- All get response -->
+            <line x1="175" y1="210" x2="115" y2="210" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <text x="145" y="225" text-anchor="middle" fill="#22c55e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">all get same</text>
+
+            <!-- Result box -->
+            <g transform="translate(50, 245)">
+                <rect x="0" y="0" width="140" height="45" rx="6" fill="url(#successGrad)" filter="url(#shadow)"/>
+                <text x="70" y="18" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin load: 1 request</text>
+                <text x="70" y="35" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Latency: ~50ms wait</text>
+            </g>
+
+            <!-- ============================================ -->
+            <!-- QUADRANT 2: Stale-While-Revalidate (Top Right) -->
+            <!-- ============================================ -->
+            <rect x="470" y="55" width="400" height="255" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+            <text x="670" y="80" text-anchor="middle" font-size="14" font-weight="600" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Stale-While-Revalidate</text>
+            <text x="670" y="98" text-anchor="middle" font-size="10" fill="#15803d" font-family="Liberation Sans, Arial, sans-serif">(Zero User-Facing Latency)</text>
+
+            <!-- Requests arrive -->
+            <g transform="translate(490, 115)">
+                <rect x="0" y="0" width="60" height="25" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
+                <text x="30" y="17" text-anchor="middle" fill="#ffffff" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Requests</text>
+            </g>
+
+            <!-- Cache with stale data -->
+            <g transform="translate(580, 110)">
+                <rect x="0" y="0" width="80" height="50" rx="6" fill="url(#staleGrad)" filter="url(#shadow)"/>
+                <text x="40" y="20" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Cache</text>
+                <text x="40" y="36" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">(stale data)</text>
+            </g>
+
+            <!-- Arrow to cache -->
+            <line x1="555" y1="127" x2="575" y2="127" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+            <!-- Immediate stale response to users (green) -->
+            <path d="M 620 165 L 620 200 L 540 200" stroke="#22c55e" stroke-width="2.5" fill="none" marker-end="url(#arrowGreen)"/>
+            <text x="580" y="215" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Instant stale response</text>
+
+            <!-- Background refresh to origin (dotted blue) -->
+            <line x1="665" y1="135" x2="740" y2="135" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowBlue)"/>
+            <text x="702" y="125" text-anchor="middle" fill="#3b82f6" font-size="9" font-family="Liberation Sans, Arial, sans-serif">background</text>
+
+            <!-- Origin -->
+            <g transform="translate(750, 110)">
+                <rect x="0" y="0" width="70" height="50" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
+                <text x="35" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin</text>
+                <text x="35" y="38" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">refresh</text>
+            </g>
+
+            <!-- Users served immediately -->
+            <g transform="translate(490, 235)">
+                <rect x="0" y="0" width="70" height="50" rx="6" fill="url(#successGrad)" filter="url(#shadow)"/>
+                <text x="35" y="20" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Users see</text>
+                <text x="35" y="36" text-anchor="middle" fill="#ffffff" font-size="9" font-family="Liberation Sans, Arial, sans-serif">10-20ms</text>
+            </g>
+
+            <!-- Result box -->
+            <g transform="translate(680, 245)">
+                <rect x="0" y="0" width="140" height="45" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
+                <text x="70" y="18" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin load: 1 request</text>
+                <text x="70" y="35" text-anchor="middle" fill="#1e40af" font-size="9" font-family="Liberation Sans, Arial, sans-serif">User latency: 0ms added</text>
+            </g>
+
+            <!-- ============================================ -->
+            <!-- QUADRANT 3: Probabilistic Early Expiration (Bottom Left) -->
+            <!-- ============================================ -->
+            <rect x="30" y="330" width="400" height="260" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+            <text x="230" y="355" text-anchor="middle" font-size="14" font-weight="600" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Probabilistic Early Expiration</text>
+            <text x="230" y="373" text-anchor="middle" font-size="10" fill="#b91c1c" font-family="Liberation Sans, Arial, sans-serif">(Randomized Refresh)</text>
+
+            <!-- Timeline -->
+            <line x1="60" y1="430" x2="400" y2="430" stroke="#94a3b8" stroke-width="2"/>
+
+            <!-- TTL markers -->
+            <line x1="60" y1="425" x2="60" y2="435" stroke="#64748b" stroke-width="2"/>
+            <text x="60" y="450" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">0s</text>
+
+            <line x1="280" y1="425" x2="280" y2="435" stroke="#64748b" stroke-width="2"/>
+            <text x="280" y="450" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">270s</text>
+            <text x="280" y="465" text-anchor="middle" fill="#f59e0b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">(jitter starts)</text>
+
+            <line x1="400" y1="425" x2="400" y2="435" stroke="#ef4444" stroke-width="2"/>
+            <text x="400" y="450" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">300s TTL</text>
+
+            <!-- Normal zone -->
+            <rect x="60" y="400" width="220" height="20" rx="3" fill="#bbf7d0"/>
+            <text x="170" y="415" text-anchor="middle" fill="#166534" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Normal serving</text>
+
+            <!-- Jitter zone (gradient) -->
+            <defs>
+                <linearGradient id="jitterGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#fef3c7;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#fecaca;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <rect x="280" y="400" width="120" height="20" rx="3" fill="url(#jitterGrad)"/>
+            <text x="340" y="415" text-anchor="middle" fill="#92400e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Jitter zone</text>
+
+            <!-- Random refresh indicators -->
+            <circle cx="295" cy="390" r="4" fill="#f59e0b"/>
+            <circle cx="330" cy="385" r="4" fill="#f59e0b"/>
+            <circle cx="360" cy="388" r="4" fill="#f59e0b"/>
+            <circle cx="385" cy="382" r="4" fill="#f59e0b"/>
+            <text x="340" y="375" text-anchor="middle" fill="#f59e0b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">random early refresh</text>
+
+            <!-- Spread visualization -->
+            <g transform="translate(60, 480)">
+                <text x="0" y="0" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Without jitter:</text>
+                <rect x="100" y="-12" width="8" height="20" fill="#ef4444"/>
+                <text x="115" y="3" fill="#ef4444" font-size="9" font-family="Liberation Sans, Arial, sans-serif">spike at 300s</text>
+            </g>
+
+            <g transform="translate(60, 510)">
+                <text x="0" y="0" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">With 10% jitter:</text>
+                <rect x="100" y="-12" width="100" height="10" fill="#22c55e" opacity="0.6"/>
+                <text x="205" y="-2" fill="#22c55e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">spread over 30s</text>
+            </g>
+
+            <!-- Result box -->
+            <g transform="translate(230, 545)">
+                <rect x="0" y="0" width="170" height="35" rx="6" fill="url(#successGrad)" filter="url(#shadow)"/>
+                <text x="85" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Load spread over time</text>
+            </g>
+
+            <!-- ============================================ -->
+            <!-- QUADRANT 4: Lock-Based Refresh (Bottom Right) -->
+            <!-- ============================================ -->
+            <rect x="470" y="330" width="400" height="260" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+            <text x="670" y="355" text-anchor="middle" font-size="14" font-weight="600" fill="#1e40af" font-family="Liberation Sans, Arial, sans-serif">Lock-Based Refresh</text>
+            <text x="670" y="373" text-anchor="middle" font-size="10" fill="#3b82f6" font-family="Liberation Sans, Arial, sans-serif">(Durable Objects Coordination)</text>
+
+            <!-- Requests -->
+            <g transform="translate(490, 395)">
+                <rect x="0" y="0" width="55" height="22" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
+                <text x="27" y="15" text-anchor="middle" fill="#ffffff" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Req 1</text>
+            </g>
+            <g transform="translate(490, 425)">
+                <rect x="0" y="0" width="55" height="22" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
+                <text x="27" y="15" text-anchor="middle" fill="#ffffff" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Req 2</text>
+            </g>
+            <g transform="translate(490, 455)">
+                <rect x="0" y="0" width="55" height="22" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
+                <text x="27" y="15" text-anchor="middle" fill="#ffffff" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Req 3</text>
+            </g>
+
+            <!-- Durable Object -->
+            <g transform="translate(580, 400)">
+                <rect x="0" y="0" width="90" height="70" rx="8" fill="url(#lockGrad)" filter="url(#shadow)"/>
+                <text x="45" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Durable</text>
+                <text x="45" y="38" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Object</text>
+                <text x="45" y="58" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">holds lock</text>
+            </g>
+
+            <!-- Arrows to Durable Object -->
+            <line x1="550" y1="406" x2="575" y2="420" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+            <line x1="550" y1="436" x2="575" y2="436" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+            <line x1="550" y1="466" x2="575" y2="452" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+
+            <!-- Winner gets lock -->
+            <line x1="675" y1="420" x2="745" y2="420" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <text x="710" y="410" text-anchor="middle" fill="#22c55e" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">1 wins lock</text>
+
+            <!-- Origin -->
+            <g transform="translate(755, 395)">
+                <rect x="0" y="0" width="70" height="50" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
+                <text x="35" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin</text>
+                <text x="35" y="38" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Server</text>
+            </g>
+
+            <!-- Others wait or get stale -->
+            <g transform="translate(580, 490)">
+                <rect x="0" y="0" width="110" height="35" rx="4" fill="#fef3c7" stroke="#f59e0b"/>
+                <text x="55" y="15" text-anchor="middle" fill="#92400e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">2,3 wait or get</text>
+                <text x="55" y="28" text-anchor="middle" fill="#92400e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">stale response</text>
+            </g>
+
+            <!-- Result box -->
+            <g transform="translate(700, 540)">
+                <rect x="0" y="0" width="160" height="45" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
+                <text x="80" y="18" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Guaranteed single-flight</text>
+                <text x="80" y="35" text-anchor="middle" fill="#1e40af" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Trade-off: +20-100ms latency</text>
+            </g>
+
+            <!-- Bottom summary bar -->
+            <rect x="50" y="610" width="800" height="35" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+            <text x="450" y="633" text-anchor="middle" font-size="11" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Choose based on consistency requirements: SWR for best UX | Lock-based for critical data | Coalescing for general protection</text>
+
+        </svg>
+    </div>
+</body>
+</html>

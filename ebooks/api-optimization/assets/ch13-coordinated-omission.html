@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinated Omission Explained</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+
+        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="naiveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="correctGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="requestGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="slowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+                <!-- Shadow filter -->
+                <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+                <!-- Arrow markers -->
+                <marker id="arrowGray" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#64748b" />
+                </marker>
+                <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#3b82f6" />
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="28" text-anchor="middle" font-size="18" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Coordinated Omission Explained</text>
+            <text x="450" y="48" text-anchor="middle" font-size="11" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Why Most Load Testing Tools Underreport Latency</text>
+
+            <!-- Naive Measurement (Top) -->
+            <g transform="translate(30, 70)">
+                <rect x="0" y="0" width="840" height="180" rx="8" fill="#f8fafc" stroke="#fecaca" stroke-width="2" filter="url(#dropShadow)"/>
+
+                <!-- Title bar -->
+                <rect x="0" y="0" width="840" height="32" rx="8" fill="url(#naiveGradient)"/>
+                <rect x="0" y="24" width="840" height="8" fill="url(#naiveGradient)"/>
+                <text x="420" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Naive Measurement: Wait for Response Before Sending Next Request</text>
+
+                <!-- Timeline -->
+                <g transform="translate(40, 50)">
+                    <!-- Time axis -->
+                    <line x1="0" y1="80" x2="760" y2="80" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrowGray)"/>
+                    <text x="760" y="100" text-anchor="end" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Time (ms)</text>
+
+                    <!-- Time markers -->
+                    <text x="0" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">0</text>
+                    <text x="100" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">100</text>
+                    <text x="200" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">200</text>
+                    <text x="300" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">300</text>
+                    <text x="400" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">400</text>
+                    <text x="500" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">500</text>
+                    <text x="600" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">600</text>
+                    <text x="700" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">700</text>
+
+                    <!-- Request 1: Fast (10ms) -->
+                    <rect x="0" y="35" width="10" height="30" rx="2" fill="url(#requestGradient)"/>
+                    <text x="5" y="25" text-anchor="middle" font-size="7" fill="#3b82f6" font-family="Liberation Sans, Arial, sans-serif">10ms</text>
+
+                    <!-- Request 2: Fast (10ms) -->
+                    <rect x="15" y="35" width="10" height="30" rx="2" fill="url(#requestGradient)"/>
+
+                    <!-- Request 3: Fast (10ms) -->
+                    <rect x="30" y="35" width="10" height="30" rx="2" fill="url(#requestGradient)"/>
+
+                    <!-- Request 4: SLOW (500ms) - takes up space -->
+                    <rect x="45" y="35" width="500" height="30" rx="2" fill="url(#slowGradient)"/>
+                    <text x="295" y="55" text-anchor="middle" font-size="10" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">SLOW REQUEST: 500ms</text>
+
+                    <!-- Request 5: Fast again (after slow) -->
+                    <rect x="550" y="35" width="10" height="30" rx="2" fill="url(#requestGradient)"/>
+
+                    <!-- Request 6: Fast -->
+                    <rect x="565" y="35" width="10" height="30" rx="2" fill="url(#requestGradient)"/>
+
+                    <!-- Annotation: Gap during slow request -->
+                    <text x="295" y="15" text-anchor="middle" font-size="8" fill="#b45309" font-family="Liberation Sans, Arial, sans-serif">No measurements during slow period!</text>
+                </g>
+
+                <!-- Result box -->
+                <g transform="translate(620, 110)">
+                    <rect x="0" y="0" width="200" height="55" rx="4" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+                    <text x="100" y="18" text-anchor="middle" font-size="9" font-weight="600" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Reported p99 Latency</text>
+                    <text x="100" y="40" text-anchor="middle" font-size="16" font-weight="bold" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">~50ms</text>
+                    <text x="100" y="52" text-anchor="middle" font-size="7" fill="#b91c1c" font-family="Liberation Sans, Arial, sans-serif">(Underreported!)</text>
+                </g>
+            </g>
+
+            <!-- Correct Measurement (Bottom) -->
+            <g transform="translate(30, 270)">
+                <rect x="0" y="0" width="840" height="180" rx="8" fill="#f8fafc" stroke="#bbf7d0" stroke-width="2" filter="url(#dropShadow)"/>
+
+                <!-- Title bar -->
+                <rect x="0" y="0" width="840" height="32" rx="8" fill="url(#correctGradient)"/>
+                <rect x="0" y="24" width="840" height="8" fill="url(#correctGradient)"/>
+                <text x="420" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Correct Measurement (wrk2): Send at Constant Rate, Measure from Intended Time</text>
+
+                <!-- Timeline -->
+                <g transform="translate(40, 50)">
+                    <!-- Time axis -->
+                    <line x1="0" y1="80" x2="760" y2="80" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrowGray)"/>
+                    <text x="760" y="100" text-anchor="end" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Time (ms)</text>
+
+                    <!-- Time markers -->
+                    <text x="0" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">0</text>
+                    <text x="100" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">100</text>
+                    <text x="200" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">200</text>
+                    <text x="300" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">300</text>
+                    <text x="400" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">400</text>
+                    <text x="500" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">500</text>
+                    <text x="600" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">600</text>
+                    <text x="700" y="95" text-anchor="middle" font-size="7" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">700</text>
+
+                    <!-- Intended send times (dots at regular intervals) -->
+                    <circle cx="0" cy="80" r="3" fill="#10b981"/>
+                    <circle cx="50" cy="80" r="3" fill="#10b981"/>
+                    <circle cx="100" cy="80" r="3" fill="#10b981"/>
+                    <circle cx="150" cy="80" r="3" fill="#10b981"/>
+                    <circle cx="200" cy="80" r="3" fill="#10b981"/>
+                    <circle cx="250" cy="80" r="3" fill="#10b981"/>
+                    <circle cx="300" cy="80" r="3" fill="#10b981"/>
+                    <circle cx="350" cy="80" r="3" fill="#10b981"/>
+                    <circle cx="400" cy="80" r="3" fill="#10b981"/>
+                    <circle cx="450" cy="80" r="3" fill="#10b981"/>
+                    <circle cx="500" cy="80" r="3" fill="#10b981"/>
+                    <circle cx="550" cy="80" r="3" fill="#10b981"/>
+                    <circle cx="600" cy="80" r="3" fill="#10b981"/>
+
+                    <text x="300" y="115" text-anchor="middle" font-size="7" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">Requests sent at constant rate (every 50ms)</text>
+
+                    <!-- Request 1: Fast (10ms) -->
+                    <rect x="0" y="35" width="10" height="30" rx="2" fill="url(#requestGradient)"/>
+
+                    <!-- Request 2: Fast (10ms) -->
+                    <rect x="50" y="35" width="10" height="30" rx="2" fill="url(#requestGradient)"/>
+
+                    <!-- Request 3: SLOW (500ms) - actual response -->
+                    <rect x="100" y="35" width="500" height="30" rx="2" fill="url(#slowGradient)"/>
+                    <text x="350" y="55" text-anchor="middle" font-size="10" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">SLOW: 500ms (measured from intended send time)</text>
+
+                    <!-- Queued requests during slow period -->
+                    <rect x="150" y="15" width="8" height="15" rx="1" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                    <rect x="200" y="15" width="8" height="15" rx="1" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                    <rect x="250" y="15" width="8" height="15" rx="1" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                    <rect x="300" y="15" width="8" height="15" rx="1" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                    <rect x="350" y="15" width="8" height="15" rx="1" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                    <rect x="400" y="15" width="8" height="15" rx="1" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                    <rect x="450" y="15" width="8" height="15" rx="1" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                    <rect x="500" y="15" width="8" height="15" rx="1" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                    <text x="330" y="8" text-anchor="middle" font-size="7" fill="#3b82f6" font-family="Liberation Sans, Arial, sans-serif">Queued requests - latency counted from intended time</text>
+
+                    <!-- Resume normal after slow -->
+                    <rect x="605" y="35" width="10" height="30" rx="2" fill="url(#requestGradient)"/>
+                </g>
+
+                <!-- Result box -->
+                <g transform="translate(620, 110)">
+                    <rect x="0" y="0" width="200" height="55" rx="4" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1"/>
+                    <text x="100" y="18" text-anchor="middle" font-size="9" font-weight="600" fill="#047857" font-family="Liberation Sans, Arial, sans-serif">Reported p99 Latency</text>
+                    <text x="100" y="40" text-anchor="middle" font-size="16" font-weight="bold" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">~500ms</text>
+                    <text x="100" y="52" text-anchor="middle" font-size="7" fill="#047857" font-family="Liberation Sans, Arial, sans-serif">(Accurate!)</text>
+                </g>
+            </g>
+
+            <!-- Key Insight -->
+            <g transform="translate(30, 465)">
+                <rect x="0" y="0" width="840" height="45" rx="6" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+                <text x="420" y="18" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">The Problem: Naive tools coordinate with slow servers to avoid measuring during slow periods</text>
+                <text x="420" y="35" text-anchor="middle" font-size="9" fill="#b45309" font-family="Liberation Sans, Arial, sans-serif">Solution: Use wrk2 or tools that maintain constant throughput and measure from intended send time, not actual send time</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

@@ -43,13 +43,13 @@ A proven pattern for technical content:
 - Avoid jargon; when technical terms are necessary, define them
 
 ### Code Examples
-- Keep examples focused on the concept being taught
-- One language per example when possible (unless comparing implementations)
-- Include enough context to be runnable
-- Don't overwhelm introductory chapters with extensive code
+- All code examples are placed in the Code Examples appendix
+- No inline fenced code blocks in chapter text
+- Reference examples by number: "(see Example N.M)"
+- Keep prose descriptions of concepts separate from implementation details
 
 ### Appendix Placement
-For this repository, substantial code examples (>10 lines) are collected in a dedicated Code Examples appendix rather than placed at the end of each chapter. This keeps chapters focused on concepts while providing complete, runnable implementations in one reference location.
+All code examples are collected in a dedicated Code Examples appendix. This keeps chapters focused on concepts while providing complete, runnable implementations in one reference location.
 
 - Reference examples as "Example N.M" where N is chapter number
 - Each example includes language, descriptive title, and context

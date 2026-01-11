@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Tier Scaling Architecture</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+
+        <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="hpaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="kedaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="vpaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="podGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="nodeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#64748b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#475569;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="clusterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#dc2626;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#b91c1c;stop-opacity:1" />
+                </linearGradient>
+                <!-- Shadow filter -->
+                <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+                <!-- Arrow markers -->
+                <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" />
+                </marker>
+                <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#10b981" />
+                </marker>
+                <marker id="arrowRed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#dc2626" />
+                </marker>
+                <marker id="arrowGray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Two-Tier Scaling Architecture</text>
+
+            <!-- Pod Layer (Top) -->
+            <g transform="translate(30, 60)">
+                <rect x="0" y="0" width="840" height="200" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+                <text x="420" y="28" text-anchor="middle" font-size="14" font-weight="600" fill="#1d4ed8" font-family="Liberation Sans, Arial, sans-serif">Tier 1: Pod-Level Autoscaling</text>
+
+                <!-- HPA -->
+                <g transform="translate(30, 50)">
+                    <rect x="0" y="0" width="160" height="90" rx="6" fill="url(#hpaGradient)" filter="url(#dropShadow)"/>
+                    <text x="80" y="25" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">HPA</text>
+                    <text x="80" y="45" text-anchor="middle" font-size="9" fill="#bfdbfe" font-family="Liberation Sans, Arial, sans-serif">CPU / Memory</text>
+                    <text x="80" y="60" text-anchor="middle" font-size="9" fill="#bfdbfe" font-family="Liberation Sans, Arial, sans-serif">Custom Metrics</text>
+                    <text x="80" y="80" text-anchor="middle" font-size="8" fill="#93c5fd" font-family="Liberation Sans, Arial, sans-serif">Horizontal scaling</text>
+                </g>
+
+                <!-- KEDA -->
+                <g transform="translate(210, 50)">
+                    <rect x="0" y="0" width="160" height="90" rx="6" fill="url(#kedaGradient)" filter="url(#dropShadow)"/>
+                    <text x="80" y="25" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">KEDA</text>
+                    <text x="80" y="45" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Queue Depth</text>
+                    <text x="80" y="60" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">External Metrics</text>
+                    <text x="80" y="80" text-anchor="middle" font-size="8" fill="#c4b5fd" font-family="Liberation Sans, Arial, sans-serif">Scale-to-zero</text>
+                </g>
+
+                <!-- VPA -->
+                <g transform="translate(390, 50)">
+                    <rect x="0" y="0" width="160" height="90" rx="6" fill="url(#vpaGradient)" filter="url(#dropShadow)"/>
+                    <text x="80" y="25" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">VPA</text>
+                    <text x="80" y="45" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Resource Requests</text>
+                    <text x="80" y="60" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Right-sizing</text>
+                    <text x="80" y="80" text-anchor="middle" font-size="8" fill="#fcd34d" font-family="Liberation Sans, Arial, sans-serif">Vertical scaling</text>
+                </g>
+
+                <!-- Resulting Pods -->
+                <g transform="translate(580, 45)">
+                    <text x="120" y="10" text-anchor="middle" font-size="11" font-weight="500" fill="#1d4ed8" font-family="Liberation Sans, Arial, sans-serif">Deployment Pods</text>
+                    <rect x="0" y="20" width="50" height="40" rx="4" fill="url(#podGradient)" filter="url(#dropShadow)"/>
+                    <text x="25" y="44" text-anchor="middle" font-size="9" fill="white" font-family="Liberation Sans, Arial, sans-serif">Pod</text>
+                    <rect x="60" y="20" width="50" height="40" rx="4" fill="url(#podGradient)" filter="url(#dropShadow)"/>
+                    <text x="85" y="44" text-anchor="middle" font-size="9" fill="white" font-family="Liberation Sans, Arial, sans-serif">Pod</text>
+                    <rect x="120" y="20" width="50" height="40" rx="4" fill="url(#podGradient)" filter="url(#dropShadow)"/>
+                    <text x="145" y="44" text-anchor="middle" font-size="9" fill="white" font-family="Liberation Sans, Arial, sans-serif">Pod</text>
+                    <rect x="180" y="20" width="50" height="40" rx="4" fill="url(#podGradient)" filter="url(#dropShadow)" stroke="#fef08a" stroke-width="2" stroke-dasharray="4,2"/>
+                    <text x="205" y="44" text-anchor="middle" font-size="9" fill="white" font-family="Liberation Sans, Arial, sans-serif">+Pod</text>
+
+                    <!-- Arrows showing scaling -->
+                    <path d="M 60 85 L 60 95 L 180 95 L 180 85" fill="none" stroke="#10b981" stroke-width="1.5"/>
+                    <text x="120" y="110" text-anchor="middle" font-size="8" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">HPA/KEDA: Add replicas</text>
+
+                    <path d="M 25 70 L 25 130" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
+                    <text x="25" y="145" text-anchor="middle" font-size="8" fill="#f59e0b" font-family="Liberation Sans, Arial, sans-serif">VPA: Resize</text>
+                </g>
+            </g>
+
+            <!-- Feedback Arrow: Pending Pods -->
+            <path d="M 450 260 L 450 290" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+            <text x="485" y="280" text-anchor="start" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Pending pods trigger node scaling</text>
+
+            <!-- Node Layer (Bottom) -->
+            <g transform="translate(30, 300)">
+                <rect x="0" y="0" width="840" height="250" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="2"/>
+                <text x="420" y="28" text-anchor="middle" font-size="14" font-weight="600" fill="#b91c1c" font-family="Liberation Sans, Arial, sans-serif">Tier 2: Node-Level Autoscaling</text>
+
+                <!-- Cluster Autoscaler -->
+                <g transform="translate(50, 55)">
+                    <rect x="0" y="0" width="180" height="100" rx="6" fill="url(#clusterGradient)" filter="url(#dropShadow)"/>
+                    <text x="90" y="25" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Cluster Autoscaler</text>
+                    <line x1="15" y1="35" x2="165" y2="35" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                    <text x="90" y="52" text-anchor="middle" font-size="9" fill="#fecaca" font-family="Liberation Sans, Arial, sans-serif">Node groups</text>
+                    <text x="90" y="66" text-anchor="middle" font-size="9" fill="#fecaca" font-family="Liberation Sans, Arial, sans-serif">Predefined configs</text>
+                    <text x="90" y="80" text-anchor="middle" font-size="9" fill="#fecaca" font-family="Liberation Sans, Arial, sans-serif">Scale-up: minutes</text>
+                    <text x="90" y="94" text-anchor="middle" font-size="8" fill="#f87171" font-family="Liberation Sans, Arial, sans-serif">AWS, GCP, Azure</text>
+                </g>
+
+                <!-- OR -->
+                <text x="290" y="110" text-anchor="middle" font-size="14" font-weight="600" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">OR</text>
+
+                <!-- Karpenter -->
+                <g transform="translate(330, 55)">
+                    <rect x="0" y="0" width="180" height="100" rx="6" fill="url(#clusterGradient)" filter="url(#dropShadow)"/>
+                    <text x="90" y="25" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Karpenter</text>
+                    <line x1="15" y1="35" x2="165" y2="35" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                    <text x="90" y="52" text-anchor="middle" font-size="9" fill="#fecaca" font-family="Liberation Sans, Arial, sans-serif">Per-pod selection</text>
+                    <text x="90" y="66" text-anchor="middle" font-size="9" fill="#fecaca" font-family="Liberation Sans, Arial, sans-serif">Right-sized nodes</text>
+                    <text x="90" y="80" text-anchor="middle" font-size="9" fill="#fecaca" font-family="Liberation Sans, Arial, sans-serif">Scale-up: 30-60s</text>
+                    <text x="90" y="94" text-anchor="middle" font-size="8" fill="#f87171" font-family="Liberation Sans, Arial, sans-serif">AWS, GCP (beta)</text>
+                </g>
+
+                <!-- Resulting Nodes -->
+                <g transform="translate(550, 45)">
+                    <text x="130" y="10" text-anchor="middle" font-size="11" font-weight="500" fill="#b91c1c" font-family="Liberation Sans, Arial, sans-serif">Cluster Nodes</text>
+
+                    <!-- Node 1 -->
+                    <rect x="0" y="20" width="80" height="100" rx="4" fill="url(#nodeGradient)" filter="url(#dropShadow)"/>
+                    <text x="40" y="40" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Node 1</text>
+                    <text x="40" y="55" text-anchor="middle" font-size="8" fill="#cbd5e1" font-family="Liberation Sans, Arial, sans-serif">m5.large</text>
+                    <rect x="10" y="65" width="25" height="20" rx="2" fill="#10b981"/>
+                    <rect x="40" y="65" width="25" height="20" rx="2" fill="#10b981"/>
+                    <rect x="10" y="90" width="25" height="20" rx="2" fill="#10b981"/>
+                    <rect x="40" y="90" width="25" height="20" rx="2" fill="#94a3b8"/>
+
+                    <!-- Node 2 -->
+                    <rect x="90" y="20" width="80" height="100" rx="4" fill="url(#nodeGradient)" filter="url(#dropShadow)"/>
+                    <text x="130" y="40" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Node 2</text>
+                    <text x="130" y="55" text-anchor="middle" font-size="8" fill="#cbd5e1" font-family="Liberation Sans, Arial, sans-serif">m5.xlarge</text>
+                    <rect x="100" y="65" width="25" height="20" rx="2" fill="#10b981"/>
+                    <rect x="130" y="65" width="25" height="20" rx="2" fill="#10b981"/>
+                    <rect x="100" y="90" width="25" height="20" rx="2" fill="#10b981"/>
+                    <rect x="130" y="90" width="25" height="20" rx="2" fill="#10b981"/>
+
+                    <!-- Node 3 (new) -->
+                    <rect x="180" y="20" width="80" height="100" rx="4" fill="url(#nodeGradient)" filter="url(#dropShadow)" stroke="#fef08a" stroke-width="2" stroke-dasharray="4,2"/>
+                    <text x="220" y="40" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">+Node 3</text>
+                    <text x="220" y="55" text-anchor="middle" font-size="8" fill="#cbd5e1" font-family="Liberation Sans, Arial, sans-serif">c5.large</text>
+                    <text x="220" y="85" text-anchor="middle" font-size="8" fill="#fef08a" font-family="Liberation Sans, Arial, sans-serif">provisioning...</text>
+
+                    <text x="130" y="140" text-anchor="middle" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Pods scheduled on available nodes</text>
+                </g>
+
+                <!-- Consolidation note -->
+                <g transform="translate(50, 170)">
+                    <rect x="0" y="0" width="460" height="60" rx="4" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+                    <text x="230" y="20" text-anchor="middle" font-size="10" font-weight="500" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Node Consolidation (Karpenter)</text>
+                    <text x="230" y="38" text-anchor="middle" font-size="9" fill="#b91c1c" font-family="Liberation Sans, Arial, sans-serif">Periodically evaluates if workloads fit on fewer nodes</text>
+                    <text x="230" y="52" text-anchor="middle" font-size="9" fill="#b91c1c" font-family="Liberation Sans, Arial, sans-serif">Drains underutilized nodes, provisions optimal replacements</text>
+                </g>
+            </g>
+
+            <!-- Feedback Arrow: Available capacity -->
+            <path d="M 700 300 L 700 270" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <text x="700" y="280" text-anchor="middle" font-size="10" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">New capacity enables pod scheduling</text>
+        </svg>
+    </div>
+</body>
+</html>

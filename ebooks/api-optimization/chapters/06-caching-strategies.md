@@ -187,7 +187,17 @@ The DataLoader pattern, popularized by Facebook for GraphQL, combines batching a
 
 DataLoader provides per-request caching: if user-1 is requested twice during the same request, the second call returns the cached result. This eliminates duplicate queries without risking stale data across requests [Source: DataLoader Documentation, 2024].
 
-For more on DataLoader and GraphQL optimization, see [Chapter 13: Advanced Techniques](./13-advanced-techniques.md).
+#### Query Complexity Analysis
+
+Unbounded GraphQL queries represent a denial-of-service vulnerability. A malicious client can construct deeply nested queries that consume excessive server resources. Query complexity analysis assigns costs to fields and rejects queries exceeding thresholds.
+
+Common approaches include:
+
+- **Depth limiting**: Reject queries exceeding maximum nesting depth (typically 7-15 levels)
+- **Field cost assignment**: Assign complexity points to each field, sum for total query cost
+- **Multiplier fields**: List fields multiply the cost of their children by expected result count
+
+Shopify's GraphQL API uses complexity analysis, publishing their cost calculation formula and rate limits publicly [Source: Shopify GraphQL Admin API Documentation, 2024].
 
 ### Distributed Cache Patterns
 

@@ -147,13 +147,7 @@ Batching writes improves throughput by amortizing network and transaction overhe
 
 Regardless of read/write ratio, connection pooling matters for any database. Opening a connection involves TCP handshake, authentication, TLS negotiation, and session setup—overhead that adds tens of milliseconds per request if done repeatedly. Connection pools maintain a cache of open connections for reuse.
 
-The HikariCP documentation provides a useful formula for OLTP workloads [Source: HikariCP Wiki, "About Pool Sizing"]:
-
-```
-pool_size = (core_count * 2) + effective_spindle_count
-```
-
-For modern SSDs, treat spindle count as 1. A 4-core server might use a pool of 9-10 connections. However, optimal sizing depends on query patterns and should be determined through measurement.
+The HikariCP documentation provides a useful formula for OLTP workloads: pool size equals core count times two, plus effective spindle count [Source: HikariCP Wiki, "About Pool Sizing"]. For modern SSDs, treat spindle count as 1. A 4-core server might use a pool of 9-10 connections. However, optimal sizing depends on query patterns and should be determined through measurement.
 
 Connection pool configuration follows similar patterns across languages and databases: set minimum and maximum counts, configure idle timeouts, and establish query timeouts. See Example 7.11 for configuration patterns.
 

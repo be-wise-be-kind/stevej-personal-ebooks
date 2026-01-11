@@ -15,6 +15,8 @@ if [ ! -d "$CHAPTERS_DIR" ]; then
     exit 1
 fi
 
+# Clean old chapters to prevent stale files from accumulating
+rm -rf "$BUILD_CHAPTERS"
 mkdir -p "$BUILD_CHAPTERS"
 
 # Determine target extension based on format

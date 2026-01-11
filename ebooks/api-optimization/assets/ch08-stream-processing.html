@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Processing Architecture</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 950 580" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Blue gradient for sources -->
+                <linearGradient id="sourceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Purple gradient for processor -->
+                <linearGradient id="processorGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#9333ea;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Green gradient for sink -->
+                <linearGradient id="sinkGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Orange gradient for state -->
+                <linearGradient id="stateGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Arrow markers -->
+                <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/>
+                </marker>
+
+                <marker id="arrowPurple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#9333ea"/>
+                </marker>
+
+                <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#16a34a"/>
+                </marker>
+
+                <!-- Drop shadow -->
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="950" height="580" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="475" y="35" text-anchor="middle" fill="#1e293b" font-size="22" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                Stream Processing Architecture
+            </text>
+            <text x="475" y="57" text-anchor="middle" fill="#64748b" font-size="13" font-family="Liberation Sans, Arial, sans-serif">
+                Continuous processing of unbounded event streams
+            </text>
+
+            <!-- ============== MAIN ARCHITECTURE ============== -->
+            <!-- Sources -->
+            <g transform="translate(30, 90)">
+                <text x="60" y="0" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Sources
+                </text>
+
+                <rect x="0" y="15" width="120" height="45" fill="url(#sourceGradient)" rx="6" filter="url(#shadow)"/>
+                <text x="60" y="43" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Kafka Topic
+                </text>
+
+                <rect x="0" y="70" width="120" height="45" fill="url(#sourceGradient)" rx="6" filter="url(#shadow)"/>
+                <text x="60" y="98" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Event Log
+                </text>
+
+                <rect x="0" y="125" width="120" height="45" fill="url(#sourceGradient)" rx="6" filter="url(#shadow)"/>
+                <text x="60" y="153" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    CDC Stream
+                </text>
+            </g>
+
+            <!-- Arrows from sources -->
+            <line x1="155" y1="145" x2="225" y2="145" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <line x1="155" y1="180" x2="225" y2="180" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <line x1="155" y1="215" x2="225" y2="215" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+            <!-- Stream Processor -->
+            <g transform="translate(230, 90)">
+                <text x="200" y="0" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Stream Processor (Flink / Kafka Streams)
+                </text>
+
+                <rect x="0" y="15" width="400" height="170" fill="#faf5ff" rx="8" stroke="#d8b4fe" stroke-width="2"/>
+
+                <!-- Processing stages -->
+                <rect x="20" y="35" width="90" height="50" fill="url(#processorGradient)" rx="6" filter="url(#shadow)"/>
+                <text x="65" y="55" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Filter /
+                </text>
+                <text x="65" y="70" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Transform
+                </text>
+
+                <line x1="115" y1="60" x2="145" y2="60" stroke="#9333ea" stroke-width="2" marker-end="url(#arrowPurple)"/>
+
+                <rect x="150" y="35" width="90" height="50" fill="url(#processorGradient)" rx="6" filter="url(#shadow)"/>
+                <text x="195" y="55" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Window
+                </text>
+                <text x="195" y="70" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Aggregate
+                </text>
+
+                <line x1="245" y1="60" x2="275" y2="60" stroke="#9333ea" stroke-width="2" marker-end="url(#arrowPurple)"/>
+
+                <rect x="280" y="35" width="100" height="50" fill="url(#processorGradient)" rx="6" filter="url(#shadow)"/>
+                <text x="330" y="55" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Join /
+                </text>
+                <text x="330" y="70" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Enrich
+                </text>
+
+                <!-- State store -->
+                <rect x="150" y="105" width="100" height="60" fill="url(#stateGradient)" rx="6" filter="url(#shadow)"/>
+                <text x="200" y="130" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    State Store
+                </text>
+                <text x="200" y="148" text-anchor="middle" fill="#fef3c7" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    (RocksDB)
+                </text>
+
+                <!-- Arrows to/from state -->
+                <line x1="195" y1="87" x2="195" y2="100" stroke="#d97706" stroke-width="2"/>
+                <line x1="205" y1="100" x2="205" y2="87" stroke="#d97706" stroke-width="2"/>
+
+                <!-- Checkpoint indicator -->
+                <rect x="275" y="115" width="105" height="45" fill="#f8fafc" rx="4" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="327" y="135" text-anchor="middle" fill="#64748b" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Checkpoints
+                </text>
+                <text x="327" y="150" text-anchor="middle" fill="#64748b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">
+                    (Fault tolerance)
+                </text>
+            </g>
+
+            <!-- Arrow to sinks -->
+            <line x1="635" y1="175" x2="705" y2="145" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <line x1="635" y1="175" x2="705" y2="175" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <line x1="635" y1="175" x2="705" y2="205" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+            <!-- Sinks -->
+            <g transform="translate(710, 90)">
+                <text x="100" y="0" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Sinks
+                </text>
+
+                <rect x="0" y="15" width="120" height="45" fill="url(#sinkGradient)" rx="6" filter="url(#shadow)"/>
+                <text x="60" y="43" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Dashboard DB
+                </text>
+
+                <rect x="0" y="70" width="120" height="45" fill="url(#sinkGradient)" rx="6" filter="url(#shadow)"/>
+                <text x="60" y="98" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Alert System
+                </text>
+
+                <rect x="0" y="125" width="120" height="45" fill="url(#sinkGradient)" rx="6" filter="url(#shadow)"/>
+                <text x="60" y="153" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Analytics
+                </text>
+            </g>
+
+            <!-- Latency annotations -->
+            <g transform="translate(175, 245)">
+                <rect x="0" y="0" width="85" height="18" fill="#dbeafe" rx="3"/>
+                <text x="42" y="13" text-anchor="middle" fill="#1d4ed8" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    ms latency
+                </text>
+            </g>
+            <g transform="translate(655, 245)">
+                <rect x="0" y="0" width="100" height="18" fill="#dcfce7" rx="3"/>
+                <text x="50" y="13" text-anchor="middle" fill="#166534" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                    Real-time output
+                </text>
+            </g>
+
+            <!-- ============== WINDOWING PATTERNS ============== -->
+            <g transform="translate(30, 295)">
+                <rect x="0" y="0" width="890" height="165" fill="#f8fafc" rx="8" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="445" y="22" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Windowing Patterns
+                </text>
+
+                <!-- Tumbling Window -->
+                <g transform="translate(20, 40)">
+                    <text x="95" y="12" text-anchor="middle" fill="#7e22ce" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                        Tumbling Window
+                    </text>
+                    <!-- Timeline -->
+                    <line x1="10" y1="75" x2="180" y2="75" stroke="#64748b" stroke-width="1"/>
+                    <!-- Windows (non-overlapping) -->
+                    <rect x="10" y="30" width="50" height="40" fill="#e9d5ff" stroke="#a855f7" stroke-width="2" rx="3"/>
+                    <text x="35" y="55" text-anchor="middle" fill="#7e22ce" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                        5 min
+                    </text>
+                    <rect x="65" y="30" width="50" height="40" fill="#e9d5ff" stroke="#a855f7" stroke-width="2" rx="3"/>
+                    <text x="90" y="55" text-anchor="middle" fill="#7e22ce" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                        5 min
+                    </text>
+                    <rect x="120" y="30" width="50" height="40" fill="#e9d5ff" stroke="#a855f7" stroke-width="2" rx="3"/>
+                    <text x="145" y="55" text-anchor="middle" fill="#7e22ce" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                        5 min
+                    </text>
+                    <text x="95" y="95" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                        Fixed, non-overlapping
+                    </text>
+                    <text x="95" y="110" text-anchor="middle" fill="#64748b" font-size="8" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                        e.g., Hourly aggregations
+                    </text>
+                </g>
+
+                <!-- Sliding Window -->
+                <g transform="translate(230, 40)">
+                    <text x="95" y="12" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                        Sliding Window
+                    </text>
+                    <!-- Timeline -->
+                    <line x1="10" y1="75" x2="180" y2="75" stroke="#64748b" stroke-width="1"/>
+                    <!-- Windows (overlapping) -->
+                    <rect x="10" y="25" width="70" height="25" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" rx="3"/>
+                    <rect x="40" y="40" width="70" height="25" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" rx="3"/>
+                    <rect x="70" y="55" width="70" height="25" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" rx="3"/>
+                    <text x="45" y="42" text-anchor="middle" fill="#1d4ed8" font-size="8" font-family="Liberation Sans, Arial, sans-serif">
+                        10min
+                    </text>
+                    <text x="95" y="95" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                        Fixed size, overlapping
+                    </text>
+                    <text x="95" y="110" text-anchor="middle" fill="#64748b" font-size="8" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                        e.g., Moving averages
+                    </text>
+                </g>
+
+                <!-- Session Window -->
+                <g transform="translate(440, 40)">
+                    <text x="95" y="12" text-anchor="middle" fill="#16a34a" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                        Session Window
+                    </text>
+                    <!-- Timeline -->
+                    <line x1="10" y1="75" x2="180" y2="75" stroke="#64748b" stroke-width="1"/>
+                    <!-- Sessions (variable size based on activity) -->
+                    <rect x="10" y="35" width="45" height="35" fill="#dcfce7" stroke="#22c55e" stroke-width="2" rx="3"/>
+                    <!-- Gap -->
+                    <line x1="57" y1="52" x2="80" y2="52" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+                    <text x="68" y="45" text-anchor="middle" fill="#94a3b8" font-size="7" font-family="Liberation Sans, Arial, sans-serif">
+                        gap
+                    </text>
+                    <rect x="85" y="35" width="75" height="35" fill="#dcfce7" stroke="#22c55e" stroke-width="2" rx="3"/>
+                    <!-- Events as dots -->
+                    <circle cx="20" cy="52" r="3" fill="#16a34a"/>
+                    <circle cx="35" cy="52" r="3" fill="#16a34a"/>
+                    <circle cx="95" cy="52" r="3" fill="#16a34a"/>
+                    <circle cx="115" cy="52" r="3" fill="#16a34a"/>
+                    <circle cx="130" cy="52" r="3" fill="#16a34a"/>
+                    <circle cx="145" cy="52" r="3" fill="#16a34a"/>
+                    <text x="95" y="95" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                        Activity-based grouping
+                    </text>
+                    <text x="95" y="110" text-anchor="middle" fill="#64748b" font-size="8" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                        e.g., User sessions
+                    </text>
+                </g>
+
+                <!-- Global Window -->
+                <g transform="translate(650, 40)">
+                    <text x="110" y="12" text-anchor="middle" fill="#d97706" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                        Global Window
+                    </text>
+                    <!-- Timeline -->
+                    <line x1="10" y1="75" x2="210" y2="75" stroke="#64748b" stroke-width="1"/>
+                    <!-- Single global window -->
+                    <rect x="10" y="30" width="200" height="40" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" rx="3"/>
+                    <text x="110" y="55" text-anchor="middle" fill="#92400e" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                        All events (with triggers)
+                    </text>
+                    <text x="110" y="95" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">
+                        Unbounded, trigger-based
+                    </text>
+                    <text x="110" y="110" text-anchor="middle" fill="#64748b" font-size="8" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                        e.g., Count-based triggers
+                    </text>
+                </g>
+            </g>
+
+            <!-- ============== USE CASES ============== -->
+            <g transform="translate(30, 475)">
+                <rect x="0" y="0" width="890" height="70" fill="#f8fafc" rx="8" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="445" y="20" text-anchor="middle" fill="#1e293b" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    When to Use Stream Processing for API Optimization
+                </text>
+
+                <text x="30" y="45" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    Real-time dashboards
+                </text>
+                <text x="180" y="45" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    Anomaly detection
+                </text>
+                <text x="320" y="45" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    Dynamic rate limiting
+                </text>
+                <text x="490" y="45" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    Fraud detection
+                </text>
+                <text x="620" y="45" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    Live recommendations
+                </text>
+                <text x="780" y="45" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    Log aggregation
+                </text>
+
+                <text x="445" y="60" text-anchor="middle" fill="#64748b" font-size="9" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                    Stream processing shines when you need sub-second latency on continuous data and can tolerate eventual consistency
+                </text>
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(30, 553)">
+                <rect x="0" y="0" width="890" height="22" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <rect x="15" y="5" width="12" height="12" fill="url(#sourceGradient)" rx="2"/>
+                <text x="33" y="14" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    Source
+                </text>
+                <rect x="95" y="5" width="12" height="12" fill="url(#processorGradient)" rx="2"/>
+                <text x="113" y="14" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    Processor
+                </text>
+                <rect x="195" y="5" width="12" height="12" fill="url(#stateGradient)" rx="2"/>
+                <text x="213" y="14" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    State
+                </text>
+                <rect x="275" y="5" width="12" height="12" fill="url(#sinkGradient)" rx="2"/>
+                <text x="293" y="14" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    Sink
+                </text>
+                <text x="475" y="14" fill="#64748b" font-size="10" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                    Frameworks: Flink, Kafka Streams, Spark Streaming, Dataflow
+                </text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

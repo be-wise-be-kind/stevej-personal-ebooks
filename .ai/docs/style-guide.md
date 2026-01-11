@@ -108,71 +108,21 @@ Use these terms consistently throughout the book. Do not use synonyms or alterna
 - Python, Rust, and TypeScript should each appear roughly equally across the book
 - Choose the language that best fits the example (e.g., Rust for performance-critical code, Python for data processing)
 
-### Placement: Hybrid Approach
+### Placement: All Code in Appendix
 
-**To maintain narrative flow, we use a hybrid placement model:**
+**All code examples are placed in the Code Examples appendix.** There are no inline fenced code blocks in chapter text.
 
-#### Inline Code (stays in the text)
-- **Maximum 10 lines**
-- Directly illustrates a single, specific point
-- Essential for understanding the surrounding paragraph
-
-Example of inline usage:
-```markdown
-The cache lookup is straightforward:
-
-```python
-value = cache.get(key)
-if value is None:
-    value = database.fetch(key)
-    cache.set(key, value, ttl=300)
-```
-
-This pattern ensures we only hit the database on cache misses.
-```
-
-#### Appendix Code Examples (referenced in text)
-- **Any example over 10 lines**
-- Complete implementations, full patterns, production-ready code
-- Collected in the Code Examples appendix (not end-of-chapter)
-- Referenced by number in the text: "(see Example 5.1 in the Code Examples appendix)"
+- Reference examples by number in prose: "(see Example N.M in the Code Examples appendix)"
+- Use prose descriptions to explain concepts without embedded code
+- Keep chapters focused on concepts while the appendix provides implementation
 
 Example of reference in text:
-```markdown
-The cache-aside pattern checks the cache first, falling back to the database
-on miss (see Example 5.1). The key insight is that the application—not the
-cache—owns the invalidation logic.
-```
 
-Example of appendix section format:
-```markdown
-## Caching Strategies (Chapter 5)
+> The cache-aside pattern checks the cache first, falling back to the database
+> on miss (see Example 5.1). The key insight is that the application—not the
+> cache—owns the invalidation logic.
 
-### Example 5.1: Cache-Aside Pattern (Python)
-
-```python
-class CacheAside:
-    def __init__(self, cache, database):
-        self.cache = cache
-        self.database = database
-
-    def get(self, key: str) -> Optional[dict]:
-        # Check cache first
-        value = self.cache.get(key)
-        if value is not None:
-            return value
-
-        # Cache miss - fetch from database
-        value = self.database.fetch(key)
-        if value is not None:
-            self.cache.set(key, value, ttl=300)
-
-        return value
-```
-
-### Example 5.2: Write-Through Pattern (Rust)
-...
-```
+**Note:** Single inline commands may use backtick code spans (e.g., `redis-cli INFO`) but fenced code blocks are reserved for the Code Examples appendix.
 
 ### Code Quality Standards
 
@@ -325,13 +275,13 @@ Every chapter must follow this structure:
 ### Section Guidelines
 
 - **Overview**: Set context. Why does this topic matter? What problem does it solve?
-- **Key Concepts**: The meat of the chapter. Use ### subsections liberally. Only include inline code snippets (≤10 lines). Reference longer examples in the Code Examples appendix by number: "(see Example N.M)"
+- **Key Concepts**: The meat of the chapter. Use ### subsections liberally. Reference examples in the Code Examples appendix by number: "(see Example N.M)". No inline fenced code blocks.
 - **Common Pitfalls**: Real mistakes developers make. Be specific and actionable.
 - **Summary**: Scannable recap. Readers often review just this section.
 - **References**: Complete, clickable where possible.
 - **Next**: Creates continuity between chapters.
 
-**Note on Code Examples**: Substantial code examples (>10 lines) are collected in the Code Examples appendix, not at the end of each chapter. This keeps chapters focused on concepts while providing complete, runnable implementations in one reference location.
+**Note on Code Examples**: All code examples are collected in the Code Examples appendix, not inline in chapters. This keeps chapters focused on concepts while providing complete, runnable implementations in one reference location.
 
 ---
 

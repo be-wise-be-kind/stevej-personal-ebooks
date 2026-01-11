@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Concurrency Feedback Loop</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+
+        <svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="requestGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="limitGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="processGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="measureGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="rejectGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                </linearGradient>
+                <!-- Shadow filter -->
+                <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+                <!-- Arrow markers -->
+                <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" />
+                </marker>
+                <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#10b981" />
+                </marker>
+                <marker id="arrowOrange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#f59e0b" />
+                </marker>
+                <marker id="arrowPurple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#8b5cf6" />
+                </marker>
+                <marker id="arrowRed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444" />
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Adaptive Concurrency Feedback Loop</text>
+
+            <!-- Request Arrives -->
+            <g transform="translate(30, 80)">
+                <rect x="0" y="0" width="140" height="80" rx="6" fill="url(#requestGradient)" filter="url(#dropShadow)"/>
+                <text x="70" y="30" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Request</text>
+                <text x="70" y="50" text-anchor="middle" font-size="10" fill="#bfdbfe" font-family="Liberation Sans, Arial, sans-serif">Arrives</text>
+                <text x="70" y="68" text-anchor="middle" font-size="9" fill="#93c5fd" font-family="Liberation Sans, Arial, sans-serif">in_flight++</text>
+            </g>
+
+            <!-- Arrow to Check Limit -->
+            <path d="M 170 120 L 220 120" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+            <!-- Check Against Limit -->
+            <g transform="translate(230, 70)">
+                <rect x="0" y="0" width="160" height="100" rx="6" fill="url(#limitGradient)" filter="url(#dropShadow)"/>
+                <text x="80" y="28" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Check Limit</text>
+                <line x1="15" y1="38" x2="145" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <text x="80" y="56" text-anchor="middle" font-size="10" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">in_flight &lt; limit?</text>
+                <rect x="20" y="65" width="120" height="25" rx="3" fill="rgba(255,255,255,0.2)"/>
+                <text x="80" y="82" text-anchor="middle" font-size="9" fill="white" font-family="Liberation Sans, Arial, sans-serif">Current: 45 | Limit: 50</text>
+            </g>
+
+            <!-- Arrow to Process (Accept) -->
+            <path d="M 390 120 L 450 120" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <text x="420" y="108" text-anchor="middle" font-size="9" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Accept</text>
+
+            <!-- Arrow to Reject -->
+            <path d="M 310 170 L 310 230" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+            <text x="280" y="205" text-anchor="end" font-size="9" fill="#ef4444" font-family="Liberation Sans, Arial, sans-serif">Over limit</text>
+
+            <!-- Process Request -->
+            <g transform="translate(460, 70)">
+                <rect x="0" y="0" width="160" height="100" rx="6" fill="url(#processGradient)" filter="url(#dropShadow)"/>
+                <text x="80" y="28" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Process Request</text>
+                <line x1="15" y1="38" x2="145" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <text x="80" y="56" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Execute operation</text>
+                <text x="80" y="74" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Measure latency</text>
+                <text x="80" y="90" text-anchor="middle" font-size="9" fill="#6ee7b7" font-family="Liberation Sans, Arial, sans-serif">sampleRTT = 45ms</text>
+            </g>
+
+            <!-- Arrow to Measure -->
+            <path d="M 620 120 L 670 120" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+            <!-- Measure & Calculate -->
+            <g transform="translate(680, 70)">
+                <rect x="0" y="0" width="180" height="100" rx="6" fill="url(#measureGradient)" filter="url(#dropShadow)"/>
+                <text x="90" y="28" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Calculate Gradient</text>
+                <line x1="15" y1="38" x2="165" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <text x="90" y="56" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">gradient = minRTT / sampleRTT</text>
+                <text x="90" y="72" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">gradient = 40ms / 45ms = 0.89</text>
+                <rect x="25" y="80" width="130" height="15" rx="2" fill="rgba(255,255,255,0.2)"/>
+                <text x="90" y="91" text-anchor="middle" font-size="8" fill="white" font-family="Liberation Sans, Arial, sans-serif">Congestion detected</text>
+            </g>
+
+            <!-- Reject Path -->
+            <g transform="translate(230, 240)">
+                <rect x="0" y="0" width="160" height="80" rx="6" fill="url(#rejectGradient)" filter="url(#dropShadow)"/>
+                <text x="80" y="28" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Reject Request</text>
+                <line x1="15" y1="38" x2="145" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <text x="80" y="56" text-anchor="middle" font-size="10" fill="#fecaca" font-family="Liberation Sans, Arial, sans-serif">HTTP 503</text>
+                <text x="80" y="72" text-anchor="middle" font-size="9" fill="#fca5a5" font-family="Liberation Sans, Arial, sans-serif">"Concurrency limit"</text>
+            </g>
+
+            <!-- Update Limit -->
+            <g transform="translate(680, 240)">
+                <rect x="0" y="0" width="180" height="100" rx="6" fill="url(#limitGradient)" filter="url(#dropShadow)"/>
+                <text x="90" y="28" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Update Limit</text>
+                <line x1="15" y1="38" x2="165" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <text x="90" y="56" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">newLimit = limit * gradient</text>
+                <text x="90" y="74" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">newLimit = 50 * 0.89 = 44.5</text>
+                <rect x="25" y="82" width="130" height="15" rx="2" fill="#dc2626"/>
+                <text x="90" y="93" text-anchor="middle" font-size="8" fill="white" font-family="Liberation Sans, Arial, sans-serif">Limit reduced: 50 -> 45</text>
+            </g>
+
+            <!-- Arrow from Measure to Update -->
+            <path d="M 770 170 L 770 230" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowOrange)"/>
+
+            <!-- Feedback loop arrow -->
+            <path d="M 680 290 L 420 290 Q 400 290 400 270 L 400 190 Q 400 175 415 175 L 470 175" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowPurple)"/>
+            <text x="440" y="280" text-anchor="middle" font-size="9" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">Feedback loop</text>
+
+            <!-- Legend -->
+            <g transform="translate(30, 360)">
+                <rect x="0" y="0" width="840" height="120" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="420" y="24" text-anchor="middle" font-size="12" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Gradient Algorithm Behavior</text>
+
+                <!-- Healthy state -->
+                <rect x="30" y="40" width="240" height="65" rx="4" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1"/>
+                <text x="150" y="58" text-anchor="middle" font-size="10" font-weight="500" fill="#047857" font-family="Liberation Sans, Arial, sans-serif">Healthy (gradient ~ 1.0)</text>
+                <text x="150" y="75" text-anchor="middle" font-size="9" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">sampleRTT ≈ minRTT</text>
+                <text x="150" y="92" text-anchor="middle" font-size="9" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">Limit stays stable or increases</text>
+
+                <!-- Congestion state -->
+                <rect x="300" y="40" width="240" height="65" rx="4" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+                <text x="420" y="58" text-anchor="middle" font-size="10" font-weight="500" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">Congestion (gradient &lt; 1.0)</text>
+                <text x="420" y="75" text-anchor="middle" font-size="9" fill="#b45309" font-family="Liberation Sans, Arial, sans-serif">sampleRTT > minRTT</text>
+                <text x="420" y="92" text-anchor="middle" font-size="9" fill="#b45309" font-family="Liberation Sans, Arial, sans-serif">Limit reduced proportionally</text>
+
+                <!-- Overload state -->
+                <rect x="570" y="40" width="240" height="65" rx="4" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+                <text x="690" y="58" text-anchor="middle" font-size="10" font-weight="500" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Overload (in_flight >= limit)</text>
+                <text x="690" y="75" text-anchor="middle" font-size="9" fill="#b91c1c" font-family="Liberation Sans, Arial, sans-serif">New requests rejected</text>
+                <text x="690" y="92" text-anchor="middle" font-size="9" fill="#b91c1c" font-family="Liberation Sans, Arial, sans-serif">HTTP 503 returned</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

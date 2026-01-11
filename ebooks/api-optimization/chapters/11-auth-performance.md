@@ -38,23 +38,7 @@ The critical metrics for authentication performance are:
 
 #### Instrumenting Auth Middleware
 
-Wrap your authentication middleware to capture timing. The key is measuring the auth portion separately from request handling:
-
-```python
-async def auth_middleware(request, call_next):
-    start = time.perf_counter_ns()
-    try:
-        user = await validate_token(request.headers.get("Authorization"))
-        auth_duration_ms = (time.perf_counter_ns() - start) / 1_000_000
-        metrics.histogram("auth.validation.duration_ms", auth_duration_ms)
-        request.state.user = user
-    except AuthError as e:
-        metrics.increment("auth.errors", tags={"type": e.error_type})
-        raise
-    return await call_next(request)
-```
-
-This pattern captures validation time for every request, enabling dashboard visualization and alerting on regressions.
+Wrap your authentication middleware to capture timing. The key is measuring the auth portion separately from request handling. Record the start time before validation, measure elapsed time after, and emit metrics for both successful validations (as a histogram) and errors (as a counter with error type tags). This pattern captures validation time for every request, enabling dashboard visualization and alerting on regressions (see Example 11.1).
 
 ### Token Validation Performance
 
@@ -140,28 +124,7 @@ Token validation, whether local or remote, can be cached. The insight: the same 
 
 #### Cache Validation Results, Not Tokens
 
-Cache the output of validation—the user claims and validity status—keyed by a hash of the token. Never cache the raw token itself, as this creates a credential store that becomes an attack target.
-
-```python
-async def validate_with_cache(token: str) -> User:
-    cache_key = f"auth:valid:{hash_token(token)}"
-
-    cached = await cache.get(cache_key)
-    if cached:
-        metrics.increment("auth.cache.hit")
-        return User.from_cache(cached)
-
-    metrics.increment("auth.cache.miss")
-    user = await validate_token_uncached(token)
-
-    # Cache with TTL shorter than token expiration
-    token_exp = get_token_expiration(token)
-    cache_ttl = min(300, token_exp - current_time() - 60)
-    if cache_ttl > 0:
-        await cache.set(cache_key, user.to_cache(), ttl=cache_ttl)
-
-    return user
-```
+Cache the output of validation—the user claims and validity status—keyed by a hash of the token. Never cache the raw token itself, as this creates a credential store that becomes an attack target. The caching pattern checks for a cached result first, records cache hit/miss metrics, validates on miss, and caches the result with a TTL shorter than token expiration. See Example 11.5 for a complete implementation.
 
 <!-- DIAGRAM: Token cache-aside pattern: Request with token -> Hash token -> Check validation cache -> [hit: return cached user claims] or [miss: validate token, cache result with TTL, return claims] -->
 
@@ -169,13 +132,7 @@ async def validate_with_cache(token: str) -> User:
 
 #### TTL Considerations
 
-Cache TTL must be shorter than token lifetime to avoid serving stale validation results for expired tokens. A common formula:
-
-```
-cache_ttl = min(max_cache_ttl, token_exp - current_time - buffer)
-```
-
-Where `max_cache_ttl` caps caching duration (e.g., 5 minutes) and `buffer` accounts for clock skew and provides margin (e.g., 60 seconds).
+Cache TTL must be shorter than token lifetime to avoid serving stale validation results for expired tokens. A common formula calculates cache TTL as the minimum of a maximum cache duration (e.g., 5 minutes) and the remaining token lifetime minus a buffer. The buffer (e.g., 60 seconds) accounts for clock skew and provides safety margin.
 
 #### Handling Revocation
 
@@ -191,27 +148,7 @@ The right choice depends on your revocation requirements. Most APIs tolerate 1-5
 
 #### Thundering Herd Prevention
 
-When a popular token's cache entry expires, multiple concurrent requests may all attempt validation simultaneously—the thundering herd problem. Apply the single-flight pattern from Chapter 6:
-
-```python
-async def validate_single_flight(token: str) -> User:
-    cache_key = hash_token(token)
-
-    # Check if validation is in progress
-    if cache_key in in_flight:
-        return await in_flight[cache_key]
-
-    # Start validation, register the future
-    future = asyncio.create_task(validate_with_cache(token))
-    in_flight[cache_key] = future
-
-    try:
-        return await future
-    finally:
-        del in_flight[cache_key]
-```
-
-This ensures only one validation occurs per unique token, with other requests waiting on the result.
+When a popular token's cache entry expires, multiple concurrent requests may all attempt validation simultaneously—the thundering herd problem. Apply the single-flight pattern from Chapter 6: track in-progress validations by token hash, and if a validation is already running, wait for its result rather than starting a duplicate. This ensures only one validation occurs per unique token, with other requests waiting on the result.
 
 ### Stateless vs Stateful: Performance Trade-offs
 
@@ -293,28 +230,7 @@ Proactive refresh requires tracking token expiration and scheduling refresh. The
 
 #### JWKS Caching
 
-JSON Web Key Sets (JWKS) contain the public keys for validating JWTs from identity providers. Fetching JWKS on every request is unnecessary and slow:
-
-```python
-class JWKSCache:
-    def __init__(self, jwks_uri: str, refresh_interval: int = 3600):
-        self.jwks_uri = jwks_uri
-        self.refresh_interval = refresh_interval
-        self.keys = {}
-        self.last_refresh = 0
-
-    async def get_key(self, kid: str) -> Key:
-        if time.time() - self.last_refresh > self.refresh_interval:
-            await self.refresh()
-
-        if kid not in self.keys:
-            # Key rotation: try refreshing once
-            await self.refresh()
-
-        return self.keys.get(kid)
-```
-
-Cache JWKS for 1-24 hours. When a key ID (kid) is not found, refresh once to handle key rotation, then fail if still not found.
+JSON Web Key Sets (JWKS) contain the public keys for validating JWTs from identity providers. Fetching JWKS on every request is unnecessary and slow. Implement a JWKS cache that stores keys locally and refreshes periodically (every 1-24 hours). When a key ID (kid) is not found, refresh once to handle key rotation, then fail if still not found. This pattern eliminates network calls for the vast majority of validations while still handling key rotation gracefully.
 
 #### Connection Pooling to Identity Providers
 
@@ -390,16 +306,7 @@ The fallback strategy depends on your security requirements. Some systems can op
 
 #### Constant-Time Comparison
 
-When comparing secrets (API keys, password hashes), use constant-time comparison to prevent timing attacks. A timing attack measures response time differences to infer correct characters:
-
-```python
-import hmac
-
-def constant_time_compare(a: bytes, b: bytes) -> bool:
-    return hmac.compare_digest(a, b)
-```
-
-This security measure has negligible performance impact—comparison takes constant time regardless of input—but is critical for authentication endpoints.
+When comparing secrets (API keys, password hashes), use constant-time comparison to prevent timing attacks. A timing attack measures response time differences to infer correct characters. Most languages provide constant-time comparison functions (such as Python's `hmac.compare_digest`). This security measure has negligible performance impact—comparison takes constant time regardless of input—but is critical for authentication endpoints.
 
 ### Measuring and Monitoring Authentication
 

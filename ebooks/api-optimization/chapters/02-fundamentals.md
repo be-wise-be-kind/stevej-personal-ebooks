@@ -147,18 +147,7 @@ The dramatic difference between p50 (23.5ms) and p99 (near 500ms) reveals a tail
 
 In microservice architectures, a single user request often traverses multiple services. Latency budgets provide a framework for allocating the total acceptable latency across the call chain.
 
-Consider a user-facing API with a 200ms SLO. If that API calls three backend services sequentially, each service cannot simply have its own 200ms SLO. The latency budget must be divided:
-
-
-```
-Total budget: 200ms
-- API Gateway overhead: 10ms
-- Auth service: 20ms
-- User service: 50ms
-- Recommendation service: 80ms
-- Response serialization: 10ms
-- Buffer for variability: 30ms
-```
+Consider a user-facing API with a 200ms SLO. If that API calls three backend services sequentially, each service cannot simply have its own 200ms SLO. The latency budget must be divided. For example, a 200ms total budget might allocate 10ms for API Gateway overhead, 20ms for auth service, 50ms for user service, 80ms for recommendation service, 10ms for response serialization, and 30ms as buffer for variability.
 
 **Principles for Latency Budget Allocation**:
 
@@ -169,21 +158,7 @@ Total budget: 200ms
 
 **Parallel vs Sequential Calls**:
 
-Sequential calls accumulate latency:
-
-
-```
-Service A (50ms) -> Service B (50ms) -> Service C (50ms) = 150ms total
-```
-
-Parallel calls take the maximum:
-
-
-```
-Service A (50ms) \
-Service B (50ms)  } = 80ms total (limited by slowest)
-Service C (80ms) /
-```
+Sequential calls accumulate latency: calling Service A (50ms), then Service B (50ms), then Service C (50ms) yields 150ms total. Parallel calls take the maximum: calling all three services concurrently takes only as long as the slowest (80ms if Service C is slowest).
 
 Restructuring call patterns from sequential to parallel can dramatically reduce latency without optimizing any individual service. Chapter 6 covers async patterns and concurrent request handling in detail.
 
@@ -195,15 +170,7 @@ Budgets are useful only if enforced. Techniques include:
 - **Deadline propagation**: Pass remaining budget as a deadline header so downstream services know their constraints (covered in Chapter 10)
 - **Circuit breakers**: When a service consistently exceeds its budget, stop calling it temporarily (covered in Chapter 10)
 
-For a 200ms total budget with 50ms allocated to a backend service:
-
-
-```python
-# Set timeout based on allocated budget
-response = await backend_service.call(request, timeout=0.050)  # 50ms
-```
-
-If the service responds in 30ms, the remaining 20ms can buffer other services. If it times out, the system can return a degraded response rather than violating the overall SLO.
+For a 200ms total budget with 50ms allocated to a backend service, set the timeout to match the allocated budget (50ms). If the service responds in 30ms, the remaining 20ms can buffer other services. If it times out, the system can return a degraded response rather than violating the overall SLO.
 
 #### Apdex Score: Measuring User Satisfaction
 
@@ -217,25 +184,11 @@ Apdex classifies each request into one of three categories based on a threshold 
 - **Tolerating**: Response time > T and <= 4T
 - **Frustrated**: Response time > 4T
 
-The Apdex score is calculated as:
-
-
-```
-Apdex = (Satisfied + (Tolerating / 2)) / Total
-```
-
-The score ranges from 0 (all users frustrated) to 1.0 (all users satisfied).
+The Apdex score is calculated as: Satisfied requests plus half of Tolerating requests, divided by Total requests. The score ranges from 0 (all users frustrated) to 1.0 (all users satisfied).
 
 **Example Calculation**:
 
-For an API with T = 100ms and 1000 requests:
-- 800 requests completed in <= 100ms (Satisfied)
-- 150 requests completed in 100-400ms (Tolerating)
-- 50 requests completed in > 400ms (Frustrated)
-
-```
-Apdex = (800 + (150 / 2)) / 1000 = (800 + 75) / 1000 = 0.875
-```
+For an API with T = 100ms and 1000 requests: 800 requests completed in 100ms or less (Satisfied), 150 requests completed in 100-400ms (Tolerating), and 50 requests completed in over 400ms (Frustrated). The Apdex score is (800 + 75) / 1000 = 0.875.
 
 **Interpreting Apdex Scores**:
 
@@ -280,14 +233,7 @@ Different endpoints often have dramatically different traffic patterns. An authe
 
 #### Little's Law
 
-**Little's Law** provides a fundamental relationship between throughput, latency, and concurrency. It states that the average number of items in a queuing system (L) equals the average arrival rate (lambda) multiplied by the average time an item spends in the system (W):
-
-
-```
-L = lambda * W
-```
-
-For API systems, this means: the number of concurrent requests in the system equals the request rate multiplied by the average response time. If we want to handle 1000 RPS with an average latency of 100ms, we need capacity for 100 concurrent requests (1000 * 0.1 = 100).
+**Little's Law** provides a fundamental relationship between throughput, latency, and concurrency. It states that the average number of items in a queuing system (L) equals the average arrival rate (lambda) multiplied by the average time an item spends in the system (W). For API systems, this means: the number of concurrent requests in the system equals the request rate multiplied by the average response time. If we want to handle 1000 RPS with an average latency of 100ms, we need capacity for 100 concurrent requests (1000 * 0.1 = 100).
 
 ![Little's Law Visualization](../assets/ch02-littles-law.html)
 
@@ -335,12 +281,7 @@ Errors measure the rate of requests that fail. This seems straightforward, but d
 - Responses that return wrong or incomplete data
 - Responses that exceed latency SLOs (functionally failed for impatient users)
 
-**Error Rate Calculation**:
-
-
-```
-Error Rate = (Failed Requests / Total Requests) * 100%
-```
+**Error Rate Calculation**: Error rate equals failed requests divided by total requests, expressed as a percentage.
 
 Track error rates by:
 - **Status code**: 4xx vs 5xx (client errors vs server errors)
@@ -531,14 +472,7 @@ SLAs differ from SLOs in important ways:
 - SLAs have **consequences** (financial penalties, contract termination)
 - SLAs should be **less strict** than SLOs to provide safety margin
 
-**Best Practice**: Set SLOs stricter than SLAs
-
-```
-SLA: 99% of requests under 500ms (contractual commitment)
-SLO: 99.5% of requests under 400ms (internal target)
-```
-
-This gap provides buffer. When you detect SLO violation (exceeding 400ms), you have time to fix it before breaching the SLA (500ms). If your SLO equals your SLA, every SLO violation is a potential contract breach.
+**Best Practice**: Set SLOs stricter than SLAs. For example, if the SLA commits to 99% of requests under 500ms, set the internal SLO to 99.5% of requests under 400ms. This gap provides buffer. When you detect SLO violation (exceeding 400ms), you have time to fix it before breaching the SLA (500ms). If your SLO equals your SLA, every SLO violation is a potential contract breach.
 
 **Example: Complete Stack**
 

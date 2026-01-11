@@ -2312,6 +2312,83 @@ async function createUser(userData: Omit<User, 'id'>): Promise<User> {
 }
 ```
 
+### Example 6.7: GraphQL N+1 Query Pattern (GraphQL)
+
+This query demonstrates the N+1 problem in GraphQL. Without DataLoader, fetching users with their posts results in 1 query for users + N queries for posts.
+
+```graphql
+query {
+  users {
+    id
+    name
+    posts {
+      title
+    }
+  }
+}
+```
+
+### Example 6.8: DataLoader Pattern Implementation (Python)
+
+```python
+# DataLoader implementation in Python (using aiodataloader)
+from aiodataloader import DataLoader
+from typing import List, Optional
+import asyncpg
+
+class UserLoader(DataLoader):
+    """Batch loads users by ID, resolving N+1 queries to a single batch query."""
+
+    def __init__(self, db_pool: asyncpg.Pool):
+        super().__init__()
+        self.db_pool = db_pool
+
+    async def batch_load_fn(self, user_ids: List[int]) -> List[Optional[dict]]:
+        """Load multiple users in a single database query."""
+        async with self.db_pool.acquire() as conn:
+            # Single query for all requested users
+            rows = await conn.fetch(
+                "SELECT id, name, email FROM users WHERE id = ANY($1)",
+                user_ids
+            )
+
+        # Create lookup map for O(1) access
+        user_map = {row['id']: dict(row) for row in rows}
+
+        # Return results in same order as requested IDs
+        # Return None for IDs not found
+        return [user_map.get(user_id) for user_id in user_ids]
+
+class PostLoader(DataLoader):
+    """Batch loads posts by user ID."""
+
+    def __init__(self, db_pool: asyncpg.Pool):
+        super().__init__()
+        self.db_pool = db_pool
+
+    async def batch_load_fn(self, user_ids: List[int]) -> List[List[dict]]:
+        """Load posts for multiple users in a single query."""
+        async with self.db_pool.acquire() as conn:
+            rows = await conn.fetch(
+                "SELECT id, user_id, title, content FROM posts WHERE user_id = ANY($1)",
+                user_ids
+            )
+
+        # Group posts by user_id
+        posts_by_user: dict[int, List[dict]] = {uid: [] for uid in user_ids}
+        for row in rows:
+            posts_by_user[row['user_id']].append(dict(row))
+
+        return [posts_by_user[user_id] for user_id in user_ids]
+
+# Usage in GraphQL resolver
+async def resolve_user_posts(user, info):
+    """Resolver that uses DataLoader for efficient batching."""
+    # DataLoader instance should be created per-request and stored in context
+    post_loader = info.context['post_loader']
+    return await post_loader.load(user['id'])
+```
+
 ---
 
 ## Database and Storage Selection (Chapter 7)
@@ -3403,6 +3480,383 @@ async def get_job_status(job_id: str):
     return jobs.get(job_id, {"error": "Job not found"})
 ```
 
+### Example A.44: Transactional Outbox Pattern (Python)
+
+This example demonstrates the transactional outbox pattern where events are written to an outbox table in the same database transaction as business data, ensuring atomicity between state changes and event publishing.
+
+```python
+# Transactional outbox pattern in Python with SQLAlchemy
+from sqlalchemy import create_engine, Column, String, DateTime, Text, Boolean
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime
+import json
+import uuid
+
+Base = declarative_base()
+
+class Order(Base):
+    __tablename__ = 'orders'
+    id = Column(String(36), primary_key=True)
+    customer_id = Column(String(36), nullable=False)
+    total_amount = Column(String(20), nullable=False)
+    status = Column(String(20), default='pending')
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class OutboxEvent(Base):
+    __tablename__ = 'outbox_events'
+    id = Column(String(36), primary_key=True)
+    aggregate_type = Column(String(100), nullable=False)
+    aggregate_id = Column(String(36), nullable=False)
+    event_type = Column(String(100), nullable=False)
+    payload = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    published = Column(Boolean, default=False)
+
+class OrderService:
+    def __init__(self, session_factory):
+        self.session_factory = session_factory
+
+    def create_order(self, customer_id: str, total_amount: str) -> Order:
+        """Create order and outbox event in single transaction."""
+        session = self.session_factory()
+        try:
+            # Create the order
+            order = Order(
+                id=str(uuid.uuid4()),
+                customer_id=customer_id,
+                total_amount=total_amount,
+                status='created'
+            )
+            session.add(order)
+
+            # Write event to outbox in SAME transaction
+            event = OutboxEvent(
+                id=str(uuid.uuid4()),
+                aggregate_type='Order',
+                aggregate_id=order.id,
+                event_type='OrderCreated',
+                payload=json.dumps({
+                    'order_id': order.id,
+                    'customer_id': customer_id,
+                    'total_amount': total_amount,
+                    'status': 'created'
+                })
+            )
+            session.add(event)
+
+            # Both writes commit or both rollback
+            session.commit()
+            return order
+        except Exception as e:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+
+class OutboxRelay:
+    """Reads outbox and publishes to message broker."""
+    def __init__(self, session_factory, publisher):
+        self.session_factory = session_factory
+        self.publisher = publisher
+
+    async def process_outbox(self, batch_size: int = 100):
+        session = self.session_factory()
+        try:
+            events = session.query(OutboxEvent)\
+                .filter(OutboxEvent.published == False)\
+                .order_by(OutboxEvent.created_at)\
+                .limit(batch_size)\
+                .all()
+
+            for event in events:
+                # Publish to broker (Kafka, RabbitMQ, etc.)
+                await self.publisher.publish(
+                    topic=f"{event.aggregate_type.lower()}.events",
+                    key=event.aggregate_id,
+                    value=event.payload,
+                    headers={'event_type': event.event_type}
+                )
+                # Mark as published
+                event.published = True
+
+            session.commit()
+        finally:
+            session.close()
+```
+
+### Example A.45: Idempotent Consumer with Deduplication (TypeScript)
+
+This example shows how to implement an idempotent consumer that tracks processed message IDs to handle duplicate deliveries safely.
+
+```typescript
+// Idempotent consumer with deduplication in TypeScript
+import { Pool } from 'pg';
+
+interface Message {
+  id: string;
+  type: string;
+  payload: Record<string, unknown>;
+  timestamp: Date;
+}
+
+interface ProcessedMessage {
+  messageId: string;
+  processedAt: Date;
+}
+
+class IdempotentConsumer {
+  private pool: Pool;
+  private handlers: Map<string, (payload: Record<string, unknown>) => Promise<void>>;
+
+  constructor(connectionString: string) {
+    this.pool = new Pool({ connectionString });
+    this.handlers = new Map();
+  }
+
+  registerHandler(
+    eventType: string,
+    handler: (payload: Record<string, unknown>) => Promise<void>
+  ): void {
+    this.handlers.set(eventType, handler);
+  }
+
+  async processMessage(message: Message): Promise<boolean> {
+    const client = await this.pool.connect();
+
+    try {
+      // Start transaction
+      await client.query('BEGIN');
+
+      // Check if already processed (with row lock to prevent races)
+      const checkResult = await client.query(
+        `SELECT message_id FROM processed_messages
+         WHERE message_id = $1 FOR UPDATE SKIP LOCKED`,
+        [message.id]
+      );
+
+      if (checkResult.rows.length > 0) {
+        // Already processed - skip silently
+        await client.query('ROLLBACK');
+        console.log(`Skipping duplicate message: ${message.id}`);
+        return false;
+      }
+
+      // Get handler for this message type
+      const handler = this.handlers.get(message.type);
+      if (!handler) {
+        throw new Error(`No handler for message type: ${message.type}`);
+      }
+
+      // Process the message
+      await handler(message.payload);
+
+      // Record as processed (in same transaction as business logic)
+      await client.query(
+        `INSERT INTO processed_messages (message_id, event_type, processed_at)
+         VALUES ($1, $2, NOW())`,
+        [message.id, message.type]
+      );
+
+      // Commit both the business logic AND the deduplication record
+      await client.query('COMMIT');
+      return true;
+
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  async cleanupOldRecords(retentionDays: number = 7): Promise<number> {
+    const result = await this.pool.query(
+      `DELETE FROM processed_messages
+       WHERE processed_at < NOW() - INTERVAL '${retentionDays} days'`
+    );
+    return result.rowCount ?? 0;
+  }
+}
+
+// Usage example
+const consumer = new IdempotentConsumer(process.env.DATABASE_URL!);
+
+consumer.registerHandler('OrderCreated', async (payload) => {
+  const { order_id, customer_id } = payload as { order_id: string; customer_id: string };
+  // Process order - safe to run multiple times due to idempotency check
+  console.log(`Processing order ${order_id} for customer ${customer_id}`);
+});
+```
+
+### Example A.46: Saga Orchestrator Pattern (TypeScript)
+
+This example demonstrates a saga orchestrator that coordinates distributed transactions across multiple services with compensating actions for rollback.
+
+```typescript
+// Saga orchestrator pattern in TypeScript
+type SagaStatus = 'pending' | 'running' | 'completed' | 'compensating' | 'failed';
+
+interface SagaStep<T> {
+  name: string;
+  execute: (context: T) => Promise<void>;
+  compensate: (context: T) => Promise<void>;
+}
+
+interface SagaState<T> {
+  id: string;
+  status: SagaStatus;
+  currentStep: number;
+  completedSteps: string[];
+  context: T;
+  error?: string;
+}
+
+class SagaOrchestrator<T> {
+  private steps: SagaStep<T>[] = [];
+  private stateStore: Map<string, SagaState<T>> = new Map();
+
+  addStep(step: SagaStep<T>): this {
+    this.steps.push(step);
+    return this;
+  }
+
+  async execute(sagaId: string, initialContext: T): Promise<SagaState<T>> {
+    const state: SagaState<T> = {
+      id: sagaId,
+      status: 'running',
+      currentStep: 0,
+      completedSteps: [],
+      context: initialContext,
+    };
+    this.stateStore.set(sagaId, state);
+
+    try {
+      // Execute steps in order
+      for (let i = 0; i < this.steps.length; i++) {
+        const step = this.steps[i];
+        state.currentStep = i;
+
+        console.log(`Saga ${sagaId}: Executing step "${step.name}"`);
+
+        try {
+          await step.execute(state.context);
+          state.completedSteps.push(step.name);
+        } catch (error) {
+          console.error(`Saga ${sagaId}: Step "${step.name}" failed:`, error);
+          state.error = error instanceof Error ? error.message : String(error);
+
+          // Begin compensation
+          await this.compensate(state);
+          return state;
+        }
+      }
+
+      state.status = 'completed';
+      console.log(`Saga ${sagaId}: Completed successfully`);
+
+    } catch (error) {
+      state.status = 'failed';
+      state.error = error instanceof Error ? error.message : String(error);
+    }
+
+    return state;
+  }
+
+  private async compensate(state: SagaState<T>): Promise<void> {
+    state.status = 'compensating';
+    console.log(`Saga ${state.id}: Starting compensation`);
+
+    // Compensate in reverse order
+    for (let i = state.completedSteps.length - 1; i >= 0; i--) {
+      const stepName = state.completedSteps[i];
+      const step = this.steps.find(s => s.name === stepName);
+
+      if (step) {
+        console.log(`Saga ${state.id}: Compensating step "${step.name}"`);
+
+        // Retry compensation until it succeeds (with backoff)
+        let attempts = 0;
+        while (attempts < 10) {
+          try {
+            await step.compensate(state.context);
+            break;
+          } catch (error) {
+            attempts++;
+            console.error(`Compensation attempt ${attempts} failed:`, error);
+            await this.delay(Math.min(1000 * Math.pow(2, attempts), 30000));
+          }
+        }
+      }
+    }
+
+    state.status = 'failed';
+    console.log(`Saga ${state.id}: Compensation complete`);
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  getState(sagaId: string): SagaState<T> | undefined {
+    return this.stateStore.get(sagaId);
+  }
+}
+
+// Example: Order processing saga
+interface OrderContext {
+  orderId: string;
+  customerId: string;
+  amount: number;
+  paymentId?: string;
+  inventoryReservationId?: string;
+}
+
+const orderSaga = new SagaOrchestrator<OrderContext>()
+  .addStep({
+    name: 'createOrder',
+    execute: async (ctx) => {
+      // Create order in order service
+      console.log(`Creating order ${ctx.orderId}`);
+    },
+    compensate: async (ctx) => {
+      // Cancel order
+      console.log(`Cancelling order ${ctx.orderId}`);
+    },
+  })
+  .addStep({
+    name: 'reserveInventory',
+    execute: async (ctx) => {
+      // Reserve inventory
+      ctx.inventoryReservationId = `inv-${ctx.orderId}`;
+      console.log(`Reserved inventory: ${ctx.inventoryReservationId}`);
+    },
+    compensate: async (ctx) => {
+      // Release inventory
+      console.log(`Releasing inventory: ${ctx.inventoryReservationId}`);
+    },
+  })
+  .addStep({
+    name: 'processPayment',
+    execute: async (ctx) => {
+      // Charge payment
+      ctx.paymentId = `pay-${ctx.orderId}`;
+      console.log(`Processed payment: ${ctx.paymentId}`);
+    },
+    compensate: async (ctx) => {
+      // Refund payment
+      console.log(`Refunding payment: ${ctx.paymentId}`);
+    },
+  });
+
+// Execute the saga
+// const result = await orderSaga.execute('saga-123', {
+//   orderId: 'order-456',
+//   customerId: 'cust-789',
+//   amount: 99.99
+// });
+```
+
 ---
 
 ## Compute and Scaling Patterns (Chapter 9)
@@ -4083,6 +4537,87 @@ async function processOrder(order: Order): Promise<void> {
     }
   }
 }
+```
+
+### Example 10.5: Hedged Requests for Tail Latency Reduction (Python)
+
+```python
+# Hedged request implementation in Python
+import asyncio
+from typing import TypeVar, Callable, Awaitable
+import time
+
+T = TypeVar('T')
+
+async def hedged_request(
+    request_fn: Callable[[], Awaitable[T]],
+    hedge_delay_ms: float = 50.0,
+    max_attempts: int = 2,
+) -> T:
+    """
+    Execute a request with hedging for tail latency reduction.
+
+    Sends the initial request immediately. If no response arrives within
+    hedge_delay_ms, sends a parallel hedge request. Returns the first
+    successful response and cancels remaining requests.
+    """
+    tasks: list[asyncio.Task] = []
+    result_queue: asyncio.Queue[tuple[int, T | Exception]] = asyncio.Queue()
+
+    async def attempt(attempt_id: int, delay_ms: float = 0):
+        """Execute a single attempt, optionally after a delay."""
+        if delay_ms > 0:
+            await asyncio.sleep(delay_ms / 1000)
+        try:
+            result = await request_fn()
+            await result_queue.put((attempt_id, result))
+        except Exception as e:
+            await result_queue.put((attempt_id, e))
+
+    # Start initial request immediately
+    tasks.append(asyncio.create_task(attempt(0)))
+
+    # Schedule hedge requests with staggered delays
+    for i in range(1, max_attempts):
+        tasks.append(asyncio.create_task(attempt(i, hedge_delay_ms * i)))
+
+    # Wait for first successful response
+    errors: list[Exception] = []
+    try:
+        while len(errors) < max_attempts:
+            attempt_id, result = await result_queue.get()
+
+            if isinstance(result, Exception):
+                errors.append(result)
+                continue
+
+            # Success - cancel remaining tasks
+            for task in tasks:
+                if not task.done():
+                    task.cancel()
+
+            return result
+
+        # All attempts failed
+        raise ExceptionGroup("All hedged requests failed", errors)
+
+    finally:
+        # Ensure all tasks are cancelled on exit
+        for task in tasks:
+            if not task.done():
+                task.cancel()
+
+
+# Usage example
+async def fetch_user_with_hedging(user_id: int) -> dict:
+    """Fetch user with hedged requests for reduced tail latency."""
+    async def fetch():
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"http://api.example.com/users/{user_id}") as resp:
+                return await resp.json()
+
+    # Hedge after 50ms (our p95 latency), max 2 attempts
+    return await hedged_request(fetch, hedge_delay_ms=50, max_attempts=2)
 ```
 
 ---
@@ -4968,252 +5503,1032 @@ export default {
 };
 ```
 
----
+### Example 12.6: Multi-Origin Aggregation Worker (TypeScript)
 
-## Advanced Optimization Techniques (Chapter 13)
+```typescript
+// Edge aggregation: fetch from multiple origins in parallel (Cloudflare Workers)
+interface Env {
+  USER_SERVICE: string;
+  ORDER_SERVICE: string;
+  RECOMMENDATION_SERVICE: string;
+}
 
-### Example 13.1: GraphQL N+1 Query Pattern (GraphQL)
+interface AggregatedResponse {
+  user: UserProfile | null;
+  recentOrders: Order[] | null;
+  recommendations: Product[] | null;
+  timing: {
+    user: number;
+    orders: number;
+    recommendations: number;
+    total: number;
+  };
+}
 
-```graphql
-query {
-  users {
-    id
-    name
-    posts {
-      title
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
+    const userId = url.searchParams.get('userId');
+
+    if (!userId) {
+      return Response.json({ error: 'userId required' }, { status: 400 });
     }
+
+    const startTime = performance.now();
+
+    // Fetch from all three services in parallel
+    const [userResult, ordersResult, recsResult] = await Promise.allSettled([
+      timedFetch(`${env.USER_SERVICE}/users/${userId}`),
+      timedFetch(`${env.ORDER_SERVICE}/orders?userId=${userId}&limit=5`),
+      timedFetch(`${env.RECOMMENDATION_SERVICE}/recommendations/${userId}`),
+    ]);
+
+    // Extract results, handling failures gracefully
+    const response: AggregatedResponse = {
+      user: userResult.status === 'fulfilled' ? userResult.value.data : null,
+      recentOrders: ordersResult.status === 'fulfilled' ? ordersResult.value.data : null,
+      recommendations: recsResult.status === 'fulfilled' ? recsResult.value.data : null,
+      timing: {
+        user: userResult.status === 'fulfilled' ? userResult.value.duration : -1,
+        orders: ordersResult.status === 'fulfilled' ? ordersResult.value.duration : -1,
+        recommendations: recsResult.status === 'fulfilled' ? recsResult.value.duration : -1,
+        total: performance.now() - startTime,
+      },
+    };
+
+    // Log any failures for monitoring
+    if (userResult.status === 'rejected') {
+      console.error('User service failed:', userResult.reason);
+    }
+    if (ordersResult.status === 'rejected') {
+      console.error('Order service failed:', ordersResult.reason);
+    }
+    if (recsResult.status === 'rejected') {
+      console.error('Recommendation service failed:', recsResult.reason);
+    }
+
+    return Response.json(response, {
+      headers: {
+        'Cache-Control': 'private, max-age=60',
+        'X-Aggregation-Time': String(response.timing.total),
+      },
+    });
+  }
+};
+
+async function timedFetch<T>(url: string): Promise<{ data: T; duration: number }> {
+  const start = performance.now();
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  const data = await response.json() as T;
+  return { data, duration: performance.now() - start };
+}
+
+interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface Order {
+  id: string;
+  date: string;
+  total: number;
+}
+
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+}
+```
+
+### Example 12.7: Edge Streaming Response (TypeScript)
+
+```typescript
+// Edge streaming: SSE response with chunked data (Cloudflare Workers)
+interface Env {
+  AI_SERVICE: string;
+}
+
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
+    const prompt = url.searchParams.get('prompt');
+
+    if (!prompt) {
+      return Response.json({ error: 'prompt required' }, { status: 400 });
+    }
+
+    // Create a TransformStream for streaming SSE
+    const { readable, writable } = new TransformStream();
+    const writer = writable.getWriter();
+    const encoder = new TextEncoder();
+
+    // Start streaming in the background
+    streamAIResponse(env.AI_SERVICE, prompt, writer, encoder);
+
+    return new Response(readable, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+  }
+};
+
+async function streamAIResponse(
+  aiService: string,
+  prompt: string,
+  writer: WritableStreamDefaultWriter,
+  encoder: TextEncoder
+): Promise<void> {
+  try {
+    // Fetch streaming response from AI service
+    const response = await fetch(`${aiService}/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+    });
+
+    if (!response.ok || !response.body) {
+      await sendSSE(writer, encoder, 'error', { message: 'AI service unavailable' });
+      await writer.close();
+      return;
+    }
+
+    // Stream chunks as SSE events
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let tokenCount = 0;
+
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        await sendSSE(writer, encoder, 'done', {
+          totalTokens: tokenCount,
+          timestamp: new Date().toISOString(),
+        });
+        break;
+      }
+
+      const chunk = decoder.decode(value, { stream: true });
+      tokenCount += chunk.split(/\s+/).length;
+
+      await sendSSE(writer, encoder, 'token', { content: chunk });
+    }
+  } catch (error) {
+    await sendSSE(writer, encoder, 'error', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  } finally {
+    await writer.close();
   }
 }
+
+async function sendSSE(
+  writer: WritableStreamDefaultWriter,
+  encoder: TextEncoder,
+  event: string,
+  data: object
+): Promise<void> {
+  const message = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
+  await writer.write(encoder.encode(message));
+}
 ```
 
-### Example A.54: DataLoader Pattern Implementation (Python)
+### Example 12.8: Canary Deployment Router (TypeScript)
 
-```python
-# DataLoader implementation in Python (using aiodataloader)
-from aiodataloader import DataLoader
-from typing import List, Optional
-import asyncpg
+```typescript
+// Canary deployment router with metrics (Cloudflare Workers)
+interface Env {
+  CANARY_CONFIG: KVNamespace;
+  ANALYTICS: AnalyticsEngineDataset;
+}
 
-class UserLoader(DataLoader):
-    """Batch loads users by ID, resolving N+1 queries to a single batch query."""
+interface CanaryConfig {
+  enabled: boolean;
+  percentage: number;       // 0-100: percentage of traffic to canary
+  canaryOrigin: string;
+  stableOrigin: string;
+  rollbackThreshold: number; // Error rate threshold for auto-rollback
+}
 
-    def __init__(self, db_pool: asyncpg.Pool):
-        super().__init__()
-        self.db_pool = db_pool
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const config = await getCanaryConfig(env);
 
-    async def batch_load_fn(self, user_ids: List[int]) -> List[Optional[dict]]:
-        """Load multiple users in a single database query."""
-        async with self.db_pool.acquire() as conn:
-            # Single query for all requested users
-            rows = await conn.fetch(
-                "SELECT id, name, email FROM users WHERE id = ANY($1)",
-                user_ids
-            )
+    if (!config.enabled) {
+      return fetchWithMetrics(config.stableOrigin, request, 'stable', env);
+    }
 
-        # Create lookup map for O(1) access
-        user_map = {row['id']: dict(row) for row in rows}
+    // Determine variant based on stable user assignment
+    const variant = getVariant(request, config.percentage);
 
-        # Return results in same order as requested IDs
-        # Return None for IDs not found
-        return [user_map.get(user_id) for user_id in user_ids]
+    const origin = variant === 'canary' ? config.canaryOrigin : config.stableOrigin;
+    const response = await fetchWithMetrics(origin, request, variant, env);
 
-class PostLoader(DataLoader):
-    """Batch loads posts by user ID."""
+    // Add variant header for debugging
+    const newResponse = new Response(response.body, response);
+    newResponse.headers.set('X-Canary-Variant', variant);
 
-    def __init__(self, db_pool: asyncpg.Pool):
-        super().__init__()
-        self.db_pool = db_pool
+    return newResponse;
+  }
+};
 
-    async def batch_load_fn(self, user_ids: List[int]) -> List[List[dict]]:
-        """Load posts for multiple users in a single query."""
-        async with self.db_pool.acquire() as conn:
-            rows = await conn.fetch(
-                "SELECT id, user_id, title, content FROM posts WHERE user_id = ANY($1)",
-                user_ids
-            )
+function getVariant(request: Request, canaryPercentage: number): 'canary' | 'stable' {
+  // Use stable identifier for consistent assignment
+  const userId = request.headers.get('X-User-ID') ||
+                 request.headers.get('CF-Connecting-IP') ||
+                 'anonymous';
 
-        # Group posts by user_id
-        posts_by_user: dict[int, List[dict]] = {uid: [] for uid in user_ids}
-        for row in rows:
-            posts_by_user[row['user_id']].append(dict(row))
+  // Simple hash-based assignment
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    hash = ((hash << 5) - hash) + userId.charCodeAt(i);
+    hash = hash & hash; // Convert to 32-bit integer
+  }
 
-        return [posts_by_user[user_id] for user_id in user_ids]
+  const bucket = Math.abs(hash) % 100;
+  return bucket < canaryPercentage ? 'canary' : 'stable';
+}
 
-# Usage in GraphQL resolver
-async def resolve_user_posts(user, info):
-    """Resolver that uses DataLoader for efficient batching."""
-    # DataLoader instance should be created per-request and stored in context
-    post_loader = info.context['post_loader']
-    return await post_loader.load(user['id'])
+async function fetchWithMetrics(
+  origin: string,
+  request: Request,
+  variant: string,
+  env: Env
+): Promise<Response> {
+  const startTime = performance.now();
+  let status = 0;
+  let error = false;
+
+  try {
+    const url = new URL(request.url);
+    const response = await fetch(`${origin}${url.pathname}${url.search}`, {
+      method: request.method,
+      headers: request.headers,
+      body: request.body,
+    });
+
+    status = response.status;
+    error = status >= 500;
+
+    return response;
+  } catch (e) {
+    error = true;
+    throw e;
+  } finally {
+    const duration = performance.now() - startTime;
+
+    // Record metrics for canary analysis
+    env.ANALYTICS.writeDataPoint({
+      blobs: [variant, request.url],
+      doubles: [duration, status, error ? 1 : 0],
+      indexes: [variant],
+    });
+  }
+}
+
+async function getCanaryConfig(env: Env): Promise<CanaryConfig> {
+  const cached = await env.CANARY_CONFIG.get('config', { type: 'json' });
+
+  if (cached) {
+    return cached as CanaryConfig;
+  }
+
+  // Default config if not set
+  return {
+    enabled: false,
+    percentage: 0,
+    canaryOrigin: '',
+    stableOrigin: 'https://api.example.com',
+    rollbackThreshold: 5,
+  };
+}
 ```
 
-### Example A.55: gRPC Service with Streaming (Rust)
+### Example 12.9: Early Hints Implementation (TypeScript)
 
-```rust
-// gRPC service implementation in Rust using tonic
-use tonic::{Request, Response, Status};
-
-// Generated from .proto file by tonic-build
-pub mod user_service {
-    tonic::include_proto!("userservice");
+```typescript
+// Early Hints implementation with dynamic resource detection (Cloudflare Workers)
+interface Env {
+  HINTS_CACHE: KVNamespace;
 }
 
-use user_service::user_service_server::{UserService, UserServiceServer};
-use user_service::{CreateUserRequest, GetUserRequest, ListUsersRequest, User};
-
-pub struct UserServiceImpl {
-    pool: sqlx::PgPool,
+interface HintConfig {
+  resources: ResourceHint[];
+  lastUpdated: number;
 }
 
-#[tonic::async_trait]
-impl UserService for UserServiceImpl {
-    /// Unary RPC: single request, single response
-    async fn get_user(&self, request: Request<GetUserRequest>) -> Result<Response<User>, Status> {
-        let user_id = request.into_inner().id;
+interface ResourceHint {
+  url: string;
+  as: 'script' | 'style' | 'font' | 'image';
+  crossorigin?: boolean;
+}
 
-        let user = sqlx::query_as!(
-            UserRow,
-            "SELECT id, name, email, created_at FROM users WHERE id = $1",
-            user_id
-        )
-        .fetch_optional(&self.pool)
-        .await
-        .map_err(|e| Status::internal(format!("Database error: {}", e)))?;
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
 
-        match user {
-            Some(row) => Ok(Response::new(User {
-                id: row.id,
-                name: row.name,
-                email: row.email,
-                created_at: row.created_at.timestamp(),
-            })),
-            None => Err(Status::not_found(format!("User {} not found", user_id))),
+    // Only apply Early Hints to HTML pages
+    const acceptHeader = request.headers.get('Accept') || '';
+    if (!acceptHeader.includes('text/html')) {
+      return fetch(request);
+    }
+
+    // Check for cached hints for this path
+    const cacheKey = `hints:${url.pathname}`;
+    const hintConfig = await env.HINTS_CACHE.get<HintConfig>(cacheKey, { type: 'json' });
+
+    // Send Early Hints if we have cached resource information
+    if (hintConfig && hintConfig.resources.length > 0) {
+      // Limit to 3 resources for mobile performance
+      const isMobile = isMobileDevice(request);
+      const resourceLimit = isMobile ? 3 : 6;
+      const hints = hintConfig.resources.slice(0, resourceLimit);
+
+      // Build Link header for Early Hints
+      const linkHeader = hints.map(hint => {
+        let link = `<${hint.url}>; rel=preload; as=${hint.as}`;
+        if (hint.crossorigin) {
+          link += '; crossorigin';
         }
+        return link;
+      }).join(', ');
+
+      // Note: Cloudflare automatically sends 103 Early Hints when Link headers
+      // are present. This simulates the pattern for documentation.
+      console.log(`Sending Early Hints: ${linkHeader}`);
     }
 
-    /// Server streaming RPC: efficient for large result sets
-    type ListUsersStream = tokio_stream::wrappers::ReceiverStream<Result<User, Status>>;
+    // Fetch the actual response
+    const response = await fetch(request);
 
-    async fn list_users(
-        &self,
-        request: Request<ListUsersRequest>,
-    ) -> Result<Response<Self::ListUsersStream>, Status> {
-        let page_size = request.into_inner().page_size.max(1).min(1000);
-        let pool = self.pool.clone();
-
-        let (tx, rx) = tokio::sync::mpsc::channel(32);
-
-        // Spawn task to stream results
-        tokio::spawn(async move {
-            let mut rows = sqlx::query_as!(
-                UserRow,
-                "SELECT id, name, email, created_at FROM users ORDER BY id LIMIT $1",
-                page_size as i64
-            )
-            .fetch(&pool);
-
-            while let Some(row) = rows.next().await {
-                match row {
-                    Ok(user) => {
-                        let _ = tx.send(Ok(User {
-                            id: user.id,
-                            name: user.name,
-                            email: user.email,
-                            created_at: user.created_at.timestamp(),
-                        })).await;
-                    }
-                    Err(e) => {
-                        let _ = tx.send(Err(Status::internal(e.to_string()))).await;
-                        break;
-                    }
-                }
-            }
-        });
-
-        Ok(Response::new(tokio_stream::wrappers::ReceiverStream::new(rx)))
+    // Learn from response for future hints (if HTML)
+    if (response.headers.get('Content-Type')?.includes('text/html')) {
+      // Schedule hint learning in background
+      scheduleHintLearning(response.clone(), cacheKey, env);
     }
+
+    return response;
+  }
+};
+
+function isMobileDevice(request: Request): boolean {
+  const userAgent = request.headers.get('User-Agent') || '';
+  return /Mobile|Android|iPhone|iPad/i.test(userAgent);
+}
+
+async function scheduleHintLearning(
+  response: Response,
+  cacheKey: string,
+  env: Env
+): Promise<void> {
+  try {
+    const html = await response.text();
+    const resources = extractCriticalResources(html);
+
+    if (resources.length > 0) {
+      const config: HintConfig = {
+        resources,
+        lastUpdated: Date.now(),
+      };
+
+      // Cache hints for 1 hour
+      await env.HINTS_CACHE.put(cacheKey, JSON.stringify(config), {
+        expirationTtl: 3600,
+      });
+    }
+  } catch (error) {
+    console.error('Failed to learn hints:', error);
+  }
+}
+
+function extractCriticalResources(html: string): ResourceHint[] {
+  const resources: ResourceHint[] = [];
+
+  // Extract critical CSS (in <head>)
+  const cssRegex = /<link[^>]+rel=["']stylesheet["'][^>]+href=["']([^"']+)["'][^>]*>/gi;
+  let match;
+  while ((match = cssRegex.exec(html)) !== null) {
+    resources.push({ url: match[1], as: 'style' });
+  }
+
+  // Extract critical JS (with async/defer or in <head>)
+  const jsRegex = /<script[^>]+src=["']([^"']+)["'][^>]*>/gi;
+  while ((match = jsRegex.exec(html)) !== null) {
+    resources.push({ url: match[1], as: 'script' });
+  }
+
+  // Extract preloaded fonts
+  const fontRegex = /<link[^>]+rel=["']preload["'][^>]+as=["']font["'][^>]+href=["']([^"']+)["'][^>]*>/gi;
+  while ((match = fontRegex.exec(html)) !== null) {
+    resources.push({ url: match[1], as: 'font', crossorigin: true });
+  }
+
+  // Return only first 6 most critical resources
+  return resources.slice(0, 6);
 }
 ```
 
-### Example A.56: Hedged Requests for Tail Latency Reduction (Python)
+### Example 12.10: Edge ML Classification (TypeScript)
+
+```typescript
+// Edge ML classification for request routing (Cloudflare Workers with Workers AI)
+interface Env {
+  AI: Ai;
+  PRIORITY_QUEUE: string;
+  STANDARD_QUEUE: string;
+}
+
+interface ClassificationResult {
+  label: 'high_priority' | 'standard' | 'low_priority';
+  confidence: number;
+  reasoning: string;
+}
+
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    // Only classify POST requests with JSON bodies
+    if (request.method !== 'POST') {
+      return forwardToStandard(request, env);
+    }
+
+    try {
+      const body = await request.clone().text();
+      const classification = await classifyRequest(body, env);
+
+      // Route based on classification
+      if (classification.label === 'high_priority' && classification.confidence > 0.8) {
+        return forwardToPriority(request, env, classification);
+      }
+
+      return forwardToStandard(request, env);
+    } catch (error) {
+      // On classification failure, use standard path
+      console.error('Classification failed:', error);
+      return forwardToStandard(request, env);
+    }
+  }
+};
+
+async function classifyRequest(body: string, env: Env): Promise<ClassificationResult> {
+  // Use a small, fast model for classification
+  const prompt = `Classify this API request as high_priority, standard, or low_priority.
+High priority: payment processing, security alerts, user authentication issues
+Standard: normal CRUD operations, data queries
+Low priority: analytics, batch updates, non-urgent notifications
+
+Request body: ${body.slice(0, 500)}
+
+Respond with JSON: {"label": "...", "confidence": 0.0-1.0, "reasoning": "..."}`;
+
+  const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+    prompt,
+    max_tokens: 100,
+  }) as { response: string };
+
+  try {
+    // Parse the JSON response
+    const jsonMatch = response.response.match(/\{[^}]+\}/);
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[0]) as ClassificationResult;
+    }
+  } catch {
+    // Parsing failed
+  }
+
+  // Default to standard if parsing fails
+  return {
+    label: 'standard',
+    confidence: 0.5,
+    reasoning: 'Classification parsing failed',
+  };
+}
+
+async function forwardToPriority(
+  request: Request,
+  env: Env,
+  classification: ClassificationResult
+): Promise<Response> {
+  const headers = new Headers(request.headers);
+  headers.set('X-Priority-Classification', classification.label);
+  headers.set('X-Priority-Confidence', String(classification.confidence));
+
+  return fetch(env.PRIORITY_QUEUE, {
+    method: request.method,
+    headers,
+    body: request.body,
+  });
+}
+
+async function forwardToStandard(request: Request, env: Env): Promise<Response> {
+  return fetch(env.STANDARD_QUEUE, {
+    method: request.method,
+    headers: request.headers,
+    body: request.body,
+  });
+}
+```
+
+---
+
+## Testing Performance (Chapter 13)
+
+### Example 13.1: Basic Locust Load Test with Realistic Think Time (Python)
+
+This example demonstrates a Locust test with realistic user behavior, including varied think times and weighted task distribution.
 
 ```python
-# Hedged request implementation in Python
-import asyncio
-from typing import TypeVar, Callable, Awaitable
-import time
+# Basic Locust load test with realistic think time
+from locust import HttpUser, task, between, constant_pacing
+import random
 
-T = TypeVar('T')
 
-async def hedged_request(
-    request_fn: Callable[[], Awaitable[T]],
-    hedge_delay_ms: float = 50.0,
-    max_attempts: int = 2,
-) -> T:
+class APIUser(HttpUser):
+    """Simulates a user interacting with an e-commerce API."""
+
+    # Wait 2-5 seconds between tasks to simulate real user behavior
+    wait_time = between(2, 5)
+
+    def on_start(self):
+        """Called when a simulated user starts."""
+        # Authenticate and store token for subsequent requests
+        response = self.client.post("/api/auth/login", json={
+            "username": f"user_{random.randint(1, 10000)}",
+            "password": "test_password"
+        })
+        if response.status_code == 200:
+            self.token = response.json().get("access_token")
+            self.client.headers["Authorization"] = f"Bearer {self.token}"
+
+    @task(6)  # 60% of traffic - most common action
+    def browse_products(self):
+        """Browse product listings with pagination."""
+        page = random.randint(1, 10)
+        self.client.get(f"/api/products?page={page}&limit=20")
+
+    @task(3)  # 30% of traffic
+    def view_product_details(self):
+        """View a specific product with realistic read time."""
+        product_id = random.randint(1, 1000)
+        self.client.get(f"/api/products/{product_id}")
+        # User reads product details - additional think time
+        self._simulate_reading_time()
+
+    @task(1)  # 10% of traffic - less common action
+    def add_to_cart(self):
+        """Add item to cart - requires form fill simulation."""
+        product_id = random.randint(1, 1000)
+        quantity = random.randint(1, 3)
+        self.client.post("/api/cart/items", json={
+            "product_id": product_id,
+            "quantity": quantity
+        })
+
+    def _simulate_reading_time(self):
+        """Simulate additional time spent reading content."""
+        # Users spend 5-15 seconds reading product details
+        import gevent
+        gevent.sleep(random.uniform(5, 15))
+```
+
+### Example 13.2: Locust Test with Staged Load Profile (Python)
+
+This example shows how to implement a realistic load test with ramp-up, steady state, and ramp-down phases using Locust's LoadTestShape.
+
+```python
+# Locust test with staged load profile
+from locust import HttpUser, task, between, LoadTestShape
+import random
+import math
+
+
+class StagedLoadShape(LoadTestShape):
     """
-    Execute a request with hedging for tail latency reduction.
-
-    Sends the initial request immediately. If no response arrives within
-    hedge_delay_ms, sends a parallel hedge request. Returns the first
-    successful response and cancels remaining requests.
+    Staged load profile:
+    - Ramp up to target over 5 minutes
+    - Hold steady for 10 minutes
+    - Ramp down over 2 minutes
     """
-    tasks: list[asyncio.Task] = []
-    result_queue: asyncio.Queue[tuple[int, T | Exception]] = asyncio.Queue()
 
-    async def attempt(attempt_id: int, delay_ms: float = 0):
-        """Execute a single attempt, optionally after a delay."""
-        if delay_ms > 0:
-            await asyncio.sleep(delay_ms / 1000)
-        try:
-            result = await request_fn()
-            await result_queue.put((attempt_id, result))
-        except Exception as e:
-            await result_queue.put((attempt_id, e))
+    stages = [
+        {"duration": 60, "users": 50, "spawn_rate": 1},    # Warm up
+        {"duration": 300, "users": 200, "spawn_rate": 0.5}, # Ramp to target
+        {"duration": 600, "users": 200, "spawn_rate": 0},   # Steady state
+        {"duration": 120, "users": 0, "spawn_rate": 2},     # Ramp down
+    ]
 
-    # Start initial request immediately
-    tasks.append(asyncio.create_task(attempt(0)))
+    def tick(self):
+        """Return user count and spawn rate for current time."""
+        run_time = self.get_run_time()
 
-    # Schedule hedge requests with staggered delays
-    for i in range(1, max_attempts):
-        tasks.append(asyncio.create_task(attempt(i, hedge_delay_ms * i)))
+        for stage in self.stages:
+            if run_time < stage["duration"]:
+                try:
+                    tick_data = (stage["users"], stage["spawn_rate"])
+                    return tick_data
+                except Exception:
+                    return None
+            run_time -= stage["duration"]
 
-    # Wait for first successful response
-    errors: list[Exception] = []
-    try:
-        while len(errors) < max_attempts:
-            attempt_id, result = await result_queue.get()
-
-            if isinstance(result, Exception):
-                errors.append(result)
-                continue
-
-            # Success - cancel remaining tasks
-            for task in tasks:
-                if not task.done():
-                    task.cancel()
-
-            return result
-
-        # All attempts failed
-        raise ExceptionGroup("All hedged requests failed", errors)
-
-    finally:
-        # Ensure all tasks are cancelled on exit
-        for task in tasks:
-            if not task.done():
-                task.cancel()
+        return None  # Test complete
 
 
-# Usage example
-async def fetch_user_with_hedging(user_id: int) -> dict:
-    """Fetch user with hedged requests for reduced tail latency."""
-    async def fetch():
-        async with aiohttp.ClientSession() as session:
-            async with session.get(f"http://api.example.com/users/{user_id}") as resp:
-                return await resp.json()
+class RealisticAPIUser(HttpUser):
+    """User with varied data to avoid cache artifacts."""
 
-    # Hedge after 50ms (our p95 latency), max 2 attempts
-    return await hedged_request(fetch, hedge_delay_ms=50, max_attempts=2)
+    wait_time = between(1, 3)
+
+    # Pre-generated test data for realistic variety
+    user_ids = list(range(1, 10001))
+    product_ids = list(range(1, 5001))
+    search_terms = ["laptop", "phone", "tablet", "headphones", "camera",
+                    "watch", "speaker", "keyboard", "mouse", "monitor"]
+
+    @task(4)
+    def search_products(self):
+        """Search with varied terms to test search performance."""
+        term = random.choice(self.search_terms)
+        self.client.get(f"/api/products/search?q={term}")
+
+    @task(3)
+    def get_user_profile(self):
+        """Fetch user profile with varied IDs."""
+        user_id = random.choice(self.user_ids)
+        self.client.get(f"/api/users/{user_id}/profile")
+
+    @task(2)
+    def get_product_reviews(self):
+        """Fetch product reviews - potentially slow endpoint."""
+        product_id = random.choice(self.product_ids)
+        with self.client.get(
+            f"/api/products/{product_id}/reviews",
+            catch_response=True
+        ) as response:
+            if response.elapsed.total_seconds() > 2.0:
+                response.failure(f"Slow response: {response.elapsed}")
+
+    @task(1)
+    def checkout_flow(self):
+        """Multi-step checkout - most complex user journey."""
+        # Step 1: Get cart
+        self.client.get("/api/cart")
+
+        # Step 2: Apply discount (optional)
+        if random.random() < 0.3:
+            self.client.post("/api/cart/discount", json={
+                "code": "SAVE10"
+            })
+
+        # Step 3: Calculate shipping
+        self.client.post("/api/cart/shipping", json={
+            "zip_code": f"{random.randint(10000, 99999)}"
+        })
+
+        # Step 4: Submit order
+        self.client.post("/api/orders", json={
+            "payment_method": "credit_card",
+            "shipping_method": "standard"
+        })
+```
+
+### Example 13.3: Distributed Locust Configuration (Python)
+
+This example shows master and worker configuration for distributed load testing, plus Kubernetes deployment manifests.
+
+```python
+# locustfile.py - Shared test definition for distributed testing
+from locust import HttpUser, task, between, events
+import logging
+import os
+
+# Configure logging for distributed debugging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+@events.init.add_listener
+def on_locust_init(environment, **kwargs):
+    """Log worker initialization for distributed debugging."""
+    worker_id = os.environ.get("LOCUST_WORKER_ID", "unknown")
+    logger.info(f"Locust worker {worker_id} initialized")
+
+
+@events.test_start.add_listener
+def on_test_start(environment, **kwargs):
+    """Called when test starts on each worker."""
+    logger.info("Test starting - warming up connections")
+
+
+@events.test_stop.add_listener
+def on_test_stop(environment, **kwargs):
+    """Called when test stops - log final statistics."""
+    stats = environment.stats
+    logger.info(f"Test complete: {stats.total.num_requests} requests, "
+                f"{stats.total.num_failures} failures")
+
+
+class DistributedAPIUser(HttpUser):
+    """User class optimized for distributed execution."""
+
+    wait_time = between(1, 2)
+
+    # Connection pooling for efficiency
+    pool_manager = None
+
+    def on_start(self):
+        """Per-worker initialization."""
+        self.worker_id = os.environ.get("LOCUST_WORKER_ID", "0")
+        # Use worker ID to partition test data
+        self.user_range_start = int(self.worker_id) * 1000
+        self.user_range_end = self.user_range_start + 999
+
+    @task
+    def api_request(self):
+        """Standard API request with worker-partitioned data."""
+        import random
+        user_id = random.randint(self.user_range_start, self.user_range_end)
+        self.client.get(f"/api/users/{user_id}")
+```
+
+```yaml
+# kubernetes/locust-master.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: locust-master
+  labels:
+    app: locust
+    role: master
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: locust
+      role: master
+  template:
+    metadata:
+      labels:
+        app: locust
+        role: master
+    spec:
+      containers:
+      - name: locust
+        image: locustio/locust:2.20.0
+        args: ["--master"]
+        ports:
+        - containerPort: 8089  # Web UI
+        - containerPort: 5557  # Worker communication
+        env:
+        - name: LOCUST_HOST
+          value: "https://api.example.com"
+        volumeMounts:
+        - name: locustfile
+          mountPath: /home/locust
+      volumes:
+      - name: locustfile
+        configMap:
+          name: locust-script
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: locust-worker
+  labels:
+    app: locust
+    role: worker
+spec:
+  replicas: 10  # Scale workers based on target load
+  selector:
+    matchLabels:
+      app: locust
+      role: worker
+  template:
+    metadata:
+      labels:
+        app: locust
+        role: worker
+    spec:
+      containers:
+      - name: locust
+        image: locustio/locust:2.20.0
+        args: ["--worker", "--master-host=locust-master"]
+        env:
+        - name: LOCUST_HOST
+          value: "https://api.example.com"
+        - name: LOCUST_WORKER_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
+        volumeMounts:
+        - name: locustfile
+          mountPath: /home/locust
+      volumes:
+      - name: locustfile
+        configMap:
+          name: locust-script
+```
+
+### Example 13.4: CI/CD Pipeline with Locust Quality Gates (Python/YAML)
+
+This example demonstrates integrating Locust into a CI/CD pipeline with automated pass/fail criteria based on SLOs.
+
+```python
+# load_test_runner.py - CI/CD integration script
+import subprocess
+import json
+import sys
+from dataclasses import dataclass
+from typing import List
+
+
+@dataclass
+class SLOThreshold:
+    """SLO-based threshold for quality gates."""
+    metric: str
+    max_value: float
+    description: str
+
+
+# Define SLOs as quality gates
+THRESHOLDS = [
+    SLOThreshold("p95_response_time", 200, "p95 latency must be under 200ms"),
+    SLOThreshold("p99_response_time", 500, "p99 latency must be under 500ms"),
+    SLOThreshold("failure_rate", 1.0, "Error rate must be under 1%"),
+    SLOThreshold("avg_response_time", 100, "Average latency must be under 100ms"),
+]
+
+
+def run_locust_test(host: str, users: int, duration: str) -> dict:
+    """Run Locust test and return statistics."""
+    cmd = [
+        "locust",
+        "-f", "locustfile.py",
+        "--host", host,
+        "--users", str(users),
+        "--spawn-rate", "10",
+        "--run-time", duration,
+        "--headless",
+        "--json",
+    ]
+
+    result = subprocess.run(cmd, capture_output=True, text=True)
+
+    if result.returncode != 0:
+        print(f"Locust failed: {result.stderr}")
+        sys.exit(1)
+
+    # Parse JSON output from Locust
+    return json.loads(result.stdout)
+
+
+def check_thresholds(stats: dict) -> List[str]:
+    """Check if test results meet SLO thresholds."""
+    failures = []
+
+    # Extract aggregate statistics
+    total_stats = stats.get("stats", [{}])[-1]  # Last entry is aggregate
+
+    metrics = {
+        "p95_response_time": total_stats.get("response_time_percentile_95", 0),
+        "p99_response_time": total_stats.get("response_time_percentile_99", 0),
+        "avg_response_time": total_stats.get("avg_response_time", 0),
+        "failure_rate": (total_stats.get("num_failures", 0) /
+                        max(total_stats.get("num_requests", 1), 1) * 100),
+    }
+
+    for threshold in THRESHOLDS:
+        actual = metrics.get(threshold.metric, 0)
+        if actual > threshold.max_value:
+            failures.append(
+                f"FAILED: {threshold.description} "
+                f"(actual: {actual:.2f}, max: {threshold.max_value})"
+            )
+        else:
+            print(f"PASSED: {threshold.description} "
+                  f"(actual: {actual:.2f}, max: {threshold.max_value})")
+
+    return failures
+
+
+def main():
+    """Main entry point for CI/CD integration."""
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run load test with quality gates")
+    parser.add_argument("--host", required=True, help="Target API host")
+    parser.add_argument("--users", type=int, default=100, help="Number of users")
+    parser.add_argument("--duration", default="5m", help="Test duration")
+    args = parser.parse_args()
+
+    print(f"Running load test against {args.host}")
+    print(f"Users: {args.users}, Duration: {args.duration}")
+    print("-" * 50)
+
+    stats = run_locust_test(args.host, args.users, args.duration)
+
+    print("\nChecking SLO thresholds:")
+    print("-" * 50)
+
+    failures = check_thresholds(stats)
+
+    if failures:
+        print("\n" + "=" * 50)
+        print("QUALITY GATE FAILED")
+        print("=" * 50)
+        for failure in failures:
+            print(f"  - {failure}")
+        sys.exit(1)
+    else:
+        print("\n" + "=" * 50)
+        print("QUALITY GATE PASSED")
+        print("=" * 50)
+        sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+```yaml
+# .github/workflows/performance-test.yml
+name: Performance Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  smoke-test:
+    name: Quick Performance Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install locust requests
+
+      - name: Run smoke test
+        run: |
+          python load_test_runner.py \
+            --host ${{ secrets.STAGING_API_URL }} \
+            --users 10 \
+            --duration 2m
+
+  load-test:
+    name: Full Load Test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: smoke-test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install locust requests
+
+      - name: Run full load test
+        run: |
+          python load_test_runner.py \
+            --host ${{ secrets.STAGING_API_URL }} \
+            --users 100 \
+            --duration 10m
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-results
+          path: locust_stats.json
 ```
 
 ---
@@ -5413,8 +6728,7 @@ if __name__ == "__main__":
 - A.18, A.19, A.22, A.25: Database
 - A.30, A.31, A.32: Async Processing
 - A.33, A.37: Scaling/Traffic
-- 13.2: Advanced Techniques (DataLoader)
-- 13.4: Advanced Techniques (Hedged Requests)
+- 13.1, 13.2, 13.3, 13.4: Testing Performance (Locust)
 - A.51, A.52: Synthesis
 
 ### Rust
@@ -5443,6 +6757,5 @@ if __name__ == "__main__":
 
 ### YAML
 - A.34: Kubernetes HPA Configuration
-
-### GraphQL
-- 13.1: N+1 Query Pattern
+- 13.3: Testing Performance (Locust Kubernetes Deployment)
+- 13.4: Testing Performance (GitHub Actions Workflow)

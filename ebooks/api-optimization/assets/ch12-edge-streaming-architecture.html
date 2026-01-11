@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Streaming Architecture</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="clientGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="originGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="sseGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="wsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0891b2;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="doGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="llmGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+                </linearGradient>
+
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.15"/>
+                </filter>
+
+                <marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#8b5cf6"/>
+                </marker>
+                <marker id="arrowCyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#06b6d4"/>
+                </marker>
+                <marker id="arrowGray" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+                </marker>
+                <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="30" text-anchor="middle" font-size="20" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Edge Streaming Architecture</text>
+
+            <!-- Divider -->
+            <line x1="450" y1="50" x2="450" y2="480" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="8,4"/>
+
+            <!-- ============================================ -->
+            <!-- LEFT SIDE: SSE for AI Streaming -->
+            <!-- ============================================ -->
+            <text x="225" y="65" text-anchor="middle" font-size="14" font-weight="600" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">Server-Sent Events (AI Streaming)</text>
+
+            <!-- Client -->
+            <g transform="translate(30, 90)">
+                <rect x="0" y="0" width="80" height="55" rx="8" fill="url(#clientGrad)" filter="url(#shadow)"/>
+                <text x="40" y="22" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Client</text>
+                <text x="40" y="40" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Browser</text>
+            </g>
+
+            <!-- Arrow to edge -->
+            <line x1="115" y1="117" x2="165" y2="117" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+            <text x="140" y="107" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">request</text>
+
+            <!-- Edge Worker with TransformStream -->
+            <g transform="translate(175, 80)">
+                <rect x="0" y="0" width="130" height="75" rx="8" fill="url(#edgeGrad)" filter="url(#shadow)"/>
+                <text x="65" y="22" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Edge Worker</text>
+                <rect x="10" y="32" width="110" height="35" rx="4" fill="#ffffff" opacity="0.15"/>
+                <text x="65" y="48" text-anchor="middle" fill="#ffffff" font-size="9" font-family="Liberation Sans, Arial, sans-serif">TransformStream</text>
+                <text x="65" y="60" text-anchor="middle" fill="#ffffff" font-size="8" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">chunk-by-chunk</text>
+            </g>
+
+            <!-- Memory constraint annotation -->
+            <g transform="translate(175, 165)">
+                <rect x="0" y="0" width="130" height="30" rx="4" fill="#fef3c7" stroke="#f59e0b"/>
+                <text x="65" y="12" text-anchor="middle" fill="#92400e" font-size="8" font-family="Liberation Sans, Arial, sans-serif">128MB memory limit</text>
+                <text x="65" y="24" text-anchor="middle" fill="#92400e" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Chunks: never full response</text>
+            </g>
+
+            <!-- Arrow to LLM -->
+            <line x1="310" y1="117" x2="350" y2="117" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+            <!-- LLM Origin -->
+            <g transform="translate(360, 85)">
+                <rect x="0" y="0" width="70" height="65" rx="8" fill="url(#llmGrad)" filter="url(#shadow)"/>
+                <text x="35" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">LLM</text>
+                <text x="35" y="38" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Origin</text>
+                <text x="35" y="55" text-anchor="middle" fill="#ffffff" font-size="8" opacity="0.7" font-family="Liberation Sans, Arial, sans-serif">~5s total</text>
+            </g>
+
+            <!-- Token stream back -->
+            <g transform="translate(310, 160)">
+                <line x1="50" y1="0" x2="0" y2="0" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+                <circle cx="55" cy="0" r="5" fill="#8b5cf6"/>
+                <circle cx="70" cy="0" r="5" fill="#8b5cf6"/>
+                <circle cx="85" cy="0" r="5" fill="#8b5cf6"/>
+                <text x="70" y="20" text-anchor="middle" fill="#8b5cf6" font-size="8" font-family="Liberation Sans, Arial, sans-serif">tokens</text>
+            </g>
+
+            <!-- Stream to client -->
+            <g transform="translate(110, 160)">
+                <line x1="60" y1="0" x2="0" y2="0" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+                <circle cx="65" cy="0" r="4" fill="#8b5cf6"/>
+                <circle cx="77" cy="0" r="4" fill="#8b5cf6"/>
+                <circle cx="89" cy="0" r="4" fill="#8b5cf6"/>
+                <circle cx="101" cy="0" r="4" fill="#8b5cf6"/>
+            </g>
+
+            <!-- Latency comparison for SSE -->
+            <g transform="translate(30, 210)">
+                <rect x="0" y="0" width="400" height="90" rx="8" fill="#f5f3ff" stroke="#c4b5fd"/>
+                <text x="200" y="22" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6" font-family="Liberation Sans, Arial, sans-serif">Perceived Latency Improvement</text>
+
+                <g transform="translate(20, 35)">
+                    <text x="0" y="12" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Traditional:</text>
+                    <rect x="80" y="0" width="200" height="18" rx="3" fill="#fecaca"/>
+                    <text x="180" y="13" text-anchor="middle" fill="#991b1b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">5 second loading spinner</text>
+                </g>
+
+                <g transform="translate(20, 60)">
+                    <text x="0" y="12" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">SSE Streaming:</text>
+                    <rect x="80" y="0" width="20" height="18" rx="3" fill="#bbf7d0"/>
+                    <text x="115" y="13" fill="#166534" font-size="9" font-family="Liberation Sans, Arial, sans-serif">First token ~100ms</text>
+                    <text x="230" y="13" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">then ~10ms per token</text>
+                </g>
+            </g>
+
+            <!-- SSE Use cases -->
+            <g transform="translate(30, 315)">
+                <rect x="0" y="0" width="400" height="70" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+                <text x="200" y="20" text-anchor="middle" font-size="10" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Best for SSE at Edge</text>
+                <text x="20" y="42" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">• AI response streaming (LLM outputs)</text>
+                <text x="20" y="56" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">• Live data feeds (stock prices, scores)</text>
+                <text x="220" y="42" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">• Progress updates</text>
+                <text x="220" y="56" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">• Log streaming</text>
+            </g>
+
+            <!-- ============================================ -->
+            <!-- RIGHT SIDE: WebSocket for Real-time -->
+            <!-- ============================================ -->
+            <text x="675" y="65" text-anchor="middle" font-size="14" font-weight="600" fill="#06b6d4" font-family="Liberation Sans, Arial, sans-serif">WebSocket (Real-time Collaboration)</text>
+
+            <!-- Multiple clients -->
+            <g transform="translate(470, 85)">
+                <rect x="0" y="0" width="60" height="40" rx="6" fill="url(#clientGrad)" filter="url(#shadow)"/>
+                <text x="30" y="25" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Client A</text>
+            </g>
+            <g transform="translate(470, 135)">
+                <rect x="0" y="0" width="60" height="40" rx="6" fill="url(#clientGrad)" filter="url(#shadow)"/>
+                <text x="30" y="25" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Client B</text>
+            </g>
+            <g transform="translate(470, 185)">
+                <rect x="0" y="0" width="60" height="40" rx="6" fill="url(#clientGrad)" filter="url(#shadow)"/>
+                <text x="30" y="25" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Client C</text>
+            </g>
+
+            <!-- Arrows to edge -->
+            <line x1="535" y1="105" x2="580" y2="135" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrowCyan)"/>
+            <line x1="535" y1="155" x2="580" y2="155" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrowCyan)"/>
+            <line x1="535" y1="205" x2="580" y2="175" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrowCyan)"/>
+
+            <!-- WS label -->
+            <text x="557" y="135" text-anchor="middle" fill="#06b6d4" font-size="8" font-family="Liberation Sans, Arial, sans-serif">WS</text>
+
+            <!-- Edge Node -->
+            <g transform="translate(590, 115)">
+                <rect x="0" y="0" width="100" height="80" rx="8" fill="url(#edgeGrad)" filter="url(#shadow)"/>
+                <text x="50" y="22" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Edge Node</text>
+                <rect x="10" y="32" width="80" height="40" rx="4" fill="#ffffff" opacity="0.15"/>
+                <text x="50" y="48" text-anchor="middle" fill="#ffffff" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Connection</text>
+                <text x="50" y="62" text-anchor="middle" fill="#ffffff" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Pooling</text>
+            </g>
+
+            <!-- Arrow to Durable Object -->
+            <line x1="695" y1="155" x2="745" y2="155" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+            <!-- Durable Object -->
+            <g transform="translate(755, 115)">
+                <rect x="0" y="0" width="100" height="80" rx="8" fill="url(#doGrad)" filter="url(#shadow)"/>
+                <text x="50" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Durable</text>
+                <text x="50" y="38" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Object</text>
+                <rect x="10" y="48" width="80" height="25" rx="4" fill="#ffffff" opacity="0.15"/>
+                <text x="50" y="65" text-anchor="middle" fill="#ffffff" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Room state</text>
+            </g>
+
+            <!-- Broadcast arrows back -->
+            <path d="M 755 175 L 695 185 L 535 215" stroke="#ec4899" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+            <path d="M 755 155 L 695 155 L 535 155" stroke="#ec4899" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+            <path d="M 755 135 L 695 125 L 535 105" stroke="#ec4899" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+            <text x="720" y="195" text-anchor="middle" fill="#ec4899" font-size="8" font-family="Liberation Sans, Arial, sans-serif">broadcast</text>
+
+            <!-- Connection limit annotation -->
+            <g transform="translate(590, 205)">
+                <rect x="0" y="0" width="145" height="35" rx="4" fill="#ecfeff" stroke="#06b6d4"/>
+                <text x="72" y="14" text-anchor="middle" fill="#0e7490" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Up to 100,000 concurrent</text>
+                <text x="72" y="28" text-anchor="middle" fill="#0e7490" font-size="8" font-family="Liberation Sans, Arial, sans-serif">connections per domain</text>
+            </g>
+
+            <!-- Trade-off note -->
+            <g transform="translate(755, 205)">
+                <rect x="0" y="0" width="110" height="35" rx="4" fill="#fdf4ff" stroke="#f0abfc"/>
+                <text x="55" y="14" text-anchor="middle" fill="#86198f" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Trade-off: +20-100ms</text>
+                <text x="55" y="28" text-anchor="middle" fill="#86198f" font-size="8" font-family="Liberation Sans, Arial, sans-serif">for distant users</text>
+            </g>
+
+            <!-- WebSocket use cases -->
+            <g transform="translate(470, 260)">
+                <rect x="0" y="0" width="400" height="70" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+                <text x="200" y="20" text-anchor="middle" font-size="10" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Best for WebSocket at Edge</text>
+                <text x="20" y="42" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">• Collaborative editing</text>
+                <text x="20" y="56" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">• Real-time chat</text>
+                <text x="180" y="42" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">• Multiplayer games</text>
+                <text x="180" y="56" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">• Live dashboards</text>
+                <text x="320" y="42" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">• IoT coordination</text>
+            </g>
+
+            <!-- ============================================ -->
+            <!-- Bottom: Comparison Table -->
+            <!-- ============================================ -->
+            <g transform="translate(50, 400)">
+                <rect x="0" y="0" width="800" height="110" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+                <text x="400" y="25" text-anchor="middle" font-size="13" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">SSE vs WebSocket at Edge</text>
+
+                <!-- Table headers -->
+                <line x1="0" y1="40" x2="800" y2="40" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="120" y="55" text-anchor="middle" font-size="10" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Characteristic</text>
+                <text x="320" y="55" text-anchor="middle" font-size="10" font-weight="600" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">SSE</text>
+                <text x="560" y="55" text-anchor="middle" font-size="10" font-weight="600" fill="#06b6d4" font-family="Liberation Sans, Arial, sans-serif">WebSocket</text>
+
+                <!-- Column dividers -->
+                <line x1="220" y1="40" x2="220" y2="110" stroke="#e2e8f0" stroke-width="1"/>
+                <line x1="420" y1="40" x2="420" y2="110" stroke="#e2e8f0" stroke-width="1"/>
+                <line x1="0" y1="65" x2="800" y2="65" stroke="#e2e8f0" stroke-width="1"/>
+
+                <!-- Row 1 -->
+                <text x="120" y="80" text-anchor="middle" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Direction</text>
+                <text x="320" y="80" text-anchor="middle" font-size="9" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Server → Client only</text>
+                <text x="560" y="80" text-anchor="middle" font-size="9" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Bidirectional</text>
+
+                <!-- Row 2 -->
+                <text x="120" y="95" text-anchor="middle" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Edge overhead</text>
+                <text x="320" y="95" text-anchor="middle" font-size="9" fill="#166534" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Lower (stateless)</text>
+                <text x="560" y="95" text-anchor="middle" font-size="9" fill="#92400e" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Higher (connection state)</text>
+
+                <!-- Best for column -->
+                <line x1="700" y1="40" x2="700" y2="110" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="750" y="55" text-anchor="middle" font-size="10" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Best for</text>
+                <text x="750" y="80" text-anchor="middle" font-size="9" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">AI, feeds</text>
+                <text x="750" y="95" text-anchor="middle" font-size="9" fill="#06b6d4" font-family="Liberation Sans, Arial, sans-serif">Chat, collab</text>
+            </g>
+
+            <!-- Key insight at bottom -->
+            <g transform="translate(50, 525)">
+                <rect x="0" y="0" width="800" height="45" rx="8" fill="#f0fdf4" stroke="#86efac"/>
+                <text x="400" y="18" text-anchor="middle" font-size="10" font-weight="600" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Key Insight: Memory-Efficient Streaming</text>
+                <text x="400" y="35" text-anchor="middle" font-size="9" fill="#15803d" font-family="Liberation Sans, Arial, sans-serif">TransformStream processes chunks sequentially, enabling multi-GB payloads within 128MB edge memory limit</text>
+            </g>
+
+        </svg>
+    </div>
+</body>
+</html>

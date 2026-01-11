@@ -78,26 +78,7 @@ Chapter 2 introduced throughput as requests per second (RPS), transactions per s
 
 Throughput is measured using **counters**—monotonically increasing values that track total requests. The monitoring system calculates rate (requests per second) by computing the delta over time windows.
 
-The standard approach uses labeled counters:
-
-
-```python
-# Using Prometheus client
-from prometheus_client import Counter
-
-http_requests_total = Counter(
-    'http_requests_total',
-    'Total HTTP requests',
-    ['method', 'endpoint', 'status_code']
-)
-
-# In request handler
-http_requests_total.labels(
-    method='GET',
-    endpoint='/api/users',
-    status_code='200'
-).inc()
-```
+The standard approach uses labeled counters. Define a counter metric with labels for method, endpoint, and status code. In each request handler, increment the counter with the appropriate labels. See Example 4.3 for a complete implementation.
 
 Key instrumentation decisions:
 
@@ -115,19 +96,7 @@ Dashboard design for per-endpoint visibility:
 - **Critical endpoint panel**: Pin business-critical endpoints regardless of traffic volume
 - **Long-tail summary**: Aggregate remaining endpoints into "other" to avoid chart clutter
 
-Queries in PromQL:
-
-
-```promql
-# Per-endpoint RPS
-sum(rate(http_requests_total[5m])) by (endpoint)
-
-# Top 10 endpoints by traffic
-topk(10, sum(rate(http_requests_total[5m])) by (endpoint))
-
-# Specific critical endpoint
-sum(rate(http_requests_total{endpoint="/api/checkout"}[5m]))
-```
+In PromQL, use `sum(rate(http_requests_total[5m])) by (endpoint)` to get per-endpoint RPS, `topk()` to show the highest-traffic endpoints, and label selectors to filter to specific critical endpoints.
 
 #### Establishing Throughput Baselines
 
@@ -143,15 +112,7 @@ Baseline calculation approaches:
 - **Rolling baselines**: Compare current throughput to same time last week. Accommodates growth
 - **Seasonal decomposition**: Statistical methods that separate trend, seasonal, and residual components
 
-For alerting, compare current throughput against baseline:
-
-
-```promql
-# Alert if traffic drops below 50% of same time last week
-http_requests_rate < (http_requests_rate offset 7d) * 0.5
-```
-
-Traffic drops often indicate problems users haven't reported yet: DNS issues, client bugs, or upstream failures preventing requests from reaching your service.
+For alerting, compare current throughput against baseline. For example, alert if traffic drops below 50% of the same time last week using the `offset` modifier in PromQL. Traffic drops often indicate problems users haven't reported yet: DNS issues, client bugs, or upstream failures preventing requests from reaching your service.
 
 #### Throughput and Capacity
 
@@ -179,16 +140,7 @@ CPU utilization (the percentage of time CPUs are busy) is widely monitored but d
 - **Run queue length**: The instantaneous count of runnable threads waiting for CPU. Available via `/proc/stat` or node_exporter's `node_procs_running`.
 - **CPU pressure (Linux 5.2+)**: Pressure Stall Information (PSI) metrics show the percentage of time processes are stalled waiting for CPU.
 
-PromQL examples:
-
-
-```promql
-# Load average vs CPU count (>1 indicates saturation)
-node_load1 / count(node_cpu_seconds_total{mode="idle"}) by (instance)
-
-# CPU pressure - percentage of time tasks are stalled
-rate(node_pressure_cpu_waiting_seconds_total[5m]) * 100
-```
+In PromQL, divide load average by CPU count to identify saturation (values above 1 indicate processes waiting). Linux 5.2+ systems expose PSI metrics showing the percentage of time tasks are stalled waiting for CPU.
 
 #### Memory Saturation
 
@@ -201,19 +153,7 @@ Memory utilization (percentage of RAM used) is misleading because modern operati
 - **OOM events**: Out-of-memory killer invocations indicate severe saturation.
 - **Memory pressure (Linux 5.2+)**: PSI metrics show time stalled on memory allocation.
 
-PromQL examples:
-
-
-```promql
-# Swap usage (should be near zero for most API servers)
-node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes
-
-# Major page faults per second
-rate(node_vmstat_pgmajfault[5m])
-
-# Memory pressure - percentage of time tasks are stalled
-rate(node_pressure_memory_waiting_seconds_total[5m]) * 100
-```
+In PromQL, track swap usage (should be near zero for most API servers), major page fault rate, and memory pressure metrics showing time stalled on allocation.
 
 #### Connection Pool Saturation
 
@@ -225,34 +165,7 @@ Connection pools (database, HTTP client, Redis) can become saturated when demand
 - **Pool wait count**: Number of requests currently waiting. Should be zero under normal operation.
 - **Acquire timeout errors**: Connection acquisition failures due to timeout indicate severe saturation.
 
-Most connection pool libraries expose these metrics. For HikariCP (Java):
-
-
-```promql
-# Connections waiting to be acquired
-hikaricp_pending_threads
-
-# Time spent waiting for connections
-rate(hikaricp_connections_acquire_seconds_sum[5m])
-  / rate(hikaricp_connections_acquire_seconds_count[5m])
-```
-
-For application-level pools, instrument acquire operations:
-
-
-```python
-# Instrument connection pool acquire time
-pool_acquire_time = Histogram(
-    'db_pool_acquire_seconds',
-    'Time to acquire database connection',
-    buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0]
-)
-
-pool_waiting = Gauge(
-    'db_pool_waiting_requests',
-    'Requests waiting for a connection'
-)
-```
+Most connection pool libraries expose these metrics. For HikariCP (Java), monitor pending threads (connections waiting to be acquired) and average acquire time. For application-level pools, instrument acquire operations with a histogram for timing and a gauge for waiting requests (see Example 4.4).
 
 #### Disk I/O Saturation
 
@@ -264,17 +177,7 @@ Disk utilization (percentage of time the disk is busy) does not capture saturati
 - **I/O wait time (await)**: Average time for I/O requests including queue time. Rising await with stable service time indicates queuing.
 - **I/O pressure (Linux 5.2+)**: PSI metrics for I/O stalls.
 
-PromQL examples:
-
-
-```promql
-# Average I/O queue depth
-rate(node_disk_io_time_weighted_seconds_total[5m])
-  / rate(node_disk_io_time_seconds_total[5m])
-
-# I/O pressure - percentage of time tasks are stalled
-rate(node_pressure_io_waiting_seconds_total[5m]) * 100
-```
+In PromQL, calculate average I/O queue depth by dividing weighted I/O time by total I/O time. Linux 5.2+ systems expose PSI metrics showing the percentage of time tasks are stalled on I/O.
 
 #### Network Saturation
 
@@ -286,16 +189,7 @@ Network interfaces can saturate when traffic approaches link capacity. Utilizati
 - **TCP retransmissions**: High retransmission rates indicate network congestion or saturation.
 - **Socket backlog**: Listen queue overflows indicate the application cannot accept connections fast enough.
 
-PromQL examples:
-
-
-```promql
-# Receive drops per second
-rate(node_network_receive_drop_total[5m])
-
-# TCP retransmissions per second
-rate(node_netstat_Tcp_RetransSegs[5m])
-```
+In PromQL, track receive drops per second and TCP retransmissions per second to identify network saturation.
 
 #### Saturation Dashboard Design
 
@@ -546,6 +440,6 @@ For implementation examples related to these concepts, see the [Appendix: Code E
 
 8. **PagerDuty Incident Response Documentation**. "Incident Response Process." https://response.pagerduty.com/
 
-## Next: [Network and Connection Optimization](./05-network-connections.md)
+## Next: [Chapter 5: Network and Connection Optimization](./05-network-connections.md)
 
 With monitoring infrastructure in place, we can now measure the impact of our optimizations. Chapter 5 tackles the network layer, where connection pooling, HTTP protocol selection, compression, and keep-alive tuning can yield significant latency reductions.
