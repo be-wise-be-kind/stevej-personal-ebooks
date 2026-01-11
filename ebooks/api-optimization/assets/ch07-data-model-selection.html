@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Model Selection Guide</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 1000 720" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background -->
+            <rect width="1000" height="720" fill="white"/>
+
+            <!-- Title -->
+            <text x="500" y="30" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Data Model Selection: Match Your Data Shape</text>
+            <text x="500" y="50" text-anchor="middle" style="font-size: 11px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Choose based on how you query, not how you store</text>
+
+            <!-- Row 1: Relational and Document -->
+            <!-- Relational -->
+            <rect x="40" y="80" width="440" height="140" fill="#dbeafe" rx="8" stroke="#3b82f6" stroke-width="2"/>
+            <rect x="40" y="80" width="440" height="32" fill="#3b82f6" rx="8"/>
+            <rect x="40" y="100" width="440" height="12" fill="#3b82f6"/>
+            <text x="260" y="101" text-anchor="middle" style="font-size: 13px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Relational (SQL)</text>
+            <text x="50" y="135" style="font-size: 11px; fill: #1e3a8a; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Best for:</text>
+            <text x="50" y="150" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Structured data, well-defined schemas</text>
+            <text x="50" y="165" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Complex queries with JOINs</text>
+            <text x="50" y="180" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• ACID transactions</text>
+            <text x="50" y="195" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Referential integrity</text>
+            <text x="280" y="135" style="font-size: 11px; fill: #1e3a8a; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Examples:</text>
+            <text x="280" y="150" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">PostgreSQL, MySQL, SQL Server</text>
+            <text x="280" y="170" style="font-size: 11px; fill: #1e3a8a; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Use cases:</text>
+            <text x="280" y="185" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Financial systems, inventory,</text>
+            <text x="280" y="200" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">user accounts, order management</text>
+
+            <!-- Document -->
+            <rect x="520" y="80" width="440" height="140" fill="#fef3c7" rx="8" stroke="#f59e0b" stroke-width="2"/>
+            <rect x="520" y="80" width="440" height="32" fill="#f59e0b" rx="8"/>
+            <rect x="520" y="100" width="440" height="12" fill="#f59e0b"/>
+            <text x="740" y="101" text-anchor="middle" style="font-size: 13px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Document</text>
+            <text x="530" y="135" style="font-size: 11px; fill: #92400e; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Best for:</text>
+            <text x="530" y="150" style="font-size: 10px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">• Hierarchical, nested data structures</text>
+            <text x="530" y="165" style="font-size: 10px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">• Flexible or evolving schemas</text>
+            <text x="530" y="180" style="font-size: 10px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">• Self-contained documents fetched as units</text>
+            <text x="530" y="195" style="font-size: 10px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">• Aggregation pipelines</text>
+            <text x="740" y="135" style="font-size: 11px; fill: #92400e; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Examples:</text>
+            <text x="740" y="150" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">MongoDB, CouchDB, Firestore</text>
+            <text x="740" y="170" style="font-size: 11px; fill: #92400e; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Use cases:</text>
+            <text x="740" y="185" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Content management, product catalogs,</text>
+            <text x="740" y="200" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">user profiles, event data</text>
+
+            <!-- Row 2: Key-Value and Wide-Column -->
+            <!-- Key-Value -->
+            <rect x="40" y="240" width="440" height="140" fill="#f3e8ff" rx="8" stroke="#8b5cf6" stroke-width="2"/>
+            <rect x="40" y="240" width="440" height="32" fill="#8b5cf6" rx="8"/>
+            <rect x="40" y="260" width="440" height="12" fill="#8b5cf6"/>
+            <text x="260" y="261" text-anchor="middle" style="font-size: 13px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Key-Value</text>
+            <text x="50" y="295" style="font-size: 11px; fill: #6b21a8; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Best for:</text>
+            <text x="50" y="310" style="font-size: 10px; fill: #6b21a8;" font-family="Liberation Sans, Arial, sans-serif">• Simple lookups by primary key</text>
+            <text x="50" y="325" style="font-size: 10px; fill: #6b21a8;" font-family="Liberation Sans, Arial, sans-serif">• Sub-millisecond latency</text>
+            <text x="50" y="340" style="font-size: 10px; fill: #6b21a8;" font-family="Liberation Sans, Arial, sans-serif">• Caching and session storage</text>
+            <text x="50" y="355" style="font-size: 10px; fill: #6b21a8;" font-family="Liberation Sans, Arial, sans-serif">• High throughput, simple access</text>
+            <text x="280" y="295" style="font-size: 11px; fill: #6b21a8; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Examples:</text>
+            <text x="280" y="310" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Redis, Memcached, DynamoDB</text>
+            <text x="280" y="330" style="font-size: 11px; fill: #6b21a8; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Use cases:</text>
+            <text x="280" y="345" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Session store, feature flags,</text>
+            <text x="280" y="360" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">rate limiting, shopping carts</text>
+
+            <!-- Wide-Column -->
+            <rect x="520" y="240" width="440" height="140" fill="#fee2e2" rx="8" stroke="#ef4444" stroke-width="2"/>
+            <rect x="520" y="240" width="440" height="32" fill="#ef4444" rx="8"/>
+            <rect x="520" y="260" width="440" height="12" fill="#ef4444"/>
+            <text x="740" y="261" text-anchor="middle" style="font-size: 13px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Wide-Column</text>
+            <text x="530" y="295" style="font-size: 11px; fill: #991b1b; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Best for:</text>
+            <text x="530" y="310" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Massive write throughput</text>
+            <text x="530" y="325" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Time-partitioned data (row key + timestamp)</text>
+            <text x="530" y="340" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Linear horizontal scalability</text>
+            <text x="530" y="355" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Eventual consistency acceptable</text>
+            <text x="740" y="295" style="font-size: 11px; fill: #991b1b; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Examples:</text>
+            <text x="740" y="310" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Cassandra, ScyllaDB, HBase, Bigtable</text>
+            <text x="740" y="330" style="font-size: 11px; fill: #991b1b; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Use cases:</text>
+            <text x="740" y="345" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">IoT sensor data, messaging platforms,</text>
+            <text x="740" y="360" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">activity feeds, time-series at scale</text>
+
+            <!-- Row 3: Graph and Time-Series -->
+            <!-- Graph -->
+            <rect x="40" y="400" width="440" height="140" fill="#dcfce7" rx="8" stroke="#22c55e" stroke-width="2"/>
+            <rect x="40" y="400" width="440" height="32" fill="#22c55e" rx="8"/>
+            <rect x="40" y="420" width="440" height="12" fill="#22c55e"/>
+            <text x="260" y="421" text-anchor="middle" style="font-size: 13px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Graph</text>
+            <text x="50" y="455" style="font-size: 11px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Best for:</text>
+            <text x="50" y="470" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Highly connected data</text>
+            <text x="50" y="485" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Relationship traversal queries</text>
+            <text x="50" y="500" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Pattern matching</text>
+            <text x="50" y="515" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Variable-depth recursive queries</text>
+            <text x="280" y="455" style="font-size: 11px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Examples:</text>
+            <text x="280" y="470" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Neo4j, Neptune, TigerGraph</text>
+            <text x="280" y="490" style="font-size: 11px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Use cases:</text>
+            <text x="280" y="505" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Social networks, recommendations,</text>
+            <text x="280" y="520" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">fraud detection, knowledge graphs</text>
+
+            <!-- Time-Series -->
+            <rect x="520" y="400" width="440" height="140" fill="#cffafe" rx="8" stroke="#06b6d4" stroke-width="2"/>
+            <rect x="520" y="400" width="440" height="32" fill="#06b6d4" rx="8"/>
+            <rect x="520" y="420" width="440" height="12" fill="#06b6d4"/>
+            <text x="740" y="421" text-anchor="middle" style="font-size: 13px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Time-Series</text>
+            <text x="530" y="455" style="font-size: 11px; fill: #0e7490; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Best for:</text>
+            <text x="530" y="470" style="font-size: 10px; fill: #0e7490;" font-family="Liberation Sans, Arial, sans-serif">• Timestamped data points</text>
+            <text x="530" y="485" style="font-size: 10px; fill: #0e7490;" font-family="Liberation Sans, Arial, sans-serif">• Time-windowed aggregations and rollups</text>
+            <text x="530" y="500" style="font-size: 10px; fill: #0e7490;" font-family="Liberation Sans, Arial, sans-serif">• Automatic data retention policies</text>
+            <text x="530" y="515" style="font-size: 10px; fill: #0e7490;" font-family="Liberation Sans, Arial, sans-serif">• Downsampling for long-term storage</text>
+            <text x="740" y="455" style="font-size: 11px; fill: #0e7490; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Examples:</text>
+            <text x="740" y="470" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">InfluxDB, TimescaleDB, Prometheus</text>
+            <text x="740" y="490" style="font-size: 11px; fill: #0e7490; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Use cases:</text>
+            <text x="740" y="505" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Metrics, monitoring, financial ticks,</text>
+            <text x="740" y="520" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">IoT telemetry, application performance</text>
+
+            <!-- Row 4: Search and Vector -->
+            <!-- Search -->
+            <rect x="40" y="560" width="440" height="140" fill="#fce7f3" rx="8" stroke="#ec4899" stroke-width="2"/>
+            <rect x="40" y="560" width="440" height="32" fill="#ec4899" rx="8"/>
+            <rect x="40" y="580" width="440" height="12" fill="#ec4899"/>
+            <text x="260" y="581" text-anchor="middle" style="font-size: 13px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Search Engine</text>
+            <text x="50" y="615" style="font-size: 11px; fill: #9d174d; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Best for:</text>
+            <text x="50" y="630" style="font-size: 10px; fill: #9d174d;" font-family="Liberation Sans, Arial, sans-serif">• Full-text search with ranking</text>
+            <text x="50" y="645" style="font-size: 10px; fill: #9d174d;" font-family="Liberation Sans, Arial, sans-serif">• Faceted navigation and filtering</text>
+            <text x="50" y="660" style="font-size: 10px; fill: #9d174d;" font-family="Liberation Sans, Arial, sans-serif">• Fuzzy matching, autocomplete</text>
+            <text x="50" y="675" style="font-size: 10px; fill: #9d174d;" font-family="Liberation Sans, Arial, sans-serif">• Log aggregation and analysis</text>
+            <text x="280" y="615" style="font-size: 11px; fill: #9d174d; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Examples:</text>
+            <text x="280" y="630" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Elasticsearch, OpenSearch</text>
+            <text x="280" y="650" style="font-size: 11px; fill: #9d174d; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Use cases:</text>
+            <text x="280" y="665" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Product search, log analytics,</text>
+            <text x="280" y="680" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">content discovery, autocomplete</text>
+
+            <!-- Vector -->
+            <rect x="520" y="560" width="440" height="140" fill="#e0e7ff" rx="8" stroke="#6366f1" stroke-width="2"/>
+            <rect x="520" y="560" width="440" height="32" fill="#6366f1" rx="8"/>
+            <rect x="520" y="580" width="440" height="12" fill="#6366f1"/>
+            <text x="740" y="581" text-anchor="middle" style="font-size: 13px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Vector</text>
+            <text x="530" y="615" style="font-size: 11px; fill: #3730a3; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Best for:</text>
+            <text x="530" y="630" style="font-size: 10px; fill: #3730a3;" font-family="Liberation Sans, Arial, sans-serif">• Semantic similarity search</text>
+            <text x="530" y="645" style="font-size: 10px; fill: #3730a3;" font-family="Liberation Sans, Arial, sans-serif">• ML embedding storage and retrieval</text>
+            <text x="530" y="660" style="font-size: 10px; fill: #3730a3;" font-family="Liberation Sans, Arial, sans-serif">• Approximate nearest neighbor (ANN)</text>
+            <text x="530" y="675" style="font-size: 10px; fill: #3730a3;" font-family="Liberation Sans, Arial, sans-serif">• High-dimensional data</text>
+            <text x="740" y="615" style="font-size: 11px; fill: #3730a3; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Examples:</text>
+            <text x="740" y="630" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Pinecone, Weaviate, pgvector, Qdrant</text>
+            <text x="740" y="650" style="font-size: 11px; fill: #3730a3; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Use cases:</text>
+            <text x="740" y="665" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">RAG applications, image similarity,</text>
+            <text x="740" y="680" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">recommendations, anomaly detection</text>
+        </svg>
+    </div>
+</body>
+</html>

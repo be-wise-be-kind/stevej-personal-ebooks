@@ -20,7 +20,7 @@ Every new TCP connection requires a three-way handshake: SYN, SYN-ACK, ACK. This
 
 <!-- DIAGRAM: TCP three-way handshake timeline showing: Client sends SYN -> 1/2 RTT -> Server sends SYN-ACK -> 1/2 RTT -> Client sends ACK -> Connection established. Total: 1 RTT before data transfer begins -->
 
-![TCP Three-Way Handshake Timeline](../assets/ch04-tcp-tls-handshake.html)
+![TCP Three-Way Handshake Timeline](../assets/ch05-tcp-tls-handshake.html)
 
 When we add TLS encryption, the cost increases further. TLS 1.2 requires two additional round trips for the full handshake, while TLS 1.3 reduces this to one round trip for new connections and supports zero round-trip resumption for repeat connections [Source: RFC 8446, TLS 1.3]. For our New York to London example, a TLS 1.2 connection establishment could cost 210-240ms before we send a single byte of application data.
 
@@ -34,7 +34,7 @@ Effective pool sizing requires balancing several factors. Too few connections an
 
 <!-- DIAGRAM: Connection pool architecture showing: Application threads (multiple) -> Pool manager (with queue for waiting requests) -> Pool of established connections (showing some idle, some in-use) -> Backend service. Annotations show: acquire from pool, use connection, release back to pool -->
 
-![Connection Pool Architecture](../assets/ch04-connection-pool.html)
+![Connection Pool Architecture](../assets/ch05-connection-pool.html)
 
 Pool health management is equally important. Connections can become stale due to server-side timeouts, network interruptions, or load balancer reconfigurations. Production connection pools should validate connections before use and implement background health checking to remove dead connections proactively.
 
@@ -46,7 +46,7 @@ This multiplexing provides several benefits. Header compression using HPACK redu
 
 <!-- DIAGRAM: HTTP/1.1 vs HTTP/2 comparison showing: HTTP/1.1 with 6 parallel connections each handling sequential requests; HTTP/2 with single connection handling 6 interleaved streams simultaneously -->
 
-![HTTP/1.1 vs HTTP/2 Multiplexing](../assets/ch04-http2-multiplexing.html)
+![HTTP/1.1 vs HTTP/2 Multiplexing](../assets/ch05-http2-multiplexing.html)
 
 HTTP/3, built on QUIC, addresses HTTP/2's remaining weakness: head-of-line blocking at the TCP layer. When a single packet is lost on an HTTP/2 connection, all streams stall until retransmission completes. QUIC implements reliability per-stream, so a lost packet only affects its specific stream [Source: RFC 9000, QUIC Protocol].
 
@@ -312,7 +312,7 @@ Brotli, developed by Google, generally achieves better compression ratios than g
 
 <!-- DIAGRAM: Compression decision flowchart: Is Content-Type compressible (text/json/xml/html)? -> Yes -> Is payload size > minimum threshold (e.g., 1KB)? -> Yes -> Is response time more important than server CPU? -> Choose gzip for speed, Brotli for size. No at any step -> Skip compression -->
 
-![Compression Decision Flowchart](../assets/ch04-compression-flowchart.html)
+![Compression Decision Flowchart](../assets/ch05-compression-flowchart.html)
 
 Not all content benefits from compression. Already-compressed formats like JPEG, PNG, and video files may actually grow when compressed. Binary protocols and encrypted payloads compress poorly. Small payloads may not justify the compression overhead, with a common threshold being 1KB minimum size before attempting compression.
 

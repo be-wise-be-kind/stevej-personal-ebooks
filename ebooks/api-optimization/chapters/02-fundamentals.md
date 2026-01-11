@@ -40,15 +40,15 @@ This chapter introduces foundational concepts that later chapters expand with pr
 
 ### The Four Golden Signals
 
-The Google Site Reliability Engineering book introduced the concept of the "four golden signals" as the essential metrics for monitoring any distributed system [Source: Google SRE Book, 2016]. For API performance, these signals provide a comprehensive view of system health:
+Rather than inventing a new metrics framework, this book adopts Google's "four golden signals" from their 2016 SRE book. These have become an industry standard because they answer the four questions that matter during an incident: How slow? How busy? How broken? How close to capacity? [Source: Google SRE Book, 2016]
 
-**Latency** measures the time it takes to service a request. Critically, we must distinguish between the latency of successful requests and failed requests. A system that returns errors quickly might appear "fast" by average latency alone, but is actually failing. We should track latency for successful responses separately from error responses.
+**Latency** answers "how slow?" but contains a trap. When a database fails, error responses return instantly, which can actually *lower* average latency while users experience complete failure. The fix: track successful and failed requests in separate histograms. A dashboard showing "improved latency" during an outage indicates a measurement bug.
 
-**Traffic** measures demand on the system. For HTTP APIs, this is typically requests per second (RPS). Different endpoints may have vastly different traffic patterns, so we often need per-endpoint traffic metrics. Understanding traffic patterns helps us distinguish between "the system is slow" and "the system is overloaded."
+**Traffic** answers "how busy?" and provides essential context for interpreting everything else. High latency at 10 RPS suggests an inefficient system. High latency at 10,000 RPS suggests an overloaded one. The diagnosis differs completely, but the latency number alone looks identical. Always display traffic alongside latency.
 
-**Errors** measure the rate of requests that fail. This includes explicit failures (HTTP 5xx responses) and implicit failures (HTTP 200 responses with wrong content, or responses that violate SLOs). An API with acceptable latency but high error rates is not performing well.
+**Errors** answers "how broken?" but requires careful definition. HTTP 500s are obvious errors, but what about a 200 response containing `{"error": "timeout"}`? What about correct responses that took 30 seconds? Define errors to include anything a user would consider broken, not just what the HTTP spec considers an error.
 
-**Saturation** measures how "full" a service is. This could be CPU utilization, memory usage, database connection pool exhaustion, or queue depth. Saturation is often a leading indicator: as a system approaches saturation, latency typically increases before errors appear.
+**Saturation** answers "how close to capacity?" and serves as an early warning system. CPU at 90% with stable latency is fine. CPU at 90% with rising latency indicates requests are queuing faster than they complete. Saturation metrics predict problems before they become outages, which makes them more valuable for prevention than the other three signals.
 
 ![The Four Golden Signals Dashboard](../assets/ch02-golden-signals-dashboard.html)
 
@@ -428,51 +428,23 @@ Chapter 10 covers these resilience patterns in detail. The key insight here is t
 
 ### Formalizing Metrics: SLIs, SLOs, and SLAs
 
-The four golden signals tell us what to measure. SLIs, SLOs, and SLAs formalize how we use those measurements to set targets and make commitments.
+The four golden signals tell us what to measure. SLIs, SLOs, and SLAs answer the follow-up questions: measured how precisely, targeting what threshold, and with what consequences?
 
-**SLI (Service Level Indicator)**: The metric being measured. An SLI is a carefully defined quantitative measure of some aspect of the level of service being provided.
+These three acronyms are frequently confused, so the distinctions matter:
 
-Examples of SLIs:
-- Request latency (time to complete a request)
-- Error rate (percentage of requests that fail)
-- Availability (percentage of time the service is operational)
-- Throughput (requests processed per second)
+**SLI (Service Level Indicator)** is the *what*: the specific metric being tracked. "Latency" is not an SLI because it lacks precision. "The proportion of requests completing under 200ms, measured at the load balancer, excluding health checks" is an SLI because it specifies exactly what counts, where measurement occurs, and what is excluded.
 
-SLIs should be:
-- **Measurable**: Can be quantified with precision
-- **Relevant**: Reflects what users actually care about
-- **Specific**: Clearly defined (which requests? measured where?)
+The specificity matters because different measurement points yield different numbers. Latency measured at the client includes network time. Latency measured at the application excludes load balancer overhead. Latency measured only for successful requests hides timeout costs. An SLI pins down these ambiguities.
 
-A good SLI definition: "The proportion of HTTP requests that complete in under 200ms, measured at the load balancer, excluding health check endpoints."
+Good SLIs share three properties: they can be measured precisely, they reflect something users actually experience, and they leave no room for interpretation about what counts.
 
-A bad SLI definition: "Latency" (too vague), "fast enough" (not measurable).
+**SLO (Service Level Objective)** is the *target*: an internal threshold the engineering team treats as a commitment. "p99 latency under 200ms" transforms the SLI into something actionable. When latency hits 195ms, the SLO provides the context to know this warrants investigation rather than shrugging.
 
-**SLO (Service Level Objective)**: The target value for an SLI. An SLO is an internal goal that the engineering team commits to maintaining.
+SLOs work best when they derive from user expectations rather than arbitrary round numbers. If users abandon after 3 seconds but the SLO targets 500ms, resources are being spent on improvements users will not notice. If users notice degradation at 100ms but the SLO allows 500ms, the target provides false comfort.
 
-Examples of SLOs:
-- "99% of requests complete in under 200ms"
-- "Monthly uptime of at least 99.9%"
-- "Error rate below 0.1%"
+**SLA (Service Level Agreement)** is the *promise*: an external commitment to customers with consequences for violation. SLAs appear in contracts with penalty clauses: service credits, fee reductions, or termination rights.
 
-SLOs should be:
-- **Achievable**: Realistic given system architecture and constraints
-- **Meaningful**: Representing a level of service users actually need
-- **Defensible**: Based on data about user expectations and business requirements
-
-The SLO transforms a vague "be fast" aspiration into a concrete engineering target. When p99 latency reaches 195ms, you know you are approaching the SLO boundary and should investigate.
-
-**SLA (Service Level Agreement)**: A contractual commitment to a customer, typically with consequences for violations.
-
-Examples of SLAs:
-- "99.9% uptime guaranteed; service credits issued for violations"
-- "API response time under 500ms for 99.5% of requests; penalty of 10% fee reduction per percentage point below target"
-
-SLAs differ from SLOs in important ways:
-- SLAs are **external** (customer-facing), SLOs are **internal** (team goals)
-- SLAs have **consequences** (financial penalties, contract termination)
-- SLAs should be **less strict** than SLOs to provide safety margin
-
-**Best Practice**: Set SLOs stricter than SLAs. For example, if the SLA commits to 99% of requests under 500ms, set the internal SLO to 99.5% of requests under 400ms. This gap provides buffer. When you detect SLO violation (exceeding 400ms), you have time to fix it before breaching the SLA (500ms). If your SLO equals your SLA, every SLO violation is a potential contract breach.
+The critical relationship: SLOs should always be stricter than SLAs. An SLA promising 99% of requests under 500ms pairs with an internal SLO of 99.5% under 400ms. This gap provides early warning. Breaching the SLO triggers investigation while there is still margin before the SLA breach triggers contract penalties. When SLO equals SLA, every miss risks financial consequences.
 
 **Example: Complete Stack**
 

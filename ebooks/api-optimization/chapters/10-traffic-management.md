@@ -14,7 +14,7 @@ The philosophy here is pragmatic: we assume failures will happen and design our 
 
 <!-- DIAGRAM: High-level resilience architecture showing: Client requests -> Rate Limiter -> Load Balancer -> Circuit Breaker -> Bulkhead -> Service, with arrows showing where each pattern intervenes -->
 
-![Resilience Architecture](../assets/ch09-resilience-architecture.html)
+![Resilience Architecture](../assets/ch10-resilience-architecture.html)
 
 ## Key Concepts
 
@@ -24,11 +24,13 @@ Rate limiting controls the number of requests a client or system can make within
 
 #### Token Bucket Algorithm
 
-The token bucket is the most widely deployed rate limiting algorithm due to its flexibility with burst traffic. Conceptually, tokens are added to a bucket at a fixed rate (the refill rate), and each request consumes one token. When the bucket is empty, requests are rejected. The bucket has a maximum capacity that determines the burst size allowed.
+Token bucket dominates rate limiting implementations because it matches how legitimate clients actually behave: idle periods followed by bursts of activity.
 
-The token bucket provides two key parameters: the sustained rate (how fast tokens refill) and the burst capacity (maximum tokens in the bucket). This allows legitimate burst traffic while preventing sustained overload. For example, a bucket configured with 100 tokens per second refill rate and 500 token capacity allows a burst of 500 requests followed by a sustained 100 requests per second.
+The mechanism has two parameters. The *refill rate* controls sustained throughput: 100 tokens per second means 100 requests per second over the long term. The *bucket capacity* controls burst tolerance: a capacity of 500 means a client can send 500 requests instantly if they have been idle, but then must wait for refills.
 
-The algorithm's strength is its simplicity and predictability. Clients can reason about their rate limits: if they have been quiet, they accumulate tokens for a burst; if they have been active, they are constrained to the refill rate. This makes token bucket ideal for user-facing API rate limits where occasional bursts are acceptable (see Example 10.1).
+This two-parameter design is why token bucket works well for user-facing APIs. A mobile app that opens and makes 20 API calls in 2 seconds, then goes idle for a minute, behaves very differently from a script hammering the API at a steady 10 requests per second. Both average 0.33 RPS, but they feel completely different. Token bucket permits the bursty human pattern while throttling the steady automated pattern, which is usually the desired behavior.
+
+The predictability also helps. Clients can calculate their own limits: idle time accumulates tokens up to the capacity cap, activity drains them at one per request. This transparency reduces the "why am I being rate limited?" support burden compared to algorithms whose behavior is harder to reason about (see Example 10.1).
 
 #### Leaky Bucket Algorithm
 
@@ -48,7 +50,7 @@ Sliding window requires tracking requests across two windows, which increases me
 
 <!-- DIAGRAM: Comparison of fixed window vs sliding window rate limiting showing: Fixed window with boundary spike (requests clustered at window boundaries), Sliding window with smooth enforcement (consistent rate across boundaries) -->
 
-![Rate Limiting Comparison](../assets/ch09-rate-limiting-comparison.html)
+![Rate Limiting Comparison](../assets/ch10-rate-limiting-comparison.html)
 
 For rate limiting at the CDN edge, including distributed state challenges and edge-specific configuration patterns, see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md).
 
@@ -101,17 +103,19 @@ The pattern originated at Netflix, documented in their Hystrix library. While Hy
 
 #### Circuit Breaker States
 
-The circuit breaker operates as a state machine with three states:
+The naming convention for circuit breaker states confuses everyone initially because it describes the *circuit*, not the *gate*. An open circuit blocks flow; a closed circuit allows it. This is backwards from how we typically think about gates and doors.
 
-**Closed (Normal Operation)**: Requests pass through normally. The breaker monitors failures and tracks the failure rate or count. When failures exceed a configured threshold (e.g., 50% failure rate over 10 requests), the circuit "opens."
+The three states represent a progression from trust to distrust and back:
 
-**Open (Fail Fast)**: All requests fail immediately without attempting the operation. This prevents cascading failures and gives the downstream service time to recover. After a configured timeout (e.g., 30 seconds), the circuit transitions to half-open.
+**Closed** means the breaker trusts the downstream service. Requests flow through while the breaker silently tracks outcomes. When failures cross a threshold (commonly 50% of the last 10-20 requests), trust is revoked and the state changes.
 
-**Half-Open (Testing Recovery)**: A limited number of test requests are allowed through. If they succeed, the circuit closes and normal operation resumes. If they fail, the circuit opens again with a reset timeout. This gradual recovery prevents a flood of requests from overwhelming a service that is just coming back online (see Example 10.2).
+**Open** means the breaker has lost trust. Every request fails immediately with a predetermined error, typically within microseconds. No attempt is made to contact the downstream service. This instant failure sounds harsh, but it prevents threads from piling up waiting for timeouts from a service that cannot respond. After a cooling-off period (30-60 seconds is typical), the breaker cautiously tests whether trust can be restored.
+
+**Half-Open** is the probationary period. A small number of requests (often just one) are permitted through. Success transitions back to Closed; failure returns to Open with the timer reset. This graduated recovery prevents a stampede of pent-up requests from immediately overwhelming a service that has just recovered (see Example 10.2).
 
 <!-- DIAGRAM: Circuit breaker state machine: Closed (normal) -[failures exceed threshold]-> Open (fail fast) -[timeout expires]-> Half-Open (test) -[success]-> Closed OR -[failure]-> Open, with annotations for each transition condition -->
 
-![Circuit Breaker State Machine](../assets/ch09-circuit-breaker-states.html)
+![Circuit Breaker State Machine](../assets/ch10-circuit-breaker-states.html)
 
 #### Configuring Circuit Breakers
 
@@ -203,7 +207,7 @@ The "consistent" part means that when instances are added or removed, only a fra
 
 <!-- DIAGRAM: Load balancing strategies comparison: Round-robin (sequential distribution to 3 servers: 1,2,3,1,2,3), Least-connections (preference to server with fewer active connections), Consistent hashing (same user always routes to same server based on hash) -->
 
-![Load Balancing Strategies](../assets/ch09-load-balancing-strategies.html)
+![Load Balancing Strategies](../assets/ch10-load-balancing-strategies.html)
 
 ### Service Mesh Traffic Management
 
@@ -266,7 +270,7 @@ Semaphore bulkheads are more memory-efficient than thread pools but do not provi
 
 <!-- DIAGRAM: Bulkhead pattern showing isolated resource pools: Service A pool (5 connections) at 80% capacity, Service B pool (10 connections) at 100% and blocking, Service C pool (3 connections) at 30% capacity. Annotation: "Service B exhaustion does not affect A or C" -->
 
-![Bulkhead Pattern](../assets/ch09-bulkhead-pattern.html)
+![Bulkhead Pattern](../assets/ch10-bulkhead-pattern.html)
 
 ### Graceful Degradation Strategies
 

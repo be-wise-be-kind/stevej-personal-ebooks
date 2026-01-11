@@ -24,7 +24,7 @@ When a service reaches its capacity limits, we have two fundamental options: mak
 
 <!-- DIAGRAM: Horizontal vs Vertical scaling comparison: Vertical shows one server growing larger with added CPU/RAM; Horizontal shows multiple identical servers behind a load balancer, with requests distributed across them -->
 
-![Horizontal vs Vertical Scaling Comparison](../assets/ch08-scaling-comparison.html)
+![Horizontal vs Vertical Scaling Comparison](../assets/ch09-scaling-comparison.html)
 
 The choice between these approaches depends on several factors:
 
@@ -66,7 +66,7 @@ The core HPA scaling formula calculates desired replicas as the ceiling of curre
 
 <!-- DIAGRAM: Auto-scaling feedback loop: Metrics collected (CPU, memory, request rate, queue depth) -> Scaling controller evaluates against thresholds -> Decision to scale up/down/maintain -> Instance count adjusted -> Metrics change -> loop continues -->
 
-![Auto-scaling Feedback Loop](../assets/ch08-autoscaling-loop.html)
+![Auto-scaling Feedback Loop](../assets/ch09-autoscaling-loop.html)
 
 **Key metrics for scaling decisions:**
 
@@ -253,7 +253,7 @@ A cold start occurs when a serverless platform must provision a new execution en
 
 <!-- DIAGRAM: Serverless cold start timeline showing: Request arrives -> Container provisioned (cold start delay: 100ms-2s) -> Runtime loaded -> Application code loaded -> Handler initialization -> Handler executes -> Response. Warm start path skips provisioning/loading steps. -->
 
-![Serverless Cold Start Timeline](../assets/ch08-cold-start-timeline.html)
+![Serverless Cold Start Timeline](../assets/ch09-cold-start-timeline.html)
 
 Cold start duration varies significantly by runtime and configuration. AWS Lambda cold starts for interpreted languages like Python and Node.js are generally faster than compiled languages with larger runtimes like Java or .NET. Cold starts typically range from under 100ms for lightweight functions to several seconds for complex applications with many dependencies.
 
@@ -287,7 +287,7 @@ Kubernetes sends SIGTERM and waits for a grace period (default 30 seconds) befor
 
 <!-- DIAGRAM: Kubernetes pod lifecycle for graceful shutdown: Pod receives SIGTERM -> PreStop hook runs (if configured) -> Container stops accepting new traffic -> In-flight requests complete (up to terminationGracePeriodSeconds) -> Container exits OR SIGKILL sent after grace period -->
 
-![Kubernetes Pod Graceful Shutdown Lifecycle](../assets/ch08-graceful-shutdown.html)
+![Kubernetes Pod Graceful Shutdown Lifecycle](../assets/ch09-graceful-shutdown.html)
 
 **Health checks** communicate service status to orchestrators and load balancers. Two types serve different purposes:
 

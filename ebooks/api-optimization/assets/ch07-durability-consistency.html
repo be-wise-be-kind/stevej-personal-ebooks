@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Durability and Consistency Tradeoffs</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background -->
+            <rect width="1000" height="700" fill="white"/>
+
+            <!-- Title -->
+            <text x="500" y="30" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Durability and Consistency Tradeoffs</text>
+            <text x="500" y="50" text-anchor="middle" style="font-size: 11px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Every guarantee has a performance cost — choose based on business requirements</text>
+
+            <!-- DURABILITY SECTION -->
+            <rect x="40" y="70" width="450" height="580" fill="#dcfce7" rx="8" stroke="#22c55e" stroke-width="2"/>
+            <rect x="40" y="70" width="450" height="35" fill="#22c55e" rx="8"/>
+            <rect x="40" y="95" width="450" height="10" fill="#22c55e"/>
+            <text x="265" y="94" text-anchor="middle" style="font-size: 14px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Durability Spectrum</text>
+            <text x="265" y="130" text-anchor="middle" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">"Will my data survive failures?"</text>
+
+            <!-- Durability Level 1: Synchronous Multi-Region -->
+            <rect x="55" y="150" width="420" height="95" fill="white" rx="6" stroke="#86efac" stroke-width="1"/>
+            <rect x="55" y="150" width="8" height="95" fill="#15803d" rx="3"/>
+            <text x="75" y="172" style="font-size: 12px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Level 4: Synchronous Multi-Region Replication</text>
+            <text x="75" y="190" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Write confirmed only after multiple regions acknowledge</text>
+            <text x="75" y="205" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Survives complete datacenter failure</text>
+            <text x="75" y="220" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Zero data loss (RPO = 0)</text>
+            <text x="75" y="238" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Cost: Highest latency (cross-region RTT), highest infrastructure cost</text>
+
+            <!-- Durability Level 2: Synchronous Local -->
+            <rect x="55" y="255" width="420" height="95" fill="white" rx="6" stroke="#86efac" stroke-width="1"/>
+            <rect x="55" y="255" width="8" height="95" fill="#22c55e" rx="3"/>
+            <text x="75" y="277" style="font-size: 12px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Level 3: Synchronous Local Replication</text>
+            <text x="75" y="295" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Write confirmed after local replicas acknowledge</text>
+            <text x="75" y="310" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Survives node failures within region</text>
+            <text x="75" y="325" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Common default for RDBMS (synchronous_commit)</text>
+            <text x="75" y="343" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Cost: Added latency per write (local network RTT)</text>
+
+            <!-- Durability Level 3: Async Replication -->
+            <rect x="55" y="360" width="420" height="95" fill="white" rx="6" stroke="#86efac" stroke-width="1"/>
+            <rect x="55" y="360" width="8" height="95" fill="#86efac" rx="3"/>
+            <text x="75" y="382" style="font-size: 12px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Level 2: Asynchronous Replication</text>
+            <text x="75" y="400" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Write confirmed after primary persists to disk</text>
+            <text x="75" y="415" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Replicas updated eventually (seconds to minutes)</text>
+            <text x="75" y="430" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Data loss window = replication lag</text>
+            <text x="75" y="448" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Cost: Potential data loss on primary failure, stale reads from replicas</text>
+
+            <!-- Durability Level 4: Memory Only -->
+            <rect x="55" y="465" width="420" height="95" fill="white" rx="6" stroke="#86efac" stroke-width="1"/>
+            <rect x="55" y="465" width="8" height="95" fill="#bbf7d0" rx="3"/>
+            <text x="75" y="487" style="font-size: 12px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Level 1: Memory-Only / Fire-and-Forget</text>
+            <text x="75" y="505" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Write confirmed immediately (no disk sync)</text>
+            <text x="75" y="520" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Data lost on process restart or crash</text>
+            <text x="75" y="535" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">• Acceptable for: metrics, analytics, caches, ephemeral state</text>
+            <text x="75" y="553" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Cost: None — but data is not durable</text>
+
+            <!-- Durability guidance -->
+            <rect x="55" y="575" width="420" height="60" fill="#f0fdf4" rx="6" stroke="#22c55e" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="265" y="598" text-anchor="middle" style="font-size: 10px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Choosing Durability Level</text>
+            <text x="265" y="615" text-anchor="middle" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">Financial transactions → Level 4 | User data → Level 3</text>
+            <text x="265" y="628" text-anchor="middle" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">Session state → Level 2 | Telemetry → Level 1</text>
+
+            <!-- CONSISTENCY SECTION -->
+            <rect x="510" y="70" width="450" height="580" fill="#dbeafe" rx="8" stroke="#3b82f6" stroke-width="2"/>
+            <rect x="510" y="70" width="450" height="35" fill="#3b82f6" rx="8"/>
+            <rect x="510" y="95" width="450" height="10" fill="#3b82f6"/>
+            <text x="735" y="94" text-anchor="middle" style="font-size: 14px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Consistency Models</text>
+            <text x="735" y="130" text-anchor="middle" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">"Will all readers see the same data?"</text>
+
+            <!-- Consistency Level 1: Strong/Linearizable -->
+            <rect x="525" y="150" width="420" height="95" fill="white" rx="6" stroke="#93c5fd" stroke-width="1"/>
+            <rect x="525" y="150" width="8" height="95" fill="#1d4ed8" rx="3"/>
+            <text x="545" y="172" style="font-size: 12px; fill: #1e3a8a; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Strong (Linearizable) Consistency</text>
+            <text x="545" y="190" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• All readers see the most recent write immediately</text>
+            <text x="545" y="205" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Single source of truth, no stale reads possible</text>
+            <text x="545" y="220" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Requires coordination (consensus protocols, locks)</text>
+            <text x="545" y="238" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Cost: Higher latency, reduced availability during partitions</text>
+
+            <!-- Consistency Level 2: Causal -->
+            <rect x="525" y="255" width="420" height="95" fill="white" rx="6" stroke="#93c5fd" stroke-width="1"/>
+            <rect x="525" y="255" width="8" height="95" fill="#3b82f6" rx="3"/>
+            <text x="545" y="277" style="font-size: 12px; fill: #1e3a8a; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Causal Consistency</text>
+            <text x="545" y="295" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Causally related operations seen in order</text>
+            <text x="545" y="310" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Concurrent operations may be seen in different orders</text>
+            <text x="545" y="325" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Read-your-writes guaranteed within session</text>
+            <text x="545" y="343" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Cost: Requires tracking causal dependencies</text>
+
+            <!-- Consistency Level 3: Read-Your-Writes -->
+            <rect x="525" y="360" width="420" height="95" fill="white" rx="6" stroke="#93c5fd" stroke-width="1"/>
+            <rect x="525" y="360" width="8" height="95" fill="#60a5fa" rx="3"/>
+            <text x="545" y="382" style="font-size: 12px; fill: #1e3a8a; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Read-Your-Writes / Session Consistency</text>
+            <text x="545" y="400" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• User always sees their own writes</text>
+            <text x="545" y="415" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Other users may see stale data temporarily</text>
+            <text x="545" y="430" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Common in web apps (sticky sessions, read from primary)</text>
+            <text x="545" y="448" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Cost: Session affinity required, limits load balancing flexibility</text>
+
+            <!-- Consistency Level 4: Eventual -->
+            <rect x="525" y="465" width="420" height="95" fill="white" rx="6" stroke="#93c5fd" stroke-width="1"/>
+            <rect x="525" y="465" width="8" height="95" fill="#93c5fd" rx="3"/>
+            <text x="545" y="487" style="font-size: 12px; fill: #1e3a8a; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Eventual Consistency</text>
+            <text x="545" y="505" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Readers may see stale data for a window of time</text>
+            <text x="545" y="520" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• All replicas converge eventually (seconds to minutes)</text>
+            <text x="545" y="535" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Highest availability and lowest latency</text>
+            <text x="545" y="553" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Cost: Application must handle stale reads and conflicts</text>
+
+            <!-- Consistency guidance -->
+            <rect x="525" y="575" width="420" height="60" fill="#eff6ff" rx="6" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="735" y="598" text-anchor="middle" style="font-size: 10px; fill: #1e3a8a; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Choosing Consistency Model</text>
+            <text x="735" y="615" text-anchor="middle" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">Financial/inventory → Strong | Collaborative editing → Causal</text>
+            <text x="735" y="628" text-anchor="middle" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">User profiles → Read-Your-Writes | Social feeds → Eventual</text>
+
+            <!-- Footer -->
+            <text x="500" y="675" text-anchor="middle" style="font-size: 11px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">CAP theorem: During network partitions, you must choose between consistency and availability</text>
+        </svg>
+    </div>
+</body>
+</html>

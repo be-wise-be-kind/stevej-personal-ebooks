@@ -322,7 +322,7 @@ Authentication deserves dedicated dashboard space. Key panels include:
 
 **Identity Provider Latency**: If using OAuth/OIDC, track latency to identity providers separately. Degradation here affects all authentication.
 
-For a complete implementation of auth metrics middleware, see Example 11.4 in the [Appendix: Code Examples](./14-appendix-code-examples.md).
+For a complete implementation of auth metrics middleware, see Example 11.4 in the [Appendix: Code Examples](./15-appendix-code-examples.md).
 
 ## Common Pitfalls
 

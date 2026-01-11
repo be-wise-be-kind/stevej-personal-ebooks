@@ -1,12 +1,13 @@
-# API Performance Optimization
+# Before the 3 AM Alert
+## What Every Developer Should Know About API Performance
 
-**Author:** Steve Jackson  
-**Last Updated:** 2026-01-10  
+**Author:** Steve Jackson
+**Last Updated:** 2026-01-11
 **Status:** In Progress
 
 ## Overview
 
-A practical guide to API performance optimization, from foundational concepts to advanced techniques. This book emphasizes the empirical nature of performance work: measure first, optimize with purpose, and validate with data. While it catalogs proven patterns from production systems, it reinforces that the ultimate truth lies in YOUR system's measurements.
+A practical guide to API performance, from foundational concepts to advanced techniques. This book emphasizes the empirical nature of performance work: measure first, optimize with purpose, and validate with data. While it catalogs proven patterns from production systems, it reinforces that the ultimate truth lies in YOUR system's measurements.
 
 ## Table of Contents
 

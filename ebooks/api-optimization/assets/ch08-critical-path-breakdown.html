@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Critical Path Latency Breakdown</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background -->
+            <rect width="900" height="520" fill="white"/>
+
+            <!-- Title -->
+            <text x="450" y="30" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">The Critical Path Problem: Order API Example</text>
+            <text x="450" y="50" text-anchor="middle" style="font-size: 11px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Every synchronous operation adds to client wait time</text>
+
+            <!-- SYNCHRONOUS SECTION -->
+            <text x="450" y="85" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: #dc2626;" font-family="Liberation Sans, Arial, sans-serif">Synchronous: All Operations Block the Response</text>
+
+            <!-- Timeline bar background -->
+            <rect x="50" y="100" width="800" height="60" fill="#fef2f2" rx="4" stroke="#fecaca" stroke-width="1"/>
+
+            <!-- Operation blocks on timeline -->
+            <!-- Validate: 5ms (0-5) scale: 800px = 285ms, so 1ms = 2.8px -->
+            <rect x="50" y="110" width="14" height="40" fill="#22c55e" rx="2"/>
+            <text x="57" y="165" text-anchor="middle" style="font-size: 8px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">5ms</text>
+
+            <!-- Save to DB: 15ms (5-20) -->
+            <rect x="64" y="110" width="42" height="40" fill="#3b82f6" rx="2"/>
+            <text x="85" y="165" text-anchor="middle" style="font-size: 8px; fill: #1e40af;" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
+
+            <!-- Send Email: 120ms (20-140) -->
+            <rect x="106" y="110" width="337" height="40" fill="#ef4444" rx="2"/>
+            <text x="274" y="135" text-anchor="middle" style="font-size: 11px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Send Confirmation Email: 120ms</text>
+
+            <!-- Update Analytics: 45ms (140-185) -->
+            <rect x="443" y="110" width="126" height="40" fill="#f59e0b" rx="2"/>
+            <text x="506" y="135" text-anchor="middle" style="font-size: 10px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Analytics: 45ms</text>
+
+            <!-- Notify Warehouse: 80ms (185-265) -->
+            <rect x="569" y="110" width="225" height="40" fill="#8b5cf6" rx="2"/>
+            <text x="681" y="135" text-anchor="middle" style="font-size: 10px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Notify Warehouse: 80ms</text>
+
+            <!-- Update Inventory Cache: 20ms (265-285) -->
+            <rect x="794" y="110" width="56" height="40" fill="#06b6d4" rx="2"/>
+            <text x="822" y="165" text-anchor="middle" style="font-size: 8px; fill: #0e7490;" font-family="Liberation Sans, Arial, sans-serif">20ms</text>
+
+            <!-- Labels above -->
+            <text x="57" y="103" text-anchor="middle" style="font-size: 8px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">Validate</text>
+            <text x="85" y="103" text-anchor="middle" style="font-size: 8px; fill: #1e40af;" font-family="Liberation Sans, Arial, sans-serif">Save DB</text>
+            <text x="822" y="103" text-anchor="middle" style="font-size: 8px; fill: #0e7490;" font-family="Liberation Sans, Arial, sans-serif">Cache</text>
+
+            <!-- Total time indicator -->
+            <line x1="50" y1="180" x2="850" y2="180" stroke="#dc2626" stroke-width="2"/>
+            <polygon points="850,180 842,176 842,184" fill="#dc2626"/>
+            <rect x="360" y="185" width="180" height="24" fill="#dc2626" rx="4"/>
+            <text x="450" y="202" text-anchor="middle" style="font-size: 12px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Total: 285ms response time</text>
+
+            <!-- ASYNCHRONOUS SECTION -->
+            <text x="450" y="245" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: #16a34a;" font-family="Liberation Sans, Arial, sans-serif">Asynchronous: Only Essential Operations Block</text>
+
+            <!-- Timeline bar background -->
+            <rect x="50" y="270" width="800" height="60" fill="#f0fdf4" rx="4" stroke="#bbf7d0" stroke-width="1"/>
+
+            <!-- Critical path operations - scaled up for readability -->
+            <!-- Validate: wider block -->
+            <rect x="50" y="280" width="50" height="40" fill="#22c55e" rx="2"/>
+            <text x="75" y="305" text-anchor="middle" style="font-size: 10px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Validate</text>
+            <text x="75" y="335" text-anchor="middle" style="font-size: 9px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">5ms</text>
+
+            <!-- Save to DB: wider block -->
+            <rect x="105" y="280" width="70" height="40" fill="#3b82f6" rx="2"/>
+            <text x="140" y="305" text-anchor="middle" style="font-size: 10px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Save DB</text>
+            <text x="140" y="335" text-anchor="middle" style="font-size: 9px; fill: #1e40af;" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
+
+            <!-- Enqueue marker - wider -->
+            <rect x="180" y="280" width="40" height="40" fill="#f59e0b" rx="2"/>
+            <text x="200" y="305" text-anchor="middle" style="font-size: 10px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Queue</text>
+            <text x="200" y="335" text-anchor="middle" style="font-size: 9px; fill: #d97706;" font-family="Liberation Sans, Arial, sans-serif">2ms</text>
+
+            <!-- Response point -->
+            <line x1="225" y1="260" x2="225" y2="340" stroke="#16a34a" stroke-width="3" stroke-dasharray="6,3"/>
+            <rect x="230" y="258" width="70" height="18" fill="white" rx="3"/>
+            <text x="265" y="271" text-anchor="middle" style="font-size: 10px; fill: #16a34a; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Response</text>
+
+            <!-- Total time indicator -->
+            <line x1="50" y1="350" x2="225" y2="350" stroke="#16a34a" stroke-width="2"/>
+            <polygon points="225,350 217,346 217,354" fill="#16a34a"/>
+            <rect x="60" y="355" width="170" height="24" fill="#16a34a" rx="4"/>
+            <text x="145" y="372" text-anchor="middle" style="font-size: 12px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Response: 22ms (92% faster)</text>
+
+            <!-- Background work indicator -->
+            <rect x="310" y="280" width="520" height="40" fill="#f8fafc" rx="4" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="570" y="305" text-anchor="middle" style="font-size: 11px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Background: Email, Analytics, Warehouse, Cache (workers)</text>
+
+            <!-- Comparison box -->
+            <rect x="50" y="390" width="800" height="110" fill="#f8fafc" rx="8" stroke="#e2e8f0" stroke-width="1"/>
+            <text x="450" y="415" text-anchor="middle" style="font-size: 13px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">The Key Insight</text>
+
+            <!-- Two columns -->
+            <rect x="70" y="430" width="350" height="55" fill="#fef2f2" rx="4"/>
+            <text x="245" y="452" text-anchor="middle" style="font-size: 11px; fill: #991b1b; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Synchronous: User waits for everything</text>
+            <text x="245" y="470" text-anchor="middle" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">285ms = validate + save + email + analytics + warehouse + cache</text>
+
+            <rect x="480" y="430" width="350" height="55" fill="#f0fdf4" rx="4"/>
+            <text x="655" y="452" text-anchor="middle" style="font-size: 11px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Asynchronous: User waits only for essentials</text>
+            <text x="655" y="470" text-anchor="middle" style="font-size: 10px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">22ms = validate + save + enqueue (everything else is background)</text>
+        </svg>
+    </div>
+</body>
+</html>

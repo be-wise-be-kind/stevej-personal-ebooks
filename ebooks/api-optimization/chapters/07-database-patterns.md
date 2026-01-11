@@ -14,7 +14,15 @@ The modern data landscape offers remarkable variety: relational databases for tr
 
 This chapter provides a decision framework for storage selection. We will examine each major database category, understand where it shines, recognize its trade-offs, and learn when to combine multiple stores in a polyglot architecture. The goal is not to make you an expert in every database (that would require several books) but to help you ask the right questions and make informed architectural decisions.
 
-![Database Selection Decision Tree](../assets/ch07-access-pattern-decision-tree.html)
+Database selection involves three interconnected decisions:
+
+1. **Data model**: Which database type matches your data shape and query patterns?
+2. **Read/write optimization**: How do you tune for your dominant access pattern?
+3. **Durability and consistency**: What guarantees does your application require?
+
+The diagrams in this chapter address each decision independently, because real-world choices rarely follow a single linear decision tree. You might need a document database (data model) with read replicas (read-heavy optimization) and eventual consistency (consistency trade-off). These dimensions combine; they do not cascade.
+
+![Data Model Selection Guide](../assets/ch07-data-model-selection.html)
 
 ## Key Concepts
 
@@ -105,6 +113,8 @@ Consistency models vary. Redis clustering provides eventual consistency for read
 
 Wide-column databases (Cassandra, ScyllaDB, HBase) optimize for a specific access pattern: massive write throughput across many nodes, with reads by known partition keys. They organize data by row key and column family, allowing different rows to have different columns without schema changes.
 
+![Wide-Column Database Architecture](../assets/ch07-wide-column-architecture.html)
+
 **When to choose wide-column databases:**
 
 - **Write throughput is extreme.** IoT sensor data arriving at millions of events per second, activity streams from social platforms, application logs at scale. Wide-column databases handle write-heavy workloads that would overwhelm relational databases.
@@ -150,6 +160,18 @@ Regardless of read/write ratio, connection pooling matters for any database. Ope
 The HikariCP documentation provides a useful formula for OLTP workloads: pool size equals core count times two, plus effective spindle count [Source: HikariCP Wiki, "About Pool Sizing"]. For modern SSDs, treat spindle count as 1. A 4-core server might use a pool of 9-10 connections. However, optimal sizing depends on query patterns and should be determined through measurement.
 
 Connection pool configuration follows similar patterns across languages and databases: set minimum and maximum counts, configure idle timeouts, and establish query timeouts. See Example 7.11 for configuration patterns.
+
+### Durability and Consistency Tradeoffs
+
+Beyond data model and read/write patterns, database selection involves durability and consistency decisions. These concepts are related but distinct:
+
+**Durability** answers "will my data survive failures?" It ranges from synchronous multi-region replication (zero data loss even if an entire datacenter fails) to memory-only storage (data lost on process restart). Higher durability costs more in latency and infrastructure.
+
+**Consistency** answers "will all readers see the same data?" Strong consistency guarantees that every read sees the most recent write. Eventual consistency allows stale reads temporarily, trading correctness for availability and latency.
+
+![Durability and Consistency Tradeoffs](../assets/ch07-durability-consistency.html)
+
+Every application has different requirements. Financial transactions need the strongest durability and consistency guarantees. Social media feeds tolerate eventual consistency and brief data loss. The sections that follow explore specific patterns along these spectrums.
 
 ### Fire-and-Forget Patterns
 
@@ -236,6 +258,8 @@ Vector similarity is one piece of retrieval. Hybrid approaches that combine vect
 ### Search Databases
 
 Search databases (Elasticsearch, OpenSearch, Typesense, Meilisearch) are optimized for full-text search, faceted navigation, and log analysis. They invert the traditional database model: rather than storing rows and querying by column, they build inverted indexes that map terms to documents containing those terms.
+
+![Search Engine: The Inverted Index](../assets/ch07-inverted-index.html)
 
 **When to choose search databases:**
 

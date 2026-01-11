@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Engine: Inverted Index</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background -->
+            <rect width="900" height="620" fill="white"/>
+
+            <!-- Title -->
+            <text x="450" y="30" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Search Engine: The Inverted Index</text>
+            <text x="450" y="50" text-anchor="middle" style="font-size: 11px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Traditional databases: "give me document X" — Search engines: "which documents contain term Y?"</text>
+
+            <!-- Left side: Documents -->
+            <text x="160" y="85" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Source Documents</text>
+
+            <!-- Document 1 -->
+            <rect x="40" y="100" width="240" height="60" fill="#dbeafe" rx="6" stroke="#3b82f6" stroke-width="2"/>
+            <text x="55" y="120" style="font-size: 10px; fill: #1e40af; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Doc 1: "The quick brown fox"</text>
+            <text x="55" y="138" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Tokens: the, quick, brown, fox</text>
+            <text x="55" y="152" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">ID: doc_001</text>
+
+            <!-- Document 2 -->
+            <rect x="40" y="170" width="240" height="60" fill="#dcfce7" rx="6" stroke="#22c55e" stroke-width="2"/>
+            <text x="55" y="190" style="font-size: 10px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Doc 2: "The lazy brown dog"</text>
+            <text x="55" y="208" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Tokens: the, lazy, brown, dog</text>
+            <text x="55" y="222" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">ID: doc_002</text>
+
+            <!-- Document 3 -->
+            <rect x="40" y="240" width="240" height="60" fill="#fef3c7" rx="6" stroke="#f59e0b" stroke-width="2"/>
+            <text x="55" y="260" style="font-size: 10px; fill: #92400e; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Doc 3: "Quick foxes are clever"</text>
+            <text x="55" y="278" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Tokens: quick, fox, are, clever</text>
+            <text x="55" y="292" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">ID: doc_003</text>
+
+            <!-- Arrow showing indexing -->
+            <path d="M 290 190 L 380 190" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowGray)"/>
+            <text x="335" y="180" text-anchor="middle" style="font-size: 10px; fill: #64748b; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Index</text>
+
+            <!-- Right side: Inverted Index -->
+            <text x="620" y="85" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Inverted Index</text>
+
+            <!-- Index header -->
+            <rect x="400" y="100" width="120" height="30" fill="#ec4899" stroke="#be185d" stroke-width="1"/>
+            <text x="460" y="120" text-anchor="middle" style="font-size: 10px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Term</text>
+            <rect x="520" y="100" width="220" height="30" fill="#8b5cf6" stroke="#6d28d9" stroke-width="1"/>
+            <text x="630" y="120" text-anchor="middle" style="font-size: 10px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Posting List (Document IDs)</text>
+
+            <!-- Index entries -->
+            <rect x="400" y="130" width="120" height="25" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1"/>
+            <text x="460" y="147" text-anchor="middle" style="font-size: 9px; fill: #9d174d;" font-family="Liberation Sans, Arial, sans-serif">brown</text>
+            <rect x="520" y="130" width="220" height="25" fill="#f3e8ff" stroke="#c4b5fd" stroke-width="1"/>
+            <text x="630" y="147" text-anchor="middle" style="font-size: 9px; fill: #6b21a8;" font-family="Liberation Sans, Arial, sans-serif">[doc_001, doc_002]</text>
+
+            <rect x="400" y="155" width="120" height="25" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1"/>
+            <text x="460" y="172" text-anchor="middle" style="font-size: 9px; fill: #9d174d;" font-family="Liberation Sans, Arial, sans-serif">clever</text>
+            <rect x="520" y="155" width="220" height="25" fill="#f3e8ff" stroke="#c4b5fd" stroke-width="1"/>
+            <text x="630" y="172" text-anchor="middle" style="font-size: 9px; fill: #6b21a8;" font-family="Liberation Sans, Arial, sans-serif">[doc_003]</text>
+
+            <rect x="400" y="180" width="120" height="25" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1"/>
+            <text x="460" y="197" text-anchor="middle" style="font-size: 9px; fill: #9d174d;" font-family="Liberation Sans, Arial, sans-serif">dog</text>
+            <rect x="520" y="180" width="220" height="25" fill="#f3e8ff" stroke="#c4b5fd" stroke-width="1"/>
+            <text x="630" y="197" text-anchor="middle" style="font-size: 9px; fill: #6b21a8;" font-family="Liberation Sans, Arial, sans-serif">[doc_002]</text>
+
+            <rect x="400" y="205" width="120" height="25" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1"/>
+            <text x="460" y="222" text-anchor="middle" style="font-size: 9px; fill: #9d174d;" font-family="Liberation Sans, Arial, sans-serif">fox</text>
+            <rect x="520" y="205" width="220" height="25" fill="#f3e8ff" stroke="#c4b5fd" stroke-width="1"/>
+            <text x="630" y="222" text-anchor="middle" style="font-size: 9px; fill: #6b21a8;" font-family="Liberation Sans, Arial, sans-serif">[doc_001, doc_003]</text>
+
+            <rect x="400" y="230" width="120" height="25" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1"/>
+            <text x="460" y="247" text-anchor="middle" style="font-size: 9px; fill: #9d174d;" font-family="Liberation Sans, Arial, sans-serif">lazy</text>
+            <rect x="520" y="230" width="220" height="25" fill="#f3e8ff" stroke="#c4b5fd" stroke-width="1"/>
+            <text x="630" y="247" text-anchor="middle" style="font-size: 9px; fill: #6b21a8;" font-family="Liberation Sans, Arial, sans-serif">[doc_002]</text>
+
+            <rect x="400" y="255" width="120" height="25" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1"/>
+            <text x="460" y="272" text-anchor="middle" style="font-size: 9px; fill: #9d174d;" font-family="Liberation Sans, Arial, sans-serif">quick</text>
+            <rect x="520" y="255" width="220" height="25" fill="#f3e8ff" stroke="#c4b5fd" stroke-width="1"/>
+            <text x="630" y="272" text-anchor="middle" style="font-size: 9px; fill: #6b21a8;" font-family="Liberation Sans, Arial, sans-serif">[doc_001, doc_003]</text>
+
+            <rect x="400" y="280" width="120" height="25" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1"/>
+            <text x="460" y="297" text-anchor="middle" style="font-size: 9px; fill: #9d174d;" font-family="Liberation Sans, Arial, sans-serif">the</text>
+            <rect x="520" y="280" width="220" height="25" fill="#f3e8ff" stroke="#c4b5fd" stroke-width="1"/>
+            <text x="630" y="297" text-anchor="middle" style="font-size: 9px; fill: #6b21a8;" font-family="Liberation Sans, Arial, sans-serif">[doc_001, doc_002]</text>
+
+            <!-- Why it's "inverted" callout -->
+            <rect x="755" y="160" width="135" height="85" fill="#fef3c7" rx="6" stroke="#f59e0b" stroke-width="1"/>
+            <text x="822" y="182" text-anchor="middle" style="font-size: 9px; fill: #92400e; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Why "inverted"?</text>
+            <text x="822" y="200" text-anchor="middle" style="font-size: 8px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">Normal: doc → terms</text>
+            <text x="822" y="215" text-anchor="middle" style="font-size: 8px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">Inverted: term → docs</text>
+            <text x="822" y="232" text-anchor="middle" style="font-size: 8px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">(the relationship</text>
+            <text x="822" y="244" text-anchor="middle" style="font-size: 8px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">is flipped)</text>
+
+            <!-- Search query example -->
+            <rect x="40" y="330" width="820" height="120" fill="#dbeafe" rx="8" stroke="#3b82f6" stroke-width="2"/>
+            <text x="450" y="355" text-anchor="middle" style="font-size: 13px; fill: #1e40af; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Search Query: "quick brown"</text>
+
+            <text x="60" y="380" style="font-size: 10px; fill: #1e40af;" font-family="Liberation Sans, Arial, sans-serif">1. Look up "quick" → [doc_001, doc_003]</text>
+            <text x="60" y="398" style="font-size: 10px; fill: #1e40af;" font-family="Liberation Sans, Arial, sans-serif">2. Look up "brown" → [doc_001, doc_002]</text>
+            <text x="60" y="416" style="font-size: 10px; fill: #1e40af;" font-family="Liberation Sans, Arial, sans-serif">3. Intersect results → [doc_001] matches both terms</text>
+            <text x="60" y="434" style="font-size: 10px; fill: #1e40af;" font-family="Liberation Sans, Arial, sans-serif">4. Score by relevance (TF-IDF, BM25) → doc_001 ranks highest</text>
+
+            <rect x="550" y="375" width="290" height="60" fill="white" rx="4" stroke="#93c5fd" stroke-width="1"/>
+            <text x="695" y="395" text-anchor="middle" style="font-size: 9px; fill: #1e40af; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Result (ranked by relevance):</text>
+            <text x="695" y="415" text-anchor="middle" style="font-size: 9px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">1. doc_001 "The quick brown fox" (score: 2.4)</text>
+            <text x="695" y="428" text-anchor="middle" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">2. doc_003 "Quick foxes..." (score: 1.2)</text>
+
+            <!-- Processing pipeline -->
+            <rect x="40" y="465" width="820" height="130" fill="#f0fdf4" rx="8" stroke="#22c55e" stroke-width="2"/>
+            <text x="450" y="490" text-anchor="middle" style="font-size: 13px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Text Analysis Pipeline (Indexing and Query Time)</text>
+
+            <!-- Pipeline boxes -->
+            <rect x="60" y="510" width="140" height="50" fill="white" rx="4" stroke="#86efac" stroke-width="1"/>
+            <text x="130" y="530" text-anchor="middle" style="font-size: 9px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Tokenization</text>
+            <text x="130" y="548" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">"quick brown" → [quick, brown]</text>
+
+            <path d="M 200 535 L 230 535" stroke="#22c55e" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+
+            <rect x="240" y="510" width="140" height="50" fill="white" rx="4" stroke="#86efac" stroke-width="1"/>
+            <text x="310" y="530" text-anchor="middle" style="font-size: 9px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Lowercasing</text>
+            <text x="310" y="548" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">"Quick" → "quick"</text>
+
+            <path d="M 380 535 L 410 535" stroke="#22c55e" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+
+            <rect x="420" y="510" width="140" height="50" fill="white" rx="4" stroke="#86efac" stroke-width="1"/>
+            <text x="490" y="530" text-anchor="middle" style="font-size: 9px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Stemming</text>
+            <text x="490" y="548" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">"foxes" → "fox"</text>
+
+            <path d="M 560 535 L 590 535" stroke="#22c55e" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+
+            <rect x="600" y="510" width="140" height="50" fill="white" rx="4" stroke="#86efac" stroke-width="1"/>
+            <text x="670" y="530" text-anchor="middle" style="font-size: 9px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Stop Word Removal</text>
+            <text x="670" y="548" text-anchor="middle" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">"the" → (removed)</text>
+
+            <path d="M 740 535 L 770 535" stroke="#22c55e" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+
+            <rect x="780" y="510" width="65" height="50" fill="#dcfce7" rx="4" stroke="#22c55e" stroke-width="2"/>
+            <text x="812" y="535" text-anchor="middle" style="font-size: 9px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Index</text>
+            <text x="812" y="550" text-anchor="middle" style="font-size: 8px; fill: #166534;" font-family="Liberation Sans, Arial, sans-serif">Terms</text>
+
+            <!-- Arrow markers -->
+            <defs>
+                <marker id="arrowGray" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
+                </marker>
+                <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#22c55e"/>
+                </marker>
+            </defs>
+        </svg>
+    </div>
+</body>
+</html>

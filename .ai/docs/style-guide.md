@@ -294,7 +294,7 @@ Before submitting a chapter, verify:
 - [ ] Terminology matches this style guide exactly
 - [ ] Chapter follows the required structure
 - [ ] Diagram placeholders are descriptive and specific
-- [ ] Word count is within 3000-8000 words (more allowed for complex/technical chapters)
+- [ ] Word count is within 3000-8000 words (narrative case study chapters like "Putting It All Together" may exceed this limit; complex/technical chapters may also require more space)
 - [ ] Common pitfalls section is included
 - [ ] References section is complete
 - [ ] "Next" link points to the correct chapter

@@ -24,7 +24,7 @@ Modern API systems employ multiple layers of caching, each with distinct charact
 
 <!-- DIAGRAM: Cache hierarchy pyramid showing layers from top to bottom: Browser cache (0ms network latency) -> CDN edge (10-50ms from user) -> Distributed cache/Redis (1-5ms from app) -> In-process cache (microseconds) -> Database buffer pool (microseconds, but still disk-backed) -> Database disk (10-100ms), with annotations showing typical latencies and use cases for each layer -->
 
-![Cache Hierarchy](../assets/ch05-cache-hierarchy.html)
+![Cache Hierarchy](../assets/ch06-cache-hierarchy.html)
 
 **L0: Database Internal Caches**
 
@@ -205,19 +205,17 @@ Distributed caches like Redis provide shared caching across multiple application
 
 **Cache-Aside (Lazy Loading)**
 
-Cache-aside is the most common caching pattern. The application is responsible for managing the cache explicitly:
+Cache-aside earns its name from the cache's position in the architecture: it sits *beside* the data path rather than in front of it. The application explicitly manages both the cache and the database, deciding when to read from each and when to populate the cache.
 
-1. Check the cache for the requested data
-2. If found (cache hit), return the cached value
-3. If not found (cache miss), fetch from the database
-4. Store the result in the cache for future requests
-5. Return the data
+The logic is straightforward: check cache first, and on a miss, fetch from the database and store the result before returning. What makes cache-aside powerful is what it *does not* do. It does not require cache warming at startup. It does not cache data that is never requested. It does not maintain consistency between cache and database automatically. These are features, not bugs.
 
 <!-- DIAGRAM: Cache-aside pattern sequence diagram showing: Client -> Application -> Check Cache -> [Hit: return cached data] or [Miss: Query Database -> Store result in Cache -> return data to client] -->
 
-![Cache-Aside Pattern](../assets/ch05-cache-aside-pattern.html)
+![Cache-Aside Pattern](../assets/ch06-cache-aside-pattern.html)
 
-This pattern works well for read-heavy workloads where data is read far more often than written. The cache naturally fills with frequently accessed data, and rarely accessed data expires without consuming cache memory (see Example 6.1).
+The cache contents emerge organically from actual access patterns. Frequently requested data stays hot; rarely requested data either never enters the cache or expires without renewal. This self-organizing property makes cache-aside well-suited for workloads where the hot set is not known in advance or shifts over time.
+
+The trade-off is that every cache miss pays the full database round-trip cost, and the application bears responsibility for invalidation. When data changes in the database, the cache does not know. Stale data persists until TTL expiration or explicit invalidation (see Example 6.1).
 
 **Write-Through**
 
@@ -233,7 +231,7 @@ This pattern is suitable for high-write-volume scenarios where some data loss is
 
 <!-- DIAGRAM: Write-through vs Write-behind comparison showing: Write-through with synchronous paths to both cache and database (higher latency, strong consistency) vs Write-behind with async database write (lower latency, eventual consistency, data loss risk) -->
 
-![Write-Through vs Write-Behind Patterns](../assets/ch05-write-patterns.html)
+![Write-Through vs Write-Behind Patterns](../assets/ch06-write-patterns.html)
 
 **Redis Pub/Sub for Distributed Invalidation**
 
@@ -445,8 +443,8 @@ Regardless of which caching pattern or invalidation strategy we choose, measurin
 | **Hit rate** | Percentage of requests served from cache | >90% for most workloads |
 | **Miss rate** | Percentage of requests requiring origin fetch | <10% |
 | **Eviction rate** | How often entries are evicted (memory pressure) | Low and stable |
-| **Latency (hit)** | Response time for cache hits | <5ms for Redis, <1ms for in-process |
-| **Latency (miss)** | Response time for cache misses | Baseline without cache |
+| **Latency (hit)** | Latency for cache hits | <5ms for Redis, <1ms for in-process |
+| **Latency (miss)** | Latency for cache misses | Baseline without cache |
 | **Memory usage** | Cache memory consumption | Below configured limit |
 | **Key count** | Number of entries in cache | Understand working set size |
 

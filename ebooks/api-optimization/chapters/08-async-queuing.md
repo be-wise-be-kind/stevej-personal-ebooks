@@ -6,21 +6,99 @@
 
 ## Overview
 
-Not every operation in an API request needs to complete before we return a response to the client. Email notifications, analytics tracking, image processing, and audit logging can often happen after we have acknowledged the user's request. By moving work off the critical path, we reduce latency for the client while improving overall system throughput and resilience.
+Your API is slow. Not because the core business logic is slow, but because you are making the user wait for work they do not need to wait for.
 
-This chapter explores the patterns and technologies that enable asynchronous processing. We will examine the fundamental trade-offs between synchronous and asynchronous approaches, dive into message queue technologies like RabbitMQ, Kafka, and SQS, and learn how to build reliable systems with backpressure, retry strategies, and dead letter queues. We will also cover critical production patterns: the transactional outbox for reliable message publishing, sagas for distributed transactions, schema evolution for maintaining compatibility, and stream processing for real-time analytics. These patterns form the foundation of event-driven architecture, enabling systems that scale gracefully under load.
+Consider an order API. The user clicks "Place Order" and waits. What happens during that wait? The server validates the order (5ms), saves it to the database (15ms), sends a confirmation email (120ms), updates analytics (45ms), notifies the warehouse (80ms), and refreshes the inventory cache (20ms). Total: 285ms.
 
-The empirical approach applies here as well: we measure queue depth, consumer lag, processing latency, and error rates. Asynchronous systems introduce new failure modes (messages can be lost, duplicated, or processed out of order) and our observability must account for these possibilities.
+But what did the user actually need to know? That the order was accepted. Everything else, the email, the analytics, the warehouse notification, happens whether or not the user is still staring at a loading spinner. By making the user wait for all of it, we have turned a 22ms operation into a 285ms one.
+
+This is the **critical path problem**: synchronous execution forces clients to wait for operations they do not care about. Asynchronous processing solves this by moving non-essential work off the critical path, returning control to the client immediately while background workers handle the rest.
+
+This chapter shows you when and how to apply async patterns for API optimization. We start with the "why": understanding what belongs on the critical path and what does not. Then we cover the "how": message queues, delivery guarantees, reliable publishing, and the patterns that make async systems production-ready. The goal is not async for its own sake, but faster APIs that scale gracefully under load.
 
 ## Key Concepts
 
+### The Critical Path Problem
+
+Every millisecond on the critical path is a millisecond the user waits. In synchronous APIs, every operation executes sequentially, and the total response time is the sum of all operations.
+
+![Critical Path Latency Breakdown](../assets/ch08-critical-path-breakdown.html)
+
+Consider what happens when a user places an order:
+
+| Operation | Latency | User Needs to Wait? |
+|-----------|---------|---------------------|
+| Validate order | 5ms | **Yes** — user needs validation errors |
+| Save to database | 15ms | **Yes** — user needs confirmation order exists |
+| Send confirmation email | 120ms | No — email arrives regardless |
+| Update analytics | 45ms | No — internal metrics |
+| Notify warehouse | 80ms | No — backend process |
+| Refresh inventory cache | 20ms | No — background optimization |
+| **Total** | **285ms** | **20ms essential, 265ms waste** |
+
+The user waits 285ms, but only 20ms of that is work they actually need completed before seeing a response. The remaining 265ms is **latency waste**: operations that block the response but provide no value to the waiting user.
+
+This pattern repeats across APIs:
+
+- **User registration**: Save user (essential) vs. send welcome email, create default settings, notify marketing (non-essential)
+- **File upload**: Store file reference (essential) vs. generate thumbnails, scan for viruses, extract metadata (non-essential)
+- **Payment processing**: Charge card, record transaction (essential) vs. send receipt, update reporting, trigger fulfillment (non-essential)
+
+The fix is architectural: identify what the user needs to know *right now*, do only that synchronously, and move everything else to background processing.
+
+![Synchronous vs Asynchronous Flow](../assets/ch08-sync-vs-async-flow.html)
+
+### What Belongs on the Critical Path?
+
+Not everything can be async. Some operations *must* complete before responding:
+
+**Must be synchronous:**
+
+- **Validation**: Users need to know immediately if their input is invalid. An async "your email was malformed" notification hours later destroys trust.
+- **Authorization**: If the user lacks permission, tell them now. Do not accept the request and fail later.
+- **Core state changes the user expects**: When placing an order, the order must exist before returning success. The user expects to see it in their order history immediately.
+- **Operations where failure changes the response**: If payment might fail, process it synchronously so you can return the error.
+
+**Can be asynchronous:**
+
+- **Notifications**: Email, SMS, push notifications. Users do not wait for delivery confirmation.
+- **Analytics and logging**: Internal observability should never slow user-facing requests.
+- **Downstream system updates**: Warehouse notifications, partner APIs, cache invalidation.
+- **Heavy computation**: Image processing, report generation, ML inference.
+- **Third-party integrations**: External APIs with unpredictable latency should not be on your critical path.
+
+**The decision framework:**
+
+1. **Does the user need the result in the response?** If yes, synchronous.
+2. **Does failure require a different response to the user?** If yes, synchronous.
+3. **Would a 5-second delay in processing be acceptable?** If yes, async candidate.
+4. **Is the operation idempotent or safely retriable?** If yes, better async candidate.
+
+When in doubt, ask: "If this operation took 10 seconds, would the user reasonably wait?" If not, it should not block the response.
+
+### The Latency Impact
+
+Moving work off the critical path directly improves your latency percentiles:
+
+- **p50 (median)**: Drops by the sum of removed operations
+- **p95/p99**: Improves dramatically because slow downstream services no longer contribute variance
+
+LinkedIn's engineering team documented moving notification processing from synchronous to asynchronous, reducing API response times by 150ms at p99 while maintaining delivery reliability through robust retry mechanisms [Source: LinkedIn Engineering Blog, 2019].
+
+The benefits compound:
+
+- **Reduced tail latency**: Slow third-party APIs no longer cause timeout cascades
+- **Improved throughput**: Threads are not blocked waiting for email servers
+- **Better resilience**: Downstream failures do not fail user requests
+- **Graceful degradation**: Under load, you can process background work slower without impacting user experience
+
 ### Synchronous vs Asynchronous Trade-offs
 
-The decision between synchronous and asynchronous processing depends on several factors: latency requirements, consistency needs, failure handling complexity, and user experience expectations.
+With the "why" established, let us examine the practical trade-offs.
 
-**Synchronous processing** provides immediate feedback. When a user submits an order, they know instantly whether it succeeded or failed. The response includes all relevant data. The implementation is straightforward: errors propagate naturally, transactions maintain consistency, and debugging follows a linear request path.
+**Synchronous processing** provides immediate feedback and simpler implementation. When a user submits an order, they know instantly whether it succeeded or failed. The response includes all relevant data. Errors propagate naturally, transactions maintain consistency, and debugging follows a linear request path.
 
-**Asynchronous processing** decouples the request from the work. The API accepts the request, validates it, enqueues the work, and returns immediately. This approach excels when:
+**Asynchronous processing** decouples the request from non-essential work. The API accepts the request, validates it, performs essential operations, enqueues background work, and returns immediately. This approach excels when:
 
 - The operation takes significant time (processing videos, generating reports, sending bulk notifications)
 - The client does not need the result immediately
@@ -28,8 +106,6 @@ The decision between synchronous and asynchronous processing depends on several 
 - Load spikes would otherwise overwhelm downstream systems
 
 The trade-off is complexity. Asynchronous systems require additional infrastructure (queues, workers), introduce eventual consistency, and complicate error handling. A failed background job cannot return an error to the original HTTP request, which has already completed. For a practical implementation of this pattern, including job enqueueing and reliable consumer processing (see Example 8.1).
-
-LinkedIn's engineering team documented their experience moving notification processing from synchronous to asynchronous paths, noting substantial reductions in API response times while maintaining delivery reliability through robust retry mechanisms [Source: LinkedIn Engineering Blog, 2019].
 
 ### Message Queue Fundamentals
 

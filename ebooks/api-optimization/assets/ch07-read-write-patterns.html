@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Read-Heavy vs Write-Heavy Patterns</title>
+    <title>Read/Write Optimization Patterns</title>
     <style>
         body {
             font-family: Liberation Sans, Arial, sans-serif;
@@ -30,152 +30,105 @@
 </head>
 <body>
     <div class="diagram-container">
-        <svg viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1000 650" xmlns="http://www.w3.org/2000/svg">
             <!-- Background -->
-            <rect width="900" height="400" fill="white"/>
+            <rect width="1000" height="650" fill="white"/>
 
             <!-- Title -->
-            <text x="450" y="30" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Read-Heavy vs Write-Heavy Optimization Patterns</text>
+            <text x="500" y="30" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Read/Write Optimization Patterns</text>
+            <text x="500" y="50" text-anchor="middle" style="font-size: 11px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Optimize for your dominant access pattern</text>
 
-            <!-- Divider -->
-            <line x1="450" y1="50" x2="450" y2="370" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="5,5"/>
-
-            <!-- LEFT SIDE: Read-Heavy -->
-            <rect x="50" y="55" width="350" height="30" fill="#3b82f6" rx="4"/>
-            <text x="225" y="75" text-anchor="middle" style="font-size: 14px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Read-Heavy Pattern (80%+ reads)</text>
-
-            <!-- Clients -->
-            <text x="80" y="115" text-anchor="middle" style="font-size: 11px; fill: #374151; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Clients</text>
-            <rect x="50" y="125" width="60" height="25" fill="#dbeafe" rx="4" stroke="#3b82f6" stroke-width="1"/>
-            <rect x="50" y="155" width="60" height="25" fill="#dbeafe" rx="4" stroke="#3b82f6" stroke-width="1"/>
-            <rect x="50" y="185" width="60" height="25" fill="#dbeafe" rx="4" stroke="#3b82f6" stroke-width="1"/>
-            <rect x="50" y="215" width="60" height="25" fill="#dbeafe" rx="4" stroke="#3b82f6" stroke-width="1"/>
-            <rect x="50" y="245" width="60" height="25" fill="#dbeafe" rx="4" stroke="#3b82f6" stroke-width="1"/>
-
-            <!-- Cache layer -->
-            <rect x="150" y="140" width="80" height="120" fill="#22c55e" rx="6"/>
-            <text x="190" y="175" text-anchor="middle" style="font-size: 11px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Cache</text>
-            <text x="190" y="195" text-anchor="middle" style="font-size: 9px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Redis</text>
-            <text x="190" y="210" text-anchor="middle" style="font-size: 9px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Memcached</text>
-            <text x="190" y="240" text-anchor="middle" style="font-size: 9px; fill: #dcfce7;" font-family="Liberation Sans, Arial, sans-serif">85% hit rate</text>
-
-            <!-- Arrows to cache (many) -->
-            <line x1="110" y1="137" x2="145" y2="160" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
-            <line x1="110" y1="167" x2="145" y2="175" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
-            <line x1="110" y1="197" x2="145" y2="195" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
-            <line x1="110" y1="227" x2="145" y2="215" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
-            <line x1="110" y1="257" x2="145" y2="240" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
-
-            <!-- Read replicas -->
-            <rect x="270" y="120" width="70" height="40" fill="#0ea5e9" rx="4"/>
-            <text x="305" y="145" text-anchor="middle" style="font-size: 9px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Replica 1</text>
-
-            <rect x="270" y="175" width="70" height="40" fill="#0ea5e9" rx="4"/>
-            <text x="305" y="200" text-anchor="middle" style="font-size: 9px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Replica 2</text>
-
-            <rect x="270" y="230" width="70" height="40" fill="#0ea5e9" rx="4"/>
-            <text x="305" y="255" text-anchor="middle" style="font-size: 9px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Replica 3</text>
-
-            <!-- Arrows from cache to replicas (fewer) -->
-            <line x1="230" y1="160" x2="265" y2="145" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
-            <line x1="230" y1="200" x2="265" y2="195" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
-            <line x1="230" y1="240" x2="265" y2="250" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
-
-            <!-- Primary -->
-            <rect x="360" y="170" width="70" height="50" fill="#1e40af" rx="4"/>
-            <text x="395" y="195" text-anchor="middle" style="font-size: 10px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Primary</text>
-            <text x="395" y="210" text-anchor="middle" style="font-size: 8px; fill: #93c5fd;" font-family="Liberation Sans, Arial, sans-serif">Writes only</text>
-
-            <!-- Replication arrows -->
-            <line x1="360" y1="185" x2="345" y2="160" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
-            <line x1="360" y1="195" x2="345" y2="195" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
-            <line x1="360" y1="205" x2="345" y2="250" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
-
-            <!-- Read-heavy annotations -->
-            <text x="225" y="295" text-anchor="middle" style="font-size: 10px; fill: #22c55e; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Most reads served from cache</text>
-            <text x="225" y="310" text-anchor="middle" style="font-size: 10px; fill: #0ea5e9; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Cache misses distributed across replicas</text>
-            <text x="225" y="325" text-anchor="middle" style="font-size: 10px; fill: #1e40af; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Primary handles only writes</text>
-
-            <!-- Use cases -->
-            <rect x="80" y="345" width="290" height="40" fill="#f1f5f9" rx="4"/>
-            <text x="225" y="365" text-anchor="middle" style="font-size: 10px; fill: #475569; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Use cases: Product catalogs, content delivery,</text>
-            <text x="225" y="378" text-anchor="middle" style="font-size: 10px; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">user profiles, configuration data</text>
-
-            <!-- RIGHT SIDE: Write-Heavy -->
-            <rect x="500" y="55" width="350" height="30" fill="#ef4444" rx="4"/>
-            <text x="675" y="75" text-anchor="middle" style="font-size: 14px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Write-Heavy Pattern (50%+ writes)</text>
-
-            <!-- Clients -->
-            <text x="530" y="115" text-anchor="middle" style="font-size: 11px; fill: #374151; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Clients</text>
-            <rect x="500" y="125" width="60" height="25" fill="#fee2e2" rx="4" stroke="#ef4444" stroke-width="1"/>
-            <rect x="500" y="155" width="60" height="25" fill="#fee2e2" rx="4" stroke="#ef4444" stroke-width="1"/>
-            <rect x="500" y="185" width="60" height="25" fill="#fee2e2" rx="4" stroke="#ef4444" stroke-width="1"/>
-            <rect x="500" y="215" width="60" height="25" fill="#fee2e2" rx="4" stroke="#ef4444" stroke-width="1"/>
-            <rect x="500" y="245" width="60" height="25" fill="#fee2e2" rx="4" stroke="#ef4444" stroke-width="1"/>
-
-            <!-- Router/Load balancer -->
-            <rect x="600" y="155" width="70" height="80" fill="#f59e0b" rx="6"/>
-            <text x="635" y="185" text-anchor="middle" style="font-size: 10px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Router</text>
-            <text x="635" y="200" text-anchor="middle" style="font-size: 9px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">Partition</text>
-            <text x="635" y="215" text-anchor="middle" style="font-size: 9px; fill: white;" font-family="Liberation Sans, Arial, sans-serif">key hash</text>
-
-            <!-- Arrows to router -->
-            <line x1="560" y1="137" x2="595" y2="165" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
-            <line x1="560" y1="167" x2="595" y2="175" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
-            <line x1="560" y1="197" x2="595" y2="195" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
-            <line x1="560" y1="227" x2="595" y2="215" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
-            <line x1="560" y1="257" x2="595" y2="225" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
-
-            <!-- Partitions/Shards -->
-            <rect x="710" y="110" width="70" height="45" fill="#dc2626" rx="4"/>
-            <text x="745" y="130" text-anchor="middle" style="font-size: 9px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Partition A</text>
-            <text x="745" y="145" text-anchor="middle" style="font-size: 8px; fill: #fca5a5;" font-family="Liberation Sans, Arial, sans-serif">keys 0-33%</text>
-
-            <rect x="710" y="165" width="70" height="45" fill="#dc2626" rx="4"/>
-            <text x="745" y="185" text-anchor="middle" style="font-size: 9px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Partition B</text>
-            <text x="745" y="200" text-anchor="middle" style="font-size: 8px; fill: #fca5a5;" font-family="Liberation Sans, Arial, sans-serif">keys 34-66%</text>
-
-            <rect x="710" y="220" width="70" height="45" fill="#dc2626" rx="4"/>
-            <text x="745" y="240" text-anchor="middle" style="font-size: 9px; fill: white; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Partition C</text>
-            <text x="745" y="255" text-anchor="middle" style="font-size: 8px; fill: #fca5a5;" font-family="Liberation Sans, Arial, sans-serif">keys 67-100%</text>
-
-            <!-- Arrows from router to partitions -->
-            <line x1="670" y1="170" x2="705" y2="135" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
-            <line x1="670" y1="195" x2="705" y2="187" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
-            <line x1="670" y1="220" x2="705" y2="242" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
-
-            <!-- Batch writes indicator -->
-            <rect x="795" y="165" width="55" height="45" fill="#fef3c7" rx="4" stroke="#f59e0b" stroke-width="1"/>
-            <text x="822" y="185" text-anchor="middle" style="font-size: 8px; fill: #92400e; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Batch</text>
-            <text x="822" y="198" text-anchor="middle" style="font-size: 8px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">writes</text>
-
-            <line x1="780" y1="187" x2="792" y2="187" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowAmber)"/>
-
-            <!-- Write-heavy annotations -->
-            <text x="675" y="295" text-anchor="middle" style="font-size: 10px; fill: #f59e0b; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Writes routed by partition key</text>
-            <text x="675" y="310" text-anchor="middle" style="font-size: 10px; fill: #dc2626; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Each partition handles subset of keys</text>
-            <text x="675" y="325" text-anchor="middle" style="font-size: 10px; fill: #92400e; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Batch writes reduce per-operation overhead</text>
-
-            <!-- Use cases -->
-            <rect x="530" y="345" width="290" height="40" fill="#f1f5f9" rx="4"/>
-            <text x="675" y="365" text-anchor="middle" style="font-size: 10px; fill: #475569; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Use cases: IoT telemetry, activity streams,</text>
-            <text x="675" y="378" text-anchor="middle" style="font-size: 10px; fill: #475569;" font-family="Liberation Sans, Arial, sans-serif">analytics events, logging, metrics</text>
-
-            <!-- Arrow markers -->
+            <!-- Spectrum bar -->
             <defs>
-                <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
-                    <path d="M0,0 L0,6 L9,3 z" fill="#3b82f6"/>
-                </marker>
-                <marker id="arrowGray" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
-                    <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
-                </marker>
-                <marker id="arrowRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
-                    <path d="M0,0 L0,6 L9,3 z" fill="#ef4444"/>
-                </marker>
-                <marker id="arrowAmber" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
-                    <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"/>
-                </marker>
+                <linearGradient id="spectrumGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#3b82f6"/>
+                    <stop offset="50%" style="stop-color:#8b5cf6"/>
+                    <stop offset="100%" style="stop-color:#ef4444"/>
+                </linearGradient>
             </defs>
+            <rect x="100" y="70" width="800" height="20" rx="10" fill="url(#spectrumGrad)"/>
+            <text x="100" y="105" text-anchor="start" style="font-size: 11px; fill: #3b82f6; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Read-Heavy (90%+ reads)</text>
+            <text x="500" y="105" text-anchor="middle" style="font-size: 11px; fill: #8b5cf6; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Balanced</text>
+            <text x="900" y="105" text-anchor="end" style="font-size: 11px; fill: #ef4444; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Write-Heavy (50%+ writes)</text>
+
+            <!-- READ-HEAVY SECTION -->
+            <rect x="40" y="130" width="450" height="480" fill="#dbeafe" rx="8" stroke="#3b82f6" stroke-width="2"/>
+            <rect x="40" y="130" width="450" height="35" fill="#3b82f6" rx="8"/>
+            <rect x="40" y="155" width="450" height="10" fill="#3b82f6"/>
+            <text x="265" y="154" text-anchor="middle" style="font-size: 14px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Read-Heavy Patterns</text>
+
+            <!-- Pattern 1: Caching Layers -->
+            <rect x="55" y="180" width="420" height="90" fill="white" rx="6" stroke="#93c5fd" stroke-width="1"/>
+            <text x="70" y="200" style="font-size: 12px; fill: #1e3a8a; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Multi-Layer Caching</text>
+            <text x="70" y="218" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• L1: In-process cache (HashMap, Caffeine) — microseconds</text>
+            <text x="70" y="233" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• L2: Distributed cache (Redis, Memcached) — sub-millisecond</text>
+            <text x="70" y="248" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• L3: CDN edge cache — varies by geography</text>
+            <text x="70" y="263" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Trade-off: Cache invalidation complexity, memory costs</text>
+
+            <!-- Pattern 2: Read Replicas -->
+            <rect x="55" y="280" width="420" height="90" fill="white" rx="6" stroke="#93c5fd" stroke-width="1"/>
+            <text x="70" y="300" style="font-size: 12px; fill: #1e3a8a; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Read Replicas</text>
+            <text x="70" y="318" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Route read queries to replica instances</text>
+            <text x="70" y="333" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Scale read capacity horizontally</text>
+            <text x="70" y="348" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Geographic distribution for latency reduction</text>
+            <text x="70" y="363" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Trade-off: Replication lag, read-after-write consistency</text>
+
+            <!-- Pattern 3: Materialized Views -->
+            <rect x="55" y="380" width="420" height="90" fill="white" rx="6" stroke="#93c5fd" stroke-width="1"/>
+            <text x="70" y="400" style="font-size: 12px; fill: #1e3a8a; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Materialized Views / Precomputation</text>
+            <text x="70" y="418" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Pre-join and pre-aggregate expensive queries</text>
+            <text x="70" y="433" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Store query results as first-class data</text>
+            <text x="70" y="448" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Refresh on schedule or on source change</text>
+            <text x="70" y="463" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Trade-off: Storage costs, staleness, refresh overhead</text>
+
+            <!-- Pattern 4: Denormalization -->
+            <rect x="55" y="480" width="420" height="90" fill="white" rx="6" stroke="#93c5fd" stroke-width="1"/>
+            <text x="70" y="500" style="font-size: 12px; fill: #1e3a8a; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Strategic Denormalization</text>
+            <text x="70" y="518" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Embed related data to eliminate JOINs</text>
+            <text x="70" y="533" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Duplicate data across access patterns</text>
+            <text x="70" y="548" style="font-size: 10px; fill: #1e3a8a;" font-family="Liberation Sans, Arial, sans-serif">• Optimize for read path, accept write complexity</text>
+            <text x="70" y="563" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Trade-off: Data duplication, update anomalies</text>
+
+            <!-- WRITE-HEAVY SECTION -->
+            <rect x="510" y="130" width="450" height="480" fill="#fee2e2" rx="8" stroke="#ef4444" stroke-width="2"/>
+            <rect x="510" y="130" width="450" height="35" fill="#ef4444" rx="8"/>
+            <rect x="510" y="155" width="450" height="10" fill="#ef4444"/>
+            <text x="735" y="154" text-anchor="middle" style="font-size: 14px; fill: white; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Write-Heavy Patterns</text>
+
+            <!-- Pattern 1: Sharding -->
+            <rect x="525" y="180" width="420" height="90" fill="white" rx="6" stroke="#fca5a5" stroke-width="1"/>
+            <text x="540" y="200" style="font-size: 12px; fill: #991b1b; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Horizontal Partitioning (Sharding)</text>
+            <text x="540" y="218" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Distribute writes across multiple nodes</text>
+            <text x="540" y="233" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Partition by tenant, geography, or hash</text>
+            <text x="540" y="248" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Each shard handles fraction of total load</text>
+            <text x="540" y="263" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Trade-off: Cross-shard queries, rebalancing complexity</text>
+
+            <!-- Pattern 2: Batching -->
+            <rect x="525" y="280" width="420" height="90" fill="white" rx="6" stroke="#fca5a5" stroke-width="1"/>
+            <text x="540" y="300" style="font-size: 12px; fill: #991b1b; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Write Batching / Buffering</text>
+            <text x="540" y="318" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Collect writes in memory, flush periodically</text>
+            <text x="540" y="333" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Bulk inserts instead of individual writes</text>
+            <text x="540" y="348" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Reduce round-trips and transaction overhead</text>
+            <text x="540" y="363" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Trade-off: Data loss risk on crash, increased latency</text>
+
+            <!-- Pattern 3: Append-Only -->
+            <rect x="525" y="380" width="420" height="90" fill="white" rx="6" stroke="#fca5a5" stroke-width="1"/>
+            <text x="540" y="400" style="font-size: 12px; fill: #991b1b; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Append-Only / Log-Structured Storage</text>
+            <text x="540" y="418" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Sequential writes only (no random I/O)</text>
+            <text x="540" y="433" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• LSM trees: write to memory, compact to disk</text>
+            <text x="540" y="448" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Immutable records with soft deletes</text>
+            <text x="540" y="463" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Trade-off: Read amplification, compaction overhead</text>
+
+            <!-- Pattern 4: Async Writes -->
+            <rect x="525" y="480" width="420" height="90" fill="white" rx="6" stroke="#fca5a5" stroke-width="1"/>
+            <text x="540" y="500" style="font-size: 12px; fill: #991b1b; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Asynchronous / Queue-Based Writes</text>
+            <text x="540" y="518" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Accept write to queue, process asynchronously</text>
+            <text x="540" y="533" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Decouple ingestion rate from storage rate</text>
+            <text x="540" y="548" style="font-size: 10px; fill: #991b1b;" font-family="Liberation Sans, Arial, sans-serif">• Handle bursts without backpressure to clients</text>
+            <text x="540" y="563" style="font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Trade-off: Eventual persistence, queue durability</text>
+
+            <!-- Footer -->
+            <text x="500" y="630" text-anchor="middle" style="font-size: 11px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Measure your actual read/write ratio before optimizing — assumptions often differ from reality</text>
         </svg>
     </div>
 </body>

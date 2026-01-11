@@ -30,7 +30,7 @@ A well-designed load test follows a three-phase pattern:
 
 1. **Ramp-up phase**: Gradually increase load from zero to target over 5-15 minutes. This reveals how the system behaves as traffic builds and allows caches to warm, connection pools to fill, and JIT compilation to complete.
 
-2. **Steady-state phase**: Maintain target load for a sustained period, typically 15-60 minutes. This is where we collect the metrics that matter: response time distributions, throughput, error rates, and resource utilization.
+2. **Steady-state phase**: Maintain target load for a sustained period, typically 15-60 minutes. This is where we collect the metrics that matter: latency distributions, throughput, error rates, and resource utilization.
 
 3. **Ramp-down phase**: Gradually decrease load back to zero over 2-5 minutes. This reveals whether the system recovers gracefully or exhibits lingering issues like connection leaks or memory that is not released.
 
@@ -65,7 +65,7 @@ During the test, we verify that p95 latency stays under 200ms (our SLO), error r
 
 Stress testing pushes the system beyond expected limits to find breaking points. The question it answers is: "At what load does the system degrade unacceptably, and how does it fail?" Understanding failure modes is critical for capacity planning and resilience engineering [Source: Abstracta, 2025].
 
-Unlike load testing, stress testing deliberately exceeds normal capacity. We increase load continuously until response times become unacceptable, error rates spike, or the system becomes unresponsive. The value is not in proving the system fails (all systems fail eventually) but in understanding how it fails and at what threshold.
+Unlike load testing, stress testing deliberately exceeds normal capacity. We increase load continuously until latencies become unacceptable, error rates spike, or the system becomes unresponsive. The value is not in proving the system fails (all systems fail eventually) but in understanding how it fails and at what threshold.
 
 **Failure Mode Categories**
 
@@ -624,7 +624,7 @@ Typically exclude the first 10-30 seconds of measurements.
 
 #### Baseline Comparisons
 
-Benchmarks gain meaning through comparison. Absolute numbers (200ms response time) are less informative than relative changes (20% improvement from baseline).
+Benchmarks gain meaning through comparison. Absolute numbers (200ms latency) are less informative than relative changes (20% improvement from baseline).
 
 **Establishing Baselines**
 
