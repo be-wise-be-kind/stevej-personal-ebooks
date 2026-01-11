@@ -84,7 +84,7 @@ PostgreSQL uses `shared_buffers` as its primary data cache. When a query request
 
 The default shared_buffers value of 128 MB is intentionally conservative. For dedicated database servers, PostgreSQL documentation recommends setting shared_buffers to approximately 25% of total system memory. A server with 64 GB RAM might use 16 GB for shared_buffers [Source: PostgreSQL Documentation, 2024].
 
-Monitor your buffer cache hit ratio to determine if shared_buffers is sized appropriately. A hit ratio below 90% suggests either shared_buffers is too small or your working set exceeds available memory. Aim for hit ratios above 99% for frequently accessed tables (see Example 6.5).
+Monitor your buffer cache hit ratio to determine if shared_buffers is sized appropriately. A hit ratio below 90% suggests either shared_buffers is too small or your working set exceeds available memory. Aim for hit ratios above 99% for frequently accessed tables.
 
 **MySQL InnoDB Buffer Pool**
 
@@ -147,7 +147,7 @@ The flow works as follows:
    - If unchanged: return `304 Not Modified` with no body (saves bandwidth)
    - If changed: return `200 OK` with new data and new ETag
 
-For API responses, generate ETags from a hash of the response body or from version timestamps. The key is consistency: the same data must always produce the same ETag (see Example 6.6).
+For API responses, generate ETags from a hash of the response body or from version timestamps. The key is consistency: the same data must always produce the same ETag.
 
 **stale-while-revalidate: The Hidden Performance Gem**
 
@@ -175,7 +175,7 @@ Application-layer caching operates within your service code, providing fine-grai
 
 Request-scoped caching stores computed values for the duration of a single request. This is particularly valuable when the same data is needed multiple times during request processing. For example, checking user permissions in multiple middleware layers. Using context variables, you can create a per-request cache dictionary that automatically discards when the request completes.
 
-Request-scoped caching is safe because the cache is automatically discarded when the request completes. There is no risk of serving stale data to other users (see Example 6.7).
+Request-scoped caching is safe because the cache is automatically discarded when the request completes. There is no risk of serving stale data to other users.
 
 **Function Memoization**
 
@@ -215,7 +215,7 @@ The logic is straightforward: check cache first, and on a miss, fetch from the d
 
 The cache contents emerge organically from actual access patterns. Frequently requested data stays hot; rarely requested data either never enters the cache or expires without renewal. This self-organizing property makes cache-aside well-suited for workloads where the hot set is not known in advance or shifts over time.
 
-The trade-off is that every cache miss pays the full database round-trip cost, and the application bears responsibility for invalidation. When data changes in the database, the cache does not know. Stale data persists until TTL expiration or explicit invalidation (see Example 6.1).
+The trade-off is that every cache miss pays the full database round-trip cost, and the application bears responsibility for invalidation. When data changes in the database, the cache does not know. Stale data persists until TTL expiration or explicit invalidation.
 
 **Write-Through**
 
@@ -245,7 +245,7 @@ Redis Pub/Sub provides a lightweight solution. When data changes, publish an inv
 
 When data changes, the publisher broadcasts an invalidation message to a Redis channel. Each service instance subscribes to the channel and invalidates its local cache entry when a message arrives.
 
-Note that Pub/Sub is best-effort and non-persistent. If a service is restarted during a publish, it may miss the message. Combine Pub/Sub invalidation with TTL-based expiration as a fallback (see Example 6.8).
+Note that Pub/Sub is best-effort and non-persistent. If a service is restarted during a publish, it may miss the message. Combine Pub/Sub invalidation with TTL-based expiration as a fallback.
 
 **Redis 6+ Client-Side Caching**
 
@@ -351,7 +351,7 @@ This is not a theoretical concern. Cache stampedes have caused outages at compan
 
 The single-flight pattern ensures only one request regenerates a cache entry while others wait for its result. The first request to find an expired entry acquires a lock, fetches the data, and populates the cache. Concurrent requests that arrive during this window wait for the first request to complete rather than independently fetching the data.
 
-This pattern is implemented in Go's `golang.org/x/sync/singleflight` package and similar libraries in other languages (see Example 6.3).
+This pattern is implemented in Go's `golang.org/x/sync/singleflight` package and similar libraries in other languages.
 
 **Implementation considerations:**
 
@@ -371,7 +371,7 @@ With beta = 1 and a delta of 1 second (time to recompute), the probability of ea
 
 Adding randomized jitter to TTL values prevents synchronized expiration across cache entries. Instead of all entries expiring at exactly 300 seconds, they expire between 270 and 330 seconds. A typical implementation adds or subtracts a random percentage (e.g., ±10%) from the base TTL.
 
-This technique is particularly effective when populating caches in bulk (such as during startup or cache warming) to prevent all entries from expiring simultaneously (see Example 6.2).
+This technique is particularly effective when populating caches in bulk (such as during startup or cache warming) to prevent all entries from expiring simultaneously.
 
 **stale-while-revalidate**
 
@@ -393,7 +393,7 @@ Beyond the fundamental patterns, several advanced techniques address specific ca
 
 Negative caching stores the absence of data. When a query returns no results (a 404 or empty set), cache that fact to prevent repeated database queries for nonexistent data. The implementation stores a sentinel value (like "NOT_FOUND") in the cache for missing entries, with a shorter TTL than positive results.
 
-Use shorter TTLs for negative results. If data is created later, you do not want to cache "not found" for hours (see Example 6.10).
+Use shorter TTLs for negative results. If data is created later, you do not want to cache "not found" for hours.
 
 **Request Coalescing**
 
@@ -418,7 +418,7 @@ The pattern:
 3. **L1 TTL**: Keep short (seconds to minutes) to limit stale data exposure
 4. **L2 TTL**: Can be longer since invalidation is explicit
 
-The read path cascades through cache tiers: check the in-process cache first (fastest), then the distributed cache like Redis, and finally the database if both miss. On write, invalidate the distributed cache and broadcast the invalidation to all instances for their local caches (see Example 6.9 for a complete Rust implementation).
+The read path cascades through cache tiers: check the in-process cache first (fastest), then the distributed cache like Redis, and finally the database if both miss. On write, invalidate the distributed cache and broadcast the invalidation to all instances for their local caches.
 
 **Proxy Caching**
 
@@ -450,7 +450,7 @@ Regardless of which caching pattern or invalidation strategy we choose, measurin
 
 **Database Cache Monitoring**
 
-Monitor your database buffer cache hit ratio. For PostgreSQL, query `pg_stat_database` for overall hit ratios and `pg_statio_user_tables` for per-table hit ratios to identify hot tables (see Example 6.5).
+Monitor your database buffer cache hit ratio. For PostgreSQL, query `pg_stat_database` for overall hit ratios and `pg_statio_user_tables` for per-table hit ratios to identify hot tables.
 
 **Redis Cache Monitoring**
 
@@ -472,7 +472,7 @@ CDN providers expose cache metrics through dashboards and APIs:
 - **Geographic hit distribution**: Cache performance by edge location
 - **Bandwidth savings**: Data transferred from cache vs origin
 
-Cloudflare's `cf-cache-status` header in responses indicates cache behavior: `HIT`, `MISS`, `EXPIRED`, `BYPASS`, `DYNAMIC`. Log and aggregate these values to understand caching effectiveness (see Example 6.4).
+Cloudflare's `cf-cache-status` header in responses indicates cache behavior: `HIT`, `MISS`, `EXPIRED`, `BYPASS`, `DYNAMIC`. Log and aggregate these values to understand caching effectiveness.
 
 **Alerting on Cache Degradation**
 
@@ -556,8 +556,6 @@ Set alerts for cache performance degradation:
 11. **Fitzpatrick, B.** (2004). "Distributed Caching with Memcached." Linux Journal.
 
 12. **Veeraraghavan, K., et al.** (2016). "Kraken: Leveraging Live Traffic Tests to Identify and Resolve Resource Utilization Bottlenecks in Large Scale Web Services." OSDI 2016.
-
-For implementation examples related to these concepts, see the [Appendix: Code Examples](./15-appendix-code-examples.md).
 
 ## Next: [Chapter 7: Database and Storage Selection](./07-database-patterns.md)
 

@@ -143,7 +143,7 @@ Regardless of which database type you choose, understanding your read/write rati
 
 For read-heavy workloads, we reduce database load by caching (covered in Chapter 6) and distributing reads across replicas. Most relational and document databases support read replicas: a primary handles all writes, which then replicate to one or more read replicas. Read queries route to replicas, distributing the load.
 
-A database router directs write operations to the primary and distributes reads across available replicas. The router can use random selection or round-robin to balance load, falling back to primary if no replicas are available (see Example 7.7).
+A database router directs write operations to the primary and distributes reads across available replicas. The router can use random selection or round-robin to balance load, falling back to primary if no replicas are available.
 
 Replication introduces eventual consistency. After a write to the primary, there is a delay before the data appears on replicas (typically milliseconds, but potentially seconds under heavy load) [Source: PostgreSQL Documentation, "Streaming Replication"]. For read-after-write consistency (a user creating a post and immediately viewing it), either route that specific read to the primary, or track recent writes per session and route accordingly.
 
@@ -159,7 +159,7 @@ Regardless of read/write ratio, connection pooling matters for any database. Ope
 
 The HikariCP documentation provides a useful formula for OLTP workloads: pool size equals core count times two, plus effective spindle count [Source: HikariCP Wiki, "About Pool Sizing"]. For modern SSDs, treat spindle count as 1. A 4-core server might use a pool of 9-10 connections. However, optimal sizing depends on query patterns and should be determined through measurement.
 
-Connection pool configuration follows similar patterns across languages and databases: set minimum and maximum counts, configure idle timeouts, and establish query timeouts. See Example 7.11 for configuration patterns.
+Connection pool configuration follows similar patterns across languages and databases: set minimum and maximum counts, configure idle timeouts, and establish query timeouts.
 
 ### Durability and Consistency Tradeoffs
 
@@ -191,7 +191,7 @@ Not all data requires immediate durability. Analytics events, telemetry, and act
 
 The simplest pattern uses an in-memory buffer with periodic flushing. Events accumulate in memory and flush to durable storage every N seconds or when the buffer reaches M items. If the process crashes between flushes, buffered events are lost. Redis with `appendfsync everysec` (flush every second) provides a middle ground between pure memory and synchronous durability [Source: Redis Documentation, "Persistence"].
 
-For higher guarantees without synchronous writes, use an asynchronous queue. The API writes to a local queue or memory-mapped buffer, and a separate process drains the queue to durable storage. This decouples API latency from storage latency while providing durability if the drain process runs continuously (see Example 7.5).
+For higher guarantees without synchronous writes, use an asynchronous queue. The API writes to a local queue or memory-mapped buffer, and a separate process drains the queue to durable storage. This decouples API latency from storage latency while providing durability if the drain process runs continuously.
 
 **Trade-offs:**
 
@@ -217,7 +217,7 @@ Time-series databases (InfluxDB, TimescaleDB, QuestDB) are designed for append-h
 
 Append-only tables in relational databases work for moderate scale. Create tables with no UPDATE or DELETE triggers, and enforce INSERT-only access at the application layer. PostgreSQL's append-only table storage option provides additional guarantees.
 
-Object storage with immutability (S3 Object Lock, GCS retention policies) provides WORM guarantees at the storage layer. Write complete log segments as immutable objects. This pattern scales to arbitrary volumes at low cost but limits real-time query capabilities (see Example 7.6).
+Object storage with immutability (S3 Object Lock, GCS retention policies) provides WORM guarantees at the storage layer. Write complete log segments as immutable objects. This pattern scales to arbitrary volumes at low cost but limits real-time query capabilities.
 
 **Trade-offs:**
 
@@ -251,7 +251,7 @@ Hybrid options add vector search to existing databases. PostgreSQL with pgvector
 
 Vector databases require embeddings, which require embedding models. You need an ML pipeline to convert text/images/audio to vectors before storage and at query time. This adds complexity and latency.
 
-Index building for vector similarity involves trade-offs between recall (finding the true nearest neighbors), query speed, and memory usage. HNSW indexes are fast but memory-intensive. IVF indexes are more compact but may miss some results. Understand your recall requirements (see Example 7.8).
+Index building for vector similarity involves trade-offs between recall (finding the true nearest neighbors), query speed, and memory usage. HNSW indexes are fast but memory-intensive. IVF indexes are more compact but may miss some results. Understand your recall requirements.
 
 Vector similarity is one piece of retrieval. Hybrid approaches that combine vector similarity with keyword matching often outperform either alone [Source: Karpukhin et al., "Dense Passage Retrieval for Open-Domain Question Answering"].
 
@@ -273,7 +273,7 @@ Search databases (Elasticsearch, OpenSearch, Typesense, Meilisearch) are optimiz
 
 **Product landscape:**
 
-Elasticsearch remains the dominant option, with OpenSearch as the open-source fork after licensing changes. Both handle large-scale deployments and complex query DSLs. Typesense and Meilisearch offer simpler APIs and faster indexing for smaller-scale use cases, with less operational complexity (see Example 7.9).
+Elasticsearch remains the dominant option, with OpenSearch as the open-source fork after licensing changes. Both handle large-scale deployments and complex query DSLs. Typesense and Meilisearch offer simpler APIs and faster indexing for smaller-scale use cases, with less operational complexity.
 
 **Trade-offs:**
 
@@ -301,7 +301,7 @@ Real-world systems often use multiple database types together. An e-commerce API
 
 **Source of truth:** Designate one database as authoritative for each piece of data. Other databases hold derived views. When data diverges (and it will), the source of truth wins.
 
-**Synchronization patterns:** Data flows from the source of truth to secondary databases. This can be synchronous (within the same transaction, which adds latency and coupling), asynchronous via change data capture (CDC) or event streams (adds eventual consistency), or periodic batch jobs (adds latency, simpler implementation). See Example 7.10 for a coordination pattern.
+**Synchronization patterns:** Data flows from the source of truth to secondary databases. This can be synchronous (within the same transaction, which adds latency and coupling), asynchronous via change data capture (CDC) or event streams (adds eventual consistency), or periodic batch jobs (adds latency, simpler implementation).
 
 **Failure handling:** When a secondary database is unavailable, should writes fail, succeed with degraded functionality, or queue for retry? Design explicit failure modes rather than discovering them in production.
 
@@ -312,8 +312,6 @@ Operational complexity multiplies. Each database requires monitoring, backup, sc
 Consistency is harder. Data in Redis may be stale relative to PostgreSQL. Search results may not reflect recent writes. Document these consistency windows and design around them.
 
 Debugging spans systems. A bug might involve the interaction between PostgreSQL state, Redis cache, and Elasticsearch index. Observability needs to span all systems.
-
-For implementation examples related to these concepts, see the [Appendix: Code Examples](./15-appendix-code-examples.md).
 
 ## Common Pitfalls
 

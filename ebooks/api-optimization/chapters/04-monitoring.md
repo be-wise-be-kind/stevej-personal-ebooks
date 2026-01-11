@@ -78,7 +78,7 @@ Chapter 2 introduced throughput as requests per second (RPS), transactions per s
 
 Throughput is measured using **counters**, which are monotonically increasing values that track total requests. The monitoring system calculates rate (requests per second) by computing the delta over time windows.
 
-The standard approach uses labeled counters. Define a counter metric with labels for method, endpoint, and status code. In each request handler, increment the counter with the appropriate labels. See Example 4.3 for a complete implementation.
+The standard approach uses labeled counters. Define a counter metric with labels for method, endpoint, and status code. In each request handler, increment the counter with the appropriate labels.
 
 Key instrumentation decisions:
 
@@ -165,7 +165,7 @@ Connection pools (database, HTTP client, Redis) can become saturated when demand
 - **Pool wait count**: Number of requests currently waiting. Should be zero under normal operation.
 - **Acquire timeout errors**: Connection acquisition failures due to timeout indicate severe saturation.
 
-Most connection pool libraries expose these metrics. For HikariCP (Java), monitor pending threads (connections waiting to be acquired) and average acquire time. For application-level pools, instrument acquire operations with a histogram for timing and a gauge for waiting requests (see Example 4.4).
+Most connection pool libraries expose these metrics. For HikariCP (Java), monitor pending threads (connections waiting to be acquired) and average acquire time. For application-level pools, instrument acquire operations with a histogram for timing and a gauge for waiting requests.
 
 #### Disk I/O Saturation
 
@@ -350,7 +350,7 @@ Effective canary analysis requires:
 - **Multi-signal analysis**: Compare latency, error rate, and resource usage. A canary might have good latency but elevated memory usage.
 - **Automated rollback**: If canary metrics deviate beyond thresholds, automatically halt deployment
 
-Canary analysis compares the new version against the stable baseline using statistical testing to avoid false positives from random variation (see Example 4.1).
+Canary analysis compares the new version against the stable baseline using statistical testing to avoid false positives from random variation.
 
 **Performance Regression Detection**
 
@@ -372,9 +372,7 @@ Simple approaches include:
 - **Seasonal decomposition**: Account for daily and weekly patterns (traffic is lower on weekends, higher during business hours)
 - **Rate of change**: Alert on sudden changes in trend, not just absolute values
 
-A rolling statistics approach can detect values that deviate significantly from recent history by tracking mean and standard deviation over a sliding window (see Example 4.2).
-
-For implementation examples related to these concepts, see the [Appendix: Code Examples](./13-appendix-code-examples.md).
+A rolling statistics approach can detect values that deviate significantly from recent history by tracking mean and standard deviation over a sliding window.
 
 ## Common Pitfalls
 

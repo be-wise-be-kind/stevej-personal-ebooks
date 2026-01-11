@@ -248,8 +248,6 @@ Alerts should be actionable. Every alert that fires should require human interve
 
 Multi-window, multi-burn-rate alerts provide sophisticated SLO monitoring. Rather than alerting on instantaneous threshold violations, these alerts fire when error budget consumption rate threatens the SLO over the compliance period. Google's SRE Workbook provides detailed guidance on this approach [Source: Google SRE Workbook, 2018].
 
-For implementation examples related to these concepts, see the [Appendix: Code Examples](./13-appendix-code-examples.md).
-
 ### Case Study: Observability for an E-Commerce API
 
 Consider a typical e-commerce backend: an API Gateway routes requests to Product, Order, and User services. PostgreSQL stores persistent data, Redis caches frequent queries, and Kafka handles async operations like order processing and email notifications.

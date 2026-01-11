@@ -327,7 +327,7 @@ Locust is a Python-based load testing framework using an event-driven architectu
 
 Locust scales horizontally by running a master process that coordinates worker processes. Workers can run on the same machine or distributed across many machines. The master aggregates statistics and provides a unified view through its web UI.
 
-This book uses Locust for code examples due to its Python accessibility and clear programming model. The principles demonstrated apply regardless of which tool you choose. See Examples 13.1-13.4 in the appendix for complete Locust implementations.
+This book uses Locust for code examples due to its Python accessibility and clear programming model. The principles demonstrated apply regardless of which tool you choose.
 
 #### wrk and wrk2
 
@@ -455,8 +455,6 @@ Think time should have variance to avoid synchronized request patterns:
 - Random range (good): `random(3, 8)` seconds creates realistic distribution
 - Statistical distribution (better): Normal or Poisson distribution matches real behavior
 
-See Example 13.1 for implementing realistic think time in Locust.
-
 #### Ramp-Up Patterns
 
 Ramp-up defines how load increases from zero to target levels. The pattern affects what the test reveals about system behavior.
@@ -492,8 +490,6 @@ Ramp to baseline, hold, then spike:
 
 - Tests normal operation before spike
 - Reveals whether baseline load affects spike handling
-
-See Example 13.2 for implementing staged load profiles with Locust's LoadTestShape.
 
 #### Realistic Scenarios
 
@@ -691,8 +687,6 @@ The challenge is defining thresholds that catch real regressions without blockin
 
 Start conservative and adjust based on experience. Track false positive rates and tune thresholds that frequently cause unwarranted failures.
 
-See Example 13.4 for implementing quality gates with Locust in a CI/CD pipeline.
-
 #### When to Run Performance Tests
 
 Performance tests vary in duration and resource requirements. Not every test belongs on every commit:
@@ -809,7 +803,7 @@ Locust's distributed mode uses a master-worker architecture. The master coordina
 
 **Kubernetes deployment:**
 
-Deploying Locust on Kubernetes enables elastic scaling. See Example 13.3 for complete Kubernetes manifests including:
+Deploying Locust on Kubernetes enables elastic scaling:
 - Master deployment (single replica)
 - Worker deployment (scaled based on target load)
 - ConfigMap for test scripts

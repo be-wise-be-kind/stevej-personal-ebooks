@@ -38,7 +38,7 @@ The critical metrics for authentication performance are:
 
 #### Instrumenting Auth Middleware
 
-Wrap your authentication middleware to capture timing. The key is measuring the auth portion separately from request handling. Record the start time before validation, measure elapsed time after, and emit metrics for both successful validations (as a histogram) and errors (as a counter with error type tags). This pattern captures validation time for every request, enabling dashboard visualization and alerting on regressions (see Example 11.1).
+Wrap your authentication middleware to capture timing. The key is measuring the auth portion separately from request handling. Record the start time before validation, measure elapsed time after, and emit metrics for both successful validations (as a histogram) and errors (as a counter with error type tags). This pattern captures validation time for every request, enabling dashboard visualization and alerting on regressions.
 
 ### Token Validation Performance
 
@@ -116,7 +116,7 @@ Keep sessions lean. Store references (user ID, cart ID) rather than full objects
 
 Session lookups happen on every request. Without connection pooling, each request opens a new connection to Redis or your session store, adding 1-5 ms of connection overhead.
 
-Apply the connection pooling principles from Chapter 5: maintain a pool of warm connections, size the pool based on concurrent request volume, and implement health checks to remove stale connections (see Example 11.2).
+Apply the connection pooling principles from Chapter 5: maintain a pool of warm connections, size the pool based on concurrent request volume, and implement health checks to remove stale connections.
 
 ### Token Caching Strategies
 
@@ -124,7 +124,7 @@ Token validation, whether local or remote, can be cached. The insight: the same 
 
 #### Cache Validation Results, Not Tokens
 
-Cache the output of validation (the user claims and validity status) keyed by a hash of the token. Never cache the raw token itself, as this creates a credential store that becomes an attack target. The caching pattern checks for a cached result first, records cache hit/miss metrics, validates on miss, and caches the result with a TTL shorter than token expiration. See Example 11.5 for a complete implementation.
+Cache the output of validation (the user claims and validity status) keyed by a hash of the token. Never cache the raw token itself, as this creates a credential store that becomes an attack target. The caching pattern checks for a cached result first, records cache hit/miss metrics, validates on miss, and caches the result with a TTL shorter than token expiration.
 
 <!-- DIAGRAM: Token cache-aside pattern: Request with token -> Hash token -> Check validation cache -> [hit: return cached user claims] or [miss: validate token, cache result with TTL, return claims] -->
 
@@ -224,7 +224,7 @@ Access tokens expire. The refresh strategy affects user experience:
 
 **Reactive refresh**: Wait for token expiration (or 401 response), then refresh. Users experience latency during refresh.
 
-**Proactive refresh**: Refresh tokens before expiration. Background refresh when tokens are within a threshold of expiring (e.g., 5 minutes before expiration) eliminates user-visible latency (see Example 11.3).
+**Proactive refresh**: Refresh tokens before expiration. Background refresh when tokens are within a threshold of expiring (e.g., 5 minutes before expiration) eliminates user-visible latency.
 
 Proactive refresh requires tracking token expiration and scheduling refresh. The complexity is justified for user-facing applications where perceived latency matters.
 
@@ -322,7 +322,6 @@ Authentication deserves dedicated dashboard space. Key panels include:
 
 **Identity Provider Latency**: If using OAuth/OIDC, track latency to identity providers separately. Degradation here affects all authentication.
 
-For a complete implementation of auth metrics middleware, see Example 11.4 in the [Appendix: Code Examples](./15-appendix-code-examples.md).
 
 ## Common Pitfalls
 

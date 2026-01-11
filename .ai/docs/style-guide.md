@@ -101,39 +101,58 @@ Use these terms consistently throughout the book. Do not use synonyms or alterna
 
 ---
 
-## 3. Code Example Standards
+## 3. Pseudocode Guidelines
 
-### Language Requirements
-**Each code example uses ONE language only.** Distribute languages across chapters for variety:
-- Python, Rust, and TypeScript should each appear roughly equally across the book
-- Choose the language that best fits the example (e.g., Rust for performance-critical code, Python for data processing)
+This book uses pseudocode rather than production code. AI coding assistants have commoditized implementation; this book focuses on conceptual understanding.
 
-### Placement: All Code in Appendix
+### When to Use Pseudocode
 
-**All code examples are placed in the Code Examples appendix.** There are no inline fenced code blocks in chapter text.
+Pseudocode is **optional and should be used sparingly**. Add it only when:
 
-- Reference examples by number in prose: "(see Example N.M in the Code Examples appendix)"
-- Use prose descriptions to explain concepts without embedded code
-- Keep chapters focused on concepts while the appendix provides implementation
+- The algorithm or decision flow genuinely benefits from visual representation
+- Prose alone would be significantly harder to understand
+- The logic has multiple branches or steps that are clearer in structured form
 
-Example of reference in text:
+**Do not add pseudocode:**
+- Just to have code on the page
+- For simple concepts that prose explains well
+- For configuration or commands (use inline backticks instead)
 
-> The cache-aside pattern checks the cache first, falling back to the database
-> on miss (see Example 5.1). The key insight is that the application—not the
-> cache—owns the invalidation logic.
+### Pseudocode Standards
 
-**Note:** Single inline commands may use backtick code spans (e.g., `redis-cli INFO`) but fenced code blocks are reserved for the Code Examples appendix.
+1. **Maximum length**: 5-10 lines ideal; never exceed one page
+2. **Frequency**: A few instances per chapter at most
+3. **Language-agnostic**: No language-specific syntax (`def`, `fn`, `function`, type annotations)
+4. **Plain English**: Use words like `for each`, `if`, `return`, `call`, `wait`
+5. **Focus on logic**: Show the algorithm or decision flow, not implementation details
+6. **Indent for structure**: Use consistent indentation to show nesting
 
-### Code Quality Standards
+### Example Pseudocode Style
 
-1. **Include comments on key lines**: Explain what non-obvious code does
-2. **Keep examples focused**: Even end-of-chapter examples should be 15-40 lines maximum
-3. **Use realistic variable names**: `connection_pool` not `cp`, `request_timeout` not `rt`
-4. **Show complete, runnable examples when possible**: Include imports and setup
-5. **Handle errors appropriately**: Show proper error handling, not just the happy path
-6. **Use modern idioms**: async/await, type hints (Python), proper typing (TypeScript)
-7. **Blank line before code blocks**: Always include a blank line before opening code fences (```) to ensure proper spacing in rendered output. Enforced by `just lint md`.
-8. **Space before inline code**: Always include a space before opening backticks for inline code. Write `the `Cache-Control` header` not `the`Cache-Control` header`. Exceptions: possessives (`Python's `lru_cache``), opening brackets/parentheses, markdown emphasis (`**`bold code`**`), and start of line. Enforced by `just lint md`.
+```
+on request:
+    if circuit is OPEN:
+        if enough time has passed:
+            try single request (HALF_OPEN)
+        else:
+            fail fast, return error
+
+    result = call downstream service
+    record success or failure
+
+    if failure rate exceeds threshold:
+        open circuit
+        schedule recovery attempt
+```
+
+### Inline Commands
+
+Single commands and configuration snippets use backtick code spans:
+- `redis-cli INFO` for CLI commands
+- `Cache-Control: max-age=3600` for headers
+- `pool_size = 20` for configuration values
+
+**Space before inline code**: Always include a space before opening backticks. Write `the `Cache-Control` header` not `the`Cache-Control` header`. Exceptions: possessives, opening brackets/parentheses, markdown emphasis, and start of line.
 
 ---
 
@@ -275,13 +294,11 @@ Every chapter must follow this structure:
 ### Section Guidelines
 
 - **Overview**: Set context. Why does this topic matter? What problem does it solve?
-- **Key Concepts**: The meat of the chapter. Use ### subsections liberally. Reference examples in the Code Examples appendix by number: "(see Example N.M)". No inline fenced code blocks.
+- **Key Concepts**: The meat of the chapter. Use ### subsections liberally. Include pseudocode sparingly where it aids understanding (see Section 3).
 - **Common Pitfalls**: Real mistakes developers make. Be specific and actionable.
 - **Summary**: Scannable recap. Readers often review just this section.
 - **References**: Complete, clickable where possible.
 - **Next**: Creates continuity between chapters.
-
-**Note on Code Examples**: All code examples are collected in the Code Examples appendix, not inline in chapters. This keeps chapters focused on concepts while providing complete, runnable implementations in one reference location.
 
 ---
 
@@ -289,11 +306,11 @@ Every chapter must follow this structure:
 
 Before submitting a chapter, verify:
 
-- [ ] All three languages (Python, Rust, TypeScript) are represented in code examples
 - [ ] All statistics and claims have citations
 - [ ] Terminology matches this style guide exactly
 - [ ] Chapter follows the required structure
 - [ ] Diagram placeholders are descriptive and specific
+- [ ] Pseudocode (if any) follows Section 3 guidelines: 5-10 lines, language-agnostic, sparingly used
 - [ ] Word count is within 3000-8000 words (narrative case study chapters like "Putting It All Together" may exceed this limit; complex/technical chapters may also require more space)
 - [ ] Common pitfalls section is included
 - [ ] References section is complete

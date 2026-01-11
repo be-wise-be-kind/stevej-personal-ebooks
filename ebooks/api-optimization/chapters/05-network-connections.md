@@ -127,8 +127,6 @@ WebSocket servers must manage potentially thousands of concurrent connections, e
 
 ![WebSocket Server Architecture](../assets/ch05-websocket-architecture.html)
 
-For implementation patterns, see Example 5.4 (WebSocket server with connection management) and Example 5.5 (heartbeat and reconnection handling).
-
 #### Backpressure and Flow Control
 
 When a client cannot consume messages as fast as the server produces them, messages accumulate in buffers. Without backpressure handling, memory grows unbounded until the server crashes or the client disconnects.
@@ -198,8 +196,6 @@ SSE connections hold HTTP connections open, so the same connection management pr
 For high-frequency updates, SSE's text-based format and HTTP framing add more overhead than WebSocket's binary frames. If you're sending hundreds of messages per second, WebSocket's efficiency advantage becomes measurable.
 
 SSE supports HTTP compression. For repetitive event data (JSON with similar structures), enabling gzip or Brotli compression on the response can significantly reduce bandwidth.
-
-See Example 5.6 for an SSE server implementation with event streaming.
 
 ### gRPC Optimization
 
@@ -294,7 +290,7 @@ gRPC is less suitable for:
 - **Caching**: gRPC responses are not cacheable by standard HTTP caching infrastructure
 - **Debugging**: Binary payloads require additional tooling to inspect
 
-For comprehensive gRPC code examples, see Example 5.7 (gRPC service with streaming) and Example 5.8 (gRPC client with channel reuse). Chapter 12 discusses gRPC in the context of advanced optimization techniques for high-performance systems.
+Chapter 12 discusses gRPC in the context of advanced optimization techniques for high-performance systems.
 
 ### Keep-Alive and Persistent Connections
 
@@ -318,17 +314,15 @@ Not all content benefits from compression. Already-compressed formats like JPEG,
 
 ### Implementing Connection Pooling
 
-Proper HTTP client configuration ensures connection reuse across requests. The key is creating the client once at application startup and sharing it across all requests, allowing the internal connection pool to maintain warm connections (see Example 5.1).
+Proper HTTP client configuration ensures connection reuse across requests. The key is creating the client once at application startup and sharing it across all requests, allowing the internal connection pool to maintain warm connections.
 
 ### Health Checking for Connection Pools
 
-Production connection pools need health checking to detect and remove stale connections. Connections can become invalid due to server restarts, network changes, or load balancer timeouts. A health-checked pool validates connections before returning them and runs periodic background checks (see Example 5.2).
+Production connection pools need health checking to detect and remove stale connections. Connections can become invalid due to server restarts, network changes, or load balancer timeouts. A health-checked pool validates connections before returning them and runs periodic background checks.
 
 ### Implementing Response Compression
 
-Server-side compression should be selective based on content type, response size, and client capabilities. The middleware pattern allows compression to be applied transparently across all responses while respecting client preferences indicated in the Accept-Encoding header (see Example 5.3).
-
-For implementation examples related to these concepts, see the [Appendix: Code Examples](./13-appendix-code-examples.md).
+Server-side compression should be selective based on content type, response size, and client capabilities. The middleware pattern allows compression to be applied transparently across all responses while respecting client preferences indicated in the Accept-Encoding header.
 
 ## Common Pitfalls
 

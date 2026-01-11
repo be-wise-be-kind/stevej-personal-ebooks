@@ -52,7 +52,7 @@ Rather than inventing a new metrics framework, this book adopts Google's "four g
 
 ![The Four Golden Signals Dashboard](../assets/ch02-golden-signals-dashboard.html)
 
-These four signals provide complementary views. High latency might indicate resource saturation. High error rates might indicate traffic beyond capacity. Monitoring all four together reveals problems that any single metric would miss. The remainder of this chapter explores each signal in depth. For a practical implementation of tracking these metrics, see Example 2.1.
+These four signals provide complementary views. High latency might indicate resource saturation. High error rates might indicate traffic beyond capacity. Monitoring all four together reveals problems that any single metric would miss. The remainder of this chapter explores each signal in depth.
 
 ### Latency: The First Golden Signal
 
@@ -139,7 +139,7 @@ For example, given latencies [10, 12, 15, 18, 22, 25, 30, 45, 100, 500] (10 valu
 - p90: position 8.1, interpolate between 100 and 500 = 140ms
 - p99: position 8.91, close to 500ms
 
-The dramatic difference between p50 (23.5ms) and p99 (near 500ms) reveals a tail that averages would obscure. The average of this dataset is 77.7ms, a number that represents neither typical nor worst-case experience. For an efficient way to track latency distributions in production without storing every value, see Example 2.2.
+The dramatic difference between p50 (23.5ms) and p99 (near 500ms) reveals a tail that averages would obscure. The average of this dataset is 77.7ms, a number that represents neither typical nor worst-case experience.
 
 ![Latency Distribution: Why Averages Lie](../assets/ch02-latency-distribution.html)
 
@@ -215,7 +215,7 @@ Apdex and percentiles complement each other:
 - **Apdex** provides a single score suitable for dashboards and executive reporting
 - **Percentiles** provide the detail needed for debugging and optimization
 
-An Apdex score of 0.85 tells you user satisfaction is "Good." Percentiles tell you why: perhaps p50 is excellent (50ms) but p99 is terrible (2000ms), dragging down the score. Use Apdex for monitoring trends, percentiles for diagnosis. For a complete implementation of Apdex score calculation, see Example 2.4.
+An Apdex score of 0.85 tells you user satisfaction is "Good." Percentiles tell you why: perhaps p50 is excellent (50ms) but p99 is terrible (2000ms), dragging down the score. Use Apdex for monitoring trends, percentiles for diagnosis.
 
 ### Traffic: The Second Golden Signal
 
@@ -467,7 +467,7 @@ Consider a benchmark targeting 100 RPS (one request every 10ms):
 
 The naive benchmark reports requests 2-5 as having 10ms latency. The correct benchmark recognizes they were delayed by the slow first request and includes that delay in their latency measurement.
 
-Correct benchmarks should maintain a consistent request rate regardless of response times. If the target rate is 100 RPS, the benchmark should send a request every 10ms whether the previous request completed or not. For a complete implementation of a load test harness that avoids coordinated omission, see Example 2.3.
+Correct benchmarks should maintain a consistent request rate regardless of response times. If the target rate is 100 RPS, the benchmark should send a request every 10ms whether the previous request completed or not.
 
 **Cold Cache Effects**: The first requests to a freshly started system will be slower than steady-state behavior. Caches are empty, JIT compilers have not optimized hot paths, and connection pools are not warmed. Benchmarks should include a warmup period and exclude warmup measurements from results.
 
@@ -478,8 +478,6 @@ Correct benchmarks should maintain a consistent request rate regardless of respo
 **Statistical Significance**: A single benchmark run proves nothing. Random variation in timing, background processes, and network conditions can dramatically affect results. Multiple runs with statistical analysis (standard deviation, confidence intervals) are necessary for valid conclusions.
 
 Chapter 3 covers observability and profiling tools in depth, including how to instrument systems for accurate measurement in production environments.
-
-For implementation examples related to these concepts, see the [Appendix: Code Examples](./13-appendix-code-examples.md).
 
 ## Common Pitfalls
 

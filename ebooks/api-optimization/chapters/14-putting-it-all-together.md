@@ -1087,6 +1087,6 @@ The Collab Docs team made mistakes along the way. Here are the lessons they lear
 
 10. **Google SRE Workbook** (2018). "Alerting on SLOs." https://sre.google/workbook/alerting-on-slos/
 
-## Next: [Appendix: Code Examples](./15-appendix-code-examples.md)
+## Next: [Appendix: Auth Fundamentals](./16-appendix-auth-fundamentals.md)
 
-The next chapter provides complete, runnable implementations of the patterns referenced throughout this book, including the permission caching and circuit breaker implementations used in the Collab Docs case study.
+The appendix provides foundational context on authentication and authorization concepts referenced throughout this book.

@@ -105,7 +105,7 @@ With the "why" established, let us examine the practical trade-offs.
 - The work can be retried independently of the original request
 - Load spikes would otherwise overwhelm downstream systems
 
-The trade-off is complexity. Asynchronous systems require additional infrastructure (queues, workers), introduce eventual consistency, and complicate error handling. A failed background job cannot return an error to the original HTTP request, which has already completed. For a practical implementation of this pattern, including job enqueueing and reliable consumer processing (see Example 8.1).
+The trade-off is complexity. Asynchronous systems require additional infrastructure (queues, workers), introduce eventual consistency, and complicate error handling. A failed background job cannot return an error to the original HTTP request, which has already completed.
 
 ### Message Queue Fundamentals
 
@@ -208,7 +208,6 @@ Because the outbox relay might publish a message more than once (crash after pub
 
 **Deduplication windows**: SQS FIFO queues deduplicate messages with the same deduplication ID within a 5-minute window. Kafka's idempotent producer prevents duplicates from producer retries.
 
-For a complete transactional outbox implementation (see Example 8.5). For an idempotent consumer with deduplication (see Example 8.6).
 
 ### Backpressure and Flow Control
 
@@ -234,7 +233,6 @@ Effective flow control requires visibility. Monitor these metrics:
 - Producer throttling events
 - Consumer processing rate
 
-For a complete implementation of rate-limited consumers with backpressure controls (see Example 8.2).
 
 ### Dead Letter Queues and Retry Strategies
 
@@ -247,7 +245,7 @@ Messages fail for various reasons: malformed data, transient downstream failures
 3. Add random jitter to prevent synchronized retry storms
 4. Cap the maximum delay and total retry count
 
-The jitter is essential. Without it, all failed messages retry simultaneously, potentially overwhelming a recovering downstream service (the "thundering herd" problem). A production-ready implementation of exponential backoff with jitter is shown in (see Example 8.3).
+The jitter is essential. Without it, all failed messages retry simultaneously, potentially overwhelming a recovering downstream service (the "thundering herd" problem).
 
 **Dead letter queues (DLQ)** capture messages that exceed retry limits. Rather than losing the message or blocking the queue, we move it to a separate queue for inspection. DLQs enable:
 
@@ -327,8 +325,6 @@ Avoid sagas for:
 - Simple two-service interactions (consider simpler patterns first)
 
 For frameworks that simplify saga implementation, see Temporal, Axon Saga, or Eventuate Tram [Source: Microsoft Azure Architecture Center, "Saga Pattern"].
-
-For a saga orchestrator implementation pattern (see Example 8.7).
 
 ### Schema Evolution and Versioning
 
@@ -488,10 +484,6 @@ Beyond simple task queuing, message systems enable event-driven architectures wh
 **CQRS (Command Query Responsibility Segregation)** separates read and write models. Commands modify state through the event log; queries read from optimized view models. This enables independent scaling and optimization of reads and writes.
 
 These patterns introduce complexity and eventual consistency. Use them when their benefits (audit trails, replay capability, independent scaling) outweigh the costs. Martin Fowler provides extensive guidance on when event sourcing and CQRS are appropriate [Source: Martin Fowler, "Event Sourcing," martinfowler.com].
-
-For a complete async API endpoint pattern with job status polling (see Example 8.4).
-
-For implementation examples related to these concepts, see the [Appendix: Code Examples](./15-appendix-code-examples.md).
 
 ## Common Pitfalls
 

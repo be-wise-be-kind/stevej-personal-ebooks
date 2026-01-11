@@ -149,11 +149,11 @@ These constraints enforce a specific design philosophy: edge workers should be t
 
 **Request Routing and A/B Testing**
 
-Route requests based on geography, device, user segment, or experiment assignment. An edge worker can hash the user ID to determine experiment variant and route to different origin servers accordingly. This runs at the edge, adding no latency to the request path while enabling experimentation infrastructure without origin changes (see Example 12.1).
+Route requests based on geography, device, user segment, or experiment assignment. An edge worker can hash the user ID to determine experiment variant and route to different origin servers accordingly. This runs at the edge, adding no latency to the request path while enabling experimentation infrastructure without origin changes.
 
 **Authentication Validation**
 
-Validate JWT tokens at the edge to reject unauthorized requests before they reach the origin. Split the token into its three parts (header, payload, signature), verify the signature using the Web Crypto API, and check claims. Public keys can be cached in KV store. This pattern eliminates origin load from invalid tokens and reduces latency for valid requests (see Example 12.2).
+Validate JWT tokens at the edge to reject unauthorized requests before they reach the origin. Split the token into its three parts (header, payload, signature), verify the signature using the Web Crypto API, and check claims. Public keys can be cached in KV store. This pattern eliminates origin load from invalid tokens and reduces latency for valid requests.
 
 **Response Transformation**
 
@@ -332,7 +332,7 @@ JWT tokens are self-contained and can be validated without origin contact:
 3. **Check claims**: Verify `exp`, `iat`, `iss`, `aud` claims
 4. **Forward or reject**: Pass validated claims to origin in headers; reject invalid tokens immediately
 
-The edge worker extracts the token from the Authorization header, validates it, and either rejects with 401 or forwards the request with validated claims (user ID, roles) in custom headers. This pattern eliminates cryptographic validation overhead at origin while enabling edge caching of responses by user ID (see Example 12.2).
+The edge worker extracts the token from the Authorization header, validates it, and either rejects with 401 or forwards the request with validated claims (user ID, roles) in custom headers. This pattern eliminates cryptographic validation overhead at origin while enabling edge caching of responses by user ID.
 
 #### Token Revocation at Edge
 
@@ -365,7 +365,7 @@ One of the most powerful edge optimization patterns is aggregating responses fro
 
 #### Multi-Origin Response Assembly
 
-The fundamental pattern uses `Promise.all` to fetch from multiple origins concurrently. An edge worker receives a client request, fans out to multiple backend services simultaneously, awaits all responses, and assembles the combined data before returning to the client. This approach transforms multiple sequential round trips into a single client request with parallel backend fetches (see Example 12.6).
+The fundamental pattern uses `Promise.all` to fetch from multiple origins concurrently. An edge worker receives a client request, fans out to multiple backend services simultaneously, awaits all responses, and assembles the combined data before returning to the client. This approach transforms multiple sequential round trips into a single client request with parallel backend fetches.
 
 The latency improvement is substantial. Consider a mobile client that needs user profile, recent orders, and recommendations. Without edge aggregation, three sequential API calls from Singapore to Virginia:
 
@@ -426,7 +426,7 @@ Edge infrastructure handles streaming and real-time connections, enabling low-la
 
 Server-Sent Events (SSE) provide a simple, HTTP-based mechanism for streaming data to clients. Edge workers can generate SSE streams, aggregating updates from multiple sources or transforming origin streams.
 
-The Streams API in edge workers enables memory-efficient streaming without buffering entire responses. Using `ReadableStream` and `TransformStream`, an edge worker can process multi-gigabyte payloads within its 128MB memory limit by processing chunks incrementally rather than loading everything into memory (see Example 12.7).
+The Streams API in edge workers enables memory-efficient streaming without buffering entire responses. Using `ReadableStream` and `TransformStream`, an edge worker can process multi-gigabyte payloads within its 128MB memory limit by processing chunks incrementally rather than loading everything into memory.
 
 SSE from edge is particularly effective for:
 - **AI response streaming**: Stream LLM outputs token-by-token, reducing perceived latency
@@ -502,7 +502,7 @@ Edge canary deployment offers sub-second rollback, critical when the alternative
 
 The October 2025 Azure Front Door outage resulted from a configuration change that propagated to 100% of traffic before monitoring detected the problem. Edge-based staged rollout with automated health gates would have limited the blast radius to the 1-5% canary cohort, triggering automatic rollback before wider impact [Source: Azure Post-Incident Analysis, 2025].
 
-Best practices for edge canary deployment (see Example 12.8):
+Best practices for edge canary deployment:
 - Start with 1-5% of traffic
 - Use sticky sessions to ensure consistent user experience by hashing the session ID rather than randomly selecting per-request, so users stay on their assigned deployment throughout a session
 - Set automated rollback triggers on anomalous metrics (e.g., canary error rate exceeding 2× stable error rate)
@@ -560,7 +560,7 @@ Best practices:
 - Preload only critical above-the-fold resources
 - Limit to 1-3 resources on mobile
 - Monitor actual performance impact through RUM data
-- Focus on resources blocking First Contentful Paint (see Example 12.9)
+- Focus on resources blocking First Contentful Paint
 
 #### Link Header Prefetching
 
@@ -664,7 +664,7 @@ Edge ML has meaningful constraints:
 - **Cold start**: First inference may be slower; subsequent inferences are faster
 - **Accuracy vs latency**: Smaller edge models may be less accurate than larger origin-hosted models
 
-The decision framework: use edge ML when latency matters more than maximum accuracy, when models are small enough to execute within constraints, and when the use case benefits from global distribution (see Example 12.10).
+The decision framework: use edge ML when latency matters more than maximum accuracy, when models are small enough to execute within constraints, and when the use case benefits from global distribution.
 
 #### Platform Capabilities
 
@@ -675,8 +675,6 @@ As of 2025, edge ML capabilities include:
 - **Fastly Compute@Edge**: Custom models via WebAssembly
 
 Workers AI provides the most integrated experience, with models accessible through a simple API call from edge workers. The 2025 updates include 2-4x inference speed improvements and batch processing for large workloads [Source: Cloudflare, 2025].
-
-For implementation examples related to these concepts, see the [Appendix: Code Examples](./15-appendix-code-examples.md).
 
 ## Common Pitfalls
 

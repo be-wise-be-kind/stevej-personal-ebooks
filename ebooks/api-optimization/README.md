@@ -26,9 +26,8 @@ A practical guide to API performance, from foundational concepts to advanced tec
 13. [Testing Performance](chapters/13-testing-performance.md)
 14. [Putting It All Together](chapters/14-putting-it-all-together.md)
 
-### Appendices
+### Appendix
 
-- [Appendix: Code Examples](chapters/15-appendix-code-examples.md)
 - [Appendix: Auth Fundamentals](chapters/16-appendix-auth-fundamentals.md)
 
 ## Prerequisites

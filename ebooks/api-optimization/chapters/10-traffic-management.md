@@ -30,7 +30,7 @@ The mechanism has two parameters. The *refill rate* controls sustained throughpu
 
 This two-parameter design is why token bucket works well for user-facing APIs. A mobile app that opens and makes 20 API calls in 2 seconds, then goes idle for a minute, behaves very differently from a script hammering the API at a steady 10 requests per second. Both average 0.33 RPS, but they feel completely different. Token bucket permits the bursty human pattern while throttling the steady automated pattern, which is usually the desired behavior.
 
-The predictability also helps. Clients can calculate their own limits: idle time accumulates tokens up to the capacity cap, activity drains them at one per request. This transparency reduces the "why am I being rate limited?" support burden compared to algorithms whose behavior is harder to reason about (see Example 10.1).
+The predictability also helps. Clients can calculate their own limits: idle time accumulates tokens up to the capacity cap, activity drains them at one per request. This transparency reduces the "why am I being rate limited?" support burden compared to algorithms whose behavior is harder to reason about.
 
 #### Leaky Bucket Algorithm
 
@@ -111,7 +111,7 @@ The three states represent a progression from trust to distrust and back:
 
 **Open** means the breaker has lost trust. Every request fails immediately with a predetermined error, typically within microseconds. No attempt is made to contact the downstream service. This instant failure sounds harsh, but it prevents threads from piling up waiting for timeouts from a service that cannot respond. After a cooling-off period (30-60 seconds is typical), the breaker cautiously tests whether trust can be restored.
 
-**Half-Open** is the probationary period. A small number of requests (often just one) are permitted through. Success transitions back to Closed; failure returns to Open with the timer reset. This graduated recovery prevents a stampede of pent-up requests from immediately overwhelming a service that has just recovered (see Example 10.2).
+**Half-Open** is the probationary period. A small number of requests (often just one) are permitted through. Success transitions back to Closed; failure returns to Open with the timer reset. This graduated recovery prevents a stampede of pent-up requests from immediately overwhelming a service that has just recovered.
 
 <!-- DIAGRAM: Circuit breaker state machine: Closed (normal) -[failures exceed threshold]-> Open (fail fast) -[timeout expires]-> Half-Open (test) -[success]-> Closed OR -[failure]-> Open, with annotations for each transition condition -->
 
@@ -266,7 +266,7 @@ The trade-off is resource efficiency: dedicated pools may sit idle while other p
 
 Semaphore bulkheads use counting semaphores to limit concurrent operations without dedicating threads. A semaphore limits how many requests to a dependency can be in flight simultaneously. When the limit is reached, new requests either wait (with timeout) or fail fast.
 
-Semaphore bulkheads are more memory-efficient than thread pools but do not provide the same isolation guarantees. They are suitable when the goal is limiting concurrency rather than complete resource isolation (see Example 10.4).
+Semaphore bulkheads are more memory-efficient than thread pools but do not provide the same isolation guarantees. They are suitable when the goal is limiting concurrency rather than complete resource isolation.
 
 <!-- DIAGRAM: Bulkhead pattern showing isolated resource pools: Service A pool (5 connections) at 80% capacity, Service B pool (10 connections) at 100% and blocking, Service C pool (3 connections) at 30% capacity. Annotation: "Service B exhaustion does not affect A or C" -->
 
@@ -345,7 +345,7 @@ Even with exponential backoff, if many clients start retrying at the same time, 
 
 Full jitter chooses a random delay between 0 and the calculated backoff: `delay = random(0, base_delay * 2^attempt)`. Equal jitter splits the difference: `delay = (base_delay * 2^attempt) / 2 + random(0, base_delay * 2^attempt / 2)`.
 
-AWS recommends full jitter for most use cases, as it provides the best distribution of retry attempts over time [Source: AWS Architecture Blog, "Exponential Backoff And Jitter"]. A complete implementation demonstrating configurable retry strategies with exponential backoff and jitter is provided in Example 10.3.
+AWS recommends full jitter for most use cases, as it provides the best distribution of retry attempts over time [Source: AWS Architecture Blog, "Exponential Backoff And Jitter"].
 
 #### Retry Budgets
 
@@ -377,8 +377,6 @@ To manage costs:
 - Use adaptive hedge delays based on observed latency percentiles
 - Implement request budgets that limit hedging under high load
 - Apply hedging selectively to latency-critical paths
-
-For implementation examples related to these concepts, see the [Appendix: Code Examples](./15-appendix-code-examples.md).
 
 ### Chaos Engineering
 

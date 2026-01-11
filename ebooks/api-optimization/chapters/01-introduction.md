@@ -59,6 +59,18 @@ This loop produces reliable, validated improvements. Skipping steps produces unr
 
 But being empirical doesn't mean being purely reactive. This book also teaches you to think systematically about performance - to recognize patterns, anticipate problems, and design systems that are observable from the start. Measurement without understanding is just data collection. Understanding without measurement is just speculation. We need both.
 
+## A Note on Code Examples
+
+You may notice this book contains pseudocode rather than production-ready implementations in specific languages. This is intentional.
+
+**AI has commoditized code generation.** When you understand a pattern conceptually, generating working code in your language of choice takes seconds with modern AI coding assistants. The bottleneck is no longer "how do I implement a circuit breaker in Go?" - it's "when should I use a circuit breaker, and how should I configure it?" This book focuses on the latter.
+
+**Real code ages poorly.** Library APIs change. Syntax evolves. Best practices shift. The OpenTelemetry Python SDK examples that were current when this was written will look dated within a year or two. Pseudocode that expresses the algorithm clearly remains useful indefinitely.
+
+**Pseudocode is language-agnostic.** Whether you work in Python, TypeScript, Rust, Go, Java, or something else entirely, pseudocode serves you equally. You translate the logic to your language and idioms rather than porting from mine.
+
+When pseudocode appears in this book, it's there because the algorithm or decision flow genuinely benefits from visual representation - not as an implementation to copy, but as a thinking tool. For production code, describe the pattern to your AI assistant, and it will generate something appropriate for your stack.
+
 ## Who This Book Is For
 
 This book is written for software professionals who build, maintain, and operate APIs:
@@ -76,8 +88,6 @@ This book is written for software professionals who build, maintain, and operate
 ### Prerequisites
 
 You should have experience building APIs in at least one programming language. Familiarity with HTTP, databases, and basic distributed systems concepts is assumed. You don't need prior performance engineering experience - we start from first principles and build up systematically.
-
-Code examples appear in Python, Rust, and TypeScript throughout the book. These languages were chosen to demonstrate patterns across different paradigms (interpreted vs. compiled, dynamic vs. static typing, synchronous vs. asynchronous). The concepts transfer to any language you work in.
 
 ### What If You're New to APIs?
 
