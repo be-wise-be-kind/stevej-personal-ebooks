@@ -464,8 +464,9 @@ release version="":
     git tag -a "$VERSION" -m "Release $VERSION"
     git push origin "$VERSION"
 
-    # Create GitHub release
+    # Create GitHub release (unset GITHUB_TOKEN to use gh's own auth)
     echo "Creating GitHub release..."
+    unset GITHUB_TOKEN
     gh release create "$VERSION" $ARTIFACTS \
         --title "Release $VERSION" \
         --generate-notes
