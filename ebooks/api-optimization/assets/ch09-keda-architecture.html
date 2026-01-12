@@ -80,17 +80,17 @@
                 <!-- Kafka -->
                 <rect x="15" y="45" width="120" height="50" rx="6" fill="url(#eventSourceGradient)" filter="url(#dropShadow)"/>
                 <text x="75" y="70" text-anchor="middle" font-size="11" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Kafka</text>
-                <text x="75" y="85" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Consumer Lag: 1,250</text>
+                <text x="75" y="85" text-anchor="middle" font-size="10" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Consumer Lag: 1,250</text>
 
                 <!-- SQS -->
                 <rect x="15" y="110" width="120" height="50" rx="6" fill="url(#eventSourceGradient)" filter="url(#dropShadow)"/>
                 <text x="75" y="135" text-anchor="middle" font-size="11" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">AWS SQS</text>
-                <text x="75" y="150" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Messages: 500</text>
+                <text x="75" y="150" text-anchor="middle" font-size="10" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Messages: 500</text>
 
                 <!-- Prometheus -->
                 <rect x="15" y="175" width="120" height="50" rx="6" fill="url(#eventSourceGradient)" filter="url(#dropShadow)"/>
                 <text x="75" y="200" text-anchor="middle" font-size="11" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Prometheus</text>
-                <text x="75" y="215" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Custom Query</text>
+                <text x="75" y="215" text-anchor="middle" font-size="10" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Custom Query</text>
 
                 <!-- More sources indicator -->
                 <text x="75" y="250" text-anchor="middle" font-size="10" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">+ 65 more scalers</text>
@@ -98,7 +98,7 @@
 
             <!-- Arrows from Event Sources to KEDA -->
             <path d="M 180 240 L 230 240" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowOrange)"/>
-            <text x="205" y="230" text-anchor="middle" font-size="9" fill="#d97706" font-family="Liberation Sans, Arial, sans-serif">Poll metrics</text>
+            <text x="205" y="230" text-anchor="middle" font-size="10" fill="#d97706" font-family="Liberation Sans, Arial, sans-serif">Poll metrics</text>
 
             <!-- KEDA Components (Center) -->
             <g transform="translate(240, 70)">
@@ -108,19 +108,19 @@
                 <!-- Scaler -->
                 <rect x="20" y="50" width="160" height="70" rx="6" fill="url(#kedaGradient)" filter="url(#dropShadow)"/>
                 <text x="100" y="78" text-anchor="middle" font-size="11" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Scalers</text>
-                <text x="100" y="98" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Connect to event sources</text>
-                <text x="100" y="112" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Read external metrics</text>
+                <text x="100" y="98" text-anchor="middle" font-size="10" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Connect to event sources</text>
+                <text x="100" y="112" text-anchor="middle" font-size="10" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Read external metrics</text>
 
                 <!-- Metrics Adapter -->
                 <rect x="20" y="135" width="160" height="70" rx="6" fill="url(#kedaGradient)" filter="url(#dropShadow)"/>
                 <text x="100" y="163" text-anchor="middle" font-size="11" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Metrics Adapter</text>
-                <text x="100" y="183" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Exposes metrics to HPA</text>
-                <text x="100" y="197" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">as custom.metrics.k8s.io</text>
+                <text x="100" y="183" text-anchor="middle" font-size="10" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Exposes metrics to HPA</text>
+                <text x="100" y="197" text-anchor="middle" font-size="10" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">as custom.metrics.k8s.io</text>
 
                 <!-- Admission Webhooks -->
                 <rect x="20" y="220" width="160" height="55" rx="6" fill="url(#kedaGradient)" filter="url(#dropShadow)"/>
                 <text x="100" y="248" text-anchor="middle" font-size="11" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Admission Webhooks</text>
-                <text x="100" y="266" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Validates ScaledObjects</text>
+                <text x="100" y="266" text-anchor="middle" font-size="10" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Validates ScaledObjects</text>
 
                 <!-- ScaledObject CRD annotation -->
                 <rect x="20" y="290" width="160" height="40" rx="4" fill="#ede9fe" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,2"/>
@@ -129,7 +129,7 @@
 
             <!-- Arrow from KEDA to HPA -->
             <path d="M 440 240 L 490 240" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
-            <text x="465" y="232" text-anchor="middle" font-size="9" fill="#6d28d9" font-family="Liberation Sans, Arial, sans-serif">Ext. metrics</text>
+            <text x="465" y="232" text-anchor="middle" font-size="10" fill="#6d28d9" font-family="Liberation Sans, Arial, sans-serif">Ext. metrics</text>
 
             <!-- HPA (Center-Right) -->
             <g transform="translate(500, 160)">
@@ -142,13 +142,13 @@
 
                 <!-- Formula -->
                 <rect x="15" y="115" width="110" height="35" rx="4" fill="rgba(255,255,255,0.15)"/>
-                <text x="70" y="135" text-anchor="middle" font-size="9" fill="white" font-family="Liberation Sans, Arial, sans-serif">desired = ceil(</text>
-                <text x="70" y="147" text-anchor="middle" font-size="9" fill="white" font-family="Liberation Sans, Arial, sans-serif">current * ratio)</text>
+                <text x="70" y="135" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">desired = ceil(</text>
+                <text x="70" y="147" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">current * ratio)</text>
             </g>
 
             <!-- Arrow from HPA to Deployment -->
             <path d="M 640 240 L 690 240" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
-            <text x="665" y="230" text-anchor="middle" font-size="9" fill="#1d4ed8" font-family="Liberation Sans, Arial, sans-serif">Scale</text>
+            <text x="665" y="230" text-anchor="middle" font-size="10" fill="#1d4ed8" font-family="Liberation Sans, Arial, sans-serif">Scale</text>
 
             <!-- Deployment (Right side) -->
             <g transform="translate(700, 100)">
@@ -175,8 +175,8 @@
                 <!-- Scale to zero indicator -->
                 <rect x="15" y="205" width="140" height="60" rx="4" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1"/>
                 <text x="85" y="225" text-anchor="middle" font-size="10" font-weight="500" fill="#047857" font-family="Liberation Sans, Arial, sans-serif">Scale-to-Zero</text>
-                <text x="85" y="242" text-anchor="middle" font-size="9" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">When queue empty:</text>
-                <text x="85" y="256" text-anchor="middle" font-size="9" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">replicas = 0</text>
+                <text x="85" y="242" text-anchor="middle" font-size="10" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">When queue empty:</text>
+                <text x="85" y="256" text-anchor="middle" font-size="10" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">replicas = 0</text>
             </g>
 
             <!-- Key features annotation -->

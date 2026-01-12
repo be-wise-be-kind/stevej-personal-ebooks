@@ -83,11 +83,11 @@
             </defs>
 
             <!-- Title -->
-            <text x="475" y="32" text-anchor="middle" font-size="22" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Three Tiers of Edge Advantage</text>
-            <text x="475" y="55" text-anchor="middle" font-size="12" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Progressive benefits as you adopt edge infrastructure</text>
+            <text x="475" y="32" text-anchor="middle" font-size="22" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Edge Adoption: Baseline to Full</text>
+            <text x="475" y="55" text-anchor="middle" font-size="12" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Comparing no edge, partial edge, and edge-only architectures</text>
 
             <!-- ============================================ -->
-            <!-- TIER 1: DIY Traditional -->
+            <!-- BASELINE: No Edge -->
             <!-- ============================================ -->
             <g transform="translate(25, 80)">
                 <!-- Column background -->
@@ -96,25 +96,25 @@
                 <!-- Header -->
                 <rect x="0" y="0" width="280" height="50" rx="10" fill="url(#slowGrad)"/>
                 <rect x="0" y="25" width="280" height="25" fill="url(#slowGrad)"/>
-                <text x="140" y="32" text-anchor="middle" font-size="14" font-weight="600" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Tier 1: DIY Traditional</text>
+                <text x="140" y="32" text-anchor="middle" font-size="14" font-weight="600" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Baseline: No Edge</text>
 
                 <!-- Client -->
                 <rect x="100" y="70" width="80" height="50" rx="6" fill="url(#clientGrad)" filter="url(#shadow)"/>
                 <text x="140" y="95" text-anchor="middle" font-size="11" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Client</text>
-                <text x="140" y="108" text-anchor="middle" font-size="8" fill="#ffffff" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Los Angeles</text>
+                <text x="140" y="108" text-anchor="middle" font-size="10" fill="#ffffff" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Los Angeles</text>
 
                 <!-- Arrow down -->
                 <line x1="140" y1="125" x2="140" y2="175" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
-                <text x="170" y="155" font-size="9" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">80ms</text>
+                <text x="170" y="155" font-size="10" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">80ms</text>
 
                 <!-- Origin -->
                 <rect x="100" y="180" width="80" height="50" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
                 <text x="140" y="205" text-anchor="middle" font-size="11" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Origin</text>
-                <text x="140" y="218" text-anchor="middle" font-size="8" fill="#ffffff" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
+                <text x="140" y="218" text-anchor="middle" font-size="10" fill="#ffffff" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
 
                 <!-- Arrow up -->
                 <line x1="140" y1="235" x2="140" y2="280" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
-                <text x="170" y="262" font-size="9" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">80ms</text>
+                <text x="170" y="262" font-size="10" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">80ms</text>
 
                 <!-- Response indicator -->
                 <rect x="100" y="285" width="80" height="30" rx="4" fill="#fecaca" stroke="#ef4444"/>
@@ -122,10 +122,10 @@
 
                 <!-- Pain points -->
                 <text x="140" y="340" text-anchor="middle" font-size="10" font-weight="600" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">What you're missing:</text>
-                <text x="20" y="360" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• Cold TCP connections</text>
-                <text x="20" y="375" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• Suboptimal routing</text>
-                <text x="20" y="390" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• No connection pooling</text>
-                <text x="20" y="405" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• TLS handshake every time</text>
+                <text x="20" y="360" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• Cold TCP connections</text>
+                <text x="20" y="375" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• Suboptimal routing</text>
+                <text x="20" y="390" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• No connection pooling</text>
+                <text x="20" y="405" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• TLS handshake every time</text>
 
                 <!-- Latency badge -->
                 <rect x="85" y="420" width="110" height="28" rx="14" fill="url(#slowGrad)" filter="url(#shadow)"/>
@@ -133,7 +133,7 @@
             </g>
 
             <!-- ============================================ -->
-            <!-- TIER 2: Edge + Origin -->
+            <!-- PARTIAL EDGE: Edge + Origin -->
             <!-- ============================================ -->
             <g transform="translate(335, 80)">
                 <!-- Column background -->
@@ -142,25 +142,25 @@
                 <!-- Header -->
                 <rect x="0" y="0" width="280" height="50" rx="10" fill="url(#mediumGrad)"/>
                 <rect x="0" y="25" width="280" height="25" fill="url(#mediumGrad)"/>
-                <text x="140" y="32" text-anchor="middle" font-size="14" font-weight="600" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Tier 2: Edge + Origin</text>
+                <text x="140" y="32" text-anchor="middle" font-size="14" font-weight="600" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Partial: Edge + Origin</text>
 
                 <!-- Client -->
                 <rect x="100" y="70" width="80" height="50" rx="6" fill="url(#clientGrad)" filter="url(#shadow)"/>
                 <text x="140" y="95" text-anchor="middle" font-size="11" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Client</text>
-                <text x="140" y="108" text-anchor="middle" font-size="8" fill="#ffffff" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Los Angeles</text>
+                <text x="140" y="108" text-anchor="middle" font-size="10" fill="#ffffff" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Los Angeles</text>
 
                 <!-- Arrow to Edge -->
                 <line x1="140" y1="125" x2="140" y2="160" stroke="#f97316" stroke-width="2" marker-end="url(#arrowOrange)"/>
-                <text x="170" y="147" font-size="9" fill="#ea580c" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
+                <text x="170" y="147" font-size="10" fill="#ea580c" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
 
                 <!-- Edge Node -->
                 <rect x="100" y="165" width="80" height="50" rx="6" fill="url(#edgeGrad)" filter="url(#shadow)"/>
                 <text x="140" y="190" text-anchor="middle" font-size="11" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Edge</text>
-                <text x="140" y="203" text-anchor="middle" font-size="8" fill="#ffffff" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">San Francisco</text>
+                <text x="140" y="203" text-anchor="middle" font-size="10" fill="#ffffff" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">San Francisco</text>
 
                 <!-- Arrow to Origin (optimized) -->
                 <path d="M 140 220 L 140 250" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowBlue)"/>
-                <text x="170" y="240" font-size="9" fill="#2563eb" font-family="Liberation Sans, Arial, sans-serif">50ms*</text>
+                <text x="170" y="240" font-size="10" fill="#2563eb" font-family="Liberation Sans, Arial, sans-serif">50ms*</text>
 
                 <!-- Origin -->
                 <rect x="100" y="255" width="80" height="40" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
@@ -172,10 +172,10 @@
                 <!-- Vendor optimizations callout -->
                 <rect x="10" y="310" width="260" height="95" rx="6" fill="#fef3c7" stroke="#f59e0b"/>
                 <text x="140" y="328" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">*Vendor optimizations included:</text>
-                <text x="20" y="345" font-size="9" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">• Pre-warmed connection pools</text>
-                <text x="20" y="360" font-size="9" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">• HTTP/3 + QUIC by default</text>
-                <text x="20" y="375" font-size="9" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">• Anycast routing to nearest PoP</text>
-                <text x="20" y="390" font-size="9" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">• Optimized peering agreements</text>
+                <text x="20" y="345" font-size="10" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">• Pre-warmed connection pools</text>
+                <text x="20" y="360" font-size="10" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">• HTTP/3 + QUIC by default</text>
+                <text x="20" y="375" font-size="10" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">• Anycast routing to nearest PoP</text>
+                <text x="20" y="390" font-size="10" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">• Optimized peering agreements</text>
 
                 <!-- Latency badge -->
                 <rect x="85" y="420" width="110" height="28" rx="14" fill="url(#mediumGrad)" filter="url(#shadow)"/>
@@ -183,7 +183,7 @@
             </g>
 
             <!-- ============================================ -->
-            <!-- TIER 3: Edge-Only (No Origin) -->
+            <!-- FULL EDGE: Edge-Only (No Origin) -->
             <!-- ============================================ -->
             <g transform="translate(645, 80)">
                 <!-- Column background -->
@@ -192,63 +192,63 @@
                 <!-- Header -->
                 <rect x="0" y="0" width="280" height="50" rx="10" fill="url(#fastGrad)"/>
                 <rect x="0" y="25" width="280" height="25" fill="url(#fastGrad)"/>
-                <text x="140" y="32" text-anchor="middle" font-size="14" font-weight="600" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Tier 3: Edge-Only</text>
+                <text x="140" y="32" text-anchor="middle" font-size="14" font-weight="600" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Full: Edge-Only</text>
 
                 <!-- Client -->
                 <rect x="100" y="70" width="80" height="50" rx="6" fill="url(#clientGrad)" filter="url(#shadow)"/>
                 <text x="140" y="95" text-anchor="middle" font-size="11" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Client</text>
-                <text x="140" y="108" text-anchor="middle" font-size="8" fill="#ffffff" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Los Angeles</text>
+                <text x="140" y="108" text-anchor="middle" font-size="10" fill="#ffffff" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Los Angeles</text>
 
                 <!-- Arrow to Edge -->
                 <line x1="140" y1="125" x2="140" y2="160" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
-                <text x="170" y="147" font-size="9" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
+                <text x="170" y="147" font-size="10" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
 
                 <!-- Edge Node -->
                 <rect x="70" y="165" width="80" height="50" rx="6" fill="url(#edgeGrad)" filter="url(#shadow)"/>
                 <text x="110" y="190" text-anchor="middle" font-size="11" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">Edge</text>
-                <text x="110" y="203" text-anchor="middle" font-size="8" fill="#ffffff" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">San Francisco</text>
+                <text x="110" y="203" text-anchor="middle" font-size="10" fill="#ffffff" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">San Francisco</text>
 
                 <!-- CDN Cache (cyan) -->
                 <rect x="160" y="165" width="50" height="24" rx="4" fill="#06b6d4" filter="url(#shadow)"/>
-                <text x="185" y="181" text-anchor="middle" font-size="8" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">CDN</text>
+                <text x="185" y="181" text-anchor="middle" font-size="10" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">CDN</text>
 
                 <!-- KV/D1 Store (purple) -->
                 <rect x="160" y="193" width="50" height="24" rx="4" fill="url(#kvGrad)" filter="url(#shadow)"/>
-                <text x="185" y="209" text-anchor="middle" font-size="8" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">KV/D1</text>
+                <text x="185" y="209" text-anchor="middle" font-size="10" font-weight="500" fill="#ffffff" font-family="Liberation Sans, Arial, sans-serif">KV/D1</text>
 
                 <!-- Rules/Workers indicator -->
                 <rect x="215" y="165" width="55" height="52" rx="4" fill="#fbbf24" filter="url(#shadow)"/>
-                <text x="242" y="186" text-anchor="middle" font-size="8" font-weight="500" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">Rules</text>
-                <text x="242" y="198" text-anchor="middle" font-size="7" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">Workers</text>
-                <text x="242" y="210" text-anchor="middle" font-size="7" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">Auth</text>
+                <text x="242" y="186" text-anchor="middle" font-size="10" font-weight="500" fill="#78350f" font-family="Liberation Sans, Arial, sans-serif">Rules</text>
+                <text x="242" y="198" text-anchor="middle" font-size="10" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">Workers</text>
+                <text x="242" y="210" text-anchor="middle" font-size="10" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">Auth</text>
 
                 <!-- Sub-ms annotation -->
-                <text x="215" y="232" text-anchor="middle" font-size="8" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">&lt;1ms local</text>
+                <text x="215" y="232" text-anchor="middle" font-size="10" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">&lt;1ms local</text>
 
                 <!-- NO ORIGIN - crossed out -->
                 <g transform="translate(100, 250)" opacity="0.3">
                     <rect x="0" y="0" width="80" height="35" rx="6" fill="#94a3b8" stroke="#64748b" stroke-dasharray="4,2"/>
-                    <text x="40" y="22" text-anchor="middle" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Origin</text>
+                    <text x="40" y="22" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Origin</text>
                     <line x1="0" y1="0" x2="80" y2="35" stroke="#ef4444" stroke-width="2"/>
                     <line x1="80" y1="0" x2="0" y2="35" stroke="#ef4444" stroke-width="2"/>
                 </g>
 
                 <!-- Response back -->
                 <line x1="110" y1="220" x2="110" y2="245" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
-                <text x="80" y="237" font-size="9" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
+                <text x="80" y="237" font-size="10" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
 
                 <!-- Response indicator -->
                 <rect x="70" y="295" width="80" height="25" rx="4" fill="#bbf7d0" stroke="#22c55e"/>
-                <text x="110" y="312" text-anchor="middle" font-size="9" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Response</text>
+                <text x="110" y="312" text-anchor="middle" font-size="10" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Response</text>
 
                 <!-- Benefits - comprehensive list -->
                 <text x="140" y="340" text-anchor="middle" font-size="10" font-weight="600" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">No origin wait:</text>
-                <text x="15" y="356" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• CDN: Cache hits, static responses</text>
-                <text x="15" y="368" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• KV: Session, config, feature flags</text>
-                <text x="15" y="380" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• D1: User data, cached queries</text>
-                <text x="15" y="392" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• Rules: Auth, rate limits, transforms</text>
-                <text x="15" y="404" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• Queues: Accept fast, process later</text>
-                <text x="15" y="416" font-size="8" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• Durable Objects: Coordination</text>
+                <text x="15" y="356" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• CDN: Cache hits, static responses</text>
+                <text x="15" y="368" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• KV: Session, config, feature flags</text>
+                <text x="15" y="380" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• D1: User data, cached queries</text>
+                <text x="15" y="392" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• Rules: Auth, rate limits, transforms</text>
+                <text x="15" y="404" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• Queues: Accept fast, process later</text>
+                <text x="15" y="416" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">• Durable Objects: Coordination</text>
 
                 <!-- Latency badge -->
                 <rect x="85" y="422" width="110" height="28" rx="14" fill="url(#fastGrad)" filter="url(#shadow)"/>
@@ -277,8 +277,8 @@
                 <polygon points="820,35 850,35 835,50" fill="#10b981"/>
 
                 <!-- Labels -->
-                <text x="165" y="70" text-anchor="middle" font-size="10" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">Full latency penalty</text>
-                <text x="475" y="70" text-anchor="middle" font-size="10" fill="#d97706" font-family="Liberation Sans, Arial, sans-serif">~40% faster (optimized pipes)</text>
+                <text x="165" y="70" text-anchor="middle" font-size="10" fill="#dc2626" font-family="Liberation Sans, Arial, sans-serif">No edge (full penalty)</text>
+                <text x="475" y="70" text-anchor="middle" font-size="10" fill="#d97706" font-family="Liberation Sans, Arial, sans-serif">~40% faster (better pipes)</text>
                 <text x="785" y="70" text-anchor="middle" font-size="10" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">~80% faster (no origin)</text>
             </g>
 
@@ -286,7 +286,7 @@
             <g transform="translate(50, 615)">
                 <rect x="0" y="0" width="850" height="55" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
                 <text x="425" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#1e40af" font-family="Liberation Sans, Arial, sans-serif">The Full Picture</text>
-                <text x="425" y="42" text-anchor="middle" font-size="11" fill="#1e3a8a" font-family="Liberation Sans, Arial, sans-serif">Edge vendors provide infrastructure that would take years to build: optimized routing, connection management, and globally distributed data stores.</text>
+                <text x="425" y="42" text-anchor="middle" font-size="11" fill="#1e3a8a" font-family="Liberation Sans, Arial, sans-serif">Partial edge provides faster pipes (not shorter distance). For origin-required physics wins, deploy multi-region origins alongside edge.</text>
             </g>
 
         </svg>

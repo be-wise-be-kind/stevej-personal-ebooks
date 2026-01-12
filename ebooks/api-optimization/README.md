@@ -22,7 +22,7 @@ A practical guide to API performance, from foundational concepts to advanced tec
 9. [Compute & Scaling](chapters/09-compute-scaling.md)
 10. [Traffic Management & Resilience](chapters/10-traffic-management.md)
 11. [Authentication Performance](chapters/11-auth-performance.md)
-12. [Edge Infrastructure](chapters/12-edge-infrastructure.md)
+12. [Geographic Optimization](chapters/12-edge-infrastructure.md)
 13. [Testing Performance](chapters/13-testing-performance.md)
 14. [Putting It All Together](chapters/14-putting-it-all-together.md)
 

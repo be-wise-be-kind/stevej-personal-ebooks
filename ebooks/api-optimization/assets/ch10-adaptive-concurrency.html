@@ -84,7 +84,7 @@
                 <rect x="0" y="0" width="140" height="80" rx="6" fill="url(#requestGradient)" filter="url(#dropShadow)"/>
                 <text x="70" y="30" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Request</text>
                 <text x="70" y="50" text-anchor="middle" font-size="10" fill="#bfdbfe" font-family="Liberation Sans, Arial, sans-serif">Arrives</text>
-                <text x="70" y="68" text-anchor="middle" font-size="9" fill="#93c5fd" font-family="Liberation Sans, Arial, sans-serif">in_flight++</text>
+                <text x="70" y="68" text-anchor="middle" font-size="10" fill="#93c5fd" font-family="Liberation Sans, Arial, sans-serif">in_flight++</text>
             </g>
 
             <!-- Arrow to Check Limit -->
@@ -97,16 +97,16 @@
                 <line x1="15" y1="38" x2="145" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
                 <text x="80" y="56" text-anchor="middle" font-size="10" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">in_flight &lt; limit?</text>
                 <rect x="20" y="65" width="120" height="25" rx="3" fill="rgba(255,255,255,0.2)"/>
-                <text x="80" y="82" text-anchor="middle" font-size="9" fill="white" font-family="Liberation Sans, Arial, sans-serif">Current: 45 | Limit: 50</text>
+                <text x="80" y="82" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Current: 45 | Limit: 50</text>
             </g>
 
             <!-- Arrow to Process (Accept) -->
             <path d="M 390 120 L 450 120" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
-            <text x="420" y="108" text-anchor="middle" font-size="9" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Accept</text>
+            <text x="420" y="108" text-anchor="middle" font-size="10" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Accept</text>
 
             <!-- Arrow to Reject -->
             <path d="M 310 170 L 310 230" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
-            <text x="280" y="205" text-anchor="end" font-size="9" fill="#ef4444" font-family="Liberation Sans, Arial, sans-serif">Over limit</text>
+            <text x="280" y="205" text-anchor="end" font-size="10" fill="#ef4444" font-family="Liberation Sans, Arial, sans-serif">Over limit</text>
 
             <!-- Process Request -->
             <g transform="translate(460, 70)">
@@ -115,7 +115,7 @@
                 <line x1="15" y1="38" x2="145" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
                 <text x="80" y="56" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Execute operation</text>
                 <text x="80" y="74" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Measure latency</text>
-                <text x="80" y="90" text-anchor="middle" font-size="9" fill="#6ee7b7" font-family="Liberation Sans, Arial, sans-serif">sampleRTT = 45ms</text>
+                <text x="80" y="90" text-anchor="middle" font-size="10" fill="#6ee7b7" font-family="Liberation Sans, Arial, sans-serif">sampleRTT = 45ms</text>
             </g>
 
             <!-- Arrow to Measure -->
@@ -126,10 +126,10 @@
                 <rect x="0" y="0" width="180" height="100" rx="6" fill="url(#measureGradient)" filter="url(#dropShadow)"/>
                 <text x="90" y="28" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Calculate Gradient</text>
                 <line x1="15" y1="38" x2="165" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-                <text x="90" y="56" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">gradient = minRTT / sampleRTT</text>
-                <text x="90" y="72" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">gradient = 40ms / 45ms = 0.89</text>
+                <text x="90" y="56" text-anchor="middle" font-size="10" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">gradient = minRTT / sampleRTT</text>
+                <text x="90" y="72" text-anchor="middle" font-size="10" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">gradient = 40ms / 45ms = 0.89</text>
                 <rect x="25" y="80" width="130" height="15" rx="2" fill="rgba(255,255,255,0.2)"/>
-                <text x="90" y="91" text-anchor="middle" font-size="8" fill="white" font-family="Liberation Sans, Arial, sans-serif">Congestion detected</text>
+                <text x="90" y="91" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Congestion detected</text>
             </g>
 
             <!-- Reject Path -->
@@ -138,7 +138,7 @@
                 <text x="80" y="28" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Reject Request</text>
                 <line x1="15" y1="38" x2="145" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
                 <text x="80" y="56" text-anchor="middle" font-size="10" fill="#fecaca" font-family="Liberation Sans, Arial, sans-serif">HTTP 503</text>
-                <text x="80" y="72" text-anchor="middle" font-size="9" fill="#fca5a5" font-family="Liberation Sans, Arial, sans-serif">"Concurrency limit"</text>
+                <text x="80" y="72" text-anchor="middle" font-size="10" fill="#fca5a5" font-family="Liberation Sans, Arial, sans-serif">"Concurrency limit"</text>
             </g>
 
             <!-- Update Limit -->
@@ -146,10 +146,10 @@
                 <rect x="0" y="0" width="180" height="100" rx="6" fill="url(#limitGradient)" filter="url(#dropShadow)"/>
                 <text x="90" y="28" text-anchor="middle" font-size="12" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Update Limit</text>
                 <line x1="15" y1="38" x2="165" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-                <text x="90" y="56" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">newLimit = limit * gradient</text>
-                <text x="90" y="74" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">newLimit = 50 * 0.89 = 44.5</text>
+                <text x="90" y="56" text-anchor="middle" font-size="10" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">newLimit = limit * gradient</text>
+                <text x="90" y="74" text-anchor="middle" font-size="10" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">newLimit = 50 * 0.89 = 44.5</text>
                 <rect x="25" y="82" width="130" height="15" rx="2" fill="#dc2626"/>
-                <text x="90" y="93" text-anchor="middle" font-size="8" fill="white" font-family="Liberation Sans, Arial, sans-serif">Limit reduced: 50 -> 45</text>
+                <text x="90" y="93" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Limit reduced: 50 -> 45</text>
             </g>
 
             <!-- Arrow from Measure to Update -->
@@ -157,7 +157,7 @@
 
             <!-- Feedback loop arrow (to Check Limit for next request) -->
             <path d="M 680 340 L 680 355 L 200 355 Q 180 355 180 335 L 180 180 Q 180 165 195 165 L 220 165" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowPurple)"/>
-            <text x="440" y="372" text-anchor="middle" font-size="9" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">Next request uses updated limit</text>
+            <text x="440" y="372" text-anchor="middle" font-size="10" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">Next request uses updated limit</text>
 
             <!-- Legend -->
             <g transform="translate(30, 390)">
@@ -167,20 +167,20 @@
                 <!-- Healthy state -->
                 <rect x="30" y="40" width="240" height="65" rx="4" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1"/>
                 <text x="150" y="58" text-anchor="middle" font-size="10" font-weight="500" fill="#047857" font-family="Liberation Sans, Arial, sans-serif">Healthy (gradient ~ 1.0)</text>
-                <text x="150" y="75" text-anchor="middle" font-size="9" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">sampleRTT ≈ minRTT</text>
-                <text x="150" y="92" text-anchor="middle" font-size="9" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">Limit stays stable or increases</text>
+                <text x="150" y="75" text-anchor="middle" font-size="10" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">sampleRTT ≈ minRTT</text>
+                <text x="150" y="92" text-anchor="middle" font-size="10" fill="#059669" font-family="Liberation Sans, Arial, sans-serif">Limit stays stable or increases</text>
 
                 <!-- Congestion state -->
                 <rect x="300" y="40" width="240" height="65" rx="4" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
                 <text x="420" y="58" text-anchor="middle" font-size="10" font-weight="500" fill="#92400e" font-family="Liberation Sans, Arial, sans-serif">Congestion (gradient &lt; 1.0)</text>
-                <text x="420" y="75" text-anchor="middle" font-size="9" fill="#b45309" font-family="Liberation Sans, Arial, sans-serif">sampleRTT > minRTT</text>
-                <text x="420" y="92" text-anchor="middle" font-size="9" fill="#b45309" font-family="Liberation Sans, Arial, sans-serif">Limit reduced proportionally</text>
+                <text x="420" y="75" text-anchor="middle" font-size="10" fill="#b45309" font-family="Liberation Sans, Arial, sans-serif">sampleRTT > minRTT</text>
+                <text x="420" y="92" text-anchor="middle" font-size="10" fill="#b45309" font-family="Liberation Sans, Arial, sans-serif">Limit reduced proportionally</text>
 
                 <!-- Overload state -->
                 <rect x="570" y="40" width="240" height="65" rx="4" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
                 <text x="690" y="58" text-anchor="middle" font-size="10" font-weight="500" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Overload (in_flight >= limit)</text>
-                <text x="690" y="75" text-anchor="middle" font-size="9" fill="#b91c1c" font-family="Liberation Sans, Arial, sans-serif">New requests rejected</text>
-                <text x="690" y="92" text-anchor="middle" font-size="9" fill="#b91c1c" font-family="Liberation Sans, Arial, sans-serif">HTTP 503 returned</text>
+                <text x="690" y="75" text-anchor="middle" font-size="10" fill="#b91c1c" font-family="Liberation Sans, Arial, sans-serif">New requests rejected</text>
+                <text x="690" y="92" text-anchor="middle" font-size="10" fill="#b91c1c" font-family="Liberation Sans, Arial, sans-serif">HTTP 503 returned</text>
             </g>
         </svg>
     </div>

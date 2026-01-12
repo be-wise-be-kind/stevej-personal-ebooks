@@ -69,6 +69,9 @@
                 <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
                     <polygon points="0 0, 8 3, 0 6" fill="#f97316"/>
                 </marker>
+                <marker id="arrowGray" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/>
+                </marker>
             </defs>
 
             <!-- Title -->
@@ -84,53 +87,53 @@
             <g transform="translate(30, 90)">
                 <rect x="0" y="0" width="90" height="60" rx="8" fill="url(#clientGrad)" filter="url(#shadow)"/>
                 <text x="45" y="25" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Client</text>
-                <text x="45" y="42" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Singapore</text>
+                <text x="45" y="42" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Singapore</text>
             </g>
 
             <!-- Origins (Left - stacked vertically) -->
             <g transform="translate(300, 90)">
                 <rect x="0" y="0" width="100" height="50" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
                 <text x="50" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin 1</text>
-                <text x="50" y="38" text-anchor="middle" fill="#ffffff" font-size="8" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
+                <text x="50" y="38" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
             </g>
             <g transform="translate(300, 160)">
                 <rect x="0" y="0" width="100" height="50" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
                 <text x="50" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin 2</text>
-                <text x="50" y="38" text-anchor="middle" fill="#ffffff" font-size="8" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
+                <text x="50" y="38" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
             </g>
             <g transform="translate(300, 230)">
                 <rect x="0" y="0" width="100" height="50" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
                 <text x="50" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin 3</text>
-                <text x="50" y="38" text-anchor="middle" fill="#ffffff" font-size="8" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
+                <text x="50" y="38" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
             </g>
 
             <!-- Sequential arrows (Left) -->
             <!-- Request 1 -->
-            <path d="M 125 110 L 295 110" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowRed)"/>
-            <text x="210" y="103" text-anchor="middle" fill="#ef4444" font-size="9" font-family="Liberation Sans, Arial, sans-serif">80ms</text>
-            <path d="M 295 125 L 125 125" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+            <path d="M 125 105 L 295 105" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowRed)"/>
+            <text x="210" y="98" text-anchor="middle" fill="#ef4444" font-size="10" font-family="Liberation Sans, Arial, sans-serif">80ms</text>
+            <path d="M 295 130 L 125 130" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2" marker-end="url(#arrowGray)"/>
 
             <!-- Wait indicator 1 -->
-            <text x="75" y="145" text-anchor="middle" fill="#64748b" font-size="8" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">wait...</text>
+            <text x="75" y="145" text-anchor="middle" fill="#64748b" font-size="10" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">wait...</text>
 
             <!-- Request 2 -->
-            <path d="M 125 165 L 295 180" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowRed)"/>
-            <text x="210" y="165" text-anchor="middle" fill="#ef4444" font-size="9" font-family="Liberation Sans, Arial, sans-serif">80ms</text>
-            <path d="M 295 195 L 125 180" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+            <path d="M 125 160 L 295 175" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowRed)"/>
+            <text x="210" y="158" text-anchor="middle" fill="#ef4444" font-size="10" font-family="Liberation Sans, Arial, sans-serif">80ms</text>
+            <path d="M 295 200 L 125 185" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2" marker-end="url(#arrowGray)"/>
 
             <!-- Wait indicator 2 -->
-            <text x="75" y="205" text-anchor="middle" fill="#64748b" font-size="8" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">wait...</text>
+            <text x="75" y="205" text-anchor="middle" fill="#64748b" font-size="10" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">wait...</text>
 
             <!-- Request 3 -->
-            <path d="M 125 220 L 295 250" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowRed)"/>
-            <text x="210" y="228" text-anchor="middle" fill="#ef4444" font-size="9" font-family="Liberation Sans, Arial, sans-serif">80ms</text>
-            <path d="M 295 265 L 125 240" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+            <path d="M 125 215 L 295 245" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowRed)"/>
+            <text x="210" y="220" text-anchor="middle" fill="#ef4444" font-size="10" font-family="Liberation Sans, Arial, sans-serif">80ms</text>
+            <path d="M 295 270 L 125 250" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2" marker-end="url(#arrowGray)"/>
 
             <!-- Total time (Left) -->
             <rect x="50" y="300" width="180" height="70" rx="8" fill="url(#slowGrad)" filter="url(#shadow)"/>
             <text x="140" y="325" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Total: 282ms</text>
-            <text x="140" y="345" text-anchor="middle" fill="#ffffff" font-size="9" font-family="Liberation Sans, Arial, sans-serif">3 x RTT (240ms) + processing</text>
-            <text x="140" y="360" text-anchor="middle" fill="#ffffff" font-size="9" font-family="Liberation Sans, Arial, sans-serif">+ client assembly</text>
+            <text x="140" y="345" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">3 x RTT (240ms) + processing</text>
+            <text x="140" y="360" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">+ client assembly</text>
 
             <!-- RIGHT SIDE: Edge Aggregation -->
             <text x="675" y="60" text-anchor="middle" font-size="16" font-weight="600" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Edge Aggregation</text>
@@ -139,36 +142,36 @@
             <g transform="translate(480, 90)">
                 <rect x="0" y="0" width="90" height="60" rx="8" fill="url(#clientGrad)" filter="url(#shadow)"/>
                 <text x="45" y="25" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Client</text>
-                <text x="45" y="42" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Singapore</text>
+                <text x="45" y="42" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Singapore</text>
             </g>
 
             <!-- Edge Node (Right) -->
             <g transform="translate(600, 90)">
                 <rect x="0" y="0" width="100" height="60" rx="8" fill="url(#edgeGrad)" filter="url(#shadow)"/>
                 <text x="50" y="25" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Edge Node</text>
-                <text x="50" y="42" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Singapore</text>
+                <text x="50" y="42" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Singapore</text>
             </g>
 
             <!-- Origins (Right - horizontal) -->
             <g transform="translate(750, 90)">
                 <rect x="0" y="0" width="80" height="45" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
-                <text x="40" y="20" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin 1</text>
-                <text x="40" y="35" text-anchor="middle" fill="#ffffff" font-size="8" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
+                <text x="40" y="20" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin 1</text>
+                <text x="40" y="35" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
             </g>
             <g transform="translate(750, 145)">
                 <rect x="0" y="0" width="80" height="45" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
-                <text x="40" y="20" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin 2</text>
-                <text x="40" y="35" text-anchor="middle" fill="#ffffff" font-size="8" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
+                <text x="40" y="20" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin 2</text>
+                <text x="40" y="35" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
             </g>
             <g transform="translate(750, 200)">
                 <rect x="0" y="0" width="80" height="45" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
-                <text x="40" y="20" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin 3</text>
-                <text x="40" y="35" text-anchor="middle" fill="#ffffff" font-size="8" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
+                <text x="40" y="20" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin 3</text>
+                <text x="40" y="35" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Virginia</text>
             </g>
 
             <!-- Client to Edge arrow -->
             <path d="M 575 115 L 595 115" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
-            <text x="585" y="108" text-anchor="middle" fill="#10b981" font-size="9" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
+            <text x="585" y="108" text-anchor="middle" fill="#10b981" font-size="10" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
 
             <!-- Edge to Origins arrows (parallel) - forward requests -->
             <path d="M 705 105 L 745 105" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
@@ -176,26 +179,26 @@
             <path d="M 705 125 L 745 215" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
 
             <!-- Response arrows back - separate from forward arrows -->
-            <path d="M 745 125 L 710 140" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
-            <path d="M 745 180 L 710 150" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
-            <path d="M 745 235 L 710 160" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+            <path d="M 745 125 L 710 140" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2" marker-end="url(#arrowGray)"/>
+            <path d="M 745 180 L 710 150" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2" marker-end="url(#arrowGray)"/>
+            <path d="M 745 235 L 710 160" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="4,2" marker-end="url(#arrowGray)"/>
 
             <!-- Parallel indicator bracket and label -->
             <text x="728" y="265" fill="#3b82f6" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">parallel: 80ms</text>
 
             <!-- Edge assembly indicator -->
             <rect x="625" y="170" width="70" height="30" rx="4" fill="#fef3c7" stroke="#f59e0b"/>
-            <text x="660" y="190" text-anchor="middle" fill="#92400e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Assembly</text>
+            <text x="660" y="190" text-anchor="middle" fill="#92400e" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Assembly</text>
 
             <!-- Edge to Client return -->
             <path d="M 595 150 L 575 150" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
-            <text x="585" y="165" text-anchor="middle" fill="#10b981" font-size="9" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
+            <text x="585" y="165" text-anchor="middle" fill="#10b981" font-size="10" font-family="Liberation Sans, Arial, sans-serif">15ms</text>
 
             <!-- Total time (Right) -->
             <rect x="520" y="300" width="180" height="70" rx="8" fill="url(#fastGrad)" filter="url(#shadow)"/>
             <text x="610" y="325" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Total: 128ms</text>
-            <text x="610" y="345" text-anchor="middle" fill="#ffffff" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Edge RTT (30ms) + parallel origins</text>
-            <text x="610" y="360" text-anchor="middle" fill="#ffffff" font-size="9" font-family="Liberation Sans, Arial, sans-serif">(80ms) + edge assembly (18ms)</text>
+            <text x="610" y="345" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Edge RTT (30ms) + parallel origins</text>
+            <text x="610" y="360" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">(80ms) + edge assembly (18ms)</text>
 
             <!-- Bottom comparison -->
             <rect x="150" y="400" width="600" height="100" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
@@ -210,11 +213,11 @@
             <!-- Timeline visualization at bottom -->
             <text x="140" y="540" text-anchor="middle" font-size="10" fill="#ef4444" font-family="Liberation Sans, Arial, sans-serif">Sequential</text>
             <rect x="200" y="530" width="180" height="12" rx="3" fill="#fecaca"/>
-            <text x="290" y="555" text-anchor="middle" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">282ms</text>
+            <text x="290" y="555" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">282ms</text>
 
             <text x="520" y="540" text-anchor="middle" font-size="10" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Edge Aggregation</text>
             <rect x="590" y="530" width="82" height="12" rx="3" fill="#bbf7d0"/>
-            <text x="631" y="555" text-anchor="middle" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">128ms</text>
+            <text x="631" y="555" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">128ms</text>
 
         </svg>
     </div>

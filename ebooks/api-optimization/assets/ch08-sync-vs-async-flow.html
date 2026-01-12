@@ -64,8 +64,8 @@
             </defs>
 
             <!-- Section Labels -->
-            <text x="225" y="30" font-family="inherit" font-size="18" font-weight="600" fill="#1e293b" text-anchor="middle">Synchronous Flow</text>
-            <text x="675" y="30" font-family="inherit" font-size="18" font-weight="600" fill="#1e293b" text-anchor="middle">Asynchronous Flow</text>
+            <text x="225" y="30" font-family="inherit" font-size="18" font-weight="600" fill="#1e293b" text-anchor="middle" >Synchronous Flow</text>
+            <text x="675" y="30" font-family="inherit" font-size="18" font-weight="600" fill="#1e293b" text-anchor="middle" >Asynchronous Flow</text>
 
             <!-- Divider -->
             <line x1="450" y1="40" x2="450" y2="480" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="8,4"/>
@@ -73,15 +73,15 @@
             <!-- SYNCHRONOUS FLOW (Left Side) -->
             <!-- Client -->
             <rect x="50" y="70" width="100" height="50" rx="8" fill="url(#clientGrad)" filter="url(#shadow)"/>
-            <text x="100" y="100" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle">Client</text>
+            <text x="100" y="100" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle" >Client</text>
 
             <!-- API Server -->
             <rect x="175" y="70" width="100" height="50" rx="8" fill="url(#apiGrad)" filter="url(#shadow)"/>
-            <text x="225" y="100" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle">API Server</text>
+            <text x="225" y="100" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle" >API Server</text>
 
             <!-- Processing -->
             <rect x="300" y="70" width="100" height="50" rx="8" fill="url(#workerGrad)" filter="url(#shadow)"/>
-            <text x="350" y="100" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle">Processing</text>
+            <text x="350" y="100" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle" >Processing</text>
 
             <!-- Sync Timeline -->
             <line x1="100" y1="140" x2="100" y2="350" stroke="#3b82f6" stroke-width="2"/>
@@ -90,46 +90,46 @@
 
             <!-- Sync Request Flow -->
             <line x1="105" y1="160" x2="220" y2="160" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
-            <text x="162" y="152" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle">Request</text>
+            <text x="162" y="152" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle" >Request</text>
 
             <line x1="230" y1="180" x2="345" y2="180" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
-            <text x="287" y="172" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle">Process</text>
+            <text x="287" y="172" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle" >Process</text>
 
             <!-- Processing Block (showing wait time) -->
             <rect x="330" y="190" width="40" height="100" rx="4" fill="#8b5cf6" opacity="0.3"/>
-            <text x="350" y="245" font-family="inherit" font-size="10" fill="#7c3aed" text-anchor="middle">180ms</text>
+            <text x="350" y="245" font-family="inherit" font-size="10" fill="#7c3aed" text-anchor="middle" >180ms</text>
 
             <!-- Client Wait Block -->
             <rect x="80" y="160" width="40" height="160" rx="4" fill="#ef4444" opacity="0.2"/>
-            <text x="55" y="240" font-family="inherit" font-size="11" font-weight="500" fill="#dc2626" text-anchor="middle" transform="rotate(-90, 55, 240)">Waiting (200ms)</text>
+            <text x="55" y="240" font-family="inherit" font-size="11" font-weight="500" fill="#dc2626" text-anchor="middle" transform="rotate(-90, 55, 240)" >Waiting (200ms)</text>
 
             <!-- Sync Response -->
             <line x1="345" y1="300" x2="230" y2="300" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowGray)"/>
-            <text x="287" y="292" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle">Result</text>
+            <text x="287" y="292" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle" >Result</text>
 
             <line x1="220" y1="320" x2="105" y2="320" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGray)"/>
-            <text x="162" y="312" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle">Response</text>
+            <text x="162" y="312" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle" >Response</text>
 
             <!-- Sync Total Time -->
             <rect x="50" y="370" width="350" height="40" rx="6" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
-            <text x="225" y="395" font-family="inherit" font-size="13" font-weight="500" fill="#dc2626" text-anchor="middle">Total Client Wait: 200ms</text>
+            <text x="225" y="395" font-family="inherit" font-size="13" font-weight="500" fill="#dc2626" text-anchor="middle" >Total Client Wait: 200ms</text>
 
             <!-- ASYNCHRONOUS FLOW (Right Side) -->
             <!-- Client -->
             <rect x="500" y="70" width="100" height="50" rx="8" fill="url(#clientGrad)" filter="url(#shadow)"/>
-            <text x="550" y="100" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle">Client</text>
+            <text x="550" y="100" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle" >Client</text>
 
             <!-- API Server -->
             <rect x="625" y="70" width="100" height="50" rx="8" fill="url(#apiGrad)" filter="url(#shadow)"/>
-            <text x="675" y="100" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle">API Server</text>
+            <text x="675" y="100" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle" >API Server</text>
 
             <!-- Queue -->
             <rect x="750" y="70" width="100" height="50" rx="8" fill="url(#queueGrad)" filter="url(#shadow)"/>
-            <text x="800" y="100" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle">Queue</text>
+            <text x="800" y="100" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle" >Queue</text>
 
             <!-- Worker (below) -->
             <rect x="750" y="280" width="100" height="50" rx="8" fill="url(#workerGrad)" filter="url(#shadow)"/>
-            <text x="800" y="310" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle">Worker</text>
+            <text x="800" y="310" font-family="inherit" font-size="14" font-weight="500" fill="white" text-anchor="middle" >Worker</text>
 
             <!-- Async Timelines -->
             <line x1="550" y1="140" x2="550" y2="350" stroke="#3b82f6" stroke-width="2"/>
@@ -139,50 +139,50 @@
 
             <!-- Async Request Flow -->
             <line x1="555" y1="160" x2="670" y2="160" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
-            <text x="612" y="152" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle">Request</text>
+            <text x="612" y="152" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle" >Request</text>
 
             <!-- Enqueue -->
             <line x1="680" y1="175" x2="795" y2="175" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
-            <text x="737" y="167" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle">Enqueue</text>
+            <text x="737" y="167" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle" >Enqueue</text>
 
             <!-- Quick Response -->
             <line x1="670" y1="200" x2="555" y2="200" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGray)"/>
-            <text x="612" y="192" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle">202 Accepted</text>
+            <text x="612" y="192" font-family="inherit" font-size="11" fill="#475569" text-anchor="middle" >202 Accepted</text>
 
             <!-- Client Short Wait -->
             <rect x="530" y="160" width="40" height="45" rx="4" fill="#22c55e" opacity="0.2"/>
-            <text x="550" y="188" font-family="inherit" font-size="10" fill="#16a34a" text-anchor="middle">20ms</text>
+            <text x="550" y="188" font-family="inherit" font-size="10" fill="#16a34a" text-anchor="middle" >20ms</text>
 
             <!-- Client Free -->
             <rect x="525" y="215" width="50" height="90" rx="4" fill="#3b82f6" opacity="0.1" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,2"/>
-            <text x="550" y="255" font-family="inherit" font-size="11" font-weight="500" fill="#3b82f6" text-anchor="middle">Client</text>
-            <text x="550" y="270" font-family="inherit" font-size="11" font-weight="500" fill="#3b82f6" text-anchor="middle">Free</text>
+            <text x="550" y="255" font-family="inherit" font-size="11" font-weight="500" fill="#3b82f6" text-anchor="middle" >Client</text>
+            <text x="550" y="270" font-family="inherit" font-size="11" font-weight="500" fill="#3b82f6" text-anchor="middle" >Free</text>
 
             <!-- Background Processing Arrow -->
             <path d="M 800 230 L 800 275" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowGray)"/>
-            <text x="815" y="252" font-family="inherit" font-size="10" fill="#d97706">Dequeue</text>
+            <text x="815" y="252" font-family="inherit" font-size="10" fill="#d97706" >Dequeue</text>
 
             <!-- Worker Processing -->
             <rect x="780" y="350" width="40" height="80" rx="4" fill="#8b5cf6" opacity="0.3"/>
-            <text x="800" y="395" font-family="inherit" font-size="10" fill="#7c3aed" text-anchor="middle">180ms</text>
+            <text x="800" y="395" font-family="inherit" font-size="10" fill="#7c3aed" text-anchor="middle" >180ms</text>
 
             <!-- Async Total Time -->
             <rect x="500" y="370" width="200" height="40" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
-            <text x="600" y="395" font-family="inherit" font-size="13" font-weight="500" fill="#16a34a" text-anchor="middle">Client Wait: 20ms</text>
+            <text x="600" y="395" font-family="inherit" font-size="13" font-weight="500" fill="#16a34a" text-anchor="middle" >Client Wait: 20ms</text>
 
             <!-- Poll Status Note -->
             <rect x="500" y="420" width="200" height="50" rx="6" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1"/>
-            <text x="600" y="440" font-family="inherit" font-size="11" fill="#0284c7" text-anchor="middle">Poll /jobs/{id} for status</text>
-            <text x="600" y="458" font-family="inherit" font-size="10" fill="#64748b" text-anchor="middle">(optional, non-blocking)</text>
+            <text x="600" y="440" font-family="inherit" font-size="11" fill="#0284c7" text-anchor="middle" >Poll /jobs/{id} for status</text>
+            <text x="600" y="458" font-family="inherit" font-size="10" fill="#64748b" text-anchor="middle" >(optional, non-blocking)</text>
 
             <!-- Legend -->
             <rect x="50" y="430" width="350" height="50" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
             <circle cx="80" cy="455" r="6" fill="#ef4444" opacity="0.5"/>
-            <text x="95" y="459" font-family="inherit" font-size="11" fill="#475569">Client blocked</text>
+            <text x="95" y="459" font-family="inherit" font-size="11" fill="#475569" >Client blocked</text>
             <circle cx="190" cy="455" r="6" fill="#22c55e" opacity="0.5"/>
-            <text x="205" y="459" font-family="inherit" font-size="11" fill="#475569">Client free</text>
+            <text x="205" y="459" font-family="inherit" font-size="11" fill="#475569" >Client free</text>
             <circle cx="300" cy="455" r="6" fill="#8b5cf6" opacity="0.5"/>
-            <text x="315" y="459" font-family="inherit" font-size="11" fill="#475569">Processing</text>
+            <text x="315" y="459" font-family="inherit" font-size="11" fill="#475569" >Processing</text>
         </svg>
     </div>
 </body>

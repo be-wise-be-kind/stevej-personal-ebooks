@@ -85,7 +85,7 @@
 
             <!-- Arrow: Client to Edge -->
             <line x1="135" y1="115" x2="195" y2="115" stroke="#64748b" stroke-width="2" marker-end="url(#arrowBlack)"/>
-            <text x="165" y="105" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">JWT Token</text>
+            <text x="165" y="105" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">JWT Token</text>
 
             <!-- Edge Worker -->
             <g transform="translate(205, 70)">
@@ -100,7 +100,7 @@
             <g transform="translate(420, 60)">
                 <rect x="0" y="0" width="130" height="55" rx="6" fill="url(#kvGrad)" filter="url(#shadow)"/>
                 <text x="65" y="22" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">KV Store</text>
-                <text x="65" y="40" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">JWKS Public Keys</text>
+                <text x="65" y="40" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">JWKS Public Keys</text>
             </g>
             <line x1="378" y1="95" x2="415" y2="85" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,2"/>
 
@@ -122,7 +122,7 @@
             <g transform="translate(60, 300)">
                 <rect x="0" y="0" width="140" height="50" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="1"/>
                 <text x="70" y="22" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">401 Unauthorized</text>
-                <text x="70" y="40" text-anchor="middle" fill="#dc2626" font-size="9" font-family="Liberation Sans, Arial, sans-serif">No origin request</text>
+                <text x="70" y="40" text-anchor="middle" fill="#dc2626" font-size="10" font-family="Liberation Sans, Arial, sans-serif">No origin request</text>
             </g>
             <line x1="130" y1="295" x2="130" y2="255" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
 
@@ -133,15 +133,15 @@
             <!-- Revocation Check Decision -->
             <g transform="translate(430, 200)">
                 <polygon points="55,0 110,45 55,90 0,45" fill="url(#decisionGrad)" filter="url(#shadow)"/>
-                <text x="55" y="40" text-anchor="middle" fill="#1e293b" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Token</text>
-                <text x="55" y="54" text-anchor="middle" fill="#1e293b" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Revoked?</text>
+                <text x="55" y="40" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Token</text>
+                <text x="55" y="54" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Revoked?</text>
             </g>
 
             <!-- KV Store for Revocation List -->
             <g transform="translate(580, 170)">
                 <rect x="0" y="0" width="130" height="55" rx="6" fill="url(#kvGrad)" filter="url(#shadow)"/>
                 <text x="65" y="22" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">KV Store</text>
-                <text x="65" y="40" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Revocation List (jti)</text>
+                <text x="65" y="40" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Revocation List (jti)</text>
             </g>
             <line x1="540" y1="225" x2="575" y2="205" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,2"/>
 
@@ -153,7 +153,7 @@
             <g transform="translate(550, 320)">
                 <rect x="0" y="0" width="140" height="50" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="1"/>
                 <text x="70" y="22" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">401 Token Revoked</text>
-                <text x="70" y="40" text-anchor="middle" fill="#dc2626" font-size="9" font-family="Liberation Sans, Arial, sans-serif">No origin request</text>
+                <text x="70" y="40" text-anchor="middle" fill="#dc2626" font-size="10" font-family="Liberation Sans, Arial, sans-serif">No origin request</text>
             </g>
 
             <!-- Not Revoked - Forward to Origin -->
@@ -164,8 +164,8 @@
             <g transform="translate(380, 375)">
                 <rect x="0" y="0" width="210" height="65" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
                 <text x="105" y="20" text-anchor="middle" fill="#16a34a" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Forward to Origin with:</text>
-                <text x="105" y="38" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">X-User-ID: {sub claim}</text>
-                <text x="105" y="52" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">X-User-Roles: {roles claim}</text>
+                <text x="105" y="38" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">X-User-ID: {sub claim}</text>
+                <text x="105" y="52" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">X-User-Roles: {roles claim}</text>
             </g>
 
             <!-- Arrow to Origin -->
@@ -176,7 +176,7 @@
                 <rect x="0" y="0" width="100" height="80" rx="8" fill="url(#originGrad)" filter="url(#shadow)"/>
                 <text x="50" y="25" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Origin</text>
                 <text x="50" y="42" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Server</text>
-                <text x="50" y="62" text-anchor="middle" fill="#ffffff" font-size="8" opacity="0.85" font-family="Liberation Sans, Arial, sans-serif">Trusts edge auth</text>
+                <text x="50" y="62" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.85" font-family="Liberation Sans, Arial, sans-serif">Trusts edge auth</text>
             </g>
 
             <!-- Benefits annotation -->

@@ -33,7 +33,7 @@
         
         <svg viewBox="0 0 900 720" xmlns="http://www.w3.org/2000/svg">
             <!-- Title -->
-            <text x="400.0" y="30" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="20" font-weight="600" fill="#1e293b">Circuit Breaker State Machine</text>
+            <text x="400.0" y="30" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="20" font-weight="600" fill="#1e293b" >Circuit Breaker State Machine</text>
 
             <defs>
                 <linearGradient id="closedGrad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -95,8 +95,8 @@
                 <!-- Info box -->
                 <rect x="5" y="170" width="190" height="60" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
                 <text x="100" y="190" text-anchor="middle" fill="#166534" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Requests pass through</text>
-                <text x="100" y="205" text-anchor="middle" fill="#15803d" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Monitors failure rate</text>
-                <text x="100" y="220" text-anchor="middle" fill="#15803d" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Resets count on success</text>
+                <text x="100" y="205" text-anchor="middle" fill="#15803d" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Monitors failure rate</text>
+                <text x="100" y="220" text-anchor="middle" fill="#15803d" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Resets count on success</text>
             </g>
 
             <!-- OPEN State -->
@@ -115,8 +115,8 @@
             <!-- OPEN Info box - positioned separately to avoid overlap -->
             <rect x="700" y="280" width="170" height="60" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
             <text x="785" y="300" text-anchor="middle" fill="#991b1b" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">All requests rejected</text>
-            <text x="785" y="315" text-anchor="middle" fill="#b91c1c" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Returns error immediately</text>
-            <text x="785" y="330" text-anchor="middle" fill="#b91c1c" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Timer counts down</text>
+            <text x="785" y="315" text-anchor="middle" fill="#b91c1c" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Returns error immediately</text>
+            <text x="785" y="330" text-anchor="middle" fill="#b91c1c" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Timer counts down</text>
 
             <!-- HALF-OPEN State -->
             <g transform="translate(300, 330)">
@@ -133,8 +133,8 @@
                 <!-- Info box -->
                 <rect x="5" y="165" width="190" height="60" rx="6" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
                 <text x="100" y="185" text-anchor="middle" fill="#92400e" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Limited test requests</text>
-                <text x="100" y="200" text-anchor="middle" fill="#a16207" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Success = Close circuit</text>
-                <text x="100" y="215" text-anchor="middle" fill="#a16207" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Failure = Reopen circuit</text>
+                <text x="100" y="200" text-anchor="middle" fill="#a16207" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Success = Close circuit</text>
+                <text x="100" y="215" text-anchor="middle" fill="#a16207" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Failure = Reopen circuit</text>
             </g>
 
             <!-- Transition: CLOSED -> OPEN -->
@@ -144,7 +144,7 @@
                       marker-end="url(#arrowRed)"/>
                 <rect x="360" y="95" width="120" height="45" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
                 <text x="420" y="113" text-anchor="middle" fill="#991b1b" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Failures exceed</text>
-                <text x="420" y="128" text-anchor="middle" fill="#b91c1c" font-size="9" font-family="Liberation Sans, Arial, sans-serif">threshold</text>
+                <text x="420" y="128" text-anchor="middle" fill="#b91c1c" font-size="10" font-family="Liberation Sans, Arial, sans-serif">threshold</text>
             </g>
 
             <!-- Transition: OPEN -> HALF-OPEN -->
@@ -157,7 +157,7 @@
             <g>
                 <rect x="470" y="340" width="90" height="40" rx="4" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
                 <text x="515" y="358" text-anchor="middle" fill="#92400e" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Timeout</text>
-                <text x="515" y="371" text-anchor="middle" fill="#a16207" font-size="9" font-family="Liberation Sans, Arial, sans-serif">expires</text>
+                <text x="515" y="371" text-anchor="middle" fill="#a16207" font-size="10" font-family="Liberation Sans, Arial, sans-serif">expires</text>
             </g>
 
             <!-- Transition: HALF-OPEN -> CLOSED (success) -->
@@ -167,7 +167,7 @@
                       marker-end="url(#arrowGreen)"/>
                 <rect x="230" y="355" width="90" height="45" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
                 <text x="275" y="373" text-anchor="middle" fill="#166534" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Test</text>
-                <text x="275" y="388" text-anchor="middle" fill="#15803d" font-size="9" font-family="Liberation Sans, Arial, sans-serif">succeeds</text>
+                <text x="275" y="388" text-anchor="middle" fill="#15803d" font-size="10" font-family="Liberation Sans, Arial, sans-serif">succeeds</text>
             </g>
 
             <!-- Transition: HALF-OPEN -> OPEN (failure) -->
@@ -180,7 +180,7 @@
             <g>
                 <rect x="545" y="280" width="65" height="40" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
                 <text x="577" y="298" text-anchor="middle" fill="#991b1b" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Test</text>
-                <text x="577" y="311" text-anchor="middle" fill="#b91c1c" font-size="9" font-family="Liberation Sans, Arial, sans-serif">fails</text>
+                <text x="577" y="311" text-anchor="middle" fill="#b91c1c" font-size="10" font-family="Liberation Sans, Arial, sans-serif">fails</text>
             </g>
 
             <!-- Self-loop: CLOSED (success resets) -->

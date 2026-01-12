@@ -1,5 +1,9 @@
 \raggedbottom
 
+% Use DejaVu Sans Mono for code blocks (supports Unicode box-drawing characters)
+\usepackage{fontspec}
+\setmonofont{DejaVu Sans Mono}
+
 % Prevent widows and orphans (minimum 2 lines before/after page break)
 \widowpenalty=10000
 \clubpenalty=10000
@@ -48,10 +52,22 @@
 \titlespacing*{\subsection}{0pt}{4ex plus 1ex minus .2ex}{2.5ex plus .2ex}
 \titlespacing*{\subsubsection}{0pt}{3ex plus 1ex minus .2ex}{2ex plus .2ex}
 
+% Limit section numbering to 3 levels: chapter.section.subsection
+% subsubsection (####) and deeper will be unnumbered
+\setcounter{secnumdepth}{2}
+
+% Style unnumbered subsubsection headings (####)
+% Large bold - stands out clearly as a heading without number
+\titleformat{\subsubsection}
+  {\normalfont\large\bfseries}  % Large bold
+  {}                            % No label/number
+  {0pt}                         % No separation
+  {}                            % No before-code
+
 % Add space between paragraphs
 \setlength{\parskip}{0.8em}
 
-% Style code blocks with background color
+% Style code blocks with background color and vertical spacing
 \usepackage{framed}
 \usepackage{mdframed}
 \definecolor{codebg}{RGB}{245,245,245}
@@ -61,7 +77,9 @@
   innerleftmargin=10pt,
   innerrightmargin=10pt,
   innertopmargin=10pt,
-  innerbottommargin=10pt
+  innerbottommargin=10pt,
+  skipabove=1.5\baselineskip,
+  skipbelow=1.5\baselineskip
 ]{verbatim}
 \surroundwithmdframed[
   backgroundcolor=codebg,
@@ -69,5 +87,7 @@
   innerleftmargin=10pt,
   innerrightmargin=10pt,
   innertopmargin=10pt,
-  innerbottommargin=10pt
+  innerbottommargin=10pt,
+  skipabove=1.5\baselineskip,
+  skipbelow=1.5\baselineskip
 ]{Highlighting}

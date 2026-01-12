@@ -128,8 +128,11 @@ build bookname format:
         html)
             just _build-html "$BOOK_DIR" "$BUILD_DIR" "$OUTPUT_FILE" "$CHAPTERS"
             ;;
+        outline)
+            just _build-outline "$BOOK_DIR" "$BUILD_DIR" "$OUTPUT_FILE" "$CHAPTERS"
+            ;;
         *)
-            echo "Error: Unsupported format '{{format}}'. Supported: pdf, pdf-mobile, epub, html"
+            echo "Error: Unsupported format '{{format}}'. Supported: pdf, pdf-mobile, epub, html, outline"
             exit 1
             ;;
     esac
@@ -167,7 +170,7 @@ _build-pdf book_dir build_dir output_file chapters:
         -V geometry:margin=1in \
         -H templates/header.tex \
         --resource-path="{{build_dir}}/assets:{{book_dir}}/assets" \
-        --pdf-engine=pdflatex
+        --pdf-engine=xelatex
 
 # Internal: Build PDF (mobile) using pandoc - larger text for tablet/phone reading
 _build-pdf-mobile book_dir build_dir output_file chapters:
@@ -203,7 +206,7 @@ _build-pdf-mobile book_dir build_dir output_file chapters:
         -V geometry:margin=0.8in \
         -H templates/header-mobile.tex \
         --resource-path="{{build_dir}}/assets:{{book_dir}}/assets" \
-        --pdf-engine=pdflatex
+        --pdf-engine=xelatex
 
 # Internal: Build EPUB using pandoc
 _build-epub book_dir build_dir output_file chapters:
@@ -263,6 +266,30 @@ _build-html book_dir build_dir output_file chapters:
         --embed-resources \
         --resource-path="{{build_dir}}/assets:{{book_dir}}/assets" \
         --css=templates/html.css
+
+# Internal: Build outline - extract document structure (headings only)
+_build-outline book_dir build_dir output_file chapters:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Read book title from README
+    TITLE=$(grep -m1 "^# " "{{book_dir}}/README.md" | sed 's/^# //' || echo "Untitled")
+
+    {
+        echo "# $TITLE - Outline"
+        echo ""
+        echo "Generated: $(date '+%Y-%m-%d %H:%M')"
+        echo ""
+        echo "---"
+        echo ""
+
+        # Extract headings from each chapter, preserving order
+        for chapter in {{chapters}}; do
+            # Get headings (lines starting with #)
+            grep -E "^#{1,5} " "$chapter" || true
+            echo ""
+        done
+    } > "{{output_file}}"
 
 # Build all formats for a book
 build-all bookname:

@@ -91,9 +91,9 @@
                 <rect x="0" y="0" width="140" height="100" rx="6" fill="url(#gatewayGradient)" filter="url(#dropShadow)"/>
                 <text x="70" y="25" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Ingress Gateway</text>
                 <line x1="15" y1="35" x2="125" y2="35" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-                <text x="70" y="52" text-anchor="middle" font-size="9" fill="#bfdbfe" font-family="Liberation Sans, Arial, sans-serif">Edge Envoy proxy</text>
-                <text x="70" y="68" text-anchor="middle" font-size="9" fill="#bfdbfe" font-family="Liberation Sans, Arial, sans-serif">TLS termination</text>
-                <text x="70" y="84" text-anchor="middle" font-size="9" fill="#bfdbfe" font-family="Liberation Sans, Arial, sans-serif">Initial routing</text>
+                <text x="70" y="52" text-anchor="middle" font-size="10" fill="#bfdbfe" font-family="Liberation Sans, Arial, sans-serif">Edge Envoy proxy</text>
+                <text x="70" y="68" text-anchor="middle" font-size="10" fill="#bfdbfe" font-family="Liberation Sans, Arial, sans-serif">TLS termination</text>
+                <text x="70" y="84" text-anchor="middle" font-size="10" fill="#bfdbfe" font-family="Liberation Sans, Arial, sans-serif">Initial routing</text>
             </g>
 
             <!-- Arrow to VirtualService -->
@@ -104,13 +104,13 @@
                 <rect x="0" y="0" width="180" height="120" rx="6" fill="url(#vsGradient)" filter="url(#dropShadow)"/>
                 <text x="90" y="25" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">VirtualService</text>
                 <line x1="15" y1="35" x2="165" y2="35" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-                <text x="90" y="52" text-anchor="middle" font-size="9" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Routing Rules</text>
+                <text x="90" y="52" text-anchor="middle" font-size="10" fill="#ddd6fe" font-family="Liberation Sans, Arial, sans-serif">Routing Rules</text>
 
                 <!-- Traffic split -->
                 <rect x="15" y="60" width="150" height="50" rx="3" fill="rgba(255,255,255,0.15)"/>
-                <text x="90" y="78" text-anchor="middle" font-size="8" fill="white" font-family="Liberation Sans, Arial, sans-serif">Traffic Split:</text>
-                <text x="90" y="92" text-anchor="middle" font-size="8" fill="#c4b5fd" font-family="Liberation Sans, Arial, sans-serif">v1: 95% | v2: 5%</text>
-                <text x="90" y="104" text-anchor="middle" font-size="8" fill="#c4b5fd" font-family="Liberation Sans, Arial, sans-serif">Header match: /api/*</text>
+                <text x="90" y="78" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Traffic Split:</text>
+                <text x="90" y="92" text-anchor="middle" font-size="10" fill="#c4b5fd" font-family="Liberation Sans, Arial, sans-serif">v1: 95% | v2: 5%</text>
+                <text x="90" y="104" text-anchor="middle" font-size="10" fill="#c4b5fd" font-family="Liberation Sans, Arial, sans-serif">Header match: /api/*</text>
             </g>
 
             <!-- Arrow to DestinationRule -->
@@ -121,12 +121,12 @@
                 <rect x="0" y="0" width="180" height="120" rx="6" fill="url(#drGradient)" filter="url(#dropShadow)"/>
                 <text x="90" y="25" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">DestinationRule</text>
                 <line x1="15" y1="35" x2="165" y2="35" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-                <text x="90" y="52" text-anchor="middle" font-size="9" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Traffic Policies</text>
+                <text x="90" y="52" text-anchor="middle" font-size="10" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Traffic Policies</text>
 
                 <rect x="15" y="60" width="150" height="50" rx="3" fill="rgba(255,255,255,0.15)"/>
-                <text x="90" y="78" text-anchor="middle" font-size="8" fill="white" font-family="Liberation Sans, Arial, sans-serif">Load Balancing: ROUND_ROBIN</text>
-                <text x="90" y="92" text-anchor="middle" font-size="8" fill="#fde68a" font-family="Liberation Sans, Arial, sans-serif">Connection Pool: max 100</text>
-                <text x="90" y="104" text-anchor="middle" font-size="8" fill="#fde68a" font-family="Liberation Sans, Arial, sans-serif">Outlier Detection: 5 errors</text>
+                <text x="90" y="78" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Load Balancing: ROUND_ROBIN</text>
+                <text x="90" y="92" text-anchor="middle" font-size="10" fill="#fde68a" font-family="Liberation Sans, Arial, sans-serif">Connection Pool: max 100</text>
+                <text x="90" y="104" text-anchor="middle" font-size="10" fill="#fde68a" font-family="Liberation Sans, Arial, sans-serif">Outlier Detection: 5 errors</text>
             </g>
 
             <!-- Service Pods Section -->
@@ -141,19 +141,19 @@
 
                     <!-- Envoy sidecar -->
                     <rect x="10" y="28" width="60" height="45" rx="3" fill="url(#envoyGradient)" filter="url(#dropShadow)"/>
-                    <text x="40" y="48" text-anchor="middle" font-size="8" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Envoy</text>
-                    <text x="40" y="60" text-anchor="middle" font-size="7" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Sidecar</text>
+                    <text x="40" y="48" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Envoy</text>
+                    <text x="40" y="60" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Sidecar</text>
 
                     <!-- App container -->
                     <rect x="80" y="28" width="70" height="45" rx="3" fill="url(#podGradient)" filter="url(#dropShadow)"/>
-                    <text x="115" y="48" text-anchor="middle" font-size="8" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">App</text>
-                    <text x="115" y="60" text-anchor="middle" font-size="7" fill="#cbd5e1" font-family="Liberation Sans, Arial, sans-serif">Container</text>
+                    <text x="115" y="48" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">App</text>
+                    <text x="115" y="60" text-anchor="middle" font-size="10" fill="#cbd5e1" font-family="Liberation Sans, Arial, sans-serif">Container</text>
 
                     <!-- Arrow between containers -->
                     <path d="M 70 50 L 78 50" fill="none" stroke="#64748b" stroke-width="1"/>
 
-                    <text x="80" y="90" text-anchor="middle" font-size="8" fill="#6b7280" font-family="Liberation Sans, Arial, sans-serif">All traffic through proxy</text>
-                    <text x="80" y="103" text-anchor="middle" font-size="8" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">95% of traffic</text>
+                    <text x="80" y="90" text-anchor="middle" font-size="10" fill="#6b7280" font-family="Liberation Sans, Arial, sans-serif">All traffic through proxy</text>
+                    <text x="80" y="103" text-anchor="middle" font-size="10" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">95% of traffic</text>
                 </g>
 
                 <!-- Pod 2 (v1) -->
@@ -162,17 +162,17 @@
                     <text x="80" y="18" text-anchor="middle" font-size="10" font-weight="500" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Pod (v1)</text>
 
                     <rect x="10" y="28" width="60" height="45" rx="3" fill="url(#envoyGradient)" filter="url(#dropShadow)"/>
-                    <text x="40" y="48" text-anchor="middle" font-size="8" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Envoy</text>
-                    <text x="40" y="60" text-anchor="middle" font-size="7" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Sidecar</text>
+                    <text x="40" y="48" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Envoy</text>
+                    <text x="40" y="60" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Sidecar</text>
 
                     <rect x="80" y="28" width="70" height="45" rx="3" fill="url(#podGradient)" filter="url(#dropShadow)"/>
-                    <text x="115" y="48" text-anchor="middle" font-size="8" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">App</text>
-                    <text x="115" y="60" text-anchor="middle" font-size="7" fill="#cbd5e1" font-family="Liberation Sans, Arial, sans-serif">Container</text>
+                    <text x="115" y="48" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">App</text>
+                    <text x="115" y="60" text-anchor="middle" font-size="10" fill="#cbd5e1" font-family="Liberation Sans, Arial, sans-serif">Container</text>
 
                     <path d="M 70 50 L 78 50" fill="none" stroke="#64748b" stroke-width="1"/>
 
-                    <text x="80" y="90" text-anchor="middle" font-size="8" fill="#6b7280" font-family="Liberation Sans, Arial, sans-serif">mTLS enforced</text>
-                    <text x="80" y="103" text-anchor="middle" font-size="8" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">95% of traffic</text>
+                    <text x="80" y="90" text-anchor="middle" font-size="10" fill="#6b7280" font-family="Liberation Sans, Arial, sans-serif">mTLS enforced</text>
+                    <text x="80" y="103" text-anchor="middle" font-size="10" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">95% of traffic</text>
                 </g>
 
                 <!-- Pod 3 (v2 - canary) -->
@@ -181,17 +181,17 @@
                     <text x="80" y="18" text-anchor="middle" font-size="10" font-weight="500" fill="#b45309" font-family="Liberation Sans, Arial, sans-serif">Pod (v2 - canary)</text>
 
                     <rect x="10" y="28" width="60" height="45" rx="3" fill="url(#envoyGradient)" filter="url(#dropShadow)"/>
-                    <text x="40" y="48" text-anchor="middle" font-size="8" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Envoy</text>
-                    <text x="40" y="60" text-anchor="middle" font-size="7" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Sidecar</text>
+                    <text x="40" y="48" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Envoy</text>
+                    <text x="40" y="60" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Sidecar</text>
 
                     <rect x="80" y="28" width="70" height="45" rx="3" fill="#f59e0b" filter="url(#dropShadow)"/>
-                    <text x="115" y="48" text-anchor="middle" font-size="8" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">App v2</text>
-                    <text x="115" y="60" text-anchor="middle" font-size="7" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Container</text>
+                    <text x="115" y="48" text-anchor="middle" font-size="10" fill="white" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">App v2</text>
+                    <text x="115" y="60" text-anchor="middle" font-size="10" fill="#fef3c7" font-family="Liberation Sans, Arial, sans-serif">Container</text>
 
                     <path d="M 70 50 L 78 50" fill="none" stroke="#64748b" stroke-width="1"/>
 
-                    <text x="80" y="90" text-anchor="middle" font-size="8" fill="#6b7280" font-family="Liberation Sans, Arial, sans-serif">Canary deployment</text>
-                    <text x="80" y="103" text-anchor="middle" font-size="8" fill="#f59e0b" font-family="Liberation Sans, Arial, sans-serif">5% of traffic</text>
+                    <text x="80" y="90" text-anchor="middle" font-size="10" fill="#6b7280" font-family="Liberation Sans, Arial, sans-serif">Canary deployment</text>
+                    <text x="80" y="103" text-anchor="middle" font-size="10" fill="#f59e0b" font-family="Liberation Sans, Arial, sans-serif">5% of traffic</text>
                 </g>
             </g>
 
@@ -201,20 +201,20 @@
             <!-- Control plane annotation -->
             <g transform="translate(800, 200)">
                 <rect x="0" y="0" width="80" height="200" rx="4" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
-                <text x="40" y="25" text-anchor="middle" font-size="9" font-weight="600" fill="#6d28d9" font-family="Liberation Sans, Arial, sans-serif">Istiod</text>
-                <text x="40" y="45" text-anchor="middle" font-size="8" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">Control</text>
-                <text x="40" y="58" text-anchor="middle" font-size="8" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">Plane</text>
+                <text x="40" y="25" text-anchor="middle" font-size="10" font-weight="600" fill="#6d28d9" font-family="Liberation Sans, Arial, sans-serif">Istiod</text>
+                <text x="40" y="45" text-anchor="middle" font-size="10" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">Control</text>
+                <text x="40" y="58" text-anchor="middle" font-size="10" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">Plane</text>
 
                 <line x1="10" y1="70" x2="70" y2="70" stroke="#c4b5fd" stroke-width="1"/>
 
-                <text x="40" y="90" text-anchor="middle" font-size="7" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">Config</text>
-                <text x="40" y="103" text-anchor="middle" font-size="7" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">distribution</text>
+                <text x="40" y="90" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">Config</text>
+                <text x="40" y="103" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">distribution</text>
 
-                <text x="40" y="125" text-anchor="middle" font-size="7" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">Certificate</text>
-                <text x="40" y="138" text-anchor="middle" font-size="7" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">authority</text>
+                <text x="40" y="125" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">Certificate</text>
+                <text x="40" y="138" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">authority</text>
 
-                <text x="40" y="160" text-anchor="middle" font-size="7" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">Service</text>
-                <text x="40" y="173" text-anchor="middle" font-size="7" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">discovery</text>
+                <text x="40" y="160" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">Service</text>
+                <text x="40" y="173" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Liberation Sans, Arial, sans-serif">discovery</text>
             </g>
 
             <!-- Dotted lines to control plane -->
@@ -225,10 +225,10 @@
                 <rect x="0" y="0" width="750" height="80" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
                 <text x="375" y="22" text-anchor="middle" font-size="11" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Service Mesh Traffic Management Capabilities</text>
 
-                <text x="30" y="45" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">VirtualService: Traffic splitting, header routing, retries, timeouts</text>
-                <text x="30" y="62" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">DestinationRule: Load balancing, connection pools, outlier detection, TLS settings</text>
-                <text x="500" y="45" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Envoy Sidecar: mTLS, telemetry, policy enforcement</text>
-                <text x="500" y="62" font-size="9" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Overhead: ~1-2ms latency per hop</text>
+                <text x="30" y="45" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">VirtualService: Traffic splitting, header routing, retries, timeouts</text>
+                <text x="30" y="62" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">DestinationRule: Load balancing, connection pools, outlier detection, TLS settings</text>
+                <text x="500" y="45" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Envoy Sidecar: mTLS, telemetry, policy enforcement</text>
+                <text x="500" y="62" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Overhead: ~1-2ms latency per hop</text>
             </g>
         </svg>
     </div>

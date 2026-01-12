@@ -33,7 +33,7 @@
         
         <svg viewBox="0 0 900 650" xmlns="http://www.w3.org/2000/svg">
             <!-- Title -->
-            <text x="450.0" y="35" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="20" font-weight="600" fill="#1e293b">Read Replica Architecture with Write/Read Routing</text>
+            <text x="450.0" y="35" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="20" font-weight="600" fill="#1e293b" >Read Replica Architecture with Write/Read Routing</text>
 
             <defs>
                 <!-- Gradients -->
@@ -85,15 +85,15 @@
             <!-- Application Layer -->
             <g>
                 <rect x="350" y="60" width="200" height="70" rx="10" fill="url(#appGradient)" filter="url(#shadow)"/>
-                <text x="450" y="90" text-anchor="middle" fill="white" font-size="14" font-weight="700">Application</text>
-                <text x="450" y="110" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">API Server</text>
+                <text x="450" y="90" text-anchor="middle" fill="white" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">Application</text>
+                <text x="450" y="110" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11" font-family="Liberation Sans, Arial, sans-serif">API Server</text>
             </g>
 
             <!-- Database Router -->
             <g>
                 <rect x="300" y="180" width="300" height="80" rx="10" fill="url(#routerGradient)" filter="url(#shadow)"/>
-                <text x="450" y="210" text-anchor="middle" fill="white" font-size="14" font-weight="700">Database Router</text>
-                <text x="450" y="230" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11">Routes writes to primary, reads to replicas</text>
+                <text x="450" y="210" text-anchor="middle" fill="white" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">Database Router</text>
+                <text x="450" y="230" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Routes writes to primary, reads to replicas</text>
             </g>
 
             <!-- Arrow from app to router -->
@@ -102,62 +102,62 @@
             <!-- Write path label -->
             <g>
                 <rect x="130" y="230" width="100" height="25" rx="4" fill="url(#writeGradient)"/>
-                <text x="180" y="247" text-anchor="middle" fill="white" font-size="11" font-weight="600">WRITE Path</text>
+                <text x="180" y="247" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">WRITE Path</text>
             </g>
 
             <!-- Read path label -->
             <g>
                 <rect x="670" y="230" width="100" height="25" rx="4" fill="url(#readGradient)"/>
-                <text x="720" y="247" text-anchor="middle" fill="white" font-size="11" font-weight="600">READ Path</text>
+                <text x="720" y="247" text-anchor="middle" fill="white" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">READ Path</text>
             </g>
 
             <!-- Write arrow to primary -->
             <path d="M 350 260 Q 250 310 180 370" stroke="#ef4444" stroke-width="3" fill="none" marker-end="url(#arrowRed)"/>
-            <text x="240" y="300" fill="#dc2626" font-size="10" font-weight="600">INSERT/UPDATE/DELETE</text>
+            <text x="240" y="300" fill="#dc2626" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">INSERT/UPDATE/DELETE</text>
 
             <!-- Read arrows to replicas -->
             <path d="M 500 260 Q 580 310 620 370" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowCyan)"/>
             <path d="M 520 260 Q 680 330 780 370" stroke="#06b6d4" stroke-width="3" fill="none" marker-end="url(#arrowCyan)"/>
-            <text x="620" y="305" fill="#0891b2" font-size="10" font-weight="600">SELECT</text>
-            <text x="680" y="325" fill="#0891b2" font-size="10" font-weight="600">(load balanced)</text>
+            <text x="620" y="305" fill="#0891b2" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">SELECT</text>
+            <text x="680" y="325" fill="#0891b2" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">(load balanced)</text>
 
             <!-- Primary Database -->
             <g>
                 <rect x="60" y="380" width="180" height="160" rx="10" fill="#fffbeb" stroke="#fcd34d" stroke-width="2" filter="url(#shadow)"/>
-                <text x="150" y="410" text-anchor="middle" fill="#b45309" font-size="14" font-weight="700">Primary</text>
-                <text x="150" y="428" text-anchor="middle" fill="#92400e" font-size="10">(Read + Write)</text>
+                <text x="150" y="410" text-anchor="middle" fill="#b45309" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">Primary</text>
+                <text x="150" y="428" text-anchor="middle" fill="#92400e" font-size="10" font-family="Liberation Sans, Arial, sans-serif">(Read + Write)</text>
 
                 <!-- Database cylinder -->
                 <ellipse cx="150" cy="455" rx="50" ry="12" fill="url(#primaryGradient)" filter="url(#shadow)"/>
                 <rect x="100" y="455" width="100" height="55" fill="url(#primaryGradient)" filter="url(#shadow)"/>
                 <ellipse cx="150" cy="510" rx="50" ry="12" fill="#d97706" filter="url(#shadow)"/>
-                <text x="150" y="488" text-anchor="middle" fill="white" font-size="11" font-weight="500">Master DB</text>
+                <text x="150" y="488" text-anchor="middle" fill="white" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Master DB</text>
             </g>
 
             <!-- Replica 1 -->
             <g>
                 <rect x="500" y="380" width="160" height="160" rx="10" fill="#ecfdf5" stroke="#86efac" stroke-width="2" filter="url(#shadow)"/>
-                <text x="580" y="410" text-anchor="middle" fill="#166534" font-size="14" font-weight="700">Replica 1</text>
-                <text x="580" y="428" text-anchor="middle" fill="#15803d" font-size="10">(Read Only)</text>
+                <text x="580" y="410" text-anchor="middle" fill="#166534" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">Replica 1</text>
+                <text x="580" y="428" text-anchor="middle" fill="#15803d" font-size="10" font-family="Liberation Sans, Arial, sans-serif">(Read Only)</text>
 
                 <!-- Database cylinder -->
                 <ellipse cx="580" cy="455" rx="45" ry="10" fill="url(#replicaGradient)" filter="url(#shadow)"/>
                 <rect x="535" y="455" width="90" height="50" fill="url(#replicaGradient)" filter="url(#shadow)"/>
                 <ellipse cx="580" cy="505" rx="45" ry="10" fill="#059669" filter="url(#shadow)"/>
-                <text x="580" y="485" text-anchor="middle" fill="white" font-size="10" font-weight="500">Replica</text>
+                <text x="580" y="485" text-anchor="middle" fill="white" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Replica</text>
             </g>
 
             <!-- Replica 2 -->
             <g>
                 <rect x="690" y="380" width="160" height="160" rx="10" fill="#ecfdf5" stroke="#86efac" stroke-width="2" filter="url(#shadow)"/>
-                <text x="770" y="410" text-anchor="middle" fill="#166534" font-size="14" font-weight="700">Replica 2</text>
-                <text x="770" y="428" text-anchor="middle" fill="#15803d" font-size="10">(Read Only)</text>
+                <text x="770" y="410" text-anchor="middle" fill="#166534" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">Replica 2</text>
+                <text x="770" y="428" text-anchor="middle" fill="#15803d" font-size="10" font-family="Liberation Sans, Arial, sans-serif">(Read Only)</text>
 
                 <!-- Database cylinder -->
                 <ellipse cx="770" cy="455" rx="45" ry="10" fill="url(#replicaGradient)" filter="url(#shadow)"/>
                 <rect x="725" y="455" width="90" height="50" fill="url(#replicaGradient)" filter="url(#shadow)"/>
                 <ellipse cx="770" cy="505" rx="45" ry="10" fill="#059669" filter="url(#shadow)"/>
-                <text x="770" y="485" text-anchor="middle" fill="white" font-size="10" font-weight="500">Replica</text>
+                <text x="770" y="485" text-anchor="middle" fill="white" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Replica</text>
             </g>
 
             <!-- Replication streams -->
@@ -175,47 +175,47 @@
             <!-- Replication label -->
             <g>
                 <rect x="340" y="420" width="120" height="50" rx="6" fill="#fef3c7" stroke="#fcd34d" stroke-width="1" filter="url(#shadow)"/>
-                <text x="400" y="442" text-anchor="middle" fill="#92400e" font-size="10" font-weight="600">Replication</text>
-                <text x="400" y="458" text-anchor="middle" fill="#92400e" font-size="9">Stream (async)</text>
+                <text x="400" y="442" text-anchor="middle" fill="#92400e" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Replication</text>
+                <text x="400" y="458" text-anchor="middle" fill="#92400e" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Stream (async)</text>
             </g>
 
             <!-- Replication Lag Warning -->
             <g>
                 <rect x="50" y="570" width="350" height="65" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="2" filter="url(#shadow)"/>
-                <text x="225" y="595" text-anchor="middle" fill="#dc2626" font-size="12" font-weight="700">Replication Lag Consideration</text>
-                <text x="225" y="615" text-anchor="middle" fill="#991b1b" font-size="10">Writes to primary take 1-100ms to appear on replicas.</text>
-                <text x="225" y="628" text-anchor="middle" fill="#991b1b" font-size="10">For read-after-write consistency, route to primary.</text>
+                <text x="225" y="595" text-anchor="middle" fill="#dc2626" font-size="12" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">Replication Lag Consideration</text>
+                <text x="225" y="615" text-anchor="middle" fill="#991b1b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Writes to primary take 1-100ms to appear on replicas.</text>
+                <text x="225" y="628" text-anchor="middle" fill="#991b1b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">For read-after-write consistency, route to primary.</text>
             </g>
 
             <!-- Benefits Box -->
             <g>
                 <rect x="420" y="570" width="240" height="65" rx="8" fill="#ecfdf5" stroke="#86efac" stroke-width="2" filter="url(#shadow)"/>
-                <text x="540" y="595" text-anchor="middle" fill="#166534" font-size="12" font-weight="700">Benefits</text>
-                <text x="540" y="615" text-anchor="middle" fill="#166534" font-size="10">Read traffic distributed across replicas</text>
-                <text x="540" y="628" text-anchor="middle" fill="#166534" font-size="10">2-3x read capacity per replica added</text>
+                <text x="540" y="595" text-anchor="middle" fill="#166534" font-size="12" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">Benefits</text>
+                <text x="540" y="615" text-anchor="middle" fill="#166534" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Read traffic distributed across replicas</text>
+                <text x="540" y="628" text-anchor="middle" fill="#166534" font-size="10" font-family="Liberation Sans, Arial, sans-serif">2-3x read capacity per replica added</text>
             </g>
 
             <!-- Scaling indicator -->
             <g>
                 <rect x="680" y="570" width="170" height="65" rx="8" fill="#f0f9ff" stroke="#7dd3fc" stroke-width="2" filter="url(#shadow)"/>
-                <text x="765" y="595" text-anchor="middle" fill="#0369a1" font-size="12" font-weight="700">Horizontal Scaling</text>
-                <text x="765" y="615" text-anchor="middle" fill="#0c4a6e" font-size="10">Add more replicas as</text>
-                <text x="765" y="628" text-anchor="middle" fill="#0c4a6e" font-size="10">read traffic grows</text>
+                <text x="765" y="595" text-anchor="middle" fill="#0369a1" font-size="12" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">Horizontal Scaling</text>
+                <text x="765" y="615" text-anchor="middle" fill="#0c4a6e" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Add more replicas as</text>
+                <text x="765" y="628" text-anchor="middle" fill="#0c4a6e" font-size="10" font-family="Liberation Sans, Arial, sans-serif">read traffic grows</text>
             </g>
 
             <!-- Legend -->
             <g>
                 <rect x="60" y="60" width="200" height="80" rx="6" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
-                <text x="160" y="82" text-anchor="middle" fill="#475569" font-size="11" font-weight="600">Traffic Types</text>
+                <text x="160" y="82" text-anchor="middle" fill="#475569" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Traffic Types</text>
 
                 <line x1="75" y1="98" x2="105" y2="98" stroke="#ef4444" stroke-width="3"/>
-                <text x="115" y="102" fill="#475569" font-size="10">Write (to Primary)</text>
+                <text x="115" y="102" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Write (to Primary)</text>
 
                 <line x1="75" y1="118" x2="105" y2="118" stroke="#06b6d4" stroke-width="3"/>
-                <text x="115" y="122" fill="#475569" font-size="10">Read (to Replicas)</text>
+                <text x="115" y="122" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Read (to Replicas)</text>
 
                 <line x1="75" y1="132" x2="105" y2="132" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,3"/>
-                <text x="115" y="136" fill="#475569" font-size="10">Replication Stream</text>
+                <text x="115" y="136" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Replication Stream</text>
             </g>
         </svg>
     </div>

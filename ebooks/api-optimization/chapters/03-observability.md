@@ -61,6 +61,151 @@ Each pillar serves distinct purposes. Understanding their strengths prevents bot
 
 In practice, we correlate signals across pillars. A metric alert fires when p95 latency exceeds our SLO. We examine traces from that time window to identify slow spans. We pull logs from those specific trace IDs for error context. Finally, we compare profiles before and after our optimization to verify improvement.
 
+### Practical Logging Strategies
+
+Logs are deceptively simple. Unlike metrics that require understanding aggregation semantics or traces that demand distributed context propagation, logs appear straightforward: something happens, write it down. This apparent simplicity leads teams to either log too little (missing critical debugging context) or log too much (drowning in noise and storage costs). Effective logging requires deliberate strategy.
+
+#### Log Levels and Their Purpose
+
+Most logging frameworks provide a hierarchy of severity levels. Understanding when to use each level ensures logs remain useful without overwhelming operators:
+
+| Level | Purpose | Example Use Cases | Production Default |
+|-------|---------|-------------------|-------------------|
+| FATAL | Unrecoverable errors requiring immediate attention | Database connection permanently lost, out of memory, configuration prevents startup | Always enabled |
+| ERROR | Failures requiring attention but service continues | Payment processor timeout, invalid authentication token, external API unavailable | Always enabled |
+| WARN | Anomalies that may indicate developing problems | Retry succeeded after failure, cache miss rate elevated, deprecated API usage | Always enabled |
+| INFO | Normal operational events worth recording | Request completed, service started, configuration loaded, job finished | Usually enabled |
+| DEBUG | Detailed diagnostic information for troubleshooting | Query parameters, cache keys, method entry/exit, decision branch taken | Disabled by default |
+| TRACE | Extremely detailed execution flow | Every function call, full request/response bodies, internal state dumps | Rarely enabled |
+
+The guiding principle: every log statement should earn its place. ERROR and above indicate problems requiring human attention. WARN signals conditions that may become problems. INFO documents significant events in normal operation. DEBUG and TRACE exist for troubleshooting specific issues.
+
+A common mistake is logging routine events at INFO level. "User logged in" at INFO generates enormous volume for popular services with no actionable insight. Reserve INFO for events worth reviewing during normal operations: service startup, configuration changes, significant state transitions.
+
+#### Structured Logging
+
+Unstructured logs like `User 12345 purchased item ABC for $99.00` require text parsing to analyze. Structured logging transforms logs into queryable data:
+
+```
+{
+  "timestamp": "2024-01-15T10:23:45.123Z",
+  "level": "INFO",
+  "message": "Purchase completed",
+  "trace_id": "abc123def456",
+  "span_id": "789xyz",
+  "user_id": "12345",
+  "item_id": "ABC",
+  "amount_cents": 9900,
+  "currency": "USD",
+  "service": "checkout-service",
+  "environment": "production"
+}
+```
+
+This structure enables queries like "show all purchases over $50 from user 12345 in the last hour" without regex gymnastics. Consistent field naming across services allows cross-service queries and automated analysis.
+
+The `trace_id` field is particularly important. Including the distributed trace ID in every log entry enables jumping from a slow trace directly to all logs generated during that request, bridging the logs and traces pillars.
+
+#### Dynamic Log Level Configuration
+
+The tension with log levels: DEBUG logs provide essential troubleshooting context but generate prohibitive volume if always enabled. The solution is dynamic configuration that allows runtime adjustment without redeployment.
+
+Configuration sources, checked in precedence order:
+
+```
+on determining effective log level:
+    if per_request_debug_header present AND debug_headers_enabled:
+        return DEBUG
+    if runtime_config.log_level is set:
+        return runtime_config.log_level
+    if environment_variable LOG_LEVEL is set:
+        return environment_variable value
+    return default_level from code
+```
+
+Each source serves different needs:
+
+- **Environment variables**: Set at deployment, require restart to change. Simple and secure, suitable for baseline configuration.
+- **Configuration file with watching**: External file reloaded periodically or on change signal. Allows level changes without restart but requires file system access.
+- **Runtime API endpoint**: Immediate changes via authenticated API call. Useful for incident response when minutes matter.
+- **Feature flag service**: Per-request or per-user granularity via external service. Most flexible but adds dependency and latency.
+
+#### Selective Logging by Context
+
+Global DEBUG logging is rarely what you need. More often, you want DEBUG logs for a specific problematic request, user, or endpoint while keeping production volume manageable.
+
+```
+on incoming request:
+    effective_level = default_log_level
+
+    if request.header["X-Debug-Level"] AND debug_headers_enabled:
+        effective_level = DEBUG
+    else if request.user_id in debug_user_list:
+        effective_level = DEBUG
+    else if request.path matches debug_endpoint_patterns:
+        effective_level = DEBUG
+
+    attach effective_level to request context
+
+on log statement at level L:
+    if L >= request_context.effective_level:
+        emit log entry
+```
+
+This pattern enables support scenarios: "Customer X is experiencing issues, enable DEBUG logging for their requests." The debug_user_list can be stored in Redis or a configuration service, allowing runtime updates without deployment.
+
+Caution: per-request header overrides create a security consideration. An attacker could send debug headers to trigger expensive logging or expose sensitive information. Either disable this feature entirely, require authentication, or limit it to internal networks.
+
+#### Avoiding Debug Overhead
+
+Even when DEBUG logging is disabled, careless implementation can impact performance:
+
+```
+// Anti-pattern: string formatting executes even when DEBUG is disabled
+log.debug("User details: " + serialize_to_json(user_object))
+
+// Better: check level before expensive operations
+if log.is_debug_enabled():
+    log.debug("User details: " + serialize_to_json(user_object))
+
+// Best: logging framework handles lazy evaluation
+log.debug("User details: {}", () => serialize_to_json(user_object))
+```
+
+The first example serializes the user object to JSON on every call, even if the DEBUG statement is ultimately discarded. For hot paths, this overhead accumulates. Modern logging frameworks support lazy evaluation where the message construction only occurs if the log level is enabled.
+
+#### Log Sampling at High Volume
+
+Some services generate such high request volume that even INFO-level logging becomes expensive. Log sampling reduces volume while maintaining statistical visibility:
+
+```
+sample_rate = 0.1  // log 10% of requests
+
+on log statement at level L with request context:
+    if L >= WARN:
+        emit log entry  // never sample errors or warnings
+    else:
+        hash = deterministic_hash(request.trace_id)
+        if hash mod 100 < (sample_rate * 100):
+            emit log entry
+```
+
+Using `trace_id` for sampling ensures consistency: either all logs for a request are sampled or none are. Random per-statement sampling would create incomplete request traces, making debugging impossible.
+
+Adaptive sampling adjusts rates based on current conditions. During normal operation, sample aggressively. When error rates increase, reduce sampling to capture more context around failures.
+
+#### Configuration Approach Trade-offs
+
+| Approach | Restart Required | Granularity | Security Risk | Complexity |
+|----------|-----------------|-------------|---------------|------------|
+| Environment variables | Yes | Global | Low | Minimal |
+| Config file watching | No | Global | Low | Low |
+| Admin API | No | Per-instance | Medium | Moderate |
+| Feature flags | No | Per-request | Medium | Higher |
+| Request header override | No | Per-request | High | Low |
+
+Most production systems benefit from layered configuration: environment variables for baseline levels, feature flags for temporary per-user debugging, and an admin API for incident response.
+
 ### Distributed Tracing Concepts
 
 Distributed tracing originated at Google with their Dapper system, described in the foundational 2010 paper [Source: Sigelman et al., "Dapper, a Large-Scale Distributed Systems Tracing Infrastructure", 2010]. The concepts introduced (traces, spans, and context propagation) remain the foundation of modern tracing systems.
@@ -359,7 +504,11 @@ The fix is straightforward: add the missing index and schedule batch imports dur
 
 - **High-cardinality metrics**: Adding unbounded labels (user IDs, request IDs) to metrics explodes storage and query costs. Use traces for request-level data; keep metrics aggregated.
 
-- **Logging sensitive data**: Accidentally including passwords, tokens, or PII in logs creates security and compliance risks. Implement scrubbing at the logging framework level.
+- **Logging sensitive data**: Accidentally including passwords, tokens, or PII in logs creates security and compliance risks. Implement scrubbing at the logging framework level. Be especially careful with DEBUG-level logs that capture full request payloads.
+
+- **Expensive operations in disabled log statements**: String formatting and object serialization execute even when the log level is disabled unless you use lazy evaluation. On hot paths, this overhead accumulates significantly.
+
+- **Inconsistent log levels across services**: If Service A logs successful requests at INFO and Service B logs them at DEBUG, cross-service analysis becomes confused. Establish team conventions for what each level means.
 
 - **Sampling too aggressively**: Very low sample rates (0.1%) may miss rare but important events. Use tail-based sampling or always-sample rules for errors and slow requests.
 

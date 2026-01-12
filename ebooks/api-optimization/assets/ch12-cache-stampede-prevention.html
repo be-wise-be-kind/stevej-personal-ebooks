@@ -92,22 +92,22 @@
             <!-- Multiple incoming requests -->
             <g transform="translate(50, 115)">
                 <rect x="0" y="0" width="60" height="25" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
-                <text x="30" y="17" text-anchor="middle" fill="#ffffff" font-size="9" font-family="Liberation Sans, Arial, sans-serif">100 reqs</text>
+                <text x="30" y="17" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">100 reqs</text>
             </g>
 
             <!-- Funnel shape -->
             <polygon points="130,115 200,115 180,175 150,175" fill="#e2e8f0" stroke="#94a3b8"/>
-            <text x="165" y="150" text-anchor="middle" fill="#475569" font-size="9" font-family="Liberation Sans, Arial, sans-serif">CDN</text>
+            <text x="165" y="150" text-anchor="middle" fill="#475569" font-size="10" font-family="Liberation Sans, Arial, sans-serif">CDN</text>
 
             <!-- Single request to origin -->
             <line x1="180" y1="155" x2="250" y2="155" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
-            <text x="215" y="145" text-anchor="middle" fill="#3b82f6" font-size="9" font-family="Liberation Sans, Arial, sans-serif">1 req</text>
+            <text x="215" y="145" text-anchor="middle" fill="#3b82f6" font-size="10" font-family="Liberation Sans, Arial, sans-serif">1 req</text>
 
             <!-- Origin -->
             <g transform="translate(260, 130)">
                 <rect x="0" y="0" width="70" height="50" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
                 <text x="35" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin</text>
-                <text x="35" y="38" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Server</text>
+                <text x="35" y="38" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Server</text>
             </g>
 
             <!-- Response back -->
@@ -116,18 +116,18 @@
             <!-- Waiting requests -->
             <g transform="translate(50, 185)">
                 <rect x="0" y="0" width="60" height="25" rx="4" fill="#fef3c7" stroke="#f59e0b"/>
-                <text x="30" y="17" text-anchor="middle" fill="#92400e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">99 wait</text>
+                <text x="30" y="17" text-anchor="middle" fill="#92400e" font-size="10" font-family="Liberation Sans, Arial, sans-serif">99 wait</text>
             </g>
 
             <!-- All get response -->
             <line x1="175" y1="210" x2="115" y2="210" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
-            <text x="145" y="225" text-anchor="middle" fill="#22c55e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">all get same</text>
+            <text x="145" y="225" text-anchor="middle" fill="#22c55e" font-size="10" font-family="Liberation Sans, Arial, sans-serif">all get same</text>
 
             <!-- Result box -->
             <g transform="translate(50, 245)">
                 <rect x="0" y="0" width="140" height="45" rx="6" fill="url(#successGrad)" filter="url(#shadow)"/>
                 <text x="70" y="18" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin load: 1 request</text>
-                <text x="70" y="35" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Latency: ~50ms wait</text>
+                <text x="70" y="35" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Latency: ~50ms wait</text>
             </g>
 
             <!-- ============================================ -->
@@ -140,14 +140,14 @@
             <!-- Requests arrive -->
             <g transform="translate(490, 115)">
                 <rect x="0" y="0" width="60" height="25" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
-                <text x="30" y="17" text-anchor="middle" fill="#ffffff" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Requests</text>
+                <text x="30" y="17" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Requests</text>
             </g>
 
             <!-- Cache with stale data -->
             <g transform="translate(580, 110)">
                 <rect x="0" y="0" width="80" height="50" rx="6" fill="url(#staleGrad)" filter="url(#shadow)"/>
                 <text x="40" y="20" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Cache</text>
-                <text x="40" y="36" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">(stale data)</text>
+                <text x="40" y="36" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">(stale data)</text>
             </g>
 
             <!-- Arrow to cache -->
@@ -159,27 +159,27 @@
 
             <!-- Background refresh to origin (dotted blue) -->
             <line x1="665" y1="135" x2="740" y2="135" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowBlue)"/>
-            <text x="702" y="125" text-anchor="middle" fill="#3b82f6" font-size="9" font-family="Liberation Sans, Arial, sans-serif">background</text>
+            <text x="702" y="125" text-anchor="middle" fill="#3b82f6" font-size="10" font-family="Liberation Sans, Arial, sans-serif">background</text>
 
             <!-- Origin -->
             <g transform="translate(750, 110)">
                 <rect x="0" y="0" width="70" height="50" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
                 <text x="35" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin</text>
-                <text x="35" y="38" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">refresh</text>
+                <text x="35" y="38" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">refresh</text>
             </g>
 
             <!-- Users served immediately -->
             <g transform="translate(490, 235)">
                 <rect x="0" y="0" width="70" height="50" rx="6" fill="url(#successGrad)" filter="url(#shadow)"/>
-                <text x="35" y="20" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Users see</text>
-                <text x="35" y="36" text-anchor="middle" fill="#ffffff" font-size="9" font-family="Liberation Sans, Arial, sans-serif">10-20ms</text>
+                <text x="35" y="20" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Users see</text>
+                <text x="35" y="36" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">10-20ms</text>
             </g>
 
             <!-- Result box -->
             <g transform="translate(680, 245)">
                 <rect x="0" y="0" width="140" height="45" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
                 <text x="70" y="18" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin load: 1 request</text>
-                <text x="70" y="35" text-anchor="middle" fill="#1e40af" font-size="9" font-family="Liberation Sans, Arial, sans-serif">User latency: 0ms added</text>
+                <text x="70" y="35" text-anchor="middle" fill="#1e40af" font-size="10" font-family="Liberation Sans, Arial, sans-serif">User latency: 0ms added</text>
             </g>
 
             <!-- ============================================ -->
@@ -194,18 +194,18 @@
 
             <!-- TTL markers -->
             <line x1="60" y1="425" x2="60" y2="435" stroke="#64748b" stroke-width="2"/>
-            <text x="60" y="450" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">0s</text>
+            <text x="60" y="450" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">0s</text>
 
             <line x1="280" y1="425" x2="280" y2="435" stroke="#64748b" stroke-width="2"/>
-            <text x="280" y="450" text-anchor="middle" fill="#64748b" font-size="9" font-family="Liberation Sans, Arial, sans-serif">270s</text>
-            <text x="280" y="465" text-anchor="middle" fill="#f59e0b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">(jitter starts)</text>
+            <text x="280" y="450" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">270s</text>
+            <text x="280" y="465" text-anchor="middle" fill="#f59e0b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">(jitter starts)</text>
 
             <line x1="400" y1="425" x2="400" y2="435" stroke="#ef4444" stroke-width="2"/>
-            <text x="400" y="450" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">300s TTL</text>
+            <text x="400" y="450" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">300s TTL</text>
 
             <!-- Normal zone -->
             <rect x="60" y="400" width="220" height="20" rx="3" fill="#bbf7d0"/>
-            <text x="170" y="415" text-anchor="middle" fill="#166534" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Normal serving</text>
+            <text x="170" y="415" text-anchor="middle" fill="#166534" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Normal serving</text>
 
             <!-- Jitter zone (gradient) -->
             <defs>
@@ -215,26 +215,26 @@
                 </linearGradient>
             </defs>
             <rect x="280" y="400" width="120" height="20" rx="3" fill="url(#jitterGrad)"/>
-            <text x="340" y="415" text-anchor="middle" fill="#92400e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Jitter zone</text>
+            <text x="340" y="415" text-anchor="middle" fill="#92400e" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Jitter zone</text>
 
             <!-- Random refresh indicators -->
             <circle cx="295" cy="390" r="4" fill="#f59e0b"/>
             <circle cx="330" cy="385" r="4" fill="#f59e0b"/>
             <circle cx="360" cy="388" r="4" fill="#f59e0b"/>
             <circle cx="385" cy="382" r="4" fill="#f59e0b"/>
-            <text x="340" y="375" text-anchor="middle" fill="#f59e0b" font-size="8" font-family="Liberation Sans, Arial, sans-serif">random early refresh</text>
+            <text x="340" y="375" text-anchor="middle" fill="#f59e0b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">random early refresh</text>
 
             <!-- Spread visualization -->
             <g transform="translate(60, 480)">
                 <text x="0" y="0" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Without jitter:</text>
                 <rect x="100" y="-12" width="8" height="20" fill="#ef4444"/>
-                <text x="115" y="3" fill="#ef4444" font-size="9" font-family="Liberation Sans, Arial, sans-serif">spike at 300s</text>
+                <text x="115" y="3" fill="#ef4444" font-size="10" font-family="Liberation Sans, Arial, sans-serif">spike at 300s</text>
             </g>
 
             <g transform="translate(60, 510)">
                 <text x="0" y="0" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">With 10% jitter:</text>
                 <rect x="100" y="-12" width="100" height="10" fill="#22c55e" opacity="0.6"/>
-                <text x="205" y="-2" fill="#22c55e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">spread over 30s</text>
+                <text x="205" y="-2" fill="#22c55e" font-size="10" font-family="Liberation Sans, Arial, sans-serif">spread over 30s</text>
             </g>
 
             <!-- Result box -->
@@ -253,15 +253,15 @@
             <!-- Requests -->
             <g transform="translate(490, 395)">
                 <rect x="0" y="0" width="55" height="22" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
-                <text x="27" y="15" text-anchor="middle" fill="#ffffff" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Req 1</text>
+                <text x="27" y="15" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Req 1</text>
             </g>
             <g transform="translate(490, 425)">
                 <rect x="0" y="0" width="55" height="22" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
-                <text x="27" y="15" text-anchor="middle" fill="#ffffff" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Req 2</text>
+                <text x="27" y="15" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Req 2</text>
             </g>
             <g transform="translate(490, 455)">
                 <rect x="0" y="0" width="55" height="22" rx="4" fill="url(#requestGrad)" filter="url(#shadow)"/>
-                <text x="27" y="15" text-anchor="middle" fill="#ffffff" font-size="8" font-family="Liberation Sans, Arial, sans-serif">Req 3</text>
+                <text x="27" y="15" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Req 3</text>
             </g>
 
             <!-- Durable Object -->
@@ -269,7 +269,7 @@
                 <rect x="0" y="0" width="90" height="70" rx="8" fill="url(#lockGrad)" filter="url(#shadow)"/>
                 <text x="45" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Durable</text>
                 <text x="45" y="38" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Object</text>
-                <text x="45" y="58" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">holds lock</text>
+                <text x="45" y="58" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">holds lock</text>
             </g>
 
             <!-- Arrows to Durable Object -->
@@ -279,27 +279,27 @@
 
             <!-- Winner gets lock -->
             <line x1="675" y1="420" x2="745" y2="420" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
-            <text x="710" y="410" text-anchor="middle" fill="#22c55e" font-size="9" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">1 wins lock</text>
+            <text x="710" y="410" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">1 wins lock</text>
 
             <!-- Origin -->
             <g transform="translate(755, 395)">
                 <rect x="0" y="0" width="70" height="50" rx="6" fill="url(#originGrad)" filter="url(#shadow)"/>
                 <text x="35" y="22" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Origin</text>
-                <text x="35" y="38" text-anchor="middle" fill="#ffffff" font-size="9" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Server</text>
+                <text x="35" y="38" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Server</text>
             </g>
 
             <!-- Others wait or get stale -->
             <g transform="translate(580, 490)">
                 <rect x="0" y="0" width="110" height="35" rx="4" fill="#fef3c7" stroke="#f59e0b"/>
-                <text x="55" y="15" text-anchor="middle" fill="#92400e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">2,3 wait or get</text>
-                <text x="55" y="28" text-anchor="middle" fill="#92400e" font-size="9" font-family="Liberation Sans, Arial, sans-serif">stale response</text>
+                <text x="55" y="15" text-anchor="middle" fill="#92400e" font-size="10" font-family="Liberation Sans, Arial, sans-serif">2,3 wait or get</text>
+                <text x="55" y="28" text-anchor="middle" fill="#92400e" font-size="10" font-family="Liberation Sans, Arial, sans-serif">stale response</text>
             </g>
 
             <!-- Result box -->
             <g transform="translate(700, 540)">
                 <rect x="0" y="0" width="160" height="45" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
                 <text x="80" y="18" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Guaranteed single-flight</text>
-                <text x="80" y="35" text-anchor="middle" fill="#1e40af" font-size="9" font-family="Liberation Sans, Arial, sans-serif">Trade-off: +20-100ms latency</text>
+                <text x="80" y="35" text-anchor="middle" fill="#1e40af" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Trade-off: +20-100ms latency</text>
             </g>
 
             <!-- Bottom summary bar -->
