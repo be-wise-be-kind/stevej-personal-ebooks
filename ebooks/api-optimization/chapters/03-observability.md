@@ -247,6 +247,83 @@ Modern observability platforms automate much of this correlation. In Grafana:
 
 The key is ensuring your instrumentation produces the connected data. Automatic correlation in the UI only works when trace IDs flow through all your telemetry.
 
+#### How Trace Context Reaches Your Logs
+
+A common question: when you write `logger.info("Processing order")`, how does the trace ID get attached? The answer involves context propagation, a mechanism that makes the current trace available throughout your code without passing it explicitly.
+
+OpenTelemetry stores the active span in thread-local storage (or language-specific equivalents like Python's `contextvars` or Go's `context.Context`). When your code executes within a traced request, the current span is always accessible:
+
+```
+// The trace context is available anywhere in your request handling code
+from opentelemetry import trace
+
+def process_order(order):
+    current_span = trace.get_current_span()
+    span_context = current_span.get_span_context()
+
+    // These IDs are what you need for correlation
+    trace_id = format(span_context.trace_id, '032x')
+    span_id = format(span_context.span_id, '016x')
+
+    logger.info("Processing order",
+        extra={"trace_id": trace_id, "span_id": span_id, "order_id": order.id})
+```
+
+This works because the OpenTelemetry SDK automatically manages context. When middleware creates a span for an incoming request, that span becomes "current" for all code executing in that request's thread or async context. You never pass the span explicitly; you retrieve it when needed.
+
+**Automatic injection** eliminates even this manual step. OpenTelemetry provides logging integrations that automatically add trace fields to every log record:
+
+```
+// Python: one-time setup injects trace context into all logs
+from opentelemetry.instrumentation.logging import LoggingInstrumentor
+LoggingInstrumentor().instrument()
+
+// Now every logger.info() automatically includes trace_id and span_id
+logger.info("Processing order")  // trace fields added automatically
+```
+
+```
+// Java: configure logback/log4j to read from MDC
+// OpenTelemetry auto-instrumentation populates MDC automatically
+// logback.xml pattern:
+%d{HH:mm:ss} [%thread] %-5level %logger - trace_id=%X{trace_id} - %msg%n
+```
+
+The pattern is consistent across languages: OpenTelemetry manages context, and logging integrations read from that context automatically. Once configured, every log statement includes trace correlation without code changes.
+
+#### Correlating Metrics with Traces
+
+Metrics and traces serve different purposes: metrics show aggregate behavior over time, while traces show individual request flow. Correlating them answers questions like "which specific requests contributed to this latency spike?"
+
+**Exemplars** bridge this gap. An exemplar is a specific trace ID attached to a metric data point, providing a concrete example of what that metric measured:
+
+```
+// When recording a histogram observation, attach an exemplar
+histogram.record(
+    latency_ms,
+    attributes={"endpoint": "/api/checkout"},
+    exemplar={"trace_id": current_trace_id}  // links this data point to a trace
+)
+```
+
+In Prometheus/Grafana, clicking a histogram bucket shows exemplars as dots. Clicking a dot opens the linked trace, letting you investigate a specific slow request that contributed to elevated p99 latency.
+
+**Instance-level correlation** works differently. Traces include attributes identifying where they executed (host, pod, region). To see resource metrics for a traced request:
+
+1. Find the trace and note its `service.instance.id` or `host.name` attribute
+2. Query metrics filtered to that instance and the trace's time window
+3. Examine CPU, memory, and other resource metrics for that specific instance during that request
+
+This is inherently approximate. A trace shows a request took 500ms on instance `pod-abc`. The instance's CPU metric shows 80% utilization during that second. You cannot prove causation, but the correlation guides investigation.
+
+```
+// Grafana query: CPU for the instance that handled a slow trace
+rate(process_cpu_seconds_total{instance="pod-abc"}[1m])
+// Time range: the 30 seconds around when the trace occurred
+```
+
+The key insight: **traces identify WHERE to look; metrics show WHAT was happening there**. You cannot attach a trace ID to a CPU metric (metrics aggregate across all requests), but you can use trace attributes to narrow metrics to the relevant instance and time window.
+
 ### Practical Logging Strategies
 
 Logs are deceptively simple. Unlike metrics that require understanding aggregation semantics or traces that demand distributed context propagation, logs appear straightforward: something happens, write it down. This apparent simplicity leads teams to either log too little (missing critical debugging context) or log too much (drowning in noise and storage costs). Effective logging requires deliberate strategy.

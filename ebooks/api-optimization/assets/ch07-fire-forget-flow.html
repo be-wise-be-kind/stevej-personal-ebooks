@@ -75,11 +75,11 @@
             <text x="230" y="210" text-anchor="middle" style="font-size: 10px; fill: #22c55e; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">200 OK</text>
             <text x="230" y="225" text-anchor="middle" style="font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">(~5ms total)</text>
 
-            <!-- Loss window annotation -->
-            <rect x="375" y="235" width="250" height="55" fill="#fef3c7" rx="6" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4,2"/>
-            <text x="500" y="255" text-anchor="middle" style="font-size: 10px; fill: #92400e; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Potential Loss Window</text>
-            <text x="500" y="270" text-anchor="middle" style="font-size: 9px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">Event acknowledged but not yet durable</text>
-            <text x="500" y="283" text-anchor="middle" style="font-size: 9px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">Process crash = data loss</text>
+            <!-- Loss window annotation - shifted up to not cover batch flush text -->
+            <rect x="375" y="220" width="250" height="55" fill="#fef3c7" rx="6" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4,2"/>
+            <text x="500" y="240" text-anchor="middle" style="font-size: 10px; fill: #92400e; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Potential Loss Window</text>
+            <text x="500" y="255" text-anchor="middle" style="font-size: 9px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">Event acknowledged but not yet durable</text>
+            <text x="500" y="268" text-anchor="middle" style="font-size: 9px; fill: #92400e;" font-family="Liberation Sans, Arial, sans-serif">Process crash = data loss</text>
 
             <!-- Step 4: Async flush -->
             <line x1="505" y1="300" x2="675" y2="300" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>

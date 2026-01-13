@@ -30,9 +30,9 @@
 </head>
 <body>
     <div class="diagram-container">
-        <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 800 520" xmlns="http://www.w3.org/2000/svg">
             <!-- Background -->
-            <rect width="800" height="450" fill="white"/>
+            <rect width="800" height="520" fill="white"/>
 
             <!-- Title -->
             <text x="400" y="30" text-anchor="middle" style="font-size: 18px; font-weight: 600; fill: #1e293b;" font-family="Liberation Sans, Arial, sans-serif">Vector Similarity Search</text>
@@ -93,29 +93,29 @@
             <text x="470" y="110" style="font-size: 10px; fill: #dc2626; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">1. Query Text</text>
             <text x="470" y="128" style="font-size: 10px; fill: #7f1d1d;" font-family="Liberation Sans, Arial, sans-serif">"comfortable running shoes"</text>
 
-            <line x1="600" y1="140" x2="600" y2="155" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+            <line x1="600" y1="140" x2="600" y2="170" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
 
             <!-- Step 2: Embedding -->
-            <rect x="450" y="160" width="300" height="50" fill="#dbeafe" rx="6"/>
-            <text x="470" y="180" style="font-size: 10px; fill: #1e40af; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">2. Generate Embedding</text>
-            <text x="470" y="198" style="font-size: 9px; fill: #1e3a8a; font-family: monospace;" font-family="Liberation Sans, Arial, sans-serif">[0.23, -0.45, 0.12, ..., 0.78]</text>
+            <rect x="450" y="180" width="300" height="50" fill="#dbeafe" rx="6"/>
+            <text x="470" y="200" style="font-size: 10px; fill: #1e40af; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">2. Generate Embedding</text>
+            <text x="470" y="218" style="font-size: 9px; fill: #1e3a8a; font-family: monospace;" font-family="Liberation Sans, Arial, sans-serif">[0.23, -0.45, 0.12, ..., 0.78]</text>
 
-            <line x1="600" y1="210" x2="600" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+            <line x1="600" y1="230" x2="600" y2="260" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
 
             <!-- Step 3: Similarity search -->
-            <rect x="450" y="230" width="300" height="50" fill="#fef3c7" rx="6"/>
-            <text x="470" y="250" style="font-size: 10px; fill: #92400e; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">3. Vector Similarity Search</text>
-            <text x="470" y="268" style="font-size: 9px; fill: #78350f;" font-family="Liberation Sans, Arial, sans-serif">Find k-nearest neighbors (cosine distance)</text>
+            <rect x="450" y="270" width="300" height="50" fill="#fef3c7" rx="6"/>
+            <text x="470" y="290" style="font-size: 10px; fill: #92400e; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">3. Vector Similarity Search</text>
+            <text x="470" y="308" style="font-size: 9px; fill: #78350f;" font-family="Liberation Sans, Arial, sans-serif">Find k-nearest neighbors (cosine distance)</text>
 
-            <line x1="600" y1="280" x2="600" y2="295" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+            <line x1="600" y1="320" x2="600" y2="350" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
 
             <!-- Step 4: Results -->
-            <rect x="450" y="300" width="300" height="85" fill="#dcfce7" rx="6"/>
-            <text x="470" y="320" style="font-size: 10px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">4. Semantic Matches</text>
-            <text x="475" y="340" style="font-size: 9px; fill: #14532d;" font-family="Liberation Sans, Arial, sans-serif">• "cushioned jogging sneakers" (0.92)</text>
-            <text x="475" y="355" style="font-size: 9px; fill: #14532d;" font-family="Liberation Sans, Arial, sans-serif">• "padded athletic footwear" (0.89)</text>
-            <text x="475" y="370" style="font-size: 9px; fill: #14532d;" font-family="Liberation Sans, Arial, sans-serif">• "soft marathon trainers" (0.87)</text>
-            <text x="560" y="380" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">(similarity scores)</text>
+            <rect x="450" y="360" width="300" height="85" fill="#dcfce7" rx="6"/>
+            <text x="470" y="380" style="font-size: 10px; fill: #166534; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">4. Semantic Matches</text>
+            <text x="475" y="400" style="font-size: 9px; fill: #14532d;" font-family="Liberation Sans, Arial, sans-serif">• "cushioned jogging sneakers" (0.92)</text>
+            <text x="475" y="415" style="font-size: 9px; fill: #14532d;" font-family="Liberation Sans, Arial, sans-serif">• "padded athletic footwear" (0.89)</text>
+            <text x="475" y="430" style="font-size: 9px; fill: #14532d;" font-family="Liberation Sans, Arial, sans-serif">• "soft marathon trainers" (0.87)</text>
+            <text x="560" y="440" style="font-size: 8px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">(similarity scores)</text>
 
             <!-- Key insight box -->
             <rect x="50" y="375" width="350" height="65" fill="#f0f9ff" rx="6" stroke="#0284c7" stroke-width="1"/>
@@ -124,9 +124,9 @@
             <text x="225" y="430" text-anchor="middle" style="font-size: 9px; fill: #0c4a6e;" font-family="Liberation Sans, Arial, sans-serif">even without keyword overlap</text>
 
             <!-- Technology examples -->
-            <rect x="450" y="395" width="300" height="45" fill="#f1f5f9" rx="4"/>
-            <text x="470" y="415" style="font-size: 10px; fill: #374151; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Vector DBs: Pinecone, Weaviate, Qdrant, Milvus</text>
-            <text x="470" y="430" style="font-size: 10px; fill: #374151;" font-family="Liberation Sans, Arial, sans-serif">Hybrid: pgvector, Elasticsearch dense vectors</text>
+            <rect x="450" y="455" width="300" height="45" fill="#f1f5f9" rx="4"/>
+            <text x="470" y="475" style="font-size: 10px; fill: #374151; font-weight: 500;" font-family="Liberation Sans, Arial, sans-serif">Vector DBs: Pinecone, Weaviate, Qdrant, Milvus</text>
+            <text x="470" y="490" style="font-size: 10px; fill: #374151;" font-family="Liberation Sans, Arial, sans-serif">Hybrid: pgvector, Elasticsearch dense vectors</text>
 
             <!-- Legend (positioned in lower left of embedding space) -->
             <circle cx="85" cy="345" r="5" fill="#ef4444"/>

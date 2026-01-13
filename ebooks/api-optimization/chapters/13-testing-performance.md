@@ -670,7 +670,7 @@ If you upgrade the database and change the caching strategy simultaneously, you 
 
 Integrating performance testing into CI/CD pipelines catches regressions before they reach production. The goal is automated quality gates that fail builds when performance degrades.
 
-<!-- DIAGRAM: CI/CD pipeline with performance gates: Code Commit -> Build -> Unit Tests -> [Smoke Perf Test: 2 min] -> Deploy to Staging -> [Load Test: 15 min] -> Deploy to Production. Show pass/fail gates at each perf test step with threshold examples -->
+<!-- DIAGRAM: CI/CD pipeline with performance gates: Code Commit -> Build -> Unit Tests -> Ephemeral Env -> [Smoke Perf Test: 2 min] -> Deploy to Staging -> [Load Test: 15 min] -> Deploy to Production. Show pass/fail gates at each perf test step with threshold examples -->
 
 ![CI/CD Performance Pipeline](../assets/ch13-cicd-pipeline.html)
 

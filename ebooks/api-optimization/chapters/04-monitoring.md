@@ -379,7 +379,7 @@ Chapter 2 introduced saturation as the fourth golden signal and distinguished it
 
 The key insight: **utilization tells you how busy a resource is; saturation tells you if work is waiting**. Most default dashboards show utilization. You must explicitly configure saturation metrics.
 
-![Saturation Dashboard](assets/ch04-saturation-dashboard.html)
+![Saturation Dashboard](../assets/ch04-saturation-dashboard.html)
 
 A saturation dashboard monitors all resource types simultaneously, highlighting which resources have work waiting versus which are simply busy.
 

@@ -72,7 +72,7 @@ on HTTP/2 connection:
         one slow response does not block others
 ```
 
-HTTP/3, built on QUIC, addresses HTTP/2's remaining weakness: head-of-line blocking at the TCP layer. When a single packet is lost on an HTTP/2 connection, all streams stall until retransmission completes. QUIC implements reliability per-stream, so a lost packet only affects its specific stream [Source: RFC 9000, QUIC Protocol].
+QUIC (Quick UDP Internet Connections) is a transport protocol originally developed by Google and standardized by the IETF in 2021. Unlike TCP, QUIC runs over UDP and implements its own reliability, congestion control, and encryption at the transport layer. HTTP/3, built on QUIC, addresses HTTP/2's remaining weakness: head-of-line blocking at the TCP layer. When a single packet is lost on an HTTP/2 connection, all streams stall until retransmission completes. QUIC implements reliability per-stream, so a lost packet only affects its specific stream [Source: RFC 9000, QUIC Protocol].
 
 QUIC also integrates TLS 1.3 directly into the protocol, achieving connection establishment in one round trip for new connections and zero round trips for resumed connections. For mobile users on unreliable networks, HTTP/3 can provide measurably better performance, particularly for tail latencies where packet loss events are more likely.
 
