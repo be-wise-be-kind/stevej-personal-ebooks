@@ -28,25 +28,7 @@ Observability differs from traditional monitoring in a fundamental way: monitori
 
 **Traces** follow a single request as it traverses multiple services. Each operation becomes a "span" with timing information, and spans connect to form a complete picture of request flow. Traces excel at identifying which service or operation causes latency in distributed systems.
 
-**Profiling** captures code-level execution details: which functions consume CPU time, where memory allocations occur, and how call stacks nest. Continuous profiling in production reveals optimization opportunities that synthetic benchmarks miss. Flame graphs provide the standard visualization for profiling data, with wider bars indicating more time spent in that function.
-
-![CPU Flame Graph Example](../assets/ch03-flame-graph.html)
-
-**Profiling Blind Spots**
-
-Profilers do not capture everything. Understanding what profilers miss prevents misguided optimization:
-
-- **I/O wait time**: CPU profilers measure time spent executing code, not time waiting for I/O. A function that blocks for 500ms on a network call may appear fast in a CPU profile because the CPU was idle during the wait. For I/O-bound services, CPU profiles show little. Use tracing to measure actual wall-clock time.
-
-- **Lock contention**: Time spent waiting to acquire locks does not always appear clearly in CPU profiles. The thread is blocked, not executing, so the profiler may not attribute time to the contended code path. Specialized lock contention profilers or off-CPU profilers are needed for lock analysis.
-
-- **Garbage collection overhead**: GC pauses stop application threads, but this pause time may not be clearly attributed in application profiles. GC logs and runtime metrics reveal pause duration and frequency that CPU profiles may miss.
-
-- **Kernel and system calls**: User-space profilers only see user-space execution. Time spent in kernel syscalls (especially slow ones like synchronous disk I/O) may be underreported. `perf` on Linux captures both user and kernel stacks but requires additional privileges.
-
-- **Sampling bias**: Statistical profilers sample call stacks periodically (typically 100-1000 Hz). Short, fast functions that complete between samples may be underrepresented. Extremely hot spots are captured accurately; moderately warm paths may be missed.
-
-For complete performance visibility, combine CPU profiling (what code is executing), tracing (what requests are doing end-to-end), and wall-clock analysis (total elapsed time). Each tool reveals blind spots in the others.
+**Profiling** captures code-level execution details: which functions consume CPU time, where memory allocations occur, and how call stacks nest. Continuous profiling in production reveals optimization opportunities that synthetic benchmarks miss. We cover profiling in depth later in this chapter.
 
 ### When to Use Which Pillar
 
@@ -59,7 +41,211 @@ Each pillar serves distinct purposes. Understanding their strengths prevents bot
 | Traces | Request flow analysis, latency breakdown | Sampling may miss rare events |
 | Profiling | Code optimization, hotspot identification | Overhead concerns at high frequency |
 
-In practice, we correlate signals across pillars. A metric alert fires when p95 latency exceeds our SLO. We examine traces from that time window to identify slow spans. We pull logs from those specific trace IDs for error context. Finally, we compare profiles before and after our optimization to verify improvement.
+### Distributed Tracing Concepts
+
+Distributed tracing originated at Google with their Dapper system, described in the foundational 2010 paper [Source: Sigelman et al., "Dapper, a Large-Scale Distributed Systems Tracing Infrastructure", 2010]. The concepts introduced (traces, spans, and context propagation) remain the foundation of modern tracing systems.
+
+A **trace** represents the complete journey of a single request through your system. Each trace has a unique identifier (trace ID) that follows the request across service boundaries.
+
+A **span** represents a single unit of work within a trace. Spans have:
+- A span ID (unique within the trace)
+- A parent span ID (linking to the calling operation)
+- Start and end timestamps
+- Attributes (key-value pairs with context)
+- Status (success, error, etc.)
+
+**Context propagation** ensures trace information travels with requests. When Service A calls Service B, the trace ID and parent span ID must transfer via HTTP headers, message metadata, or similar mechanisms. OpenTelemetry standardizes this propagation through the W3C Trace Context specification.
+
+The propagation logic follows this pattern:
+
+```
+on outgoing request:
+    trace_id = current trace ID (or generate new if none exists)
+    span_id = generate new unique span ID
+    add headers: traceparent = trace_id + span_id
+    record span start time and operation name
+
+    make the outbound request
+
+    record span end time, status code, and any error info
+```
+
+<!-- DIAGRAM: Distributed trace waterfall view showing a request spanning 4 services: API Gateway (50ms total) -> User Service (30ms) -> Auth Service (15ms) -> Database (10ms), with parent-child span relationships and timing breakdown -->
+
+![Distributed Trace Waterfall View](../assets/ch03-trace-waterfall.html)
+
+**How Spans Become Traces**
+
+Each service in your system independently sends its spans to the trace backend (Tempo, Jaeger, or similar). Services do not communicate with each other about tracing. They simply emit their spans as they complete work.
+
+The trace backend assembles complete traces from these independent span submissions. When the API Gateway processes a request, it creates a span and sends it to Tempo. When the User Service handles its portion, it creates its own span (with the same trace ID) and also sends it to Tempo. The backend uses the shared trace_id to group spans together, and the parent_span_id to reconstruct the tree structure.
+
+This architecture means spans arrive at the backend out of order. The database query span might arrive before the API Gateway span that initiated the request. The backend buffers incoming spans briefly (typically 30-60 seconds) before assembling them into a viewable trace. This buffering window explains why traces are not visible immediately after a request completes.
+
+![Example Distributed Trace](../assets/ch03-example-trace.html)
+
+**Clock Synchronization**
+
+Since each service timestamps its own spans, clock drift between servers can produce confusing traces where child spans appear to start before their parents. NTP (Network Time Protocol) synchronization across your infrastructure is essential for accurate trace visualization. In Kubernetes environments, all pods typically share the host's clock, minimizing this issue.
+
+**Sampling Strategies and Trade-offs**
+
+Tracing every request at scale is prohibitively expensive. A service handling 10,000 requests per second generates 864 million traces per day. At $0.01 per thousand traces (typical managed pricing), that costs $8,640 daily just for storage. Sampling makes distributed tracing economically viable, but the choice of sampling strategy affects what you can learn.
+
+**Head-Based Sampling** decides at request entry whether to trace. The first service (typically the API gateway) makes a probabilistic decision: 10% sample rate means 10% of traces are captured. This decision propagates downstream via trace context headers. All participating services either trace or don't trace a request together.
+
+Head-based sampling is simple and predictable. You know exactly what percentage of traffic you're capturing. The limitation: interesting requests (errors, slow responses) are sampled at the same rate as boring ones. With 10% sampling, you capture only 10% of errors, potentially missing rare but important failure modes.
+
+**Tail-Based Sampling** delays the sampling decision until the request completes. The OpenTelemetry Collector buffers all spans for a brief window (typically 30-60 seconds), then evaluates rules to decide which traces to keep. Common rules include:
+
+- Keep 100% of traces with errors (any span with error status)
+- Keep 100% of traces exceeding latency thresholds (p99 outliers)
+- Keep 5% of successful, normal-latency traces
+- Keep 100% of traces matching specific attributes (specific endpoints, user IDs)
+
+Tail-based sampling requires buffering at the collector layer, which increases memory usage and operational complexity. The collector must see all spans before making decisions, so it becomes a bottleneck if undersized. However, the ability to capture all errors and latency outliers often justifies the complexity.
+
+**Adaptive Sampling** adjusts rates based on traffic volume. During normal traffic, sample at 10%. During traffic spikes, reduce to 1% to prevent collector overload. This maintains cost control while preserving debug capability during typical operation. The OpenTelemetry Collector supports probabilistic sampling with rate limiting to implement adaptive behavior.
+
+**Cost Implications**
+
+| Strategy | Storage Cost | Error Coverage | Complexity |
+|----------|--------------|----------------|------------|
+| Head 10% | Predictable | 10% of errors | Simple |
+| Head 1% | Very low | 1% of errors | Simple |
+| Tail-based | Higher (buffering) | 100% of errors | Complex |
+| Adaptive | Variable | Varies | Moderate |
+
+For most API optimization work, tail-based sampling with 100% error capture provides the best debugging capability. Accept the operational complexity of running the collector with adequate resources. The ability to investigate every error is worth the investment.
+
+### Correlating Signals Across Pillars
+
+The four pillars are not independent tools - they form a connected system. The key to effective observability is moving fluidly between pillars during investigation, using each signal type for what it does best. This correlation is enabled by a universal identifier: the **trace ID**.
+
+![Correlating Signals Across Pillars](../assets/ch03-pillar-correlation.html)
+
+#### The Trace ID as Universal Correlator
+
+Every request entering your system should receive a trace ID that follows it everywhere: through service calls, into log statements, attached to metrics as exemplars, and associated with profiling data. This single identifier is the thread that connects all your observability data.
+
+```
+on request entry at API gateway:
+    trace_id = extract from incoming headers OR generate new
+
+    // Trace: automatically attached to all spans
+    start_span(trace_id, "api-gateway")
+
+    // Logs: explicitly include in every log entry
+    log.info("Request received", trace_id=trace_id, path=request.path)
+
+    // Metrics: attach as exemplar for drill-down
+    request_counter.increment(labels={endpoint: path}, exemplar={trace_id: trace_id})
+
+    // Profiling: tag profiling samples with trace context
+    profiler.tag_current_execution(trace_id=trace_id)
+```
+
+Without consistent trace ID propagation, you have four separate data silos. With it, you can navigate seamlessly between pillars.
+
+#### Metric to Trace: Finding the Needles
+
+Metrics tell you something is wrong; traces tell you why. When a metric alert fires (p95 latency exceeded, error rate spiked), you need to find representative traces from that time window.
+
+**Exemplars** bridge this gap. An exemplar is a trace ID attached to a specific metric observation. When you record a histogram bucket for a 2-second response, you also record which trace ID produced that measurement. Later, clicking on that histogram spike in Grafana can jump directly to a trace that contributed to it.
+
+```
+// When recording latency metric, attach the trace as an exemplar
+latency_histogram.observe(
+    value=response_time_ms,
+    labels={endpoint: "/api/orders", status: 200},
+    exemplar={trace_id: current_trace_id()}
+)
+```
+
+Without exemplars, you query traces by time window and hope to find a slow one:
+
+```
+// Tempo query: find slow traces in the last hour
+{ duration > 2s } | select(traceid, duration, name)
+```
+
+With exemplars, you click the metric spike and land directly on a problematic trace.
+
+#### Trace to Logs: Getting the Details
+
+Traces show the shape of a request - which services were called, how long each took, where errors occurred. Logs provide the details: the actual error message, the query that was executed, the decision that was made.
+
+When examining a trace in Tempo or Jaeger, you identify a slow or errored span. The next step is pulling logs for that specific request:
+
+```
+// Loki query: all logs for a specific trace
+{service="checkout-service"} | json | trace_id="abc123def456"
+
+// Or across all services
+{} | json | trace_id="abc123def456"
+```
+
+This query returns every log entry generated during that request's execution, across all services, in chronological order. You see the complete story: what was attempted, what failed, what the error details were.
+
+For this to work, every log statement must include the trace ID. Most OpenTelemetry SDKs provide automatic trace context injection into logging frameworks. If not, add it explicitly:
+
+```
+// Manual trace context injection
+log.error("Payment failed",
+    trace_id=current_span().trace_id,
+    span_id=current_span().span_id,
+    error=exception.message,
+    payment_provider="stripe",
+    amount_cents=order.total)
+```
+
+#### Trace to Profile: Finding the Hot Code
+
+When a trace shows a span that took 500ms but you cannot see why from the span attributes alone, profiling reveals what code was executing during that time.
+
+Continuous profiling tools like Pyroscope can correlate profiling samples with trace spans. You click a slow span and see a flame graph of exactly what code was running during that span's execution. This pinpoints whether the time was spent in your code, a library, garbage collection, or waiting for I/O.
+
+The correlation requires two things:
+1. **Continuous profiling running in production** - sampling CPU, memory, or allocations constantly
+2. **Span-to-profile linking** - associating profiling samples with the trace context active when they were taken
+
+Not all profiling setups support this correlation. Pyroscope with OpenTelemetry integration enables it. When available, this capability transforms debugging: instead of staring at a slow span wondering what it was doing, you see the actual call stack.
+
+#### Logs and Metrics to Profile: Identifying Hot Paths
+
+Beyond individual request investigation, you can use aggregate signals to identify code worth profiling. If metrics show CPU saturation, continuous profiling reveals which functions consume the most CPU across all requests. If logs show frequent garbage collection pauses, allocation profiling shows which code paths create the most objects.
+
+This is a different correlation pattern - not following a single trace, but using aggregate signals to guide optimization efforts. Profiling answers "what code is responsible for this resource consumption?" which metrics and logs cannot answer.
+
+#### The Investigation Workflow
+
+A typical investigation flows through the pillars:
+
+1. **Alert fires** (metrics): p95 latency exceeded SLO for `/api/checkout`
+2. **Find affected traces** (metrics → traces): Use exemplars or time-window query to find slow checkout requests
+3. **Identify slow span** (traces): Trace waterfall shows payment service span taking 2 seconds
+4. **Get error details** (traces → logs): Query logs by trace ID, find "connection timeout to payment provider"
+5. **Check if systemic** (logs → metrics): Query payment service error rate, see it spiked at same time
+6. **Find root cause** (metrics): Payment provider status page confirms outage
+
+Or for a performance optimization:
+
+1. **Dashboard shows high CPU** (metrics): Service running at 80% CPU
+2. **Examine profiles** (metrics → profiling): Flame graph shows 40% of CPU in JSON serialization
+3. **Find affected endpoints** (profiling → traces): Trace the hot functions to specific API endpoints
+4. **Verify with metrics** (traces → metrics): Those endpoints have highest request volume
+5. **Optimize and validate** (profiling): After fix, flame graph shows JSON serialization dropped to 5%
+
+#### Tooling Integration
+
+Modern observability platforms automate much of this correlation. In Grafana:
+
+- Clicking a metric data point with an exemplar opens the linked trace in Tempo
+- Trace view includes a "Logs" tab showing Loki results filtered by trace ID
+- Pyroscope integration shows flame graphs for individual spans
+- Shared time selectors keep all panels synchronized
+
+The key is ensuring your instrumentation produces the connected data. Automatic correlation in the UI only works when trace IDs flow through all your telemetry.
 
 ### Practical Logging Strategies
 
@@ -206,82 +392,45 @@ Adaptive sampling adjusts rates based on current conditions. During normal opera
 
 Most production systems benefit from layered configuration: environment variables for baseline levels, feature flags for temporary per-user debugging, and an admin API for incident response.
 
-### Distributed Tracing Concepts
+### Continuous Profiling in Practice
 
-Distributed tracing originated at Google with their Dapper system, described in the foundational 2010 paper [Source: Sigelman et al., "Dapper, a Large-Scale Distributed Systems Tracing Infrastructure", 2010]. The concepts introduced (traces, spans, and context propagation) remain the foundation of modern tracing systems.
+Profiling captures what code is actually executing—which functions consume CPU time, where memory allocations occur, and how call stacks nest. While metrics tell you *that* CPU is high and traces tell you *which request* is slow, profiling tells you *what code* is responsible.
 
-A **trace** represents the complete journey of a single request through your system. Each trace has a unique identifier (trace ID) that follows the request across service boundaries.
+#### Flame Graphs
 
-A **span** represents a single unit of work within a trace. Spans have:
-- A span ID (unique within the trace)
-- A parent span ID (linking to the calling operation)
-- Start and end timestamps
-- Attributes (key-value pairs with context)
-- Status (success, error, etc.)
+Flame graphs provide the standard visualization for profiling data. Each horizontal bar represents a function in the call stack, with wider bars indicating more time spent in that function. The vertical axis shows call depth: functions at the bottom called functions stacked above them.
 
-**Context propagation** ensures trace information travels with requests. When Service A calls Service B, the trace ID and parent span ID must transfer via HTTP headers, message metadata, or similar mechanisms. OpenTelemetry standardizes this propagation through the W3C Trace Context specification.
+![CPU Flame Graph Example](../assets/ch03-flame-graph.html)
 
-The propagation logic follows this pattern:
+Reading a flame graph:
+- **Width matters**: Look for wide bars—these are where time is spent
+- **Plateaus indicate hotspots**: A wide bar with no children means that function itself is doing the work
+- **Narrow towers are fine**: Deep call stacks with narrow bars indicate little time spent at each level
+- **Compare before/after**: Flame graphs are most useful when comparing optimized vs. unoptimized versions
 
-```
-on outgoing request:
-    trace_id = current trace ID (or generate new if none exists)
-    span_id = generate new unique span ID
-    add headers: traceparent = trace_id + span_id
-    record span start time and operation name
+#### Profiling Blind Spots
 
-    make the outbound request
+Profilers do not capture everything. Understanding what profilers miss prevents misguided optimization:
 
-    record span end time, status code, and any error info
-```
+- **I/O wait time**: CPU profilers measure time spent executing code, not time waiting for I/O. A function that blocks for 500ms on a network call may appear fast in a CPU profile because the CPU was idle during the wait. For I/O-bound services, CPU profiles show little. Use tracing to measure actual wall-clock time.
 
-<!-- DIAGRAM: Distributed trace waterfall view showing a request spanning 4 services: API Gateway (50ms total) -> User Service (30ms) -> Auth Service (15ms) -> Database (10ms), with parent-child span relationships and timing breakdown -->
+- **Lock contention**: Time spent waiting to acquire locks does not always appear clearly in CPU profiles. The thread is blocked, not executing, so the profiler may not attribute time to the contended code path. Specialized lock contention profilers or off-CPU profilers are needed for lock analysis.
 
-![Distributed Trace Waterfall View](../assets/ch03-trace-waterfall.html)
+- **Garbage collection overhead**: GC pauses stop application threads, but this pause time may not be clearly attributed in application profiles. GC logs and runtime metrics reveal pause duration and frequency that CPU profiles may miss.
 
-**How Spans Become Traces**
+- **Kernel and system calls**: User-space profilers only see user-space execution. Time spent in kernel syscalls (especially slow ones like synchronous disk I/O) may be underreported. `perf` on Linux captures both user and kernel stacks but requires additional privileges.
 
-Each service in your system independently sends its spans to the trace backend (Tempo, Jaeger, or similar). Services do not communicate with each other about tracing. They simply emit their spans as they complete work.
+- **Sampling bias**: Statistical profilers sample call stacks periodically (typically 100-1000 Hz). Short, fast functions that complete between samples may be underrepresented. Extremely hot spots are captured accurately; moderately warm paths may be missed.
 
-The trace backend assembles complete traces from these independent span submissions. When the API Gateway processes a request, it creates a span and sends it to Tempo. When the User Service handles its portion, it creates its own span (with the same trace ID) and also sends it to Tempo. The backend uses the shared trace_id to group spans together, and the parent_span_id to reconstruct the tree structure.
+For complete performance visibility, combine CPU profiling (what code is executing), tracing (what requests are doing end-to-end), and wall-clock analysis (total elapsed time). Each tool reveals blind spots in the others.
 
-This architecture means spans arrive at the backend out of order. The database query span might arrive before the API Gateway span that initiated the request. The backend buffers incoming spans briefly (typically 30-60 seconds) before assembling them into a viewable trace. This buffering window explains why traces are not visible immediately after a request completes.
+#### Continuous Profiling vs. Ad-Hoc Profiling
 
-![Example Distributed Trace](../assets/ch03-example-trace.html)
+Traditional profiling is ad-hoc: attach a profiler during debugging, capture samples, detach. This misses production-only behavior—the hot paths that only appear under real load with real data.
 
-**Clock Synchronization**
+Continuous profiling runs always-on in production at low overhead (typically 1-2% CPU). Tools like Pyroscope, Datadog Continuous Profiler, or Google Cloud Profiler sample constantly, building a historical record of where CPU time goes. When metrics show CPU saturation, you query the profiler for that time window and see exactly what code was responsible.
 
-Since each service timestamps its own spans, clock drift between servers can produce confusing traces where child spans appear to start before their parents. NTP (Network Time Protocol) synchronization across your infrastructure is essential for accurate trace visualization. In Kubernetes environments, all pods typically share the host's clock, minimizing this issue.
-
-**Sampling Strategies and Trade-offs**
-
-Tracing every request at scale is prohibitively expensive. A service handling 10,000 requests per second generates 864 million traces per day. At $0.01 per thousand traces (typical managed pricing), that costs $8,640 daily just for storage. Sampling makes distributed tracing economically viable, but the choice of sampling strategy affects what you can learn.
-
-**Head-Based Sampling** decides at request entry whether to trace. The first service (typically the API gateway) makes a probabilistic decision: 10% sample rate means 10% of traces are captured. This decision propagates downstream via trace context headers. All participating services either trace or don't trace a request together.
-
-Head-based sampling is simple and predictable. You know exactly what percentage of traffic you're capturing. The limitation: interesting requests (errors, slow responses) are sampled at the same rate as boring ones. With 10% sampling, you capture only 10% of errors, potentially missing rare but important failure modes.
-
-**Tail-Based Sampling** delays the sampling decision until the request completes. The OpenTelemetry Collector buffers all spans for a brief window (typically 30-60 seconds), then evaluates rules to decide which traces to keep. Common rules include:
-
-- Keep 100% of traces with errors (any span with error status)
-- Keep 100% of traces exceeding latency thresholds (p99 outliers)
-- Keep 5% of successful, normal-latency traces
-- Keep 100% of traces matching specific attributes (specific endpoints, user IDs)
-
-Tail-based sampling requires buffering at the collector layer, which increases memory usage and operational complexity. The collector must see all spans before making decisions, so it becomes a bottleneck if undersized. However, the ability to capture all errors and latency outliers often justifies the complexity.
-
-**Adaptive Sampling** adjusts rates based on traffic volume. During normal traffic, sample at 10%. During traffic spikes, reduce to 1% to prevent collector overload. This maintains cost control while preserving debug capability during typical operation. The OpenTelemetry Collector supports probabilistic sampling with rate limiting to implement adaptive behavior.
-
-**Cost Implications**
-
-| Strategy | Storage Cost | Error Coverage | Complexity |
-|----------|--------------|----------------|------------|
-| Head 10% | Predictable | 10% of errors | Simple |
-| Head 1% | Very low | 1% of errors | Simple |
-| Tail-based | Higher (buffering) | 100% of errors | Complex |
-| Adaptive | Variable | Varies | Moderate |
-
-For most API optimization work, tail-based sampling with 100% error capture provides the best debugging capability. Accept the operational complexity of running the collector with adequate resources. The ability to investigate every error is worth the investment.
+The combination of continuous profiling with trace correlation (covered in "Correlating Signals Across Pillars") enables a powerful workflow: click a slow span in a trace, see the flame graph of exactly what code executed during that span.
 
 ### OpenTelemetry: The Industry Standard
 
@@ -468,6 +617,8 @@ Alerts should be actionable. Every alert that fires should require human interve
 - Regularly reviewing and pruning alert rules
 
 Multi-window, multi-burn-rate alerts provide sophisticated SLO monitoring. Rather than alerting on instantaneous threshold violations, these alerts fire when error budget consumption rate threatens the SLO over the compliance period. Google's SRE Workbook provides detailed guidance on this approach [Source: Google SRE Workbook, 2018].
+
+Chapter 4 expands on alerting operations: routing and escalation procedures, runbook integration, and using incident patterns to drive optimization priorities.
 
 ### Case Study: Observability for an E-Commerce API
 

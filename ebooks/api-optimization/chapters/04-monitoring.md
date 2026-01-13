@@ -124,6 +124,187 @@ Throughput monitoring connects directly to capacity planning (covered in Chapter
 
 A well-designed traffic dashboard answers: "How much traffic are we handling, is it normal, and how much headroom do we have?"
 
+### Latency Monitoring
+
+Latency is the golden signal users feel most directly. A throughput drop might go unnoticed; a latency spike makes every user wait. Effective latency monitoring requires understanding how to instrument, interpret, and act on latency data.
+
+#### Instrumenting Latency
+
+Latency measurement starts with choosing the right metric type. Prometheus offers two options:
+
+**Histograms** bucket observations into predefined ranges. A histogram with buckets at 50ms, 100ms, 250ms, 500ms, 1s counts how many requests fall into each bucket. Percentiles are calculated at query time by interpolating between buckets.
+
+**Summaries** calculate percentiles on the client side before sending to Prometheus. They're more accurate for a single instance but cannot be aggregated across instances—you cannot combine p99s from multiple pods to get a fleet-wide p99.
+
+For most API monitoring, histograms are the better choice. They aggregate across instances, support flexible queries, and allow retroactive analysis. The trade-off is bucket configuration: too few buckets lose precision, too many increase cardinality.
+
+```
+// Recording latency with a histogram
+latency_histogram = create_histogram(
+    name="http_request_duration_seconds",
+    buckets=[0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0],
+    labels=["endpoint", "method", "status_code"]
+)
+
+on request complete:
+    duration = end_time - start_time
+    latency_histogram.observe(duration, labels={
+        endpoint: request.path,
+        method: request.method,
+        status_code: response.status
+    })
+```
+
+Configure buckets based on your SLO targets. If your SLO requires p95 under 200ms, you need buckets around that threshold (100ms, 150ms, 200ms, 250ms) for accurate measurement.
+
+#### Percentile Interpretation
+
+Different percentiles answer different questions:
+
+| Percentile | What It Reveals | When to Use |
+|------------|-----------------|-------------|
+| p50 (median) | Typical user experience | Baseline performance understanding |
+| p90 | Experience for most users | Identifying emerging issues |
+| p95 | SLO threshold for many services | Standard SLO target |
+| p99 | Worst-case for typical users | Tail latency investigation |
+| p99.9 | Extreme outliers | Identifying systematic issues vs noise |
+
+The gap between percentiles tells a story. When p50 and p99 are close, latency is consistent. When p99 is 10x higher than p50, something causes occasional severe delays—investigate tail latency causes.
+
+Avoid using averages for latency monitoring. A bimodal distribution (half at 50ms, half at 5s) shows a 2.5s average that describes no actual user's experience. Percentiles reveal what averages hide.
+
+![Latency Monitoring Dashboard](../assets/ch04-latency-dashboard.html)
+
+#### Per-Endpoint Latency Analysis
+
+Aggregate latency metrics mask endpoint-specific problems. A slow `/reports/generate` endpoint might be acceptable at 3 seconds, while `/api/search` at 300ms is a crisis. Break down latency by:
+
+- **Endpoint**: Each API path has different acceptable latency ranges
+- **Method**: GET requests are typically faster than POST; monitor separately
+- **Status code**: Error responses (5xx) may be faster (failing quickly) or slower (timeouts)
+
+Latency heatmaps reveal patterns invisible in line charts. A heatmap shows request distribution over time, revealing:
+- Bimodal distributions (two distinct latency clusters)
+- Gradual degradation (distribution shifting rightward over hours)
+- Periodic spikes (correlating with cron jobs or batch processes)
+
+#### Latency Baselines and Anomalies
+
+Latency varies with time of day, day of week, and business cycles. A static threshold of "alert if p95 > 200ms" will either fire constantly during peak hours or miss problems during quiet periods.
+
+Establish baselines by:
+1. Recording latency over at least two weeks to capture weekly patterns
+2. Comparing current latency to the same time period (hour of day, day of week) in history
+3. Alerting on deviation from baseline rather than absolute threshold
+
+```
+// Baseline comparison in PromQL
+// Alert if current p95 is 50% higher than same time last week
+histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+  >
+histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m] offset 1w)) * 1.5
+```
+
+Early warning comes from detecting degradation before SLO breach. If your SLO allows p95 of 200ms and current p95 is 180ms but was 120ms yesterday, the trend indicates a problem even though the SLO is still met.
+
+#### Tail Latency Causes
+
+When p99 latency spikes while p50 remains stable, investigate these common causes:
+
+**Garbage collection pauses**: GC events block request processing. Correlate latency spikes with GC logs or metrics. Long GC pauses appear as latency outliers with otherwise normal distributions.
+
+**Lock contention**: Requests waiting for locks show increased latency under load. CPU profiling may show low utilization while latency climbs—a signature of contention.
+
+**Cold caches**: After deployments, cache misses cause initial requests to be slower. Latency should improve as caches warm. If it doesn't, investigate cache hit rates.
+
+**Connection pool exhaustion**: When pools are exhausted, requests queue waiting for connections. Saturation metrics (covered in the next section) reveal this pattern.
+
+**Downstream dependencies**: A slow database or external service affects your latency. Trace analysis (Chapter 3) identifies which dependency is responsible.
+
+Not all tail latency requires investigation. Occasional outliers are normal in distributed systems. Focus on persistent patterns or outliers affecting SLO compliance.
+
+### Errors Monitoring
+
+Errors are the golden signal that most directly indicates something is broken. While latency degradation frustrates users, errors prevent them from completing their tasks entirely. Effective error monitoring distinguishes signal from noise and connects errors to business impact.
+
+#### Error Categorization
+
+Not all errors indicate system problems:
+
+**5xx errors** (server errors) almost always indicate issues requiring investigation:
+- 500 Internal Server Error: Unhandled exception or application bug
+- 502 Bad Gateway: Upstream service failure
+- 503 Service Unavailable: Overload or maintenance
+- 504 Gateway Timeout: Upstream service too slow
+
+**4xx errors** (client errors) require nuanced interpretation:
+- 400 Bad Request: Could indicate API misuse or validation bugs
+- 401/403 Unauthorized/Forbidden: Normal for protected resources; spikes may indicate auth system issues
+- 404 Not Found: Normal for user typos; spikes may indicate broken links or routing changes
+- 429 Too Many Requests: Rate limiting working as designed; high volume may indicate attack or misconfigured client
+
+For system health monitoring, focus on 5xx errors. Track 4xx separately to identify client integration issues or API usability problems.
+
+```
+// Error rate query in PromQL - 5xx only
+sum(rate(http_requests_total{status_code=~"5.."}[5m]))
+  /
+sum(rate(http_requests_total[5m]))
+```
+
+#### Error Rate Calculation
+
+Express error rates as percentages rather than absolute counts. "50 errors per minute" means nothing without knowing total traffic; 50 errors in 10,000 requests (0.5%) differs vastly from 50 errors in 100 requests (50%).
+
+Calculate error rates at multiple granularities:
+- **Global error rate**: Overall API health
+- **Per-endpoint error rate**: Identifying problematic endpoints
+- **Per-status-code breakdown**: Understanding error types
+
+Exclude expected errors from health calculations. A 404 for a nonexistent resource isn't a system failure. Configure your metrics to distinguish:
+
+```
+// Success rate excluding expected 4xx errors
+sum(rate(http_requests_total{status_code=~"2.."}[5m]))
+  /
+sum(rate(http_requests_total{status_code!~"4(00|04|29)"}[5m]))
+```
+
+![Errors Monitoring Dashboard](../assets/ch04-errors-dashboard.html)
+
+#### Error Budgets in Practice
+
+Error budgets connect error rates to SLOs. If your SLO promises 99.9% availability, you have a 0.1% error budget—roughly 43 minutes of downtime per month or 8.7 hours per year.
+
+Monitor error budget consumption rate:
+- **Slow burn**: Consistently elevated error rate that gradually depletes budget
+- **Fast burn**: Sudden spike that rapidly consumes budget
+- **Budget remaining**: How much room remains before SLO breach
+
+Multi-burn-rate alerting (introduced in Chapter 3) catches both patterns:
+
+```
+// Fast burn: 14x budget consumption over 1 hour = exhausts monthly budget in ~2 days
+error_rate > (14 * monthly_error_budget) for 1 hour
+
+// Slow burn: 2x budget consumption over 6 hours = exhausts monthly budget in ~15 days
+error_rate > (2 * monthly_error_budget) for 6 hours
+```
+
+When error budget is exhausted or nearly so, shift priorities from feature development to reliability work. This is the organizational mechanism that balances velocity with stability.
+
+#### Error Correlation
+
+Errors rarely occur in isolation. Connecting errors to other signals accelerates diagnosis:
+
+**Errors preceding latency**: Error spikes often precede latency degradation as retries and fallback logic add load. Early error detection prevents cascading failures.
+
+**Errors correlated with deployments**: Track deployment events as annotations on error graphs. Sudden error rate changes aligned with deployments indicate the likely cause.
+
+**Downstream vs origin errors**: Distinguish errors your service generates from errors returned by dependencies. A 502 may reflect your code's bug or an upstream service's failure. Trace analysis reveals the true source.
+
+**Error clustering**: Multiple error types spiking simultaneously suggests a shared cause (infrastructure issue, configuration change) rather than multiple independent bugs.
+
 ### Per-Endpoint SLO Strategies
 
 A single API often contains dozens or hundreds of endpoints with vastly different performance characteristics. A `/health` check returning in 1ms shares metrics with a `/reports/generate` call that legitimately takes 5 seconds. Aggregate SLOs mask these differences: an API might report 99.5% of requests under 200ms while critical user-facing endpoints fail to meet their individual targets.
@@ -167,7 +348,9 @@ Strategies for managing cardinality while preserving endpoint visibility:
 
 #### Multi-Tenant Performance Visibility
 
-In multi-tenant systems, performance varies by tenant. A tenant with unusual data patterns or high request volume can experience different performance than others. Per-tenant visibility is essential for identifying tenant-specific issues, but naive tenant-labeling creates cardinality proportional to tenant count.
+A multi-tenant system is one where a single deployment serves multiple customers (tenants). Think of SaaS products like Slack, Salesforce, or Shopify: one codebase, one database cluster, thousands of companies using it simultaneously. The alternative—single-tenant—gives each customer their own dedicated deployment, which is simpler to reason about but more expensive to operate.
+
+In multi-tenant systems, performance varies by tenant. A tenant with unusual data patterns (millions of records where others have thousands) or high request volume can experience different performance than others. Per-tenant visibility is essential for identifying tenant-specific issues, but naive tenant-labeling creates cardinality proportional to tenant count.
 
 **Strategies for tenant-aware monitoring:**
 
@@ -195,6 +378,10 @@ In PromQL, calculate per-endpoint SLO compliance using histogram_quantile with e
 Chapter 2 introduced saturation as the fourth golden signal and distinguished it from utilization: a resource at 100% utilization with no queue is efficiently used; the same resource with work waiting is saturated. Here we cover how to measure saturation for each resource type.
 
 The key insight: **utilization tells you how busy a resource is; saturation tells you if work is waiting**. Most default dashboards show utilization. You must explicitly configure saturation metrics.
+
+![Saturation Dashboard](assets/ch04-saturation-dashboard.html)
+
+A saturation dashboard monitors all resource types simultaneously, highlighting which resources have work waiting versus which are simply busy.
 
 #### CPU Saturation
 
@@ -381,6 +568,50 @@ Playbooks are broader procedures for incident types (database outage, security i
 
 Every alert should link to a runbook. An alert without a runbook is incomplete.
 
+**Runbook Template**
+
+A well-structured runbook follows a consistent format:
+
+```
+RUNBOOK: High API Latency Alert
+Last Updated: 2024-01-15
+Owner: Platform Team
+
+ALERT CONTEXT
+- Fires when: p95 latency > 500ms for 5 minutes
+- SLO impact: Degrades user experience SLO (p95 < 200ms)
+- False positive rate: ~5% (usually during batch jobs)
+
+INITIAL ASSESSMENT
+1. Check Grafana dashboard: [link]
+2. Run: kubectl get pods -n api | grep -v Running
+3. Check recent deployments: [link to deployment history]
+4. Review error rate (correlated latency/error spikes suggest code issue)
+
+COMMON CAUSES (check in order)
+1. Database connection pool exhaustion
+   - Check: SELECT count(*) FROM pg_stat_activity;
+   - Fix: Scale up connection pool or restart stuck connections
+
+2. Memory pressure causing GC pauses
+   - Check: Grafana panel "JVM GC Pause Duration"
+   - Fix: Restart affected pods, investigate memory leak if recurring
+
+3. Downstream service degradation
+   - Check: Trace view for slow spans
+   - Fix: Enable circuit breaker, contact downstream team
+
+MITIGATION OPTIONS
+- Rollback: kubectl rollout undo deployment/api
+- Scale up: kubectl scale deployment/api --replicas=10
+- Shed load: Enable rate limiting via feature flag X
+
+ESCALATION
+- If not mitigated in 15 minutes: page secondary on-call
+- If customer-facing impact confirmed: notify support team
+- If data integrity risk: page database team immediately
+```
+
 **Communication During Incidents**
 
 Incidents require coordinated communication across multiple audiences:
@@ -396,23 +627,76 @@ Best practices for incident communication:
 - **Regular updates**: Post status updates at regular intervals (every 15-30 minutes during active incidents) even if just "still investigating"
 - **External status page**: Update public status page for customer-visible incidents with honest, jargon-free language
 
-### On-Call Best Practices
+**Status Update Templates**
 
-On-call is the human component of monitoring. Sustainable on-call practices maintain team health while ensuring system reliability.
+Consistent status updates reduce confusion during incidents. Use templates to ensure completeness:
 
-**On-Call Fundamentals**
+*Initial acknowledgment (within 5 minutes of alert):*
+```
+INCIDENT DECLARED: [Brief description]
+Severity: [P1/P2/P3]
+Impact: [What users are experiencing]
+Status: Investigating
+Incident Commander: [Name]
+Next update: [Time, typically 15-30 min]
+```
 
-- **Rotation fairness**: Distribute on-call burden evenly across the team. Track and balance pages received, not just shifts assigned.
-- **Handoff procedures**: Require written handoff at rotation change including active incidents, ongoing issues, and recent alerts.
-- **Acknowledgment SLOs**: Set expectations for acknowledgment time (e.g., 15 minutes). Track and review.
-- **Compensation**: On-call is real work. Compensate appropriately, whether through pay, time off, or both.
+*Progress update (every 15-30 minutes):*
+```
+UPDATE [Incident Name] - [Time]
+Current status: [Investigating/Mitigating/Monitoring]
+Actions taken: [What we've done]
+Current hypothesis: [What we think is wrong]
+Next steps: [What we're trying next]
+ETA to resolution: [If known, or "Unknown"]
+```
 
-**Reducing On-Call Burden**
+*Resolution announcement:*
+```
+RESOLVED: [Incident Name] - [Time]
+Duration: [Start to end]
+Impact: [Users affected, errors generated, revenue impact if known]
+Root cause: [Brief description]
+Resolution: [What fixed it]
+Follow-up: [Postmortem scheduled for X, action items being tracked]
+```
 
-- **Fix the causes**: Track repeat alerts and prioritize fixing underlying issues. The best alert is one that never fires.
-- **Automate responses**: If the response to an alert is always the same, automate it. Self-healing systems reduce human toil.
-- **Improve runbooks**: After each incident, update runbooks with lessons learned. Faster diagnosis reduces time-to-mitigation.
-- **Share knowledge**: Document tribal knowledge. No one should be the only person who can diagnose a particular problem.
+### On-Call as an Optimization Signal
+
+On-call data is one of the most valuable inputs for optimization prioritization. Every page represents a system asking for human help—and an opportunity to make the system better.
+
+**Incident Patterns Reveal Optimization Priorities**
+
+Track and categorize every alert:
+
+- **By root cause**: Database overload, memory pressure, downstream timeouts, deployment regressions
+- **By affected component**: Which services page most frequently?
+- **By time of day**: Are problems correlated with traffic patterns, batch jobs, or maintenance windows?
+- **By resolution type**: What percentage require code fixes vs. operational responses vs. false positives?
+
+When the same alert fires repeatedly, it signals a systemic issue worth optimizing. A service that pages twice per week for connection pool exhaustion is telling you to either increase the pool, optimize query patterns, or add connection pooling at the application layer.
+
+**Post-Incident Optimization**
+
+Every incident should produce optimization candidates:
+
+- **Performance incidents**: Latency spikes and timeouts reveal bottlenecks. Add the specific optimization (query optimization, caching, connection pooling) to the backlog.
+- **Capacity incidents**: Traffic spikes that overwhelmed the system indicate where autoscaling, caching, or load shedding could help.
+- **Cascading failures**: When one service failure brings down others, circuit breakers, bulkheads, or timeout tuning can prevent recurrence.
+
+The postmortem process should explicitly ask: "What optimization would prevent this incident class?" Track these items alongside feature work.
+
+**Measuring Optimization Success Through Alert Reduction**
+
+Alert volume is a lagging indicator of optimization effectiveness:
+
+- **Pages per week**: Should trend downward as optimizations land
+- **Mean time to resolution**: Faster resolution suggests runbooks and tooling improvements
+- **Repeat incidents**: Same root cause appearing multiple times indicates incomplete optimization
+
+A healthy optimization program creates a virtuous cycle: incidents reveal problems, optimization fixes them, alert volume decreases, engineers have more time to optimize proactively rather than reactively.
+
+The goal is not zero alerts—some alerting is healthy confirmation that monitoring works. The goal is eliminating preventable incidents through systematic optimization.
 
 ### Continuous Performance Validation
 
