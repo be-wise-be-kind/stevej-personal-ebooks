@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correlating Signals Across Pillars</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 550" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="metricsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="tracesGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="logsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="profilingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="traceIdGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+                </linearGradient>
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
+                </filter>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#6366f1"/>
+                </marker>
+                <marker id="arrowhead-gray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="35" text-anchor="middle" font-size="22" font-weight="600" fill="#1f2937" font-family="Liberation Sans, Arial, sans-serif">Correlating Signals Across Pillars</text>
+
+            <!-- Central trace_id hub -->
+            <g transform="translate(350, 200)">
+                <circle cx="100" cy="80" r="70" fill="url(#traceIdGrad)" filter="url(#shadow)"/>
+                <text x="100" y="70" text-anchor="middle" font-size="14" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">trace_id</text>
+                <text x="100" y="90" text-anchor="middle" font-size="11" fill="white" fill-opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Universal</text>
+                <text x="100" y="105" text-anchor="middle" font-size="11" fill="white" fill-opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Correlator</text>
+            </g>
+
+            <!-- Metrics (top left) -->
+            <g transform="translate(50, 80)">
+                <rect x="0" y="0" width="180" height="120" rx="8" fill="url(#metricsGrad)" filter="url(#shadow)"/>
+                <text x="90" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Metrics</text>
+                <rect x="15" y="45" width="150" height="60" rx="4" fill="white" fill-opacity="0.15"/>
+                <text x="90" y="65" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">p95 latency spike</text>
+                <text x="90" y="80" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Error rate increase</text>
+                <text x="90" y="95" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">+ exemplar links</text>
+            </g>
+
+            <!-- Traces (top right) -->
+            <g transform="translate(670, 80)">
+                <rect x="0" y="0" width="180" height="120" rx="8" fill="url(#tracesGrad)" filter="url(#shadow)"/>
+                <text x="90" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Traces</text>
+                <rect x="15" y="45" width="150" height="60" rx="4" fill="white" fill-opacity="0.15"/>
+                <text x="90" y="65" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Request flow</text>
+                <text x="90" y="80" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Span timing</text>
+                <text x="90" y="95" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Service dependencies</text>
+            </g>
+
+            <!-- Logs (bottom left) -->
+            <g transform="translate(50, 350)">
+                <rect x="0" y="0" width="180" height="120" rx="8" fill="url(#logsGrad)" filter="url(#shadow)"/>
+                <text x="90" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Logs</text>
+                <rect x="15" y="45" width="150" height="60" rx="4" fill="white" fill-opacity="0.15"/>
+                <text x="90" y="65" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Error messages</text>
+                <text x="90" y="80" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Debug context</text>
+                <text x="90" y="95" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Query by trace_id</text>
+            </g>
+
+            <!-- Profiling (bottom right) -->
+            <g transform="translate(670, 350)">
+                <rect x="0" y="0" width="180" height="120" rx="8" fill="url(#profilingGrad)" filter="url(#shadow)"/>
+                <text x="90" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Profiling</text>
+                <rect x="15" y="45" width="150" height="60" rx="4" fill="white" fill-opacity="0.15"/>
+                <text x="90" y="65" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Flame graphs</text>
+                <text x="90" y="80" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">CPU/memory hotspots</text>
+                <text x="90" y="95" text-anchor="middle" font-size="10" fill="white" font-family="Liberation Sans, Arial, sans-serif">Span correlation</text>
+            </g>
+
+            <!-- Connection lines to trace_id hub -->
+            <!-- Metrics to hub -->
+            <path d="M 230 140 Q 300 180 350 230" stroke="#6366f1" stroke-width="2.5" fill="none" stroke-dasharray="6,3"/>
+
+            <!-- Traces to hub -->
+            <path d="M 670 140 Q 600 180 550 230" stroke="#6366f1" stroke-width="2.5" fill="none" stroke-dasharray="6,3"/>
+
+            <!-- Logs to hub -->
+            <path d="M 230 410 Q 300 370 350 330" stroke="#6366f1" stroke-width="2.5" fill="none" stroke-dasharray="6,3"/>
+
+            <!-- Profiling to hub -->
+            <path d="M 670 410 Q 600 370 550 330" stroke="#6366f1" stroke-width="2.5" fill="none" stroke-dasharray="6,3"/>
+
+            <!-- Navigation arrows between pillars -->
+            <!-- Metrics -> Traces (exemplars) -->
+            <g>
+                <path d="M 240 120 L 660 120" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#arrowhead-gray)"/>
+                <rect x="390" y="105" width="120" height="22" rx="4" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="450" y="120" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">exemplars</text>
+            </g>
+
+            <!-- Traces -> Logs -->
+            <g>
+                <path d="M 760 210 L 760 340" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#arrowhead-gray)"/>
+                <rect x="770" y="255" width="90" height="22" rx="4" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="815" y="270" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">trace_id query</text>
+            </g>
+
+            <!-- Traces -> Profiling -->
+            <g>
+                <path d="M 760 210 Q 820 280 760 340" stroke="#94a3b8" stroke-width="2" fill="none" stroke-dasharray="4,2"/>
+            </g>
+
+            <!-- Logs -> Metrics -->
+            <g>
+                <path d="M 140 340 L 140 210" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#arrowhead-gray)"/>
+                <rect x="35" y="255" width="90" height="22" rx="4" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="80" y="270" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">verify scope</text>
+            </g>
+
+            <!-- Investigation workflow box -->
+            <g transform="translate(280, 420)">
+                <rect x="0" y="0" width="340" height="100" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="170" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Typical Investigation Flow</text>
+                <text x="170" y="45" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">1. Alert fires (Metrics) - "p95 latency exceeded"</text>
+                <text x="170" y="60" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">2. Find slow requests (Traces) - via exemplar or time window</text>
+                <text x="170" y="75" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">3. Get details (Logs) - query by trace_id</text>
+                <text x="170" y="90" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">4. Find hot code (Profiling) - span-correlated flame graph</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>
