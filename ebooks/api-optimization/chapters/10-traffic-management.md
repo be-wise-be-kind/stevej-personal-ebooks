@@ -423,7 +423,53 @@ The "consistent" part means that when instances are added or removed, only a fra
 
 ### Service Mesh Traffic Management
 
-Service meshes like Istio and Linkerd move traffic management from application code to infrastructure, providing sophisticated routing, load balancing, and resilience capabilities without code changes. For API optimization, service meshes offer several capabilities that complement application-level patterns.
+When a microservice calls another service, it needs to handle failures gracefully. Without shared infrastructure, each service implements its own traffic management:
+
+```
+function call_user_service(user_id):
+    if circuit_breaker_is_open:
+        return fallback_data
+
+    for attempt in 1..3:
+        try:
+            response = http_get(user_service_url, timeout=2s)
+            if response.ok:
+                reset_failure_count()
+                return response
+        catch:
+            wait exponential_backoff + random_jitter
+            increment_failure_count()
+
+    if failure_count > threshold:
+        open_circuit_breaker(duration=30s)
+
+    return fallback_data
+```
+
+This pattern repeats across every service. One team uses Python, another Java, a third Go—each with different implementations and configurations. Debugging failures requires understanding dozens of different approaches.
+
+**The Decorator Mental Model**
+
+If you are familiar with Python decorators, a service mesh works similarly but at the network layer. Decorators wrap functions to add behavior without modifying the function itself:
+
+```
+@circuit_breaker
+@retry(attempts=3)
+@timeout(2s)
+function call_user_service(user_id):
+    return http_get(user_service_url)
+```
+
+A service mesh does this at the network layer. Your code stays simple—just the HTTP call. A sidecar proxy intercepts all network traffic and applies retries, timeouts, and circuit breaking based on configuration. The service never knows it is being "decorated."
+
+| Python Decorator | Service Mesh Equivalent |
+|------------------|------------------------|
+| Wraps a function | Wraps all network traffic |
+| Defined in code | Defined in YAML/config |
+| Applied at import time | Applied by sidecar proxy |
+| Per-function granularity | Per-service or per-route granularity |
+
+This moves traffic management from application code to infrastructure, providing consistent behavior across all services regardless of language or framework. Service meshes like Istio and Linkerd provide sophisticated routing, load balancing, and resilience capabilities without code changes. For API optimization, service meshes offer several capabilities that complement application-level patterns.
 
 A service mesh deploys a sidecar proxy (typically Envoy) alongside each service instance. All traffic flows through these proxies, which enforce policies defined in mesh configuration. The control plane (Istiod in Istio's case) distributes configuration to the proxies and collects telemetry [Source: Istio Documentation, 2024].
 

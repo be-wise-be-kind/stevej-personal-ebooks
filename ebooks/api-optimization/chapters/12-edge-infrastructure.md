@@ -261,6 +261,20 @@ Edge-based routing is covered in detail in the vendor edge infrastructure sectio
 
 Multi-region deployment forces explicit decisions about data consistency. The CAP theorem states that during a network partition, a distributed system must choose between consistency (all nodes see the same data) and availability (all requests receive a response).
 
+**The Two Bank Branches**
+
+A concrete example clarifies the trade-off. Imagine a bank with two branches across town that share a phone line to sync account balances. A customer walks into Branch A to withdraw $500. At the same moment, the customer's spouse walks into Branch B to withdraw $500. The account has $600.
+
+The phone line goes down. This is the partition.
+
+Each branch must choose:
+
+- **Consistency over availability**: "Sorry, our system is down. We can't process withdrawals until we verify your balance with the other branch." Both customers are refused service. Frustrating, but the bank never gives out money it doesn't have.
+
+- **Availability over consistency**: "Sure, here's your $500." Both branches say yes. Both customers leave with $500. The account is now -$400. The bank gave out money it didn't have.
+
+The "pick two of three" framing is misleading—partitions *will* happen. The real question is: when the network fails, do you stop answering or risk being wrong? Banking systems choose consistency; shopping carts often choose availability (stale cart data is acceptable, overdrafts are not).
+
 **CAP Theorem in Practice**
 
 Network partitions between regions are rare but do occur. More commonly, you face latency trade-offs: strong consistency requires coordination across regions, adding latency to every write.
@@ -632,6 +646,22 @@ Edge authentication validates credentials before requests reach origin servers, 
 - **Durable Objects for instant revocation**: Route validation through a Durable Object maintaining the authoritative revocation list. Adds latency but guarantees consistency.
 
 **Session Lookup**: For session-based auth, implement edge KV with origin fallback - check KV first, on miss fetch from origin and cache with TTL. Adds single-digit ms read latency but eliminates origin session validation for cached sessions.
+
+**Securing the Edge-to-Origin Path**: When edge workers forward validated claims to origin (via headers like `X-User-ID`), the origin must ensure requests genuinely came from the edge. An attacker who reaches origin directly could forge these headers.
+
+**Private connectivity (recommended)**: Services like Cloudflare Tunnel or AWS PrivateLink eliminate public origin exposure entirely. The origin has no public IP; the only path in is through the edge. This is the strongest option because there is no direct route to bypass.
+
+**Mutual TLS**: Origin accepts only connections presenting a valid edge client certificate. Cloudflare's "Authenticated Origin Pulls" provides this capability. The edge presents a certificate your origin validates before accepting requests.
+
+**IP allowlisting**: Restrict origin firewall to edge provider IP ranges. Simpler but requires maintaining IP lists as ranges change.
+
+| Approach | Security | Complexity |
+|----------|----------|------------|
+| Private connectivity (Tunnel/PrivateLink) | Strongest (no public exposure) | Low |
+| Mutual TLS | Strong | Moderate |
+| IP allowlisting | Good (but IPs change) | Low |
+
+Without one of these controls, edge authentication provides no security benefit—attackers simply bypass the edge.
 
 ### Edge Aggregation and Composition
 

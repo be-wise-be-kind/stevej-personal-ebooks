@@ -16,6 +16,53 @@ The distinction matters because different mechanisms optimize for different conc
 
 Most modern systems use tokens that carry both authentication (proof of identity) and authorization (permissions or roles) information. Understanding this dual role helps when designing caching and validation strategies.
 
+## The Wristband, Passport, and Visa
+
+Before diving into technical details, a metaphor helps frame the three main authentication approaches covered in this appendix.
+
+**Sessions are like a venue wristband.**
+
+A guest (the user) arrives at a venue and shows ID (credentials). The bouncer (server) verifies the ID, then writes the guest's name and access level in a log (creates session state). The bouncer gives the guest a wristband with a number (session ID).
+
+Inside the venue, staff check the wristband number against the log to see who the guest is and what the guest is allowed to do. When the guest leaves, the venue crosses out the entry—the wristband number no longer works.
+
+- Wristband lost or stolen? The venue crosses out the log entry and the wristband stops working immediately.
+- Every interaction requires a log lookup.
+
+**JWTs are like a passport.**
+
+A government (the auth server) verifies a citizen's identity, then issues a booklet with the citizen's name, photo, and an expiration date, signed with an official seal. The citizen carries the passport.
+
+When the citizen arrives at a border (an API), the agent doesn't call the issuing government. The agent inspects the passport itself: Is the seal authentic? Has it expired? If everything checks out, the citizen passes through. No phone call home needed.
+
+The catch: if someone steals the passport, the passport works until it expires. This is why JWTs use short expiration times.
+
+*Where the metaphor breaks down: A real passport has a photo—the border agent verifies the face matches the document. JWTs have no such binding. Anyone holding the token can use it. This is why JWTs must be transmitted over HTTPS and stored securely. Some systems add extra binding (client certificates, device fingerprints) to partially address this, but most JWTs remain pure bearer tokens.*
+
+**OAuth is like the visa process.**
+
+A traveler (the user) wants to visit a foreign country (use a third-party app). The foreign country wants to know some things about the traveler before granting entry:
+
+1. The traveler arrives at the foreign country's border and requests entry
+2. The border agent says "Before we let you in, we'd like to access some of your records from your home government—your photo, travel history, and vaccination status."
+3. The traveler goes to the home government (identity provider like Google). The home government asks: "This country is requesting access to your photo, travel history, and vaccination records. Do you authorize us to share this information?" (These are the *scopes*—specific data being requested)
+4. The traveler approves. The home government gives the traveler a **claim ticket** (authorization code).
+5. The traveler brings the claim ticket back to the foreign country's border.
+6. The border agent takes the claim ticket and contacts the home government directly: "The traveler authorized us to access their records. Here's the claim ticket." The home government sends an **access pass** (access token) that lets the foreign country retrieve those specific records.
+7. The foreign country uses the access pass to fetch the traveler's photo, travel history, and vaccination status from the home government—but nothing else.
+
+The traveler never handed over a password. The traveler just authorized the home government to share specific information with the foreign country.
+
+**Refresh tokens** are like standing authorizations the foreign country keeps on file, allowing the foreign country to request updated records without asking the traveler again each time.
+
+| Mechanism | Metaphor | Who Stores Info | Revocation | Use Case |
+|-----------|----------|-----------------|------------|----------|
+| Session | Venue wristband | Server | Instant | Traditional web apps |
+| JWT | Passport | Client | Hard (wait for expiry) | Stateless APIs |
+| OAuth | Visa process | Issuing authority | Revoke at authority | "Login with Google" |
+
+With this framework in mind, the following sections cover each mechanism in technical detail.
+
 ## Session-Based Authentication
 
 Session-based authentication stores user state on the server. The flow:
@@ -62,6 +109,8 @@ JSON Web Tokens (JWTs) are self-contained tokens that carry identity and claims 
 6. Client stores JWT (localStorage, sessionStorage, or cookie)
 7. Client includes JWT in request headers (`Authorization: Bearer <token>`)
 8. Server validates signature and reads claims from token
+
+![JWT Authentication Flow](../assets/ch15-jwt-flow.html)
 
 ### JWT Structure
 
