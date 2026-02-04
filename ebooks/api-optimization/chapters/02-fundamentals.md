@@ -268,7 +268,7 @@ This is not a trade-off you choose. It is a consequence of queuing theory. When 
 
 **Optimizations increase capacity.** When we say "caching improves throughput," we mean it increases *capacity*: the system can now handle more demand before latency rises. Many optimizations improve both latency and capacity simultaneously:
 
-- Fixing an N+1 query reduces latency (fewer round-trips) AND increases capacity (database handles more requests)
+- Adding a missing database index reduces latency (index lookup vs. full table scan) AND increases capacity (less I/O per query frees resources for other requests)
 - Caching improves latency (faster responses) AND increases capacity (backend serves fewer requests)
 - Connection pooling reduces latency (no setup overhead) AND increases capacity (connections reused efficiently)
 
@@ -313,7 +313,7 @@ When the error budget is exhausted, the team focuses on reliability over feature
 
 ### Saturation: The Fourth Golden Signal
 
-Saturation measures queued demand—work waiting because the resource can't keep up. The term is counterintuitive: a sponge holding all the water it can is "fully saturated," but in monitoring, saturation doesn't mean "fully used." Think of it like a sink: utilization is the water level, saturation is water spilling onto the floor because it's draining slower than it's filling.
+Saturation measures queued demand: work waiting because the resource can't keep up. The term is counterintuitive: a sponge holding all the water it can is "fully saturated," but in monitoring, saturation doesn't mean "fully used." Think of it like a sink: utilization is the water level, saturation is water spilling onto the floor because it's draining slower than it's filling.
 
 More precisely: utilization measures current usage as a percentage of capacity, while saturation measures pending work that can't be processed yet. Consider two scenarios:
 
@@ -321,7 +321,7 @@ More precisely: utilization measures current usage as a percentage of capacity, 
 
 - **Saturated**: A CPU at 100% utilization with 10 threads waiting for CPU time. Demand exceeds capacity. Work is piling up faster than it can be processed. Each new request waits longer than the last.
 
-In practice, sustained 100% utilization without saturation is a knife-edge condition—any variance in arrival rate causes immediate queueing. This is why capacity planning typically targets headroom well below maximum capacity.
+In practice, sustained 100% utilization without saturation is a knife-edge condition. Any variance in arrival rate causes immediate queueing. This is why capacity planning typically targets headroom well below maximum capacity.
 
 The distinction matters because saturated systems exhibit degraded behavior: queues grow, latency increases, and small traffic spikes cause cascading failures. High utilization alone is not a problem; queuing is.
 
