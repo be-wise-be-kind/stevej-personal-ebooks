@@ -11,7 +11,9 @@ A practical guide to API performance, from foundational concepts to advanced tec
 
 ## Table of Contents
 
-1. [Introduction: The Empirical Discipline](chapters/01-introduction.md)
+- [Preface](chapters/00-preface.md)
+
+1. [The Empirical Discipline](chapters/01-introduction.md)
 2. [Fundamentals: Understanding Performance](chapters/02-fundamentals.md)
 3. [Observability: The Four Pillars](chapters/03-observability.md)
 4. [Monitoring: Dashboards & Alerting](chapters/04-monitoring.md)

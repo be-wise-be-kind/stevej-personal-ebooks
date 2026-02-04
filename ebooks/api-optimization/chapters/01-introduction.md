@@ -1,4 +1,4 @@
-# Chapter 1: Introduction
+# Chapter 1: The Empirical Discipline
 
 ![Chapter 1 Opener](../assets/ch01-opener.html)
 
@@ -16,7 +16,7 @@ This scenario plays out in engineering teams around the world, every day. Not be
 
 This book offers a different path.
 
-## Why This Book Exists
+## The Problem Landscape
 
 The landscape of API development has transformed dramatically over the past decade. What was once a relatively contained problem - optimizing a single application serving requests from a single data center - has become a multidimensional challenge spanning distributed systems, global infrastructure, and increasingly demanding user expectations.
 
@@ -35,28 +35,6 @@ Consider the complexity modern APIs must navigate:
 Amid this complexity, a curious gap has emerged in technical literature. Books about distributed systems explain the theory. Framework documentation covers the mechanics. Blog posts share war stories. But few resources systematically teach the *discipline* of API performance optimization - the methodical approach to understanding, measuring, and improving how APIs behave under real-world conditions.
 
 This book fills that gap.
-
-## Who This Book Is For
-
-This book is written for software professionals who build, maintain, and operate APIs:
-
-**Backend Developers** building REST, GraphQL, gRPC, or WebSocket services who want to move beyond guesswork when diagnosing performance problems. You'll learn to identify bottlenecks systematically, understand why common optimizations work (or don't), and write code that's observable from the start.
-
-**Software Architects** designing systems that must meet specific latency and throughput requirements. You'll develop frameworks for reasoning about performance trade-offs, learn to set meaningful performance targets, and understand how architectural decisions ripple through system behavior.
-
-**Site Reliability Engineers** responsible for service level objectives, monitoring, and production performance. You'll gain deeper insight into what metrics matter, how to build effective dashboards and alerts, and how to collaborate with development teams on performance improvements.
-
-**Technical Leaders** making decisions about technology investments, team priorities, and technical debt. You'll learn to distinguish performance problems that need immediate attention from those that can wait, and how to build a culture where performance is everyone's responsibility.
-
-**Curious Engineers** who want to understand how things work at a deeper level. Performance optimization touches every layer of the stack - networking, operating systems, databases, application code, distributed systems. Studying performance is one of the best ways to become a more complete engineer.
-
-### Prerequisites
-
-You should have experience building APIs in at least one programming language. Familiarity with HTTP, databases, and basic distributed systems concepts is assumed. You don't need prior performance engineering experience - we start from first principles and build up systematically.
-
-### What If You're New to APIs?
-
-If you're still learning the basics of API development, this book might feel advanced in places. That's okay. Consider reading the first few chapters to absorb the mindset and measurement fundamentals, then return to later chapters as you gain experience. Performance optimization is a skill that compounds over time - even partial understanding now will pay dividends as you grow.
 
 ## The Business Case: Why Performance Matters
 
@@ -104,16 +82,25 @@ This might seem obvious, but consider how often we violate this principle. A dev
 
 These aren't hypothetical examples. They happen constantly, in teams of all sizes, because optimization without measurement is guesswork dressed up as engineering.
 
-The methodology in this book follows the scientific method:
+The methodology in this book follows the scientific method, structured as a feedback loop:
 
-1. **Observe**: Collect baseline performance data - latency percentiles, throughput, error rates, resource utilization
-2. **Hypothesize**: Based on profiling and analysis, form a specific hypothesis about what's causing slowness
-3. **Experiment**: Apply a targeted optimization addressing that hypothesis
-4. **Measure**: Collect post-change performance data using the same methodology
-5. **Analyze**: Did the optimization work? Were there unexpected regressions? What did we learn?
-6. **Iterate**: Move to the next bottleneck or refine the hypothesis
+![The Optimization Feedback Loop](../assets/ch01-optimization-loop.html)
 
-This loop produces reliable, validated improvements. Skipping steps produces unreliable results and wasted effort.
+\newpage
+
+1. **Measure**: Collect baseline performance data before changing anything. Latency percentiles, throughput, error rates, and resource utilization form the starting picture. Without a baseline, you can't prove an optimization helped or detect regressions it introduced.
+
+2. **Analyze**: Identify where time and resources are actually spent. Distributed traces, flame graphs, and profiling data reveal which components contribute most to latency. The goal is to separate symptoms from root causes. High latency on Service A might actually originate in Service B's connection pool three hops upstream.
+
+3. **Hypothesize**: Form a specific, falsifiable prediction. "Increasing the connection pool from 8 to 32 will reduce p95 latency by 30-40%" is a useful hypothesis. "Making the system faster" is not. Specificity forces you to think about mechanisms, not just outcomes.
+
+4. **Implement**: Apply a single targeted change addressing the hypothesis. Resist the temptation to fix three things at once. Bundled changes make it impossible to attribute improvement (or regression) to a specific intervention. If the change works, you won't know which part helped. If it fails, you won't know which part broke things.
+
+5. **Validate**: Measure again using the same methodology and compare against the baseline. Did the change produce the predicted improvement? Were there unexpected side effects? Validation closes the loop. It either confirms your understanding of the system or corrects it. Both outcomes are valuable.
+
+Each cycle produces two things: a measurable improvement (or a validated "this didn't help") and a deeper understanding of system behavior. The understanding compounds. After three or four cycles, you know your system well enough to predict where bottlenecks will appear before you measure them. After a dozen, you've developed intuition grounded in evidence rather than assumption.
+
+This is what separates the optimization loop from ad-hoc performance work. Ad-hoc optimization generates random interventions: add caching here, increase threads there, try a different serialization library. Some interventions help, some don't, and you have no systematic way to tell which is which. The loop generates *knowledge*. Each cycle narrows the hypothesis space. Even failed experiments are informative because they eliminate possibilities and refine your mental model.
 
 But being empirical doesn't mean being purely reactive. This book also teaches you to think systematically about performance - to recognize patterns, anticipate problems, and design systems that are observable from the start. Measurement without understanding is just data collection. Understanding without measurement is just speculation. We need both.
 
@@ -157,7 +144,7 @@ The faster you iterate, the faster you converge on the right solution. CI/CD pip
 
 After each optimization cycle, reassess the conditions. Fixing one bottleneck may reveal that the next problem is in a system you don't control - Visibility and Understanding showed you a problem, but now you lack Agency. Budgets shift mid-quarter. Deployment pipelines slow as system complexity grows. A new compliance requirement changes what's Affordable. The Five Conditions are not a one-time checklist to satisfy before you begin. They are constraints to re-evaluate at every iteration, because the landscape shifts as you make progress.
 
-## A Day in the Life: Optimization in Practice
+## Optimization in Practice
 
 To make these ideas concrete, let's follow a fictional (but representative) optimization effort.
 
@@ -210,163 +197,72 @@ Before we dive into specific techniques, let's establish the principles that gui
 
 This bears repeating because it's violated so often. Before changing anything, establish baseline measurements using consistent methodology. Document the "before" state so you can prove the "after" is better (or learn that it isn't).
 
+Consider a team that rewrites their JSON serializer in a "faster" language, ships the rewrite after weeks of effort, and declares success because the system "feels faster." Without before-and-after measurements using consistent methodology, they can't know whether the improvement is real, whether it's significant, or whether a simpler change (like reducing payload size) would have accomplished more. Measurement isn't bureaucracy. It's what separates engineering from guessing.
+
 ### Principle 2: Percentiles Over Averages
 
-Averages lie by hiding outliers. A p50 of 50ms with a p99 of 5000ms indicates serious problems that average latency would mask completely. Always look at distributions, especially the tail (p95, p99, p99.9 depending on your scale).
+Averages lie by hiding outliers. Consider an API with these latency numbers: average 120ms, p50 75ms, p95 180ms, p99 550ms. The average looks fine. But 1 in 100 users waits over half a second, and if each user session involves 40 API calls, a majority of sessions will include at least one slow request. The average conceals the problem; the percentiles reveal it.
+
+![Latency Distribution: Why Percentiles Matter](../assets/ch01-latency-distribution.html)
+
+\newpage
+
+Always look at distributions, especially the tail (p95, p99, p99.9 depending on your scale). The tail is where user frustration lives, where timeouts trigger, and where cascading failures begin. Chapter 2 explores latency distributions in depth and explains how to measure them without falling into common traps like coordinated omission.
 
 ### Principle 3: Production Is the Only Truth
 
-Load tests approximate reality. Staging environments differ in subtle ways. Only production data - from real users, at real scale, with real dependencies - tells you how your system actually behaves. Design for observability from the start.
+Load tests approximate reality. Staging environments differ in subtle ways. Only production data - from real users, at real scale, with real dependencies - tells you how your system actually behaves.
+
+A staging environment might share a database with two other staging services instead of fifty production ones. Its connection pool never saturates. Its cache hit rates are artificially high because synthetic traffic is more predictable than real user behavior. The performance profile you measure in staging may bear little resemblance to production. Design for observability from the start so that production itself becomes your most reliable performance lab.
 
 ### Principle 4: Correctness Before Performance
 
-The performance pyramid prioritizes:
+Performance sits at the top of a priority pyramid, not the bottom:
+
+![The Performance Pyramid](../assets/ch01-performance-pyramid.html)
+
+\newpage
 
 1. **Correctness** (foundation): The system produces correct results
 2. **Functionality**: The system implements required features
 3. **Maintainability**: The system can be understood and modified
 4. **Performance** (top): The system is fast enough
 
-Optimizing broken code produces fast broken code. Optimizing unmaintainable code produces unmaintainable complexity. Only optimize systems that work correctly and can be maintained by your team.
+A team that parallelizes database writes for speed but introduces race conditions hasn't optimized their system. They've broken it. A team that reduces latency by 40% through a custom binary protocol but makes the codebase incomprehensible to half the team hasn't improved net productivity. They've traded visible latency for invisible drag on every future change. Only optimize systems that work correctly and can be maintained by your team.
 
 ### Principle 5: Define "Fast Enough"
 
-Performance optimization can continue indefinitely. There's always another millisecond to shave. Service Level Objectives (SLOs) provide the practical answer to "when is our API fast enough?"
+Performance optimization can continue indefinitely. There's always another millisecond to shave, another percentile to tighten. Without a stopping criterion, teams oscillate between neglecting performance entirely and pursuing diminishing returns. Service Level Objectives (SLOs) provide the practical answer to "when is our API fast enough?"
 
-An SLO like "99% of requests complete in under 200ms" transforms performance from a vague aspiration into an engineering constraint. It tells you when to stop optimizing, what regressions matter, and how to prioritize work. Chapter 2 covers SLOs in depth.
+An SLO like "99% of requests complete in under 200ms" transforms performance from a vague aspiration into an engineering constraint. It tells you when to stop optimizing (you're within SLO), what regressions matter (SLO violations), and how to prioritize work (the endpoint furthest from its SLO gets attention first). Chapter 2 covers SLOs in depth.
 
 ### Principle 6: Optimize the System, Not Just the Code
 
-The slowest code might not be the bottleneck. A function that takes 1ms but is called 1000 times per request matters more than a function that takes 10ms but runs once. Always understand how components fit together before optimizing them in isolation.
+The slowest code might not be the bottleneck. A function that takes 1ms but is called 1000 times per request contributes more total latency than a function that takes 10ms but runs once. A service with fast p50 but terrible p99 might be perfectly efficient in isolation and pathologically slow when combined with three other services that each contribute tail latency.
 
-## How to Read This Book
+System-level thinking means understanding how components interact under load, where queuing happens, how failures propagate, and which dependencies are on the critical path. Optimizing a function that isn't on the critical path produces zero user-visible improvement regardless of how dramatic the speedup. Always understand how components fit together before optimizing them in isolation.
 
-This book is designed to work both as a sequential learning path and as a reference you return to when facing specific challenges.
-
-### Sequential vs Reference Path
-
-If you're new to performance optimization, read the book in order. Chapters build on each other conceptually:
-
-- **Chapters 1-4** establish foundations: the optimization mindset, measurement infrastructure, observability, and monitoring practices. Without these fundamentals, later optimizations become guesswork.
-
-- **Chapters 5-11** address specific optimization domains: networking, caching, databases, async processing, scaling, traffic management, and authentication. Each chapter assumes you understand how to measure and identify bottlenecks first.
-
-- **Chapter 12** covers edge infrastructure: CDN caching, edge workers, distributed rate limiting, edge data stores, and edge authentication patterns. Edge infrastructure offloads optimization problems to the network layer closest to users.
-
-- **Chapters 13-14** cover advanced techniques and synthesis: protocol optimization (GraphQL, gRPC), speculative execution, and putting everything together into a coherent methodology.
-
-If you're facing a specific problem, jump directly to relevant chapters:
-
-- API is slow but you don't know why? Start with **Chapter 3: Observability** to instrument your system
-- Need better dashboards or alerting? **Chapter 4: Monitoring** covers operational practices
-- Network latency killing you? **Chapter 5: Network Optimization** addresses connection management and protocols
-- Cache hit rates disappointing? **Chapter 6: Caching Strategies** covers patterns and pitfalls
-- Unsure which database type fits your access patterns? **Chapter 7: Database and Storage Selection** helps you choose
-- Need async processing? **Chapter 8: Asynchronous Processing** explains queues and background jobs
-- Scaling problems? **Chapter 9: Compute and Scaling** covers horizontal and vertical strategies
-- System unstable under load? **Chapter 10: Traffic Management** covers circuit breakers and rate limiting
-- Authentication slowing you down? **Chapter 11: Authentication Performance** covers token validation, caching, and auth under attack
-- Need CDN or edge optimization? **Chapter 12: Edge Infrastructure** covers CDN caching, edge workers, and distributed rate limiting
-
-Each chapter stands alone enough to be useful in isolation, while connecting to the broader framework established early in the book.
-
-### The Journey Ahead
-
-This book takes you from measurement fundamentals through advanced optimization techniques across thirteen chapters. Here's the journey:
-
-#### Part I: Foundations (Chapters 2-4)
-
-**Chapter 2: Performance Fundamentals** establishes the vocabulary and mental models you'll use throughout the book. You'll learn the four golden signals that matter for any API (latency, traffic, errors, saturation), why percentiles reveal truths that averages hide, and how Service Level Objectives transform vague performance goals into engineering constraints.
-
-**Chapter 3: Observability** teaches you to instrument systems so you can understand their behavior. You'll learn distributed tracing, structured logging, metrics collection, and continuous profiling. This chapter answers the question: how do we collect the data we need to optimize?
-
-**Chapter 4: Monitoring** builds on observability to cover operational practices. You'll learn dashboard design that tells stories instead of displaying noise, SLO-based alerting that reduces alert fatigue, incident response workflows, and on-call best practices. This chapter answers: what do we do with the data we collect?
-
-#### Part II: Optimization Domains (Chapters 5-11)
-
-**Chapter 5: Network Optimization** addresses the latency you can't eliminate through code changes alone. You'll learn connection pooling, HTTP/2 and HTTP/3 benefits, compression trade-offs, and payload optimization. We cover what happens below your application code and how to influence it.
-
-**Chapter 6: Caching Strategies** goes beyond "cache everything" to help you understand when caching helps and when it introduces more complexity than it solves. You'll learn cache invalidation patterns that actually work, multi-tier caching architectures, and how to avoid cache stampedes.
-
-**Chapter 7: Database and Storage Selection** addresses the strategic question of which database type fits which access pattern. You'll learn when to use relational databases versus document stores, key-value stores for session data, wide-column databases for write-heavy workloads, vector databases for similarity search, and when polyglot persistence is worth the complexity.
-
-**Chapter 8: Asynchronous Processing** covers message queues, async patterns, and background job processing. You'll learn when to move work off the critical path, how to handle backpressure, and patterns for reliable message handling.
-
-**Chapter 9: Compute and Scaling** addresses horizontal and vertical scaling strategies, stateless service design, auto-scaling policies, serverless considerations, and graceful shutdown patterns.
-
-**Chapter 10: Traffic Management** covers the resilience patterns that keep systems stable under pressure: rate limiting algorithms, circuit breakers, load balancing strategies, bulkhead patterns, and retry strategies with backoff.
-
-**Chapter 11: Authentication Performance** examines authentication through the lens of latency and scalability. You'll learn token validation overhead, caching strategies for validation results, stateless vs stateful authentication trade-offs, and how to maintain performance under attack. An appendix provides auth fundamentals for readers who need background.
-
-#### Part III: Edge and Advanced Topics (Chapters 12-14)
-
-**Chapter 12: Edge Infrastructure** covers the middleware layer between users and origin servers. You'll learn CDN caching patterns for APIs, edge workers and compute, distributed rate limiting, edge data stores (KV, databases, coordination primitives), and edge authentication. Edge infrastructure offloads many optimization problems discussed in earlier chapters to the network edge, reducing latency and origin load.
-
-**Chapter 13: Testing Performance** covers load testing, benchmarking, and performance regression testing - the practices that validate our optimization work and prevent regressions.
-
-**Chapter 14: Putting It All Together** synthesizes everything into a coherent methodology. You'll work through real-world case studies, learn decision frameworks for choosing techniques, and develop a systematic approach to performance optimization.
-
-#### The Connecting Thread
-
-Throughout these chapters, you'll notice recurring themes: measure before optimizing, understand before measuring, validate after changing. The specific techniques vary by domain, but the discipline remains constant. The Five Conditions are the thread connecting all of it. Chapters 3-4 build Visibility and Understanding - the ability to see and interpret system behavior. Chapters 5-12 give you the knowledge to exercise Agency effectively across every optimization domain. And the empirical methodology woven throughout ensures Velocity - the ability to iterate safely and quickly. By the end, you won't just know how to make APIs faster - you'll know how to *think* about making APIs faster, which serves you long after any specific technique becomes obsolete.
-
-### A Note on Code Examples
-
-You may notice this book contains pseudocode rather than production-ready implementations in specific languages. This is intentional.
-
-**AI has commoditized code generation.** When you understand a pattern conceptually, generating working code in your language of choice takes seconds with modern AI coding assistants. The bottleneck is no longer "how do I implement a circuit breaker in Go?" - it's "when should I use a circuit breaker, and how should I configure it?" This book focuses on the latter.
-
-**Real code ages poorly.** Library APIs change. Syntax evolves. Best practices shift. The OpenTelemetry Python SDK examples that were current when this was written will look dated within a year or two. Pseudocode that expresses the algorithm clearly remains useful indefinitely.
-
-**Pseudocode is language-agnostic.** Whether you work in Python, TypeScript, Rust, Go, Java, or something else entirely, pseudocode serves you equally. You translate the logic to your language and idioms rather than porting from mine.
-
-When pseudocode appears in this book, it's there because the algorithm or decision flow genuinely benefits from visual representation - not as an implementation to copy, but as a thinking tool. For production code, describe the pattern to your AI assistant, and it will generate something appropriate for your stack.
-
-### Practice Deliberately
-
-Reading about performance optimization is not the same as doing it. Throughout the book, you'll find exercises, examples, and suggested experiments. Do them. Apply the techniques to your own systems. The concepts won't truly click until you've seen them work (and fail) in code you care about.
-
-## What This Book Does Not Cover
-
-Defining scope is as important as defining content. This book focuses specifically on backend API performance. Here's what falls outside our scope:
-
-**Frontend Performance**: Browser rendering, JavaScript bundle optimization, image loading strategies, and client-side caching are their own discipline with their own excellent resources. We touch on how backend decisions affect frontend performance, but don't teach frontend optimization directly.
-
-**Mobile Application Performance**: Native iOS and Android performance optimization, mobile network handling, and battery considerations have specialized concerns beyond API response times.
-
-**Specific Cloud Provider Details**: While examples may reference AWS, GCP, or Azure services, this book teaches portable concepts rather than provider-specific configurations. The principles apply whether you're running on Kubernetes, Lambda, bare metal, or something that doesn't exist yet.
-
-**Machine Learning Model Serving**: ML inference optimization involves specialized techniques (model quantization, batching strategies, GPU utilization) that deserve their own treatment. We cover APIs that call ML services, not optimizing the services themselves.
-
-**Database Administration**: While we cover query optimization and connection management from an application perspective, we don't cover database server tuning, replication setup, or backup strategies. Your DBA handles those.
-
-**Comprehensive Security**: While Chapter 11 covers authentication performance and Appendix B provides auth fundamentals, this book does not teach security comprehensively. We focus on the performance implications of authentication choices, not penetration testing, vulnerability assessment, or security architecture. For security guidance, consult OWASP and specialized security resources.
-
-**Organizational Dynamics**: Building a performance culture, convincing leadership to prioritize optimization, and navigating political resistance to technical improvements are real challenges this book doesn't address. We assume you have the authority (or persuasion skills) to implement what you learn.
-
-If these topics interest you, the References section at the end of each chapter points to resources that cover them well.
+These six principles form the foundation. The chapters that follow expand on each one, grounding them in specific domains - from observability and monitoring to caching, databases, networking, and beyond.
 
 ## Summary
 
 This chapter established the foundation for everything that follows:
 
-- Modern API performance challenges span distributed systems, global scale, real-time expectations, complex dependencies, and cost pressure. Performance directly impacts business outcomes through revenue, costs, developer experience, and system resilience.
+- Performance directly impacts business outcomes through revenue, costs, developer experience, and system resilience. The stakes are real and measurable.
 
-- This book takes an empirical approach: measure first, hypothesize based on data, implement targeted changes, and validate improvements. Optimization without measurement is guesswork.
+- Effective optimization is empirical: measure first, hypothesize based on data, implement targeted changes, and validate improvements. Optimization without measurement is guesswork.
 
 - The optimization loop (observe, hypothesize, experiment, measure, analyze, iterate) produces reliable improvements, but only when five conditions are met: Visibility, Understanding, Agency, Affordability, and Velocity.
 
 - Sarah's optimization story demonstrated these ideas in action - two targeted changes guided by measurement delivered 60% latency reduction without architectural overhaul.
 
-- Core principles guide effective work: measure first, use percentiles not averages, trust production data, maintain correctness, define "fast enough," and optimize systems not just code.
-
-- The book works as sequential learning or targeted reference. Either path requires applying concepts to real systems - reading about performance is not the same as doing it.
+- Six core principles guide effective work: measure first, use percentiles not averages, trust production data, maintain correctness, define "fast enough," and optimize systems not just code.
 
 ## What's Next
 
-Chapter 2 establishes the technical foundation for everything that follows. We'll define the four golden signals (latency, traffic, errors, saturation), explain why latency distributions matter more than averages, introduce Service Level Objectives and their relationship to SLIs and SLAs, and build the measurement infrastructure that makes optimization possible.
+Chapter 2 establishes the vocabulary and mental models for the rest of the book. We'll define the four golden signals (latency, traffic, errors, saturation), explain why latency distributions matter more than averages, and introduce Service Level Objectives - the engineering constraint that tells you when your API is "fast enough."
 
-The concepts in Chapter 2 may seem abstract at first, but they're the vocabulary we'll use throughout the book. Master them, and every subsequent chapter will click into place.
+The concepts in Chapter 2 may seem abstract at first, but they're the language we'll use throughout the book. Master them, and every subsequent chapter will click into place.
 
 ---
 
