@@ -131,11 +131,11 @@ Reading about performance optimization is not the same as doing it. Throughout t
 
 ### On Stating the Obvious {-}
 
-Some concepts in this book may seem basic. The optimization loop — measure, analyze, hypothesize, implement, validate — is not a revelation. Experienced engineers may read sections like these and think: *I already know this.*
+Some concepts in this book may seem basic. The optimization loop (measure, analyze, hypothesize, implement, validate) is not a revelation. Experienced engineers may read sections like these and think: *I already know this.*
 
 Perhaps. But knowing a concept and consistently practicing it are different things. It has been the author's experience that these fundamentals are either never formally taught, not deeply understood, or routinely abandoned under pressure. Teams that would never skip writing tests will happily skip measuring before optimizing. Engineers who insist on code review will deploy performance "fixes" without a baseline to compare against.
 
-Neglecting the fundamentals is the root cause of more optimization failures than any missing technique or tool. When this book states something that seems obvious, it is because the obvious bears repeating — especially when so much of the industry quietly ignores it.
+Neglecting the fundamentals is the root cause of more optimization failures than any missing technique or tool. When this book states something that seems obvious, it is because the obvious bears repeating, especially when so much of the industry quietly ignores it.
 
 ## What This Book Does Not Cover {-}
 
