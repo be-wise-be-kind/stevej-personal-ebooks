@@ -394,8 +394,6 @@ These platforms prioritize developer experience, comprehensive free tiers, and i
 
 **The Cloudflare Platform**
 
-This book uses Cloudflare for examples because it offers a comprehensive free tier, extensive documentation, and covers all edge capabilities (CDN, compute, data, and security) in one platform. The principles apply regardless of which platform you choose.
-
 Cloudflare's edge platform includes:
 
 - **Workers**: JavaScript/TypeScript/Rust edge functions with sub-millisecond cold starts

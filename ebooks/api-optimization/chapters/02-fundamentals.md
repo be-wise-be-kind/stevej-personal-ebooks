@@ -88,7 +88,7 @@ For most API optimization work, TTFB dominates, which is why server-side optimiz
 
 Not all latency is created equal. Understanding the different types helps us measure correctly and optimize effectively.
 
-**Network Latency** is the time spent in transit between client and server. It includes propagation delay (limited by the speed of light), transmission delay (limited by bandwidth), and routing delay (processing at network hops). Network latency is largely determined by physical distance and network infrastructure. You cannot optimize your way around the speed of light, but you can reduce distance through geographic distribution.
+**Network Latency** is the time spent in transit between client and server, and between services. It includes propagation delay (limited by the speed of light), transmission delay (limited by bandwidth), and routing delay (processing at network hops). Network latency is largely determined by physical distance and network infrastructure. In microservices architectures, inter-service network latency accumulates across every hop on the call path. You cannot optimize your way around the speed of light, but you can reduce distance through geographic distribution and minimize the number of sequential network hops.
 
 **Processing Latency** is the time the server spends actually working on the request: executing business logic, querying databases, calling external services, serializing responses. This is where most API optimization focuses. Processing latency is directly under your control.
 
@@ -103,6 +103,10 @@ The relationship between these types matters for optimization strategy:
 When measuring, ensure your instrumentation captures all three types. End-to-end client measurements include all three. Server-side measurements typically capture processing latency but may miss queuing latency if measured after the request is dequeued.
 
 #### Latency Distributions: Why Averages Lie
+
+![Latency Distribution: Why Averages Lie](../assets/ch02-latency-distribution.html)
+
+\newpage
 
 Perhaps no concept is more important to understand than why average latency is a misleading metric. Consider an API with 99 requests completing in 10ms and one request completing in 1000ms. The average latency is 19.9ms, but this number describes no actual user's experience. Most users saw 10ms, one user suffered through 1000ms, and the "average" user (19.9ms) does not exist.
 
@@ -152,8 +156,6 @@ else:
     fraction = position - floor(position)
     return lower + fraction * (upper - lower)
 ```
-
-![Latency Distribution: Why Averages Lie](../assets/ch02-latency-distribution.html)
 
 #### Latency Budgets: Allocating Time Across Services
 
@@ -329,8 +331,10 @@ The distinction matters because saturated systems exhibit degraded behavior: que
 
 For API systems, monitor these saturation metrics:
 
+- **CPU saturation**: Run queue length, threads waiting for CPU time
 - **Thread pool saturation**: Queued tasks waiting for available threads
 - **Connection pool saturation**: Requests waiting for available database connections
+- **Worker/concurrency saturation**: In serverless and event-driven systems, invocations throttled or queued because concurrency limits are reached
 - **Memory saturation**: Garbage collection frequency and duration
 - **Network saturation**: Dropped packets, TCP retransmissions
 - **Disk I/O saturation**: Queue depth on storage devices

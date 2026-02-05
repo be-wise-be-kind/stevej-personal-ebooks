@@ -125,6 +125,12 @@ You may notice this book contains pseudocode rather than production-ready implem
 
 When pseudocode appears in this book, it's there because the algorithm or decision flow genuinely benefits from visual representation - not as an implementation to copy, but as a thinking tool. For production code, describe the pattern to your AI assistant, and it will generate something appropriate for your stack.
 
+### About Technology Choices {-}
+
+Throughout this book, examples use specific tools: OpenTelemetry and Grafana for observability, Cloudflare for edge infrastructure, Locust for load testing. We chose these because they are open-source (or offer comprehensive free tiers), well-documented, and widely adopted. They make good teaching tools because you can follow along without a licensing conversation.
+
+They are not the only good options. Datadog, New Relic, Splunk, AWS CloudWatch, Fastly, Akamai, k6, Gatling, and many others are equally capable. The principles, patterns, and mental models in each chapter transfer directly to whatever stack you use. If you already have tooling in place, keep using it. The instrumentation strategies, measurement techniques, and optimization patterns matter far more than which vendor logo is on the dashboard.
+
 ### Practice Deliberately {-}
 
 Reading about performance optimization is not the same as doing it. Throughout the book, you'll find exercises, examples, and suggested experiments. Do them. Apply the techniques to your own systems. The concepts won't truly click until you've seen them work (and fail) in code you care about.
