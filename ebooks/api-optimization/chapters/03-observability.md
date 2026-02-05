@@ -585,15 +585,15 @@ The key insight is that OpenTelemetry decouples instrumentation from backends. I
 
 ### The Grafana Stack
 
-This book uses the Grafana stack for examples because it is open-source, self-hostable, integrates cleanly with OpenTelemetry, and provides a complete solution across all four pillars. The principles apply regardless of which stack you choose.
-
 Grafana Labs has assembled a comprehensive observability stack:
 
 - **Grafana**: Visualization and dashboarding, serving as the central interface for exploring all telemetry types
-- **Prometheus/Mimir**: Metrics storage and querying using PromQL
+- **Prometheus/Mimir**: Metrics storage and querying using PromQL. Prometheus stores metrics on local disk; Mimir extends it with horizontally-scalable, multi-tenant storage backed by object storage. Both use the same query language, and Mimir is wire-compatible with Prometheus, so the rest of the stack treats them interchangeably
 - **Loki**: Log aggregation and querying using LogQL, designed for cost-effective storage
 - **Tempo**: Distributed trace storage with no indexing required
 - **Pyroscope**: Continuous profiling with flame graph visualization
+
+Tempo, Loki, Mimir, and Pyroscope all store data to object storage (S3, GCS, or Azure Blob) for long-term retention. This matters for optimization work: object storage is cheap enough to retain months of telemetry history, which lets you compare performance across releases, track gradual degradation, and revisit traces from incidents long after they occurred. Prometheus stores to local disk by default, but Mimir extends it with horizontally-scalable object storage. Grafana queries all four backends and serves as the single interface for exploring metrics, traces, logs, and profiles together.
 
 This stack offers both open-source deployment and managed cloud options (Grafana Cloud). The tight integration between components enables seamless correlation: clicking a trace in Tempo can jump to related logs in Loki and metrics in Prometheus, all filtered by the same trace ID.
 

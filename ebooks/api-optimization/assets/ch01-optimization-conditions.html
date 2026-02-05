@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Five Conditions for Optimization</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 600 520" xmlns="http://www.w3.org/2000/svg">
+            <!-- Title -->
+            <text x="300" y="30" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #1e293b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">The Five Conditions for Optimization</text>
+            <text x="300" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Prerequisites that must be satisfied before optimization can succeed</text>
+
+            <!-- 1. Visibility -->
+            <rect x="60" y="75" width="480" height="58" rx="8" style="fill: #2563eb; stroke: #1d4ed8; stroke-width: 2;"/>
+            <!-- Checkbox -->
+            <rect x="76" y="91" width="26" height="26" rx="4" style="fill: #1d4ed8; stroke: #ffffff; stroke-width: 1.5;"/>
+            <polyline points="82,104 88,112 98,96" style="fill: none; stroke: #ffffff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;"/>
+            <!-- Number and text -->
+            <text x="120" y="100" style="fill: #bfdbfe; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700;" font-family="Liberation Sans, Arial, sans-serif">1</text>
+            <text x="138" y="100" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 15px; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Visibility</text>
+            <text x="138" y="120" style="fill: #bfdbfe; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px;" font-family="Liberation Sans, Arial, sans-serif">Can you see the problem? Do you have metrics, traces, and logs?</text>
+
+            <!-- 2. Understanding -->
+            <rect x="60" y="148" width="480" height="58" rx="8" style="fill: #7c3aed; stroke: #6d28d9; stroke-width: 2;"/>
+            <rect x="76" y="164" width="26" height="26" rx="4" style="fill: #6d28d9; stroke: #ffffff; stroke-width: 1.5;"/>
+            <polyline points="82,177 88,185 98,169" style="fill: none; stroke: #ffffff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;"/>
+            <text x="120" y="173" style="fill: #ddd6fe; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700;" font-family="Liberation Sans, Arial, sans-serif">2</text>
+            <text x="138" y="173" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 15px; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Understanding</text>
+            <text x="138" y="193" style="fill: #ddd6fe; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px;" font-family="Liberation Sans, Arial, sans-serif">Can you interpret the data? Do you know what normal looks like?</text>
+
+            <!-- 3. Agency -->
+            <rect x="60" y="221" width="480" height="58" rx="8" style="fill: #16a34a; stroke: #15803d; stroke-width: 2;"/>
+            <rect x="76" y="237" width="26" height="26" rx="4" style="fill: #15803d; stroke: #ffffff; stroke-width: 1.5;"/>
+            <polyline points="82,250 88,258 98,242" style="fill: none; stroke: #ffffff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;"/>
+            <text x="120" y="246" style="fill: #bbf7d0; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700;" font-family="Liberation Sans, Arial, sans-serif">3</text>
+            <text x="138" y="246" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 15px; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Agency</text>
+            <text x="138" y="266" style="fill: #bbf7d0; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px;" font-family="Liberation Sans, Arial, sans-serif">Can you change the system? Do you have access and authority?</text>
+
+            <!-- 4. Affordability -->
+            <rect x="60" y="294" width="480" height="58" rx="8" style="fill: #d97706; stroke: #b45309; stroke-width: 2;"/>
+            <rect x="76" y="310" width="26" height="26" rx="4" style="fill: #b45309; stroke: #ffffff; stroke-width: 1.5;"/>
+            <polyline points="82,323 88,331 98,315" style="fill: none; stroke: #ffffff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;"/>
+            <text x="120" y="319" style="fill: #fef3c7; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700;" font-family="Liberation Sans, Arial, sans-serif">4</text>
+            <text x="138" y="319" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 15px; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Affordability</text>
+            <text x="138" y="339" style="fill: #fef3c7; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px;" font-family="Liberation Sans, Arial, sans-serif">Can you afford the solution? Is the ROI worth the complexity?</text>
+
+            <!-- 5. Velocity -->
+            <rect x="60" y="367" width="480" height="58" rx="8" style="fill: #dc2626; stroke: #b91c1c; stroke-width: 2;"/>
+            <rect x="76" y="383" width="26" height="26" rx="4" style="fill: #b91c1c; stroke: #ffffff; stroke-width: 1.5;"/>
+            <polyline points="82,396 88,404 98,388" style="fill: none; stroke: #ffffff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;"/>
+            <text x="120" y="392" style="fill: #fecaca; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700;" font-family="Liberation Sans, Arial, sans-serif">5</text>
+            <text x="138" y="392" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 15px; font-weight: 600;" font-family="Liberation Sans, Arial, sans-serif">Velocity</text>
+            <text x="138" y="412" style="fill: #fecaca; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px;" font-family="Liberation Sans, Arial, sans-serif">Can you iterate quickly? Can you deploy and measure in hours, not weeks?</text>
+
+            <!-- Annotation -->
+            <text x="300" y="465" fill="#475569" font-size="11" text-anchor="middle" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                If any condition is missing, fix that before optimizing
+            </text>
+
+            <!-- Chapter subtitle -->
+            <text x="300" y="500" fill="#64748b" font-size="14" text-anchor="middle" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                Chapter 1: The Five Conditions
+            </text>
+        </svg>
+    </div>
+</body>
+</html>

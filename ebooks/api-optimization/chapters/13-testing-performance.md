@@ -327,8 +327,6 @@ Locust is a Python-based load testing framework using an event-driven architectu
 
 Locust scales horizontally by running a master process that coordinates worker processes. Workers can run on the same machine or distributed across many machines. The master aggregates statistics and provides a unified view through its web UI.
 
-This book uses Locust for code examples due to its Python accessibility and clear programming model. The principles demonstrated apply regardless of which tool you choose.
-
 #### wrk and wrk2
 
 wrk and wrk2 are lightweight HTTP benchmarking tools focused on generating maximum load with minimal resources. They excel at quick benchmarks and baseline measurements rather than complex scenario testing.

@@ -534,6 +534,8 @@ Escalation ensures response:
 
 ### Incident Response
 
+Incident response might seem out of scope for a performance book, but it belongs here for two reasons. First, performance incidents are incidents - SLO violations, latency spikes, and capacity exhaustion trigger pages just like functional outages do. Second, how you respond to incidents determines whether they produce lasting optimization or just temporary fixes. A team with disciplined postmortems turns every incident into an optimization candidate; a team without them fights the same fires repeatedly.
+
 When alerts fire and confirm a real problem, incident response begins. Effective incident response minimizes user impact through rapid detection, organized triage, and systematic resolution.
 
 **The Incident Lifecycle**

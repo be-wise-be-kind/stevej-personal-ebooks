@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Six Core Principles</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 640 520" xmlns="http://www.w3.org/2000/svg">
+            <!-- Title -->
+            <text x="320" y="30" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #1e293b; text-anchor: middle;">The Six Core Principles</text>
+            <text x="320" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">Each principle answers a question about the optimization process</text>
+
+            <!-- ===== Row 1: Gathering Truth ===== -->
+            <!-- Card 1: Measure First -->
+            <rect x="35" y="70" width="285" height="120" rx="8" style="fill: #1e40af; stroke: #1e3a8a; stroke-width: 2;"/>
+            <circle cx="55" cy="90" r="12" style="fill: #1e3a8a; stroke: #ffffff; stroke-width: 1.5;"/>
+            <text x="55" y="94" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; text-anchor: middle;">1</text>
+            <text x="75" y="94" style="fill: #93c5fd; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-style: italic;">When do you start?</text>
+            <text x="47" y="118" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700;">Measure First, Optimize Second</text>
+            <text x="47" y="140" style="fill: #bfdbfe; font-family: Liberation Sans, Arial, sans-serif; font-size: 10px;">Baseline before you change anything.</text>
+            <text x="47" y="154" style="fill: #bfdbfe; font-family: Liberation Sans, Arial, sans-serif; font-size: 10px;">Use percentiles, not averages.</text>
+            <text x="47" y="168" style="fill: #bfdbfe; font-family: Liberation Sans, Arial, sans-serif; font-size: 10px;">No baseline, no proof.</text>
+
+            <!-- Card 2: Production Is Truth -->
+            <rect x="335" y="70" width="285" height="120" rx="8" style="fill: #1e40af; stroke: #1e3a8a; stroke-width: 2;"/>
+            <circle cx="355" cy="90" r="12" style="fill: #1e3a8a; stroke: #ffffff; stroke-width: 1.5;"/>
+            <text x="355" y="94" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; text-anchor: middle;">2</text>
+            <text x="375" y="94" style="fill: #93c5fd; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-style: italic;">Where do you measure?</text>
+            <text x="347" y="118" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700;">Production Is the Only Truth</text>
+            <text x="347" y="140" style="fill: #bfdbfe; font-family: Liberation Sans, Arial, sans-serif; font-size: 10px;">Staging lies. Only real traffic under</text>
+            <text x="347" y="154" style="fill: #bfdbfe; font-family: Liberation Sans, Arial, sans-serif; font-size: 10px;">real load tells the truth.</text>
+
+            <!-- ===== Row 2: Priorities & Targets ===== -->
+            <!-- Card 3: Correctness First -->
+            <rect x="35" y="215" width="285" height="120" rx="8" style="fill: #b45309; stroke: #92400e; stroke-width: 2;"/>
+            <circle cx="55" cy="235" r="12" style="fill: #92400e; stroke: #ffffff; stroke-width: 1.5;"/>
+            <text x="55" y="239" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; text-anchor: middle;">3</text>
+            <text x="75" y="239" style="fill: #fde68a; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-style: italic;">What's the priority?</text>
+            <text x="47" y="263" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700;">Correctness Before Performance</text>
+            <text x="47" y="285" style="fill: #fef3c7; font-family: Liberation Sans, Arial, sans-serif; font-size: 10px;">Never optimize broken code.</text>
+            <text x="47" y="299" style="fill: #fef3c7; font-family: Liberation Sans, Arial, sans-serif; font-size: 10px;">Fast and wrong is still wrong.</text>
+
+            <!-- Card 4: Fast Enough -->
+            <rect x="335" y="215" width="285" height="120" rx="8" style="fill: #b45309; stroke: #92400e; stroke-width: 2;"/>
+            <circle cx="355" cy="235" r="12" style="fill: #92400e; stroke: #ffffff; stroke-width: 1.5;"/>
+            <text x="355" y="239" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; text-anchor: middle;">4</text>
+            <text x="375" y="239" style="fill: #fde68a; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-style: italic;">When do you stop?</text>
+            <text x="347" y="263" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700;">Define "Fast Enough"</text>
+            <text x="347" y="285" style="fill: #fef3c7; font-family: Liberation Sans, Arial, sans-serif; font-size: 10px;">SLOs define the target. Without one,</text>
+            <text x="347" y="299" style="fill: #fef3c7; font-family: Liberation Sans, Arial, sans-serif; font-size: 10px;">you never know when to stop.</text>
+
+            <!-- ===== Row 3: Optimizing & Sustaining ===== -->
+            <!-- Card 5: The System -->
+            <rect x="35" y="360" width="285" height="120" rx="8" style="fill: #047857; stroke: #065f46; stroke-width: 2;"/>
+            <circle cx="55" cy="380" r="12" style="fill: #065f46; stroke: #ffffff; stroke-width: 1.5;"/>
+            <text x="55" y="384" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; text-anchor: middle;">5</text>
+            <text x="75" y="384" style="fill: #6ee7b7; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-style: italic;">What scope do you think at?</text>
+            <text x="47" y="408" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700;">Optimize the System</text>
+            <text x="47" y="430" style="fill: #a7f3d0; font-family: Liberation Sans, Arial, sans-serif; font-size: 10px;">Components interact. Optimizing off</text>
+            <text x="47" y="444" style="fill: #a7f3d0; font-family: Liberation Sans, Arial, sans-serif; font-size: 10px;">the critical path changes nothing.</text>
+
+            <!-- Card 6: Protect Your Gains -->
+            <rect x="335" y="360" width="285" height="120" rx="8" style="fill: #047857; stroke: #065f46; stroke-width: 2;"/>
+            <circle cx="355" cy="380" r="12" style="fill: #065f46; stroke: #ffffff; stroke-width: 1.5;"/>
+            <text x="355" y="384" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; text-anchor: middle;">6</text>
+            <text x="375" y="384" style="fill: #6ee7b7; font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-style: italic;">How do you sustain?</text>
+            <text x="347" y="408" style="fill: white; font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700;">Protect Your Gains</text>
+            <text x="347" y="430" style="fill: #a7f3d0; font-family: Liberation Sans, Arial, sans-serif; font-size: 10px;">Regression detection in CI and SLO</text>
+            <text x="347" y="444" style="fill: #a7f3d0; font-family: Liberation Sans, Arial, sans-serif; font-size: 10px;">monitoring keep improvements alive.</text>
+
+            <!-- Bottom annotation -->
+            <text x="320" y="508" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: middle; font-style: italic;">Chapter 1: Core Principles</text>
+        </svg>
+    </div>
+</body>
+</html>
