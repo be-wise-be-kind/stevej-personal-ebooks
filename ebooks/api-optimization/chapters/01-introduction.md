@@ -50,7 +50,7 @@ Industry research demonstrates measurable correlations between latency and reven
 
 **Akamai** research showed that a 100-millisecond delay in website load time can decrease conversion rates by 7% [Source: Akamai, 2017]. For an e-commerce site processing $100,000 in daily revenue, that's $2.5 million in lost annual revenue from a tenth of a second.
 
-These numbers compound. Slow APIs don't just lose individual transactions - they erode user trust, damage brand perception, and send customers to faster competitors.
+These numbers compound. Each slow interaction is a small push toward the competitor who loads faster.
 
 ### The Cost Connection
 
@@ -61,6 +61,16 @@ Poor performance doesn't just cost revenue - it inflates expenses:
 **Development Velocity**: Slow test suites break flow. Debugging without observability wastes engineering hours. Performance firefighting steals time from roadmap work. The drag is real even when it's hard to quantify.
 
 **Operational Burden**: Every performance incident consumes on-call time, requires postmortem analysis, and leaves the team a little more burned out. Proactive optimization is cheaper than reactive firefighting.
+
+### The Reputation Connection
+
+Revenue and cost impacts are immediate and measurable. Reputational damage is slower and harder to quantify, but often more consequential.
+
+**User Trust Erodes Quietly**: Users don't file bug reports for slow APIs. They develop a vague sense that your product is unreliable, and they start hedging. They keep a competitor's tab open. They mention the slowness in a review. They hesitate before recommending your product to a colleague. By the time slow performance shows up in churn metrics, the damage has been compounding for months.
+
+**Platform Reputation Compounds**: If your API serves external developers or partners, performance is part of your implicit contract. A payment processor with unpredictable latency drives integrators to build fallback paths to competitors. A B2B data provider with slow endpoints loses out at renewal time to a faster alternative. Platform reputation is earned over thousands of API calls and lost in a few bad weeks.
+
+**Talent Feels It Too**: Engineers talk. Teams known for slow, poorly instrumented systems struggle to hire and retain strong engineers. Teams known for fast, well-understood systems attract people who want to work on interesting problems with good tooling. Performance reputation affects recruiting whether or not it shows up on a careers page.
 
 ### Beyond the Numbers
 
@@ -114,7 +124,7 @@ But being empirical doesn't mean being purely reactive. This book also teaches y
 
 ## The Five Conditions {-}
 
-The optimization loop tells you *how* to improve performance: observe, hypothesize, experiment, measure, analyze, iterate. But the loop assumes you're in a position to execute it. In practice, optimization efforts stall not because teams lack methodology, but because one or more prerequisites aren't met. We call these the Five Conditions.
+The optimization loop tells you *how* to improve performance: observe, hypothesize, experiment, measure, analyze, iterate. But the loop assumes you're in a position to execute it. In practice, even teams with sound methodology find their optimization efforts stalling because one or more prerequisites aren't met. We call these the Five Conditions.
 
 If all five conditions are satisfied, you can solve almost any performance problem given enough cycles of the optimization loop. If any condition is missing, even simple problems become intractable. Before starting any optimization effort, assess whether these conditions hold. If they don't, fix that first - it's a better use of your time than optimizing blind.
 
@@ -140,9 +150,9 @@ The faster you iterate, the faster you converge on the right solution. CI/CD pip
 
 > **A note on communication:** Optimization is rarely a solo activity. Shared understanding of goals, constraints, and trade-offs keeps teams aligned and prevents wasted effort. A developer optimizing for latency while the product team prioritizes throughput will produce technically sound work that solves the wrong problem. Communication isn't a sixth condition - it's the medium through which the other five are coordinated across people.
 
-### The Conditions Are Circular
+### The Conditions Shift
 
-After each optimization cycle, reassess the conditions. Fixing one bottleneck may reveal that the next problem is in a system you don't control - Visibility and Understanding showed you a problem, but now you lack Agency. Budgets shift mid-quarter. Deployment pipelines slow as system complexity grows. A new compliance requirement changes what's Affordable. The Five Conditions are not a one-time checklist to satisfy before you begin. They are constraints to re-evaluate at every iteration, because the landscape shifts as you make progress.
+After each optimization cycle, reassess the conditions. Fixing one bottleneck may reveal that the next problem is in a system you don't control — Visibility and Understanding showed you a problem, but now you lack Agency. Budgets shift mid-quarter. Deployment pipelines slow as system complexity grows. A new compliance requirement changes what's Affordable. The Five Conditions are not a one-time gate to clear before you begin. They are constraints to re-evaluate at every iteration, because the landscape shifts as you make progress.
 
 ## Optimization in Practice
 

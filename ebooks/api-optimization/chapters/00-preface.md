@@ -73,9 +73,11 @@ Each chapter stands alone enough to be useful in isolation, while connecting to 
 
 ### The Journey Ahead {-}
 
-This book takes you from measurement fundamentals through advanced optimization techniques across thirteen chapters. Here's the journey:
+This book takes you from first principles through advanced optimization techniques across fourteen chapters. Here's the journey:
 
-#### Part I: Foundations (Chapters 2-4) {-}
+#### Part I: Foundations (Chapters 1-4) {-}
+
+**Chapter 1: The Empirical Discipline** establishes why performance matters, introduces the optimization loop (measure, analyze, hypothesize, implement, validate), and presents the Five Conditions that determine whether optimization is even possible. You'll also meet the six core principles that guide effective performance work throughout the book.
 
 **Chapter 2: Performance Fundamentals** establishes the vocabulary and mental models you'll use throughout the book. You'll learn the four golden signals that matter for any API (latency, traffic, errors, saturation), why percentiles reveal truths that averages hide, and how Service Level Objectives transform vague performance goals into engineering constraints.
 
@@ -126,6 +128,14 @@ When pseudocode appears in this book, it's there because the algorithm or decisi
 ### Practice Deliberately {-}
 
 Reading about performance optimization is not the same as doing it. Throughout the book, you'll find exercises, examples, and suggested experiments. Do them. Apply the techniques to your own systems. The concepts won't truly click until you've seen them work (and fail) in code you care about.
+
+### On Stating the Obvious {-}
+
+Some concepts in this book may seem basic. The optimization loop — measure, analyze, hypothesize, implement, validate — is not a revelation. Experienced engineers may read sections like these and think: *I already know this.*
+
+Perhaps. But knowing a concept and consistently practicing it are different things. It has been the author's experience that these fundamentals are either never formally taught, not deeply understood, or routinely abandoned under pressure. Teams that would never skip writing tests will happily skip measuring before optimizing. Engineers who insist on code review will deploy performance "fixes" without a baseline to compare against.
+
+Neglecting the fundamentals is the root cause of more optimization failures than any missing technique or tool. When this book states something that seems obvious, it is because the obvious bears repeating — especially when so much of the industry quietly ignores it.
 
 ## What This Book Does Not Cover {-}
 
