@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Serving Framework Landscape</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 800 560" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <marker id="arrowRight" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #64748b;"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="400" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">The Serving Framework Landscape</text>
+            <text x="400" y="54" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Three generations of ML inference serving frameworks</text>
+
+            <!-- === GENERATION 1 === -->
+            <g transform="translate(40, 85)">
+                <!-- Generation header -->
+                <rect x="0" y="0" width="720" height="110" rx="8" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1.5"/>
+                <rect x="0" y="0" width="720" height="32" rx="8" fill="#7c3aed"/>
+                <rect x="0" y="16" width="720" height="16" fill="#7c3aed"/>
+                <text x="20" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #ffffff;" font-family="Liberation Sans, Arial, sans-serif">GEN 1: Framework-Native (2017-2020)</text>
+                <text x="700" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #e9d5ff; text-anchor: end;" font-family="Liberation Sans, Arial, sans-serif">Single-framework, model-specific</text>
+
+                <!-- Frameworks -->
+                <rect x="20" y="48" width="155" height="46" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+                <text x="97" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">TF Serving</text>
+                <text x="97" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #7c3aed; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">TensorFlow only</text>
+
+                <rect x="195" y="48" width="155" height="46" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+                <text x="272" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">TorchServe</text>
+                <text x="272" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #7c3aed; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">PyTorch only</text>
+
+                <!-- Characteristics -->
+                <text x="420" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #6b21a8; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">Tight framework coupling</text>
+                <text x="420" y="86" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #6b21a8; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">Basic HTTP/gRPC, no GPU-aware batching</text>
+            </g>
+
+            <!-- Arrow between generations -->
+            <line x1="400" y1="200" x2="400" y2="220" stroke="#64748b" stroke-width="2" marker-end="url(#arrowRight)"/>
+
+            <!-- === GENERATION 2 === -->
+            <g transform="translate(40, 225)">
+                <!-- Generation header -->
+                <rect x="0" y="0" width="720" height="120" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+                <rect x="0" y="0" width="720" height="32" rx="8" fill="#2563eb"/>
+                <rect x="0" y="16" width="720" height="16" fill="#2563eb"/>
+                <text x="20" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #ffffff;" font-family="Liberation Sans, Arial, sans-serif">GEN 2: Multi-Framework Platforms (2020-2023)</text>
+                <text x="700" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #bfdbfe; text-anchor: end;" font-family="Liberation Sans, Arial, sans-serif">Framework-agnostic, orchestration</text>
+
+                <!-- Frameworks -->
+                <rect x="20" y="48" width="120" height="56" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                <text x="80" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Triton</text>
+                <text x="80" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #2563eb; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">NVIDIA, multi-</text>
+                <text x="80" y="96" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #2563eb; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">framework</text>
+
+                <rect x="155" y="48" width="120" height="56" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                <text x="215" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">KServe</text>
+                <text x="215" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #2563eb; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">K8s-native,</text>
+                <text x="215" y="96" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #2563eb; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">scale-to-zero</text>
+
+                <rect x="290" y="48" width="120" height="56" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                <text x="350" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">BentoML</text>
+                <text x="350" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #2563eb; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Developer-</text>
+                <text x="350" y="96" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #2563eb; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">friendly</text>
+
+                <rect x="425" y="48" width="120" height="56" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                <text x="485" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Ray Serve</text>
+                <text x="485" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #2563eb; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Distributed</text>
+                <text x="485" y="96" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #2563eb; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">compute</text>
+
+                <!-- Characteristics -->
+                <text x="575" y="72" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #1d4ed8; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">GPU scheduling</text>
+                <text x="575" y="90" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #1d4ed8; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">Ensemble pipelines</text>
+            </g>
+
+            <!-- Arrow between generations -->
+            <line x1="400" y1="350" x2="400" y2="370" stroke="#64748b" stroke-width="2" marker-end="url(#arrowRight)"/>
+
+            <!-- === GENERATION 3 === -->
+            <g transform="translate(40, 375)">
+                <!-- Generation header -->
+                <rect x="0" y="0" width="720" height="120" rx="8" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.5"/>
+                <rect x="0" y="0" width="720" height="32" rx="8" fill="#059669"/>
+                <rect x="0" y="16" width="720" height="16" fill="#059669"/>
+                <text x="20" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #ffffff;" font-family="Liberation Sans, Arial, sans-serif">GEN 3: LLM-Optimized Engines (2023-present)</text>
+                <text x="700" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #a7f3d0; text-anchor: end;" font-family="Liberation Sans, Arial, sans-serif">Attention-aware, KV cache as first-class</text>
+
+                <!-- Frameworks -->
+                <rect x="20" y="48" width="155" height="56" rx="6" fill="#d1fae5" stroke="#34d399" stroke-width="1.5"/>
+                <text x="97" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #065f46; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">vLLM</text>
+                <text x="97" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">PagedAttention</text>
+                <text x="97" y="96" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">4,741 tok/s</text>
+
+                <rect x="195" y="48" width="155" height="56" rx="6" fill="#d1fae5" stroke="#34d399" stroke-width="1.5"/>
+                <text x="272" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #065f46; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">SGLang</text>
+                <text x="272" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">RadixAttention</text>
+                <text x="272" y="96" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">16,200 tok/s</text>
+
+                <rect x="370" y="48" width="175" height="56" rx="6" fill="#d1fae5" stroke="#34d399" stroke-width="1.5"/>
+                <text x="457" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #065f46; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">TensorRT-LLM</text>
+                <text x="457" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">NVIDIA-optimized</text>
+                <text x="457" y="96" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">FP8/FP4 native</text>
+
+                <!-- Characteristics -->
+                <text x="575" y="72" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #047857; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">Continuous batching</text>
+                <text x="575" y="90" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #047857; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">KV cache mgmt</text>
+            </g>
+
+            <!-- Bottom annotation -->
+            <text x="400" y="535" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #475569; text-anchor: middle; font-style: italic;" font-family="Liberation Sans, Arial, sans-serif">Each generation solved the previous generation's biggest limitation</text>
+        </svg>
+    </div>
+</body>
+</html>

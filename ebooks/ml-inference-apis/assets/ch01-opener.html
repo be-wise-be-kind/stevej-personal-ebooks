@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Serving Problem</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <marker id="arrowGray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #94a3b8;"/>
+                </marker>
+                <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #2563eb;"/>
+                </marker>
+                <linearGradient id="bridgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+
+            <!-- Title -->
+            <text x="380" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">The Serving Problem</text>
+            <text x="380" y="54" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Bridging trained models and production APIs</text>
+
+            <!-- === LEFT: Research/Training Side === -->
+            <g transform="translate(30, 85)">
+                <!-- Header -->
+                <rect x="0" y="0" width="200" height="32" rx="6" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1.5"/>
+                <text x="100" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #7c3aed; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">RESEARCH / TRAINING</text>
+
+                <!-- Items -->
+                <rect x="10" y="50" width="180" height="30" rx="5" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+                <text x="100" y="70" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Trained model weights</text>
+
+                <rect x="10" y="92" width="180" height="30" rx="5" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+                <text x="100" y="112" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Benchmark accuracy</text>
+
+                <rect x="10" y="134" width="180" height="30" rx="5" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+                <text x="100" y="154" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Single-GPU notebook</text>
+
+                <rect x="10" y="176" width="180" height="30" rx="5" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+                <text x="100" y="196" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Offline evaluation</text>
+            </g>
+
+            <!-- === RIGHT: Production Side === -->
+            <g transform="translate(530, 85)">
+                <!-- Header -->
+                <rect x="0" y="0" width="200" height="32" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+                <text x="100" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #2563eb; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">PRODUCTION</text>
+
+                <!-- Items -->
+                <rect x="10" y="50" width="180" height="30" rx="5" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+                <text x="100" y="70" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Sub-300ms latency</text>
+
+                <rect x="10" y="92" width="180" height="30" rx="5" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+                <text x="100" y="112" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">99.9% availability</text>
+
+                <rect x="10" y="134" width="180" height="30" rx="5" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+                <text x="100" y="154" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Multi-GPU auto-scaling</text>
+
+                <rect x="10" y="176" width="180" height="30" rx="5" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+                <text x="100" y="196" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Real-time streaming</text>
+            </g>
+
+            <!-- === CENTER: Bridge Arrow === -->
+            <line x1="240" y1="240" x2="520" y2="240" stroke="url(#bridgeGrad)" stroke-width="3" marker-end="url(#arrowBlue)"/>
+            <line x1="520" y1="250" x2="240" y2="250" stroke="url(#bridgeGrad)" stroke-width="3" marker-end="url(#arrowGray)"/>
+
+            <!-- Bridge label -->
+            <rect x="300" y="215" width="160" height="50" rx="8" fill="url(#bridgeGrad)"/>
+            <text x="380" y="237" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #ffffff; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">THE GAP</text>
+            <text x="380" y="254" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #e0e7ff; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Where this book lives</text>
+
+            <!-- === BOTTOM: What the gap contains === -->
+            <g transform="translate(30, 330)">
+                <line x1="0" y1="0" x2="700" y2="0" stroke="#e2e8f0" stroke-width="1.5"/>
+
+                <text x="380" y="30" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #475569; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">THE SERVING ENGINEER'S DOMAIN</text>
+
+                <!-- Row 1 -->
+                <rect x="0" y="50" width="160" height="44" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="80" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #334155; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">GPU Optimization</text>
+                <text x="80" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Batching, KV cache, quant</text>
+
+                <rect x="180" y="50" width="160" height="44" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="260" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #334155; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Streaming Protocols</text>
+                <text x="260" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">WebSocket, gRPC, WebRTC</text>
+
+                <rect x="360" y="50" width="160" height="44" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="440" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #334155; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">API Design</text>
+                <text x="440" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Contracts, versioning, DX</text>
+
+                <rect x="540" y="50" width="160" height="44" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="620" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #334155; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Enterprise Ops</text>
+                <text x="620" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">SLOs, billing, compliance</text>
+            </g>
+
+            <!-- Bottom annotation -->
+            <text x="380" y="498" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #475569; text-anchor: middle; font-style: italic;" font-family="Liberation Sans, Arial, sans-serif">The gap between a trained model and a production API is where most organizations struggle</text>
+        </svg>
+    </div>
+</body>
+</html>
