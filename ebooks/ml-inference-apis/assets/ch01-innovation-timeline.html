@@ -32,14 +32,14 @@
 </head>
 <body>
     <div class="diagram-container">
-        <svg viewBox="0 0 800 520" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 800 610" xmlns="http://www.w3.org/2000/svg">
 
             <!-- Title -->
             <text x="400" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Key Innovations in ML Inference</text>
             <text x="400" y="54" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">The techniques that transformed serving from bottleneck to solved problem (2022-2026)</text>
 
             <!-- === TIMELINE AXIS === -->
-            <g transform="translate(60, 85)">
+            <g transform="translate(60, 175)">
                 <line x1="0" y1="0" x2="680" y2="0" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>
 
                 <!-- Year markers -->
@@ -62,7 +62,7 @@
             <!-- === INNOVATIONS: Alternating above/below timeline === -->
 
             <!-- 2022: FlashAttention (above) -->
-            <g transform="translate(60, 85)">
+            <g transform="translate(60, 175)">
                 <line x1="30" y1="-8" x2="30" y2="-40" stroke="#7c3aed" stroke-width="2"/>
                 <rect x="-50" y="-110" width="160" height="65" rx="6" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1.5"/>
                 <text x="30" y="-86" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #6d28d9; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">FlashAttention</text>
@@ -71,7 +71,7 @@
             </g>
 
             <!-- 2022: Continuous Batching (below) -->
-            <g transform="translate(60, 85)">
+            <g transform="translate(60, 175)">
                 <line x1="120" y1="8" x2="120" y2="45" stroke="#2563eb" stroke-width="2"/>
                 <rect x="30" y="50" width="180" height="65" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
                 <text x="120" y="74" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #1d4ed8; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Continuous Batching</text>
@@ -80,7 +80,7 @@
             </g>
 
             <!-- 2023: PagedAttention / vLLM (above) -->
-            <g transform="translate(60, 85)">
+            <g transform="translate(60, 175)">
                 <line x1="200" y1="-8" x2="200" y2="-40" stroke="#059669" stroke-width="2"/>
                 <rect x="115" y="-110" width="170" height="65" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.5"/>
                 <text x="200" y="-86" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #047857; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">PagedAttention</text>
@@ -89,7 +89,7 @@
             </g>
 
             <!-- 2023-2024: SGLang (below) -->
-            <g transform="translate(60, 85)">
+            <g transform="translate(60, 175)">
                 <line x1="290" y1="8" x2="290" y2="45" stroke="#dc2626" stroke-width="2"/>
                 <rect x="200" y="50" width="180" height="65" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
                 <text x="290" y="74" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #991b1b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">SGLang + RadixAttention</text>
@@ -98,7 +98,7 @@
             </g>
 
             <!-- 2024: FlashAttention-3 (above) -->
-            <g transform="translate(60, 85)">
+            <g transform="translate(60, 175)">
                 <line x1="380" y1="-8" x2="380" y2="-40" stroke="#7c3aed" stroke-width="2"/>
                 <rect x="295" y="-110" width="170" height="65" rx="6" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1.5"/>
                 <text x="380" y="-86" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #6d28d9; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">FlashAttention-3</text>
@@ -107,7 +107,7 @@
             </g>
 
             <!-- 2025: FP8/FP4 Quantization (below) -->
-            <g transform="translate(60, 85)">
+            <g transform="translate(60, 175)">
                 <line x1="480" y1="8" x2="480" y2="45" stroke="#b45309" stroke-width="2"/>
                 <rect x="390" y="50" width="180" height="65" rx="6" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
                 <text x="480" y="74" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #9a3412; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">FP8/FP4 Quantization</text>
@@ -116,7 +116,7 @@
             </g>
 
             <!-- 2025: Speculative Decoding (above) -->
-            <g transform="translate(60, 85)">
+            <g transform="translate(60, 175)">
                 <line x1="560" y1="-8" x2="560" y2="-40" stroke="#059669" stroke-width="2"/>
                 <rect x="475" y="-110" width="170" height="65" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.5"/>
                 <text x="560" y="-86" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #047857; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Speculative Decoding</text>
@@ -125,7 +125,7 @@
             </g>
 
             <!-- 2026: Blackwell / FA-4 (below) -->
-            <g transform="translate(60, 85)">
+            <g transform="translate(60, 175)">
                 <line x1="650" y1="8" x2="650" y2="45" stroke="#1e40af" stroke-width="2"/>
                 <rect x="560" y="50" width="180" height="65" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
                 <text x="650" y="74" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Blackwell + FA-4</text>
@@ -134,7 +134,7 @@
             </g>
 
             <!-- === IMPACT SUMMARY === -->
-            <g transform="translate(40, 310)">
+            <g transform="translate(40, 400)">
                 <line x1="0" y1="0" x2="720" y2="0" stroke="#e2e8f0" stroke-width="1.5"/>
 
                 <text x="360" y="30" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e293b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Cumulative Impact</text>
@@ -157,7 +157,7 @@
             </g>
 
             <!-- Bottom annotation -->
-            <text x="400" y="498" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #475569; text-anchor: middle; font-style: italic;" font-family="Liberation Sans, Arial, sans-serif">The KV cache is the central bottleneck; every major innovation addresses how it is managed</text>
+            <text x="400" y="588" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #475569; text-anchor: middle; font-style: italic;" font-family="Liberation Sans, Arial, sans-serif">The KV cache is the central bottleneck; every major innovation addresses how it is managed</text>
         </svg>
     </div>
 </body>
