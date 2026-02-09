@@ -324,6 +324,41 @@ rate(process_cpu_seconds_total{instance="pod-abc"}[1m])
 
 The key insight: **traces identify WHERE to look; metrics show WHAT was happening there**. You cannot attach a trace ID to a CPU metric (metrics aggregate across all requests), but you can use trace attributes to narrow metrics to the relevant instance and time window.
 
+#### Finding Root Causes Across Traces
+
+Following one exemplar to one trace tells you what happened to a single request. But the more powerful question is: "across all slow requests, which attributes correlate with slowness?" If every slow trace hit the same database replica or ran on the same host, that pattern points to root cause — but you will not find it by inspecting traces one at a time.
+
+**Trace analytics** tools let you query across traces the way you would query a database. Instead of examining individual traces, you ask aggregate questions:
+
+```
+// Honeycomb-style query: group slow traces by replica
+WHERE duration_ms > 2000
+GROUP BY db.replica
+CALCULATE count, avg(duration_ms)
+```
+
+This might reveal that `db-read-3` accounts for 80% of slow traces while handling only 20% of total traffic. Some tools go further: Honeycomb's BubbleUp automatically compares slow traces against fast traces and highlights which attributes differ between the two populations. You select the latency spike on a chart, and it surfaces that `db.replica=read-3` and `host.az=us-east-1c` are overrepresented in the slow group.
+
+This approach depends on rich span attributes. The more context you attach to spans (replica ID, availability zone, feature flags, customer tier), the more dimensions you can slice across when investigating. Chapter 6 revisits this in the context of database performance, where identifying a hot replica or slow query pattern across traces is a common debugging workflow.
+
+**Trace-derived metrics** offer a complementary approach. Instead of querying raw traces at investigation time, you configure your collector to generate metrics from span attributes as traces flow through:
+
+```
+// OpenTelemetry Collector: generate a histogram from span data
+connectors:
+  spanmetrics:
+    dimensions:
+      - name: db.replica
+      - name: host.name
+    histogram:
+      explicit:
+        buckets: [100, 250, 500, 1000, 2500]
+```
+
+This produces a standard latency histogram broken down by `db.replica` and `host.name`, queryable in Prometheus or Grafana without touching the trace store. You see replica-level latency distributions directly in dashboards, and anomalies surface through normal metric alerting rather than requiring ad hoc trace investigation.
+
+The tradeoff is flexibility: trace-derived metrics only include dimensions you configured in advance, while trace analytics tools let you slice by any attribute after the fact. Teams often use both — trace-derived metrics for known-important dimensions in dashboards, and trace analytics for exploratory investigation when something unexpected happens.
+
 ### Practical Logging Strategies
 
 Logs are deceptively simple. Unlike metrics that require understanding aggregation semantics or traces that demand distributed context propagation, logs appear straightforward: something happens, write it down. This apparent simplicity leads teams to either log too little (missing critical debugging context) or log too much (drowning in noise and storage costs). Effective logging requires deliberate strategy.

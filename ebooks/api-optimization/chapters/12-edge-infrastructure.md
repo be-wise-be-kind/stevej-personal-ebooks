@@ -636,6 +636,8 @@ This offloads image processing from origin servers while serving optimized image
 
 Edge authentication validates credentials before requests reach origin servers, reducing latency for valid requests and protecting origins from authentication floods. Chapter 11 covers JWT validation mechanics and authentication performance in detail. This section focuses on edge-specific patterns.
 
+![Edge Authentication Decision Flow](../assets/ch12-edge-auth-flow.html)
+
 **JWT at Edge**: Cache JWKS in KV store, validate signatures using Web Crypto API, check claims (exp, iat, iss, aud), then forward validated claims to origin in headers or reject with 401. This eliminates cryptographic validation at origin while enabling edge caching by user ID.
 
 **Token Revocation**: JWT tokens remain valid until expiration, requiring edge revocation patterns:

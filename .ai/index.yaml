@@ -1,0 +1,74 @@
+version: "1.0"
+project:
+  name: stevej-personal-ebooks
+  type: ebook-collection
+  purpose: Technical ebooks on API engineering and ML infrastructure
+  status: in-development
+
+core_documents:
+  - ai-context.md
+  - rules.md
+  - index.yaml
+
+structure:
+  ebooks:
+    location: ebooks/
+    description: Individual ebook directories
+  build:
+    location: build/
+    description: Generated output (gitignored)
+  scripts:
+    location: scripts/
+    description: Helper scripts for ebook creation and building
+  templates_shared:
+    location: templates/
+    description: Shared LaTeX/CSS templates for all ebooks
+
+documentation:
+  location: .ai/docs/
+  files:
+    - style-guide.md
+    - ROADMAP_WORKFLOW.md
+
+howto:
+  location: .ai/howto/
+  files:
+    - how-to-roadmap.md
+    - evaluating-diagram-quality.md
+    - writing-technical-books.md
+
+templates:
+  location: .ai/templates/
+  files:
+    - html-diagram.html
+    - roadmap-progress-tracker.md.template
+    - roadmap-milestone-breakdown.md.template
+    - roadmap-ai-context.md.template
+
+roadmaps:
+  location: .roadmap/
+  guide: .ai/howto/how-to-roadmap.md
+  workflow_docs: .ai/docs/ROADMAP_WORKFLOW.md
+  structure:
+    planning: .roadmap/planning/
+    in_progress: .roadmap/in-progress/
+    complete: .roadmap/complete/
+  templates:
+    progress_tracker: .ai/templates/roadmap-progress-tracker.md.template
+    milestone_breakdown: .ai/templates/roadmap-milestone-breakdown.md.template
+    ai_context: .ai/templates/roadmap-ai-context.md.template
+
+commands:
+  validate: just validate <book-name>
+  build: just build <book-name> <format>
+  build_all: just build-all <book-name>
+  watch: just watch <book-name> <format>
+  lint_md: just lint md <book-name>
+  list_books: just list-books
+
+key_files:
+  readme: README.md
+  agents: AGENTS.md
+  contributing: CONTRIBUTING.md
+  build_docs: BUILD.md
+  justfile: justfile

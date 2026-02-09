@@ -36,6 +36,10 @@ A well-designed load test follows a three-phase pattern:
 
 **Interpreting Load Test Results**
 
+<!-- DIAGRAM: Load test time-series dashboard showing three stacked panels: RPS (with failures), Response Time (p50/p95 with initial cache-cold spike), and Concurrent Users (ramp-up/steady-state/ramp-down phases). Shows the relationship between user count, throughput, and latency over a 5-minute test -->
+
+![Load Test Results Dashboard](../assets/ch13-load-test-dashboard.html)
+
 The primary metrics to observe during load testing:
 
 | Metric | What It Tells Us | Warning Signs |
@@ -49,6 +53,10 @@ The primary metrics to observe during load testing:
 | Memory utilization | Memory pressure | Continuous growth |
 
 A successful load test shows stable metrics throughout the steady-state phase. If p95 latency drifts upward during steady state, something is degrading, perhaps a memory leak, connection pool exhaustion, or garbage collection pressure.
+
+<!-- DIAGRAM: Per-endpoint statistics table from a load test showing Method, Endpoint, Requests, Failures, p50/p95/p99 latencies, Average, and RPS for 8 realistic API endpoints with color-coded p95 latency values -->
+
+![Load Test Per-Endpoint Statistics](../assets/ch13-load-test-stats.html)
 
 **Example Load Test Scenario**
 

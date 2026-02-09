@@ -1,0 +1,44 @@
+# {{FEATURE_NAME}} - AI Context
+
+**Scope**: {{FEATURE_SCOPE}}
+
+---
+
+## Overview
+{{DETAILED_OVERVIEW}}
+
+## Book Vision
+{{BOOK_VISION}}
+
+## Target Audience
+{{TARGET_AUDIENCE}}
+
+## Scope Boundaries
+{{SCOPE_BOUNDARIES}}
+
+## Relationship to Other Books
+{{BOOK_RELATIONSHIPS}}
+
+## Key Design Decisions
+
+{{KEY_DECISIONS_SECTIONS}}
+
+## Reference APIs and Systems
+{{REFERENCE_APIS}}
+
+## Research Sources
+{{RESEARCH_SOURCES}}
+
+## AI Agent Guidance
+
+### When Writing Chapters
+{{WRITING_GUIDANCE}}
+
+### When Creating Diagrams
+{{DIAGRAM_GUIDANCE}}
+
+### Common Patterns
+{{COMMON_PATTERNS}}
+
+## Future Considerations
+{{FUTURE_CONSIDERATIONS}}

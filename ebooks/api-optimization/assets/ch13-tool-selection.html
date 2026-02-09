@@ -31,7 +31,7 @@
 <body>
     <div class="diagram-container">
 
-        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 900 550" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <!-- Gradients -->
                 <linearGradient id="startGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -63,133 +63,133 @@
             <text x="450" y="35" text-anchor="middle" font-size="18" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Load Testing Tool Selection Decision Tree</text>
 
             <!-- Start node -->
-            <g transform="translate(50, 80)">
+            <g transform="translate(50, 110)">
                 <circle cx="40" cy="30" r="30" fill="url(#startGradient)" filter="url(#dropShadow)"/>
                 <text x="40" y="35" text-anchor="middle" font-size="10" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">START</text>
             </g>
 
             <!-- Arrow from Start to Q1 -->
-            <path d="M 120 110 L 160 110" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+            <path d="M 120 140 L 160 140" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
 
             <!-- Question 1: Non-HTTP protocols? -->
-            <g transform="translate(170, 75)">
+            <g transform="translate(170, 105)">
                 <polygon points="90,0 180,35 90,70 0,35" fill="url(#questionGradient)" filter="url(#dropShadow)"/>
                 <text x="90" y="30" text-anchor="middle" font-size="10" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Non-HTTP</text>
                 <text x="90" y="42" text-anchor="middle" font-size="10" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">protocols?</text>
             </g>
 
             <!-- Yes arrow to JMeter -->
-            <path d="M 260 75 L 260 50 L 700 50" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
-            <text x="280" y="45" font-size="10" font-weight="500" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Yes</text>
+            <path d="M 260 105 L 260 80 L 700 80" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <text x="280" y="75" font-size="10" font-weight="500" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Yes</text>
 
             <!-- JMeter result -->
-            <g transform="translate(710, 30)">
+            <g transform="translate(710, 60)">
                 <rect x="0" y="0" width="140" height="45" rx="6" fill="url(#toolGradient)" filter="url(#dropShadow)"/>
                 <text x="70" y="20" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">JMeter</text>
                 <text x="70" y="35" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">JDBC, JMS, LDAP, FTP</text>
             </g>
 
             <!-- No arrow to Q2 -->
-            <path d="M 350 110 L 390 110" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
-            <text x="365" y="103" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">No</text>
+            <path d="M 350 140 L 390 140" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+            <text x="365" y="133" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">No</text>
 
             <!-- Question 2: CI/CD priority? -->
-            <g transform="translate(400, 75)">
+            <g transform="translate(400, 105)">
                 <polygon points="90,0 180,35 90,70 0,35" fill="url(#questionGradient)" filter="url(#dropShadow)"/>
                 <text x="90" y="30" text-anchor="middle" font-size="10" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">CI/CD</text>
                 <text x="90" y="42" text-anchor="middle" font-size="10" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">priority?</text>
             </g>
 
             <!-- Yes arrow to k6 -->
-            <path d="M 490 75 L 490 50 L 600 50 L 600 105" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
-            <text x="510" y="45" font-size="10" font-weight="500" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Yes</text>
+            <path d="M 490 105 L 490 80 L 600 80 L 600 135" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <text x="510" y="75" font-size="10" font-weight="500" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Yes</text>
 
             <!-- k6 result -->
-            <g transform="translate(530, 110)">
+            <g transform="translate(530, 140)">
                 <rect x="0" y="0" width="140" height="45" rx="6" fill="url(#toolGradient)" filter="url(#dropShadow)"/>
                 <text x="70" y="20" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">k6</text>
                 <text x="70" y="35" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">JS scripts, thresholds</text>
             </g>
 
             <!-- No arrow to Q3 -->
-            <path d="M 490 145 L 490 210 L 190 210" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
-            <text x="495" y="165" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">No</text>
+            <path d="M 490 175 L 490 240 L 190 240" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+            <text x="495" y="195" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">No</text>
 
             <!-- Question 3: Team knows Python? -->
-            <g transform="translate(100, 175)">
+            <g transform="translate(100, 205)">
                 <polygon points="90,0 180,35 90,70 0,35" fill="url(#questionGradient)" filter="url(#dropShadow)"/>
                 <text x="90" y="30" text-anchor="middle" font-size="10" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Team knows</text>
                 <text x="90" y="42" text-anchor="middle" font-size="10" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Python?</text>
             </g>
 
             <!-- Yes arrow to Locust -->
-            <path d="M 100 210 L 50 210 L 50 270" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
-            <text x="55" y="240" font-size="10" font-weight="500" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Yes</text>
+            <path d="M 100 240 L 50 240 L 50 300" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <text x="55" y="270" font-size="10" font-weight="500" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Yes</text>
 
             <!-- Locust result -->
-            <g transform="translate(0, 280)">
+            <g transform="translate(0, 310)">
                 <rect x="0" y="0" width="140" height="45" rx="6" fill="url(#toolGradient)" filter="url(#dropShadow)"/>
                 <text x="70" y="20" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Locust</text>
                 <text x="70" y="35" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Python, distributed</text>
             </g>
 
             <!-- No arrow to Q4 -->
-            <path d="M 280 210 L 360 210" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
-            <text x="300" y="203" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">No</text>
+            <path d="M 280 240 L 360 240" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+            <text x="300" y="233" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">No</text>
 
             <!-- Question 4: Extreme concurrency? -->
-            <g transform="translate(370, 175)">
+            <g transform="translate(370, 205)">
                 <polygon points="90,0 180,35 90,70 0,35" fill="url(#questionGradient)" filter="url(#dropShadow)"/>
                 <text x="90" y="30" text-anchor="middle" font-size="10" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Extreme</text>
                 <text x="90" y="42" text-anchor="middle" font-size="10" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">concurrency?</text>
             </g>
 
             <!-- Yes arrow to Gatling -->
-            <path d="M 550 210 L 600 210 L 600 270" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
-            <text x="570" y="203" font-size="10" font-weight="500" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Yes</text>
+            <path d="M 550 240 L 600 240 L 600 300" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <text x="570" y="233" font-size="10" font-weight="500" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Yes</text>
 
             <!-- Gatling result -->
-            <g transform="translate(530, 280)">
+            <g transform="translate(530, 310)">
                 <rect x="0" y="0" width="140" height="45" rx="6" fill="url(#toolGradient)" filter="url(#dropShadow)"/>
                 <text x="70" y="20" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Gatling</text>
                 <text x="70" y="35" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">Scala, 50k+ VUs</text>
             </g>
 
             <!-- No arrow to Q5 -->
-            <path d="M 460 245 L 460 310 L 330 310" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
-            <text x="465" y="270" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">No</text>
+            <path d="M 460 275 L 460 340 L 330 340" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+            <text x="465" y="300" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">No</text>
 
             <!-- Question 5: Quick benchmark? -->
-            <g transform="translate(240, 275)">
+            <g transform="translate(240, 305)">
                 <polygon points="90,0 180,35 90,70 0,35" fill="url(#questionGradient)" filter="url(#dropShadow)"/>
                 <text x="90" y="30" text-anchor="middle" font-size="10" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Quick</text>
                 <text x="90" y="42" text-anchor="middle" font-size="10" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">benchmark?</text>
             </g>
 
             <!-- Yes arrow to wrk2/hey -->
-            <path d="M 330 345 L 330 380" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
-            <text x="345" y="370" font-size="10" font-weight="500" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Yes</text>
+            <path d="M 330 375 L 330 410" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <text x="345" y="400" font-size="10" font-weight="500" fill="#10b981" font-family="Liberation Sans, Arial, sans-serif">Yes</text>
 
             <!-- wrk2/hey result -->
-            <g transform="translate(260, 390)">
+            <g transform="translate(260, 420)">
                 <rect x="0" y="0" width="140" height="45" rx="6" fill="url(#toolGradient)" filter="url(#dropShadow)"/>
                 <text x="70" y="20" text-anchor="middle" font-size="11" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">wrk2 / hey</text>
                 <text x="70" y="35" text-anchor="middle" font-size="10" fill="#a7f3d0" font-family="Liberation Sans, Arial, sans-serif">CLI, accurate latency</text>
             </g>
 
             <!-- No arrow to general recommendation -->
-            <path d="M 240 310 L 180 310 L 180 380" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
-            <text x="195" y="350" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">No</text>
+            <path d="M 240 340 L 180 340 L 180 410" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+            <text x="195" y="380" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">No</text>
 
             <!-- General fallback -->
-            <g transform="translate(110, 390)">
+            <g transform="translate(110, 420)">
                 <rect x="0" y="0" width="140" height="45" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1" filter="url(#dropShadow)"/>
                 <text x="70" y="20" text-anchor="middle" font-size="10" font-weight="600" fill="#1e40af" font-family="Liberation Sans, Arial, sans-serif">k6 or Locust</text>
                 <text x="70" y="35" text-anchor="middle" font-size="10" fill="#3b82f6" font-family="Liberation Sans, Arial, sans-serif">General purpose</text>
             </g>
 
             <!-- Legend -->
-            <g transform="translate(710, 190)">
+            <g transform="translate(710, 220)">
                 <rect x="0" y="0" width="160" height="130" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
                 <text x="80" y="20" text-anchor="middle" font-size="10" font-weight="600" fill="#475569" font-family="Liberation Sans, Arial, sans-serif">Legend</text>
                 <line x1="10" y1="30" x2="150" y2="30" stroke="#e2e8f0" stroke-width="1"/>
@@ -208,7 +208,7 @@
             </g>
 
             <!-- Bottom note -->
-            <g transform="translate(450, 480)">
+            <g transform="translate(450, 510)">
                 <text x="0" y="0" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Note: This tree guides initial selection. Consider team expertise and existing tooling in final decision.</text>
             </g>
         </svg>

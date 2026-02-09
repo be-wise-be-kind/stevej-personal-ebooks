@@ -1,0 +1,30 @@
+# {{FEATURE_NAME}} - Milestone Breakdown
+
+**Scope**: Complete ebook development from {{START_POINT}} through {{END_POINT}}
+
+---
+
+## Overview
+This document breaks down {{FEATURE_NAME}} into manageable milestones. Each milestone is designed to be:
+- Self-contained and verifiable
+- Builds incrementally toward the complete ebook
+- Has clear success criteria
+- Can be validated with `just validate`
+
+---
+
+{{MILESTONE_SECTIONS}}
+
+---
+
+## Writing Standards
+{{WRITING_STANDARDS}}
+
+## Validation Requirements
+{{VALIDATION_REQUIREMENTS}}
+
+## Documentation Standards
+{{DOCUMENTATION_STANDARDS}}
+
+## Quality Targets
+{{QUALITY_TARGETS}}
