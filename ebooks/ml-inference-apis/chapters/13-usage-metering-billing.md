@@ -1,6 +1,6 @@
-# Chapter 8: Usage Metering & Billing
+# Chapter 13: Usage Metering & Billing
 
-![Chapter 8 Opener](../assets/ch08-opener.html)
+![Chapter 13 Opener](../assets/ch13-opener.html)
 
 \newpage
 
@@ -71,7 +71,7 @@
 - Advantage: predictable cost for sustained, high-volume usage -- no per-request cost uncertainty
 - Best for: always-on streaming applications (live captioning, 24/7 monitoring) where utilization is consistently high
 
-![Billing Model Comparison](../assets/ch08-billing-model-comparison.html)
+![Billing Model Comparison](../assets/ch13-billing-model-comparison.html)
 
 \newpage
 
@@ -106,7 +106,7 @@
 - Batch is sufficient for: monthly invoicing, cost reporting, usage analytics
 - Most production systems use both: real-time for enforcement, batch for invoicing and reconciliation
 
-![Metering Architecture: Event Collection to Billing](../assets/ch08-metering-architecture.html)
+![Metering Architecture: Event Collection to Billing](../assets/ch13-metering-architecture.html)
 
 \newpage
 
@@ -133,7 +133,7 @@
 - Webhook-driven reconciliation: Stripe sends `invoice.created` and `invoice.finalized` events -- the application verifies totals match internal records
 - Failure handling: if Stripe event submission fails, buffer locally and retry -- idempotency keys prevent double-billing on retry
 
-![Stripe Meters API Integration Flow](../assets/ch08-stripe-integration.html)
+![Stripe Meters API Integration Flow](../assets/ch13-stripe-integration.html)
 
 \newpage
 
@@ -266,4 +266,4 @@
 
 ---
 
-**Next: [Chapter 9: Security for Audio ML APIs](./09-security-audio-ml.md)**
+**Next: [Chapter 14: Scaling Inference Globally](./14-scaling-inference-globally.md)**

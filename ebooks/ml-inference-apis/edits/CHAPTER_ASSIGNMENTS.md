@@ -19,13 +19,13 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 
 **Cross-References to Book 1**: "Before the 3 AM Alert" referenced as companion book; explain what Book 1 covers (observability, caching, protocols, scaling, auth) and how Book 2 builds on it
 
-**Cross-References to Other Chapters**: Overview of all five parts and 13 chapters
+**Cross-References to Other Chapters**: Overview of all five parts and 15 chapters
 
 **Research Topics**: None -- preface is written last, after all chapters are complete, based on the final content
 
 **Estimated Word Count**: 1000-1500
 
-**Priority Notes**: Write LAST (PR15). The preface must accurately reflect the final content of all chapters. It should be direct and informative, not promotional.
+**Priority Notes**: Write LAST (PR17). The preface must accurately reflect the final content of all chapters. It should be direct and informative, not promotional.
 
 ---
 
@@ -83,7 +83,7 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 
 **Cross-References to Book 1**: None directly -- this is ML-specific content
 
-**Cross-References to Other Chapters**: Forward to Ch 3 (GPU optimization details), Ch 6 (inference pipelines using these frameworks), Ch 12 (scaling with these frameworks)
+**Cross-References to Other Chapters**: Forward to Ch 3 (GPU optimization details), Ch 6 (inference pipelines using these frameworks), Ch 14 (scaling with these frameworks)
 
 **Research Topics**: Topic 1 (ML Inference Serving Frameworks)
 
@@ -123,7 +123,7 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 
 **Cross-References to Book 1**: Ch 9 (Compute and Scaling -- general scaling patterns)
 
-**Cross-References to Other Chapters**: Back to Ch 2 (frameworks implement these optimizations), forward to Ch 12 (scaling at the infrastructure level)
+**Cross-References to Other Chapters**: Back to Ch 2 (frameworks implement these optimizations), forward to Ch 14 (scaling at the infrastructure level)
 
 **Research Topics**: Topic 2 (GPU Optimization Advances)
 
@@ -214,7 +214,7 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 
 **Cross-References to Book 1**: Ch 3 (Observability & Distributed Tracing -- trace/span concepts for streaming)
 
-**Cross-References to Other Chapters**: Back to Ch 2 (frameworks), Ch 4 (audio architecture), Ch 5 (protocols). Forward to Ch 11 (SLOs for pipeline metrics).
+**Cross-References to Other Chapters**: Back to Ch 2 (frameworks), Ch 4 (audio architecture), Ch 5 (protocols). Forward to Ch 12 (SLOs for pipeline metrics).
 
 **Research Topics**: Topic 1 (ML Inference Serving Frameworks), Topic 3 (Real-Time Speech/Audio API Landscape), Topic 4 (Streaming Protocols for Audio)
 
@@ -229,67 +229,87 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 **Key Concepts**:
 - Resource-oriented API design for inference endpoints (Google AIP patterns: AIP-121, AIP-133, AIP-136)
 - Synchronous vs asynchronous API patterns: short inference (<1s, sync), medium (1-30s, streaming), long (>30s, long-running operations via AIP-151)
-- Streaming response design:
-  - SSE with `data:` prefix and `[DONE]` signal (OpenAI Chat Completions pattern)
-  - OpenAI Responses API structured events (response.created, response.output_text.delta, response.completed)
-  - WebSocket message schemas with interim/final results
-  - gRPC server streaming
 - Error handling for ML-specific failures: model not loaded, GPU OOM, inference timeout, queue full
-- API versioning strategies: URL path vs header vs content negotiation, model version to API version mapping
+- HTTP and gRPC status code mapping for ML errors
+- Request validation and input constraints for inference endpoints
+- Idempotency patterns for inference requests
 - SDK and developer experience: making inference APIs easy to integrate
 
 **Suggested Diagrams**:
 - ch07-opener.html (chapter opener)
 - ch07-sync-vs-async-decision.html (sync/async/LRO decision framework)
-- ch07-streaming-response-patterns.html (SSE, WebSocket, gRPC streaming patterns)
-- ch07-versioning-strategies.html (versioning approaches + model version mapping)
+- ch07-error-handling-taxonomy.html (ML error types and status code mapping)
 
 **Cross-References to Book 1**: Ch 10 (Traffic Management -- rate limiting algorithms referenced in API design)
 
-**Cross-References to Other Chapters**: Back to Ch 4-6 (streaming patterns this API exposes). Forward to Ch 8 (metering these API calls), Ch 9 (securing these APIs).
+**Cross-References to Other Chapters**: Back to Ch 4-6 (streaming patterns this API exposes). Forward to Ch 8 (streaming response contracts), Ch 9 (versioning and DX).
 
 **Research Topics**: Topic 5 (API Design for ML Services)
 
 **Estimated Word Count**: 4000-6000
 
-**Priority Notes**: Cover both Google AIP patterns and OpenAI patterns as two design philosophies. The long-running operations pattern (AIP-151) deserves its own subsection for batch inference. SSE streaming is critical -- OpenAI has standardized it and many developers expect it. Model-version-to-API-version mapping needs practical examples.
+**Priority Notes**: Cover both Google AIP patterns and OpenAI patterns as two design philosophies. The long-running operations pattern (AIP-151) deserves its own subsection for batch inference. Focus on API fundamentals and error handling; streaming response contracts and versioning are now covered in Ch 8 and Ch 9 respectively.
 
 ---
 
-## Chapter 8: Usage Metering & Billing
+## Chapter 8: Streaming Response Contracts
 
 **Key Concepts**:
-- What to meter: audio seconds, API calls, compute time, tokens, characters
-- Billing models comparison: per-second (Deepgram, AssemblyAI), per-15-second-block (AWS), per-character (ElevenLabs), per-token (OpenAI), per-hour base (AssemblyAI)
-- Feature-based pricing stacking: base rate + PII redaction + diarization + summarization (AssemblyAI pattern: $0.0025/min base can 3-4x)
-- Metering architecture: idempotent event collection, event queue, aggregation pipeline, billing period roll-up
-- Real-time vs batch metering tradeoffs
-- Stripe Meters API integration: meter definition, event ingestion, aggregation, invoice generation (new standard, legacy usage records removed)
-- Stripe token billing: purpose-built for LLM token metering
-- OpenMeter as open-source alternative (acquired by Kong 2025, native Stripe integration)
-- Rate limiting tied to billing tiers
-- Audit trail for usage disputes
-- 2026 reality: AI without financial governance is a margin-bleeding cost center
+- SSE event design: `data:` prefix, `[DONE]` signal, structured event types (OpenAI Responses API pattern: response.created, response.output_text.delta, response.completed)
+- WebSocket message schemas: binary vs JSON framing, interim/final result signaling, keep-alive/heartbeat, close codes
+- gRPC streaming contracts: server streaming, bidirectional streaming, typed response messages, deadline propagation
+- Partial results and progressive delivery: stability indicators, finalization signals, client-side rendering
+- Connection lifecycle management: establishment, authentication, session state, graceful shutdown, error termination
+- Backpressure in streaming responses: server-side buffering, client acknowledgment, flow control
 
 **Suggested Diagrams**:
 - ch08-opener.html (chapter opener)
-- ch08-metering-architecture.html (event collection -> aggregation -> billing)
-- ch08-billing-model-comparison.html (per-second vs per-block vs per-character vs per-token)
-- ch08-stripe-integration.html (Stripe Meters API end-to-end flow)
+- ch08-streaming-response-patterns.html (SSE, WebSocket, gRPC streaming patterns)
+- ch08-connection-lifecycle.html (connection lifecycle state transitions)
+- ch08-interim-final-results.html (interim vs final results progressive delivery)
 
-**Cross-References to Book 1**: Ch 10 (Traffic Management -- rate limiting tied to billing)
+**Cross-References to Book 1**: Ch 5 (Network & Connection Optimization -- SSE, WebSocket, gRPC fundamentals)
 
-**Cross-References to Other Chapters**: Back to Ch 7 (APIs being metered). Forward to Ch 9 (security for metering data).
+**Cross-References to Other Chapters**: Back to Ch 5 (protocol selection), Ch 6 (streaming inference pipelines), Ch 7 (API fundamentals). Forward to Ch 9 (versioning these contracts).
 
-**Research Topics**: Topic 6 (Usage Metering & Billing)
+**Research Topics**: Topics 4 (Streaming Protocols for Audio), 5 (API Design for ML Services)
 
 **Estimated Word Count**: 4000-5000
 
-**Priority Notes**: Per-second vs per-block billing is an architectural decision, not just a pricing choice -- it affects how metering events are emitted and aggregated. Stripe Meters API is the primary billing integration path in 2025-2026. Feature stacking is a common but under-discussed pricing pattern in speech APIs.
+**Priority Notes**: This chapter is the deep dive into streaming contract design that was split from the original Ch 7. SSE streaming is critical -- OpenAI has standardized it and many developers expect it. Include concrete message schema examples for each protocol. The interim vs final results pattern is essential for speech-to-text use cases.
 
 ---
 
-## Chapter 9: Security for Audio ML APIs
+## Chapter 9: API Versioning & Developer Experience
+
+**Key Concepts**:
+- Versioning strategies: URL path versioning (/v1/), header versioning, content negotiation
+- Two-axis versioning: API version (contract stability) vs model version (capability evolution), independent lifecycle management
+- Model-version-to-API-version mapping: model v2 behind API v1, canary routing, dated model snapshots (OpenAI pattern)
+- Deprecation policy: sunset headers, migration guides, timeline communication
+- SDK design for ML APIs: language-specific clients, streaming helpers, retry logic, error handling
+- Documentation as product: API reference, quickstarts, migration guides, changelog
+- Developer onboarding: time-to-first-inference as a key metric, sandbox environments, free tiers
+
+**Suggested Diagrams**:
+- ch09-opener.html (chapter opener)
+- ch09-versioning-strategies.html (versioning approaches + model version mapping)
+- ch09-two-axis-versioning.html (API version vs model version lifecycle)
+- ch09-developer-journey.html (developer journey with friction points)
+
+**Cross-References to Book 1**: None directly -- versioning and DX are ML-API-specific concerns at this depth
+
+**Cross-References to Other Chapters**: Back to Ch 7 (API fundamentals being versioned), Ch 8 (streaming contracts being versioned). Forward to Ch 10 (security implications of versioning).
+
+**Research Topics**: Topic 5 (API Design for ML Services)
+
+**Estimated Word Count**: 4000-5000
+
+**Priority Notes**: The two-axis versioning model (API version vs model version) is the key insight of this chapter. Include concrete examples from OpenAI (dated model snapshots like gpt-4o-2024-08-06) and Google (AIP stability levels). SDK design patterns should be practical, not theoretical. Developer onboarding flow should emphasize reducing time-to-first-inference.
+
+---
+
+## Chapter 10: Security for Audio ML APIs
 
 **Key Concepts**:
 - Authentication for streaming connections: token-based auth on WebSocket upgrade, per-stream auth for gRPC, token refresh during long-running streams
@@ -301,14 +321,14 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 - Audio-specific privacy risks: biometric voiceprints, background conversations, emotional states
 
 **Suggested Diagrams**:
-- ch09-opener.html (chapter opener)
-- ch09-streaming-auth-flow.html (auth flow for streaming connections)
-- ch09-api-key-lifecycle.html (key generation through revocation)
-- ch09-pii-redaction-pipeline.html (PII detection and redaction pipeline)
+- ch10-opener.html (chapter opener)
+- ch10-streaming-auth-flow.html (auth flow for streaming connections)
+- ch10-api-key-lifecycle.html (key generation through revocation)
+- ch10-pii-redaction-pipeline.html (PII detection and redaction pipeline)
 
 **Cross-References to Book 1**: Ch 11 (Auth Performance -- auth caching, token validation optimization), Appendix A (Auth Fundamentals -- JWT, OAuth2, API keys, WebSocket auth patterns)
 
-**Cross-References to Other Chapters**: Back to Ch 7 (API design includes security). Forward to Ch 10 (compliance builds on security).
+**Cross-References to Other Chapters**: Back to Ch 7 (API design includes security), Ch 9 (versioning security implications). Forward to Ch 11 (compliance builds on security).
 
 **Research Topics**: Topic 7 (Enterprise Compliance for AI/ML -- security subsections)
 
@@ -318,7 +338,7 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 
 ---
 
-## Chapter 10: Compliance & Data Governance
+## Chapter 11: Compliance & Data Governance
 
 **Key Concepts**:
 - SOC 2 for ML APIs: Trust Service Criteria applied to inference systems (not a law, but effectively mandatory for B2B)
@@ -332,14 +352,14 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 - Building compliance into the architecture vs bolting it on
 
 **Suggested Diagrams**:
-- ch10-opener.html (chapter opener)
-- ch10-eu-ai-act-timeline.html (implementation timeline with penalties)
-- ch10-compliance-matrix.html (SOC 2 / HIPAA / GDPR / CCPA / EU AI Act requirements matrix)
-- ch10-data-lifecycle.html (audio data lifecycle: ingestion through deletion)
+- ch11-opener.html (chapter opener)
+- ch11-eu-ai-act-timeline.html (implementation timeline with penalties)
+- ch11-compliance-matrix.html (SOC 2 / HIPAA / GDPR / CCPA / EU AI Act requirements matrix)
+- ch11-data-lifecycle.html (audio data lifecycle: ingestion through deletion)
 
 **Cross-References to Book 1**: None directly -- compliance is new territory specific to ML/audio
 
-**Cross-References to Other Chapters**: Back to Ch 9 (security foundation). Forward to Ch 11 (SLOs include compliance monitoring).
+**Cross-References to Other Chapters**: Back to Ch 10 (security foundation). Forward to Ch 12 (SLOs include compliance monitoring).
 
 **Research Topics**: Topic 7 (Enterprise Compliance for AI/ML)
 
@@ -349,7 +369,7 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 
 ---
 
-## Chapter 11: SLOs for Streaming ML Systems
+## Chapter 12: SLOs for Streaming ML Systems
 
 **Key Concepts**:
 - Streaming-specific SLIs taxonomy:
@@ -365,14 +385,14 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 - Jitter buffers in streaming pipelines
 
 **Suggested Diagrams**:
-- ch11-opener.html (chapter opener)
-- ch11-streaming-sli-taxonomy.html (SLI categories organized by type)
-- ch11-slo-target-framework.html (target numbers by use case tier)
-- ch11-burn-rate-alerting.html (burn rate alerting with budget projection)
+- ch12-opener.html (chapter opener)
+- ch12-streaming-sli-taxonomy.html (SLI categories organized by type)
+- ch12-slo-target-framework.html (target numbers by use case tier)
+- ch12-burn-rate-alerting.html (burn rate alerting with budget projection)
 
 **Cross-References to Book 1**: Ch 2 (Performance Fundamentals -- SLI/SLO/SLA definitions, percentile latencies), Ch 3 (Observability -- OpenTelemetry, distributed tracing), Ch 4 (Monitoring -- dashboards, alerting patterns)
 
-**Cross-References to Other Chapters**: Back to Ch 6 (pipeline metrics to measure), Ch 9-10 (compliance monitoring). Forward to Ch 12 (scaling decisions driven by SLOs).
+**Cross-References to Other Chapters**: Back to Ch 6 (pipeline metrics to measure), Ch 10-11 (compliance monitoring). Forward to Ch 14 (scaling decisions driven by SLOs).
 
 **Research Topics**: Topic 8 (SLOs for Streaming ML Systems)
 
@@ -382,7 +402,40 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 
 ---
 
-## Chapter 12: Scaling Inference Globally
+## Chapter 13: Usage Metering & Billing
+
+**Key Concepts**:
+- What to meter: audio seconds, API calls, compute time, tokens, characters
+- Billing models comparison: per-second (Deepgram, AssemblyAI), per-15-second-block (AWS), per-character (ElevenLabs), per-token (OpenAI), per-hour base (AssemblyAI)
+- Feature-based pricing stacking: base rate + PII redaction + diarization + summarization (AssemblyAI pattern: $0.0025/min base can 3-4x)
+- Metering architecture: idempotent event collection, event queue, aggregation pipeline, billing period roll-up
+- Real-time vs batch metering tradeoffs
+- Stripe Meters API integration: meter definition, event ingestion, aggregation, invoice generation (new standard, legacy usage records removed)
+- Stripe token billing: purpose-built for LLM token metering
+- OpenMeter as open-source alternative (acquired by Kong 2025, native Stripe integration)
+- Rate limiting tied to billing tiers
+- Audit trail for usage disputes
+- 2026 reality: AI without financial governance is a margin-bleeding cost center
+
+**Suggested Diagrams**:
+- ch13-opener.html (chapter opener)
+- ch13-metering-architecture.html (event collection -> aggregation -> billing)
+- ch13-billing-model-comparison.html (per-second vs per-block vs per-character vs per-token)
+- ch13-stripe-integration.html (Stripe Meters API end-to-end flow)
+
+**Cross-References to Book 1**: Ch 10 (Traffic Management -- rate limiting tied to billing)
+
+**Cross-References to Other Chapters**: Back to Ch 7 (APIs being metered), Ch 9 (developer experience includes billing transparency). Forward to Ch 14 (scaling cost optimization).
+
+**Research Topics**: Topic 6 (Usage Metering & Billing)
+
+**Estimated Word Count**: 4000-5000
+
+**Priority Notes**: Per-second vs per-block billing is an architectural decision, not just a pricing choice -- it affects how metering events are emitted and aggregated. Stripe Meters API is the primary billing integration path in 2025-2026. Feature stacking is a common but under-discussed pricing pattern in speech APIs.
+
+---
+
+## Chapter 14: Scaling Inference Globally
 
 **Key Concepts**:
 - Horizontal scaling: adding GPU instances, load balancing inference requests (GPU-aware routing)
@@ -394,14 +447,14 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 - Capacity planning for inference workloads
 
 **Suggested Diagrams**:
-- ch12-opener.html (chapter opener)
-- ch12-autoscaling-signals.html (scaling signal hierarchy with hysteresis)
-- ch12-multi-region-architecture.html (multi-region deployment with routing and sovereignty)
-- ch12-cost-optimization-strategies.html (cost optimization decision framework)
+- ch14-opener.html (chapter opener)
+- ch14-autoscaling-signals.html (scaling signal hierarchy with hysteresis)
+- ch14-multi-region-architecture.html (multi-region deployment with routing and sovereignty)
+- ch14-cost-optimization-strategies.html (cost optimization decision framework)
 
 **Cross-References to Book 1**: Ch 9 (Compute and Scaling -- general horizontal/vertical scaling, auto-scaling patterns), Ch 12 (Geographic Optimization -- edge computing, CDN patterns, multi-region)
 
-**Cross-References to Other Chapters**: Back to Ch 3 (GPU optimization and cold starts), Ch 11 (SLOs driving scaling decisions). Forward to Ch 13 (putting scaling into the complete system).
+**Cross-References to Other Chapters**: Back to Ch 3 (GPU optimization and cold starts), Ch 12 (SLOs driving scaling decisions). Forward to Ch 15 (putting scaling into the complete system).
 
 **Research Topics**: Topic 1 (ML Inference Serving Frameworks -- scaling characteristics), Topic 2 (GPU Optimization -- right-sizing)
 
@@ -411,25 +464,25 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 
 ---
 
-## Chapter 13: Putting It All Together
+## Chapter 15: Putting It All Together
 
 **Key Concepts**:
 - Case study: building a production streaming speech API from scratch (end-to-end walkthrough)
 - Architecture walkthrough: from audio input to transcription output, showing every component
-- The decisions along the way: framework selection (Ch 2), GPU optimization (Ch 3), audio architecture (Ch 4), protocol (Ch 5), pipeline (Ch 6), API design (Ch 7), metering (Ch 8), security (Ch 9), compliance (Ch 10), SLOs (Ch 11), scaling (Ch 12)
+- The decisions along the way: framework selection (Ch 2), GPU optimization (Ch 3), audio architecture (Ch 4), protocol (Ch 5), pipeline (Ch 6), API design (Ch 7), streaming contracts (Ch 8), versioning (Ch 9), security (Ch 10), compliance (Ch 11), SLOs (Ch 12), metering (Ch 13), scaling (Ch 14)
 - What goes wrong and how to recover: common failure modes and remediation
 - Operational runbook patterns for ML inference systems: cold start, GPU OOM, model rollback, connection storms, SLO burn, compliance incidents
 - Lessons learned and key principles
 
 **Suggested Diagrams**:
-- ch13-opener.html (chapter opener)
-- ch13-complete-architecture.html (full production system architecture)
-- ch13-decision-flowchart.html (key decision points from all chapters)
-- ch13-runbook-patterns.html (operational runbook decision trees)
+- ch15-opener.html (chapter opener)
+- ch15-complete-architecture.html (full production system architecture)
+- ch15-decision-flowchart.html (key decision points from all chapters)
+- ch15-runbook-patterns.html (operational runbook decision trees)
 
 **Cross-References to Book 1**: Ch 14 (Putting It All Together -- Book 1's synthesis chapter, similar structure)
 
-**Cross-References to Other Chapters**: References ALL previous chapters (1-12). This is the synthesis chapter.
+**Cross-References to Other Chapters**: References ALL previous chapters (1-14). This is the synthesis chapter.
 
 **Research Topics**: All topics in RESEARCH_SUMMARY.md (synthesis chapter draws from everything)
 
@@ -453,29 +506,32 @@ Per-chapter specifications for authoring "Productionizing ML Inference APIs." Ea
 | Ch 5 | Ch 5 | Protocol deep dive (recap + audio-specific) |
 | Ch 6 | Ch 3 | Distributed tracing for streaming |
 | Ch 7 | Ch 10 | Rate limiting in API design |
-| Ch 8 | Ch 10 | Rate limiting tied to billing |
-| Ch 9 | Ch 11, App A | Auth performance, auth fundamentals |
-| Ch 11 | Ch 2, 3, 4 | SLI/SLO definitions, observability, monitoring |
-| Ch 12 | Ch 9, 12 | Compute scaling, geographic optimization |
-| Ch 13 | Ch 14 | Synthesis chapter pattern |
+| Ch 8 | Ch 5 | SSE, WebSocket, gRPC fundamentals |
+| Ch 10 | Ch 11, App A | Auth performance, auth fundamentals |
+| Ch 12 | Ch 2, 3, 4 | SLI/SLO definitions, observability, monitoring |
+| Ch 13 | Ch 10 | Rate limiting tied to billing |
+| Ch 14 | Ch 9, 12 | Compute scaling, geographic optimization |
+| Ch 15 | Ch 14 | Synthesis chapter pattern |
 
 ### Internal Cross-References (Chapter-to-Chapter)
 
 | From | To | Topic |
 |------|----|-------|
 | Ch 1 | All | Roadmap for the book |
-| Ch 2 | Ch 3, 6, 12 | Framework -> GPU optimization, pipelines, scaling |
-| Ch 3 | Ch 2, 12 | GPU optimization context, scaling implications |
+| Ch 2 | Ch 3, 6, 14 | Framework -> GPU optimization, pipelines, scaling |
+| Ch 3 | Ch 2, 14 | GPU optimization context, scaling implications |
 | Ch 4 | Ch 5, 6 | Architecture -> protocols, pipelines |
 | Ch 5 | Ch 4, 6 | Protocol -> architecture, pipelines |
-| Ch 6 | Ch 2-5, 11 | Pipeline synthesis, SLO metrics |
-| Ch 7 | Ch 4-6, 8, 9 | API design -> streaming, metering, security |
-| Ch 8 | Ch 7, 9 | Metering -> API design, security |
-| Ch 9 | Ch 7, 10 | Security -> API design, compliance |
-| Ch 10 | Ch 9, 11 | Compliance -> security, monitoring |
-| Ch 11 | Ch 6, 9-10, 12 | SLOs -> pipeline metrics, compliance, scaling |
-| Ch 12 | Ch 3, 11 | Scaling -> GPU optimization, SLO-driven |
-| Ch 13 | Ch 1-12 | Synthesis of all chapters |
+| Ch 6 | Ch 2-5, 12 | Pipeline synthesis, SLO metrics |
+| Ch 7 | Ch 4-6, 8, 9 | API design -> streaming, contracts, versioning |
+| Ch 8 | Ch 5-7, 9 | Streaming contracts -> protocols, pipelines, API design, versioning |
+| Ch 9 | Ch 7, 8, 10 | Versioning -> API design, contracts, security |
+| Ch 10 | Ch 7, 9, 11 | Security -> API design, versioning, compliance |
+| Ch 11 | Ch 10, 12 | Compliance -> security, monitoring |
+| Ch 12 | Ch 6, 10-11, 14 | SLOs -> pipeline metrics, compliance, scaling |
+| Ch 13 | Ch 7, 9, 14 | Metering -> API design, DX, cost optimization |
+| Ch 14 | Ch 3, 12 | Scaling -> GPU optimization, SLO-driven |
+| Ch 15 | Ch 1-14 | Synthesis of all chapters |
 
 ---
 

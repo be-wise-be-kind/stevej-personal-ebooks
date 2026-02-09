@@ -15,8 +15,8 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the ml-inferen
 
 ## Current Status
 **Current PR**: PR1 -- Outline Review (submitted for review)
-**Book State**: All 14 chapter outlines complete, supporting docs created
-**Target**: Complete ebook with 13 chapters across 5 parts
+**Book State**: All 16 chapter outlines complete, supporting docs created
+**Target**: Complete ebook with 15 chapters across 5 parts
 
 ## Required Documents Location
 ```
@@ -44,7 +44,7 @@ Author Chapter 1 in full prose. This is the most important chapter -- it sets th
 **PR1 Deliverables (completed)**:
 - [x] README.md with full TOC and book metadata
 - [x] chapters/00-preface.md (outline)
-- [x] chapters/01-the-serving-problem.md through chapters/13-putting-it-all-together.md (outlines)
+- [x] chapters/01-the-serving-problem.md through chapters/15-putting-it-all-together.md (outlines)
 - [x] WORKS_CITED.md skeleton
 - [x] DIAGRAM_INVENTORY.md
 - [x] edits/CHAPTER_ASSIGNMENTS.md
@@ -53,10 +53,10 @@ Author Chapter 1 in full prose. This is the most important chapter -- it sets th
 ---
 
 ## Overall Progress
-**Total Completion**: 7% (1/15 PRs completed)
+**Total Completion**: 6% (1/17 PRs completed)
 
 ```
-[█░░░░░░░░░░░░░░░░░░░] 7% Complete
+[█░░░░░░░░░░░░░░░░░░░] 6% Complete
 ```
 
 ---
@@ -65,7 +65,7 @@ Author Chapter 1 in full prose. This is the most important chapter -- it sets th
 
 | PR | Title | Status | Completion | Notes |
 |----|-------|--------|------------|-------|
-| PR1 | Outline Review | 🟢 Complete | 100% | All 14 outlines + supporting docs |
+| PR1 | Outline Review | 🟢 Complete | 100% | All 16 outlines + supporting docs |
 | PR2 | Chapter 1: The Serving Problem | 🔴 Not Started | 0% | Most important chapter |
 | PR3 | Chapter 2: Model Serving Frameworks | 🔴 Not Started | 0% | |
 | PR4 | Chapter 3: GPU Optimization & Cold Starts | 🔴 Not Started | 0% | |
@@ -73,13 +73,15 @@ Author Chapter 1 in full prose. This is the most important chapter -- it sets th
 | PR6 | Chapter 5: Protocol Selection for Audio | 🔴 Not Started | 0% | |
 | PR7 | Chapter 6: Streaming Inference Pipelines | 🔴 Not Started | 0% | |
 | PR8 | Chapter 7: Designing ML-Facing APIs | 🔴 Not Started | 0% | |
-| PR9 | Chapter 8: Usage Metering & Billing | 🔴 Not Started | 0% | |
-| PR10 | Chapter 9: Security for Audio ML APIs | 🔴 Not Started | 0% | |
-| PR11 | Chapter 10: Compliance & Data Governance | 🔴 Not Started | 0% | |
-| PR12 | Chapter 11: SLOs for Streaming ML Systems | 🔴 Not Started | 0% | |
-| PR13 | Chapter 12: Scaling Inference Globally | 🔴 Not Started | 0% | |
-| PR14 | Chapter 13: Putting It All Together | 🔴 Not Started | 0% | |
-| PR15 | Preface & Final Polish | 🔴 Not Started | 0% | Preface written last |
+| PR9 | Chapter 8: Streaming Response Contracts | 🔴 Not Started | 0% | New chapter (split from old Ch 7) |
+| PR10 | Chapter 9: API Versioning & Developer Experience | 🔴 Not Started | 0% | New chapter (split from old Ch 7) |
+| PR11 | Chapter 10: Security for Audio ML APIs | 🔴 Not Started | 0% | |
+| PR12 | Chapter 11: Compliance & Data Governance | 🔴 Not Started | 0% | |
+| PR13 | Chapter 12: SLOs for Streaming ML Systems | 🔴 Not Started | 0% | |
+| PR14 | Chapter 13: Usage Metering & Billing | 🔴 Not Started | 0% | |
+| PR15 | Chapter 14: Scaling Inference Globally | 🔴 Not Started | 0% | |
+| PR16 | Chapter 15: Putting It All Together | 🔴 Not Started | 0% | |
+| PR17 | Preface & Final Polish | 🔴 Not Started | 0% | Preface written last |
 
 ### Status Legend
 - 🔴 Not Started
@@ -101,12 +103,14 @@ Author Chapter 1 in full prose. This is the most important chapter -- it sets th
 | 05 | Protocol Selection for Audio | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 06 | Streaming Inference Pipelines | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 07 | Designing ML-Facing APIs | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 08 | Usage Metering & Billing | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 09 | Security for Audio ML APIs | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 10 | Compliance & Data Governance | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 11 | SLOs for Streaming ML Systems | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 12 | Scaling Inference Globally | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 13 | Putting It All Together | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 08 | Streaming Response Contracts | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 09 | API Versioning & DX | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 10 | Security for Audio ML APIs | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 11 | Compliance & Data Governance | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 12 | SLOs for Streaming ML Systems | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 13 | Usage Metering & Billing | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 14 | Scaling Inference Globally | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 15 | Putting It All Together | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 
 Legend: ✅ Done | 🔄 In Progress | ⬜ Not Started | - Not Applicable
 
@@ -148,7 +152,7 @@ After completing each PR:
 ## Definition of Done
 
 The ebook is considered complete when:
-- [ ] All 14 chapter files have full prose (not just outlines)
+- [ ] All 16 chapter files have full prose (not just outlines)
 - [ ] All diagrams created and referenced
 - [ ] WORKS_CITED.md fully populated with verified sources
 - [ ] `just validate ml-inference-apis` passes

@@ -1,6 +1,6 @@
 # Diagram Inventory
 
-**Total Planned Diagrams**: 55
+**Total Planned Diagrams**: 60
 **Status**: All diagrams pending -- to be created during chapter authoring PRs
 **Template**: `.ai/templates/html-diagram.html`
 **Quality Guide**: `.ai/howto/evaluating-diagram-quality.md`
@@ -75,80 +75,101 @@
 
 ---
 
-## Chapter 7: Designing ML-Facing APIs (4 diagrams)
+## Chapter 7: Designing ML-Facing APIs (3 diagrams)
 
 | Filename | Description | Status |
 |----------|-------------|--------|
 | ch07-opener.html | Chapter opener illustration -- ML API design patterns | Pending |
 | ch07-sync-vs-async-decision.html | Sync vs async API pattern decision: short inference (<1s) uses synchronous request/response, medium inference (1-30s) uses streaming/SSE, long inference (>30s) uses long-running operations (AIP-151 pattern) with polling | Pending |
-| ch07-streaming-response-patterns.html | Streaming response design patterns: SSE with `data:` prefix and `[DONE]` signal (OpenAI pattern), WebSocket message schemas with interim/final results, gRPC server streaming with typed responses | Pending |
-| ch07-versioning-strategies.html | API versioning strategies: URL path versioning (/v1/), header versioning, content negotiation -- and how model versions map to API versions (model v2 behind API v1, canary routing) | Pending |
+| ch07-error-handling-taxonomy.html | Error handling taxonomy for ML APIs: model-specific failures (not loaded, GPU OOM, inference timeout), request-level errors (invalid input, queue full), and appropriate HTTP/gRPC status codes for each | Pending |
 
 ---
 
-## Chapter 8: Usage Metering & Billing (4 diagrams)
+## Chapter 8: Streaming Response Contracts (4 diagrams)
 
 | Filename | Description | Status |
 |----------|-------------|--------|
-| ch08-opener.html | Chapter opener illustration -- usage metering and billing architecture | Pending |
-| ch08-metering-architecture.html | Metering architecture: API request, idempotent event emission, event queue, aggregation pipeline, billing period roll-up -- showing the path from API call to invoice line item | Pending |
-| ch08-billing-model-comparison.html | Billing model comparison: per-second (Deepgram, AssemblyAI), per-15-second-block (AWS), per-character (ElevenLabs), per-token (OpenAI) -- with cost impact analysis for different usage patterns | Pending |
-| ch08-stripe-integration.html | Stripe Meters API integration: meter definition, event ingestion via API, aggregation, subscription billing period, invoice generation -- showing the end-to-end Stripe flow | Pending |
+| ch08-opener.html | Chapter opener illustration -- streaming response contract design | Pending |
+| ch08-streaming-response-patterns.html | Streaming response design patterns: SSE with `data:` prefix and `[DONE]` signal (OpenAI pattern), WebSocket message schemas with interim/final results, gRPC server streaming with typed responses | Pending |
+| ch08-connection-lifecycle.html | Connection lifecycle for streaming inference: connection establishment, authentication, streaming session, keep-alive/heartbeat, graceful shutdown, error termination -- with state transitions | Pending |
+| ch08-interim-final-results.html | Interim vs final results flow: partial transcription updates arriving progressively, stability indicators, finalization signals, and client-side rendering strategies | Pending |
 
 ---
 
-## Chapter 9: Security for Audio ML APIs (4 diagrams)
+## Chapter 9: API Versioning & Developer Experience (4 diagrams)
 
 | Filename | Description | Status |
 |----------|-------------|--------|
-| ch09-opener.html | Chapter opener illustration -- security for audio ML APIs | Pending |
-| ch09-streaming-auth-flow.html | Streaming authentication flow: initial token validation on WebSocket upgrade/gRPC connection, per-message authorization, token refresh during long-running streams, connection termination on auth failure | Pending |
-| ch09-api-key-lifecycle.html | API key lifecycle: generation (with scoping to endpoints/features), distribution, rotation schedule, usage monitoring, revocation -- showing the complete key management flow | Pending |
-| ch09-pii-redaction-pipeline.html | PII redaction pipeline for audio transcripts: raw transcript, entity detection (names, SSN, credit cards, addresses), redaction (masking, replacement, removal), audit logging of redaction events | Pending |
+| ch09-opener.html | Chapter opener illustration -- API versioning and developer experience | Pending |
+| ch09-versioning-strategies.html | API versioning strategies: URL path versioning (/v1/), header versioning, content negotiation -- and how model versions map to API versions (model v2 behind API v1, canary routing) | Pending |
+| ch09-two-axis-versioning.html | Two-axis versioning: API version (contract stability) vs model version (capability evolution) -- showing independent lifecycle management and the mapping between them | Pending |
+| ch09-developer-journey.html | Developer journey through an ML API: discovery, authentication, first API call, streaming integration, SDK adoption, version migration -- with friction points and DX optimizations at each stage | Pending |
 
 ---
 
-## Chapter 10: Compliance & Data Governance (4 diagrams)
+## Chapter 10: Security for Audio ML APIs (4 diagrams)
 
 | Filename | Description | Status |
 |----------|-------------|--------|
-| ch10-opener.html | Chapter opener illustration -- compliance and data governance | Pending |
-| ch10-eu-ai-act-timeline.html | EU AI Act implementation timeline: Prohibited practices (Feb 2025), GPAI obligations (Aug 2025), High-risk + transparency rules (Aug 2026), Regulated products (Aug 2027) -- with penalty ranges (up to EUR 35M / 7% turnover) | Pending |
-| ch10-compliance-matrix.html | Compliance requirements matrix: SOC 2, HIPAA, GDPR, CCPA, EU AI Act -- cross-referenced with audio ML API requirements (encryption, audit logging, data retention, PII handling, consent, BAAs) | Pending |
-| ch10-data-lifecycle.html | Audio data lifecycle: ingestion (with consent), processing (inference), storage (encrypted, regional), retention (configurable TTL), deletion (verified erasure), audit trail at each stage | Pending |
+| ch10-opener.html | Chapter opener illustration -- security for audio ML APIs | Pending |
+| ch10-streaming-auth-flow.html | Streaming authentication flow: initial token validation on WebSocket upgrade/gRPC connection, per-message authorization, token refresh during long-running streams, connection termination on auth failure | Pending |
+| ch10-api-key-lifecycle.html | API key lifecycle: generation (with scoping to endpoints/features), distribution, rotation schedule, usage monitoring, revocation -- showing the complete key management flow | Pending |
+| ch10-pii-redaction-pipeline.html | PII redaction pipeline for audio transcripts: raw transcript, entity detection (names, SSN, credit cards, addresses), redaction (masking, replacement, removal), audit logging of redaction events | Pending |
 
 ---
 
-## Chapter 11: SLOs for Streaming ML Systems (4 diagrams)
+## Chapter 11: Compliance & Data Governance (4 diagrams)
 
 | Filename | Description | Status |
 |----------|-------------|--------|
-| ch11-opener.html | Chapter opener illustration -- SLOs for streaming ML systems | Pending |
-| ch11-streaming-sli-taxonomy.html | Streaming SLI taxonomy: latency metrics (TTFT, TPOT, inter-token, E2E), quality metrics (WER, goodput, RTF), reliability metrics (connection drops, reconnection success, availability) -- organized by category | Pending |
-| ch11-slo-target-framework.html | SLO target framework: interactive agent (TTFT <= 100ms P95), voice AI (TTFT <= 300ms P95), batch (P95 Final <= 800ms) -- with user experience impact at each threshold level | Pending |
-| ch11-burn-rate-alerting.html | SLO burn rate alerting: error budget consumption over time, fast-burn alert (2% budget in 1 hour), slow-burn alert (5% budget in 6 hours), budget exhaustion projection -- with alert configuration | Pending |
+| ch11-opener.html | Chapter opener illustration -- compliance and data governance | Pending |
+| ch11-eu-ai-act-timeline.html | EU AI Act implementation timeline: Prohibited practices (Feb 2025), GPAI obligations (Aug 2025), High-risk + transparency rules (Aug 2026), Regulated products (Aug 2027) -- with penalty ranges (up to EUR 35M / 7% turnover) | Pending |
+| ch11-compliance-matrix.html | Compliance requirements matrix: SOC 2, HIPAA, GDPR, CCPA, EU AI Act -- cross-referenced with audio ML API requirements (encryption, audit logging, data retention, PII handling, consent, BAAs) | Pending |
+| ch11-data-lifecycle.html | Audio data lifecycle: ingestion (with consent), processing (inference), storage (encrypted, regional), retention (configurable TTL), deletion (verified erasure), audit trail at each stage | Pending |
 
 ---
 
-## Chapter 12: Scaling Inference Globally (4 diagrams)
+## Chapter 12: SLOs for Streaming ML Systems (4 diagrams)
 
 | Filename | Description | Status |
 |----------|-------------|--------|
-| ch12-opener.html | Chapter opener illustration -- scaling inference globally | Pending |
-| ch12-autoscaling-signals.html | Auto-scaling signal hierarchy: GPU utilization, request queue depth, latency P95, memory pressure -- showing which signals to use for scale-up vs scale-down decisions with hysteresis | Pending |
-| ch12-multi-region-architecture.html | Multi-region inference deployment: model replicas across regions, request routing (latency-based, geography-based), data sovereignty boundaries, model synchronization strategy | Pending |
-| ch12-cost-optimization-strategies.html | Cost optimization strategies: persistent pool for baseline traffic + spot/preemptible for burst, scheduled scaling for predictable patterns, right-sizing GPU instances, quantization for cost reduction | Pending |
+| ch12-opener.html | Chapter opener illustration -- SLOs for streaming ML systems | Pending |
+| ch12-streaming-sli-taxonomy.html | Streaming SLI taxonomy: latency metrics (TTFT, TPOT, inter-token, E2E), quality metrics (WER, goodput, RTF), reliability metrics (connection drops, reconnection success, availability) -- organized by category | Pending |
+| ch12-slo-target-framework.html | SLO target framework: interactive agent (TTFT <= 100ms P95), voice AI (TTFT <= 300ms P95), batch (P95 Final <= 800ms) -- with user experience impact at each threshold level | Pending |
+| ch12-burn-rate-alerting.html | SLO burn rate alerting: error budget consumption over time, fast-burn alert (2% budget in 1 hour), slow-burn alert (5% budget in 6 hours), budget exhaustion projection -- with alert configuration | Pending |
 
 ---
 
-## Chapter 13: Putting It All Together (4 diagrams)
+## Chapter 13: Usage Metering & Billing (4 diagrams)
 
 | Filename | Description | Status |
 |----------|-------------|--------|
-| ch13-opener.html | Chapter opener illustration -- complete production system | Pending |
-| ch13-complete-architecture.html | Complete production architecture: client, API gateway (auth, metering, rate limiting), load balancer, inference cluster (framework, GPU optimization, model serving), streaming pipeline, monitoring/SLOs, compliance layer -- the full system from Chapters 1-12 | Pending |
-| ch13-decision-flowchart.html | Decision flowchart for building a production inference API: framework selection, protocol choice, API design pattern, billing model, security posture, compliance requirements, scaling strategy -- key decision points from each chapter | Pending |
-| ch13-runbook-patterns.html | Operational runbook patterns: cold start remediation, GPU OOM response, model rollback, connection storm handling, SLO burn rate response, compliance incident response -- with decision trees for each scenario | Pending |
+| ch13-opener.html | Chapter opener illustration -- usage metering and billing architecture | Pending |
+| ch13-metering-architecture.html | Metering architecture: API request, idempotent event emission, event queue, aggregation pipeline, billing period roll-up -- showing the path from API call to invoice line item | Pending |
+| ch13-billing-model-comparison.html | Billing model comparison: per-second (Deepgram, AssemblyAI), per-15-second-block (AWS), per-character (ElevenLabs), per-token (OpenAI) -- with cost impact analysis for different usage patterns | Pending |
+| ch13-stripe-integration.html | Stripe Meters API integration: meter definition, event ingestion via API, aggregation, subscription billing period, invoice generation -- showing the end-to-end Stripe flow | Pending |
+
+---
+
+## Chapter 14: Scaling Inference Globally (4 diagrams)
+
+| Filename | Description | Status |
+|----------|-------------|--------|
+| ch14-opener.html | Chapter opener illustration -- scaling inference globally | Pending |
+| ch14-autoscaling-signals.html | Auto-scaling signal hierarchy: GPU utilization, request queue depth, latency P95, memory pressure -- showing which signals to use for scale-up vs scale-down decisions with hysteresis | Pending |
+| ch14-multi-region-architecture.html | Multi-region inference deployment: model replicas across regions, request routing (latency-based, geography-based), data sovereignty boundaries, model synchronization strategy | Pending |
+| ch14-cost-optimization-strategies.html | Cost optimization strategies: persistent pool for baseline traffic + spot/preemptible for burst, scheduled scaling for predictable patterns, right-sizing GPU instances, quantization for cost reduction | Pending |
+
+---
+
+## Chapter 15: Putting It All Together (4 diagrams)
+
+| Filename | Description | Status |
+|----------|-------------|--------|
+| ch15-opener.html | Chapter opener illustration -- complete production system | Pending |
+| ch15-complete-architecture.html | Complete production architecture: client, API gateway (auth, metering, rate limiting), load balancer, inference cluster (framework, GPU optimization, model serving), streaming pipeline, monitoring/SLOs, compliance layer -- the full system from Chapters 1-14 | Pending |
+| ch15-decision-flowchart.html | Decision flowchart for building a production inference API: framework selection, protocol choice, API design pattern, billing model, security posture, compliance requirements, scaling strategy -- key decision points from each chapter | Pending |
+| ch15-runbook-patterns.html | Operational runbook patterns: cold start remediation, GPU OOM response, model rollback, connection storm handling, SLO burn rate response, compliance incident response -- with decision trees for each scenario | Pending |
 
 ---
 
@@ -162,14 +183,16 @@
 | Ch 4: Streaming Audio Architecture | 4 | All Pending |
 | Ch 5: Protocol Selection for Audio | 4 | All Pending |
 | Ch 6: Streaming Inference Pipelines | 4 | All Pending |
-| Ch 7: Designing ML-Facing APIs | 4 | All Pending |
-| Ch 8: Usage Metering & Billing | 4 | All Pending |
-| Ch 9: Security for Audio ML APIs | 4 | All Pending |
-| Ch 10: Compliance & Data Governance | 4 | All Pending |
-| Ch 11: SLOs for Streaming ML Systems | 4 | All Pending |
-| Ch 12: Scaling Inference Globally | 4 | All Pending |
-| Ch 13: Putting It All Together | 4 | All Pending |
-| **Total** | **55** | **All Pending** |
+| Ch 7: Designing ML-Facing APIs | 3 | All Pending |
+| Ch 8: Streaming Response Contracts | 4 | All Pending |
+| Ch 9: API Versioning & Developer Experience | 4 | All Pending |
+| Ch 10: Security for Audio ML APIs | 4 | All Pending |
+| Ch 11: Compliance & Data Governance | 4 | All Pending |
+| Ch 12: SLOs for Streaming ML Systems | 4 | All Pending |
+| Ch 13: Usage Metering & Billing | 4 | All Pending |
+| Ch 14: Scaling Inference Globally | 4 | All Pending |
+| Ch 15: Putting It All Together | 4 | All Pending |
+| **Total** | **60** | **All Pending** |
 
 ---
 

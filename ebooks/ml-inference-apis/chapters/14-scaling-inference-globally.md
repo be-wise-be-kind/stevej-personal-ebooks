@@ -1,6 +1,6 @@
-# Chapter 12: Scaling Inference Globally
+# Chapter 14: Scaling Inference Globally
 
-![Chapter 12 Opener](../assets/ch12-opener.html)
+![Chapter 14 Opener](../assets/ch14-opener.html)
 
 \newpage
 
@@ -45,7 +45,7 @@
 - **KV cache utilization**: for LLM workloads, KV cache memory pressure limits batch sizes before GPU compute saturates
 - Composite signals: combine multiple metrics with weighted scoring rather than relying on any single signal
 
-![Auto-Scaling Signals for GPU Inference](../assets/ch12-autoscaling-signals.html)
+![Auto-Scaling Signals for GPU Inference](../assets/ch14-autoscaling-signals.html)
 
 \newpage
 
@@ -91,7 +91,7 @@
 - **Failover routing**: if a region is unhealthy, automatically redirect traffic to backup regions with health-check-driven DNS failover
 - Anycast for UDP-based protocols: when using WebRTC or RTP for audio, anycast routing naturally selects the nearest edge
 
-![Multi-Region Inference Architecture](../assets/ch12-multi-region-architecture.html)
+![Multi-Region Inference Architecture](../assets/ch14-multi-region-architecture.html)
 
 \newpage
 
@@ -164,7 +164,7 @@
 - Layer on-demand for predictable peaks and spot for burst capacity above that
 - The three-tier cost model: reserved (baseline) + on-demand (predictable peak) + spot (burst)
 
-![Cost Optimization Strategies](../assets/ch12-cost-optimization-strategies.html)
+![Cost Optimization Strategies](../assets/ch14-cost-optimization-strategies.html)
 
 \newpage
 
@@ -231,4 +231,4 @@
 
 ---
 
-**Next: [Chapter 13: Putting It All Together](./13-putting-it-all-together.md)**
+**Next: [Chapter 15: Putting It All Together](./15-putting-it-all-together.md)**

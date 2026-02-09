@@ -189,7 +189,7 @@
 
 - Not all streams need the same pipeline: a simple transcription stream can skip diarization and NER stages
 - Feature flags on the pipeline: client-specified options (e.g., `enable_diarization=true`) add or remove pipeline stages at stream creation time
-- Cost implications: each additional stage increases compute time and cost -- this feeds directly into metering (Chapter 8)
+- Cost implications: each additional stage increases compute time and cost -- this feeds directly into metering (Chapter 13)
 - Runtime reconfiguration: some systems allow changing pipeline configuration mid-stream (e.g., enabling punctuation after stream start)
 
 ### Error Handling Across Pipeline Stages

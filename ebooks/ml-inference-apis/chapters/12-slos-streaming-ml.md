@@ -1,6 +1,6 @@
-# Chapter 11: SLOs for Streaming ML Systems
+# Chapter 12: SLOs for Streaming ML Systems
 
-![Chapter 11 Opener](../assets/ch11-opener.html)
+![Chapter 12 Opener](../assets/ch12-opener.html)
 
 \newpage
 
@@ -52,7 +52,7 @@
 - RTF as a capacity planning metric: as load increases, RTF approaches 1.0 -- this is the signal to scale out before crossing the threshold
 - Target: RTF < 0.5 under normal load (50% headroom), with alerting when RTF > 0.8
 
-![Streaming SLI Taxonomy](../assets/ch11-streaming-sli-taxonomy.html)
+![Streaming SLI Taxonomy](../assets/ch12-streaming-sli-taxonomy.html)
 
 \newpage
 
@@ -85,7 +85,7 @@
 - Emphasize that targets are starting points -- adjust based on user research and business requirements
 - More aggressive targets increase infrastructure cost; relaxed targets reduce cost but may degrade user experience
 
-![SLO Target Framework](../assets/ch11-slo-target-framework.html)
+![SLO Target Framework](../assets/ch12-slo-target-framework.html)
 
 \newpage
 
@@ -206,7 +206,7 @@
 - Goodput alert: goodput drops below 90% for > 10 minutes -- significant quality degradation
 - Connection drop rate alert: drop rate exceeds 1% for > 5 minutes -- infrastructure reliability issue
 
-![Burn Rate Alerting](../assets/ch11-burn-rate-alerting.html)
+![Burn Rate Alerting](../assets/ch12-burn-rate-alerting.html)
 
 \newpage
 
@@ -267,4 +267,4 @@
 
 ---
 
-**Next: [Chapter 12: Scaling Inference Globally](./12-scaling-inference-globally.md)**
+**Next: [Chapter 13: Usage Metering & Billing](./13-usage-metering-billing.md)**

@@ -186,9 +186,9 @@
 
 - **Part I (Chapters 2-3)**: Deep dive into serving frameworks, GPU optimization, and cold start mitigation
 - **Part II (Chapters 4-6)**: Audio streaming architecture, protocol selection, and inference pipelines
-- **Part III (Chapters 7-8)**: API design patterns for ML services and usage metering
-- **Part IV (Chapters 9-11)**: Enterprise requirements -- security, compliance, SLOs
-- **Part V (Chapters 12-13)**: Scaling globally and synthesizing everything into a complete system
+- **Part III (Chapters 7-9)**: API design patterns for ML services -- endpoint design, streaming contracts, versioning, and developer experience
+- **Part IV (Chapters 10-13)**: Enterprise requirements -- security, compliance, SLOs, and usage metering
+- **Part V (Chapters 14-15)**: Scaling globally and synthesizing everything into a complete system
 
 ## Summary
 

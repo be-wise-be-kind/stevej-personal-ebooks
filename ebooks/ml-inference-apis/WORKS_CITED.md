@@ -10,13 +10,13 @@ The following works are referenced across multiple chapters and form the foundat
 
 | Work | Chapters Referenced |
 |------|---------------------|
-| Google SRE Book (Beyer et al., 2016) | 1, 3, 11, 12 |
-| AssemblyAI (2025). "The 300ms Rule: Why Latency Makes or Breaks Voice AI." | 1, 4, 5, 11 |
-| BentoML (2025). "LLM Inference Handbook." | 1, 2, 3, 11 |
+| Google SRE Book (Beyer et al., 2016) | 1, 3, 12, 14 |
+| AssemblyAI (2025). "The 300ms Rule: Why Latency Makes or Breaks Voice AI." | 1, 4, 5, 12 |
+| BentoML (2025). "LLM Inference Handbook." | 1, 2, 3, 12 |
 | Clarifai (2025). "Comparing SGLang, vLLM, and TensorRT-LLM with GPT-OSS-120B." | 1, 2, 3 |
 | Stixor (2025). "The New LLM Inference Stack 2025: FA-3, FP8 & FP4." | 1, 3 |
 | OpenAI Realtime API Documentation (2025). | 4, 5, 7 |
-| Deepgram Compliance Docs (2025). "Standard Compliance Speech-to-Text: HIPAA, SOC 2, GDPR." | 9, 10 |
+| Deepgram Compliance Docs (2025). "Standard Compliance Speech-to-Text: HIPAA, SOC 2, GDPR." | 10, 11 |
 
 ---
 
@@ -120,19 +120,31 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 8: Usage Metering & Billing
+## Chapter 8: Streaming Response Contracts
 
-1. **Stripe** (2025). "Meters API Reference." https://docs.stripe.com/api/billing/meter [Aggregation, billing periods, event ingestion]
+1. **OpenAI** (2025). "API Reference — Chat Completions." https://platform.openai.com/docs/api-reference/chat [SSE streaming with `data:` prefix and `[DONE]` signal]
 
-2. **Stripe** (2025). "Token Billing Documentation." https://docs.stripe.com/billing/subscriptions/usage-based/token-billing [LLM token metering]
+2. **OpenAI** (2025). "Streaming Events — Responses API." https://platform.openai.com/docs/api-reference/streaming [Structured event types: response.created, response.output_text.delta, response.completed]
 
-3. **OpenMeter** (2025). Open-source real-time metering. https://openmeter.io [Native Stripe integration, real-time aggregation]
+3. **Deepgram** (2025). "WebSocket API Reference." https://developers.deepgram.com/docs/streaming [Binary WebSocket frames, interim/final results, keep-alive, close codes]
 
-4. **BrasTranscripts** (2025). Deepgram and AssemblyAI pricing breakdowns. [Per-second vs per-block billing comparison]
+4. **AssemblyAI** (2025). "Real-Time Streaming API." https://www.assemblyai.com/docs/speech-to-text/streaming [WebSocket streaming, partial transcripts, session lifecycle]
+
+5. **Google Cloud** (2025). "Speech-to-Text Streaming Recognition." https://cloud.google.com/speech-to-text/docs/streaming-recognize [gRPC bidirectional streaming, StreamingRecognizeRequest/Response, interim results]
 
 ---
 
-## Chapter 9: Security for Audio ML APIs
+## Chapter 9: API Versioning & Developer Experience
+
+1. **Google** (2025). "API Improvement Proposals." https://aip.dev [AIP-181: Stability levels, AIP-180: Versioning, AIP-182: Deprecation]
+
+2. **OpenAI** (2025). "API Reference." https://platform.openai.com/docs/api-reference [URL path versioning (/v1/), model version pinning, dated model snapshots]
+
+3. **Microsoft Azure** (2025). "Azure OpenAI Service REST API Reference — v1." https://learn.microsoft.com/en-us/azure/ai-services/openai/reference [api-version query parameter, preview vs GA versioning]
+
+---
+
+## Chapter 10: Security for Audio ML APIs
 
 1. **Deepgram** (2025). "Standard Compliance Speech-to-Text: HIPAA, SOC 2, GDPR." https://deepgram.com/compliance [Zero-retention defaults, configurable redaction, sub-300ms]
 
@@ -142,7 +154,7 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 10: Compliance & Data Governance
+## Chapter 11: Compliance & Data Governance
 
 1. **EU AI Act Service Desk** (2025). "Implementation Timeline." [Prohibited practices Feb 2025, GPAI Aug 2025, High-risk Aug 2026, Regulated products Aug 2027]
 
@@ -154,7 +166,7 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 11: SLOs for Streaming ML Systems
+## Chapter 12: SLOs for Streaming ML Systems
 
 1. **Gladia** (2025). "How to Measure Latency in STT: TTFB, Partials, Finals, RTF." https://www.gladia.io/blog/ [Speech-to-text latency taxonomy]
 
@@ -168,7 +180,19 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 12: Scaling Inference Globally
+## Chapter 13: Usage Metering & Billing
+
+1. **Stripe** (2025). "Meters API Reference." https://docs.stripe.com/api/billing/meter [Aggregation, billing periods, event ingestion]
+
+2. **Stripe** (2025). "Token Billing Documentation." https://docs.stripe.com/billing/subscriptions/usage-based/token-billing [LLM token metering]
+
+3. **OpenMeter** (2025). Open-source real-time metering. https://openmeter.io [Native Stripe integration, real-time aggregation]
+
+4. **BrasTranscripts** (2025). Deepgram and AssemblyAI pricing breakdowns. [Per-second vs per-block billing comparison]
+
+---
+
+## Chapter 14: Scaling Inference Globally
 
 *Combines sources from Chapters 1 and 2. Additional sources to be identified during authoring.*
 
@@ -182,11 +206,11 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 13: Putting It All Together
+## Chapter 15: Putting It All Together
 
 *Synthesis chapter referencing all previous chapters. Sources drawn from across the full bibliography.*
 
-*No unique sources — this chapter integrates findings from Chapters 1-12.*
+*No unique sources — this chapter integrates findings from Chapters 1-14.*
 
 ---
 

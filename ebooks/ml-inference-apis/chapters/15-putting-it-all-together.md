@@ -1,6 +1,6 @@
-# Chapter 13: Putting It All Together
+# Chapter 15: Putting It All Together
 
-![Chapter 13 Opener](../assets/ch13-opener.html)
+![Chapter 15 Opener](../assets/ch15-opener.html)
 
 \newpage
 
@@ -48,7 +48,7 @@
 
 - Client connects via WebSocket (primary) or gRPC (high-performance clients) -- protocol selection from Chapter 5
 - Audio arrives as Opus-encoded chunks at 20ms intervals (50 chunks per second)
-- Edge proxy terminates TLS, authenticates the API key, and routes to the correct region based on customer configuration (Chapter 9)
+- Edge proxy terminates TLS, authenticates the API key, and routes to the correct region based on customer configuration (Chapter 10)
 - The WebSocket connection is pinned to a specific inference instance for the duration of the stream -- sticky session routing
 
 ### The Inference Pipeline
@@ -61,7 +61,7 @@
 - **Stage 6: Partial Result Assembly** -- Partial transcripts assembled, compared against previous partials, stability markers applied
 - Pipeline from Chapter 6 realized end-to-end with Triton's ensemble scheduler managing the DAG
 
-![Complete System Architecture](../assets/ch13-complete-architecture.html)
+![Complete System Architecture](../assets/ch15-complete-architecture.html)
 
 \newpage
 
@@ -74,9 +74,9 @@
 
 ### Supporting Infrastructure
 
-- **API Gateway**: rate limiting, authentication, request routing, protocol translation (Chapter 7, Chapter 9)
-- **Usage Metering**: every audio second processed is metered and attributed to the customer's account (Chapter 8)
-- **Observability Stack**: distributed traces from client connection through every pipeline stage, GPU metrics, per-stream latency histograms (Chapter 11)
+- **API Gateway**: rate limiting, authentication, request routing, protocol translation (Chapter 7, Chapter 10)
+- **Usage Metering**: every audio second processed is metered and attributed to the customer's account (Chapter 13)
+- **Observability Stack**: distributed traces from client connection through every pipeline stage, GPU metrics, per-stream latency histograms (Chapter 12)
 - **Model Registry**: tracks which model version is deployed in each region, supports rollback (Chapter 2)
 - **Configuration Service**: feature flags, per-customer settings, rate limits synchronized across regions
 
@@ -86,7 +86,7 @@
 
 - **Which serving framework?** Chapter 2 -- Framework selection criteria: model type, latency requirements, scaling model, operational complexity
 - **How to optimize GPU usage?** Chapter 3 -- Quantization (FP8), CUDA graphs, memory pooling, cold start mitigation
-- **How to scale globally?** Chapter 12 -- GPU-aware load balancing, auto-scaling signals, multi-region deployment, cost optimization
+- **How to scale globally?** Chapter 14 -- GPU-aware load balancing, auto-scaling signals, multi-region deployment, cost optimization
 
 ### Streaming and Protocol Decisions
 
@@ -97,15 +97,17 @@
 ### API and Business Decisions
 
 - **How to design the API?** Chapter 7 -- Streaming endpoint design, error handling, versioning, SDK patterns
-- **How to meter and bill?** Chapter 8 -- Per-second metering, idempotent usage events, billing pipeline, revenue reconciliation
+- **How to design streaming response contracts?** Chapter 8 -- Streaming response formats, partial result semantics, client contract guarantees
+- **How to version APIs and optimize developer experience?** Chapter 9 -- API versioning strategies, deprecation policies, SDK design, developer portal patterns
+- **How to meter and bill?** Chapter 13 -- Per-second metering, idempotent usage events, billing pipeline, revenue reconciliation
 
 ### Enterprise Decisions
 
-- **How to secure audio data?** Chapter 9 -- TLS, API key management, audio encryption at rest, tenant isolation
-- **How to meet compliance requirements?** Chapter 10 -- GDPR for voice biometrics, SOC 2 controls, data retention, audit logging
-- **How to define and monitor SLOs?** Chapter 11 -- Availability, latency, stream success rate, error budgets for streaming systems
+- **How to secure audio data?** Chapter 10 -- TLS, API key management, audio encryption at rest, tenant isolation
+- **How to meet compliance requirements?** Chapter 11 -- GDPR for voice biometrics, SOC 2 controls, data retention, audit logging
+- **How to define and monitor SLOs?** Chapter 12 -- Availability, latency, stream success rate, error budgets for streaming systems
 
-![Decision Flowchart: Major Architecture Choices](../assets/ch13-decision-flowchart.html)
+![Decision Flowchart: Major Architecture Choices](../assets/ch15-decision-flowchart.html)
 
 \newpage
 
@@ -171,13 +173,13 @@
 
 ### Incident Response for Inference Systems
 
-- **Detection**: SLO burn rate alerts (Chapter 11), GPU health alerts, customer-reported quality degradation
+- **Detection**: SLO burn rate alerts (Chapter 12), GPU health alerts, customer-reported quality degradation
 - **Triage**: is this a capacity issue (need more instances), a quality issue (bad model version), an infrastructure issue (GPU failure, network), or a dependency issue (model storage, config service)?
 - **Containment**: for capacity -- emergency scale-up; for quality -- rollback model version; for infrastructure -- drain affected instances; for dependency -- activate fallback/cached configuration
 - **Resolution**: root cause analysis after containment, fix applied and verified, postmortem written with action items
 - **Communication**: status page updates during incident, customer-facing RCA for significant events
 
-![Operational Runbook Decision Tree](../assets/ch13-runbook-patterns.html)
+![Operational Runbook Decision Tree](../assets/ch15-runbook-patterns.html)
 
 \newpage
 
@@ -274,7 +276,7 @@
 
 ## Summary
 
-- A production streaming speech API integrates decisions from every chapter: framework selection, GPU optimization, streaming architecture, protocol choice, pipeline design, API design, metering, security, compliance, SLOs, and scaling
+- A production streaming speech API integrates decisions from every chapter: framework selection, GPU optimization, streaming architecture, protocol choice, pipeline design, API design, streaming response contracts, API versioning, metering, security, compliance, SLOs, and scaling
 - The end-to-end architecture spans: client connection (WebSocket/gRPC) through edge proxy, audio decoding, VAD, buffered ASR inference, token decoding, and partial result streaming
 - Common failure modes -- GPU OOM, cold start storms, stream disconnection cascades, model rollback, billing discrepancies -- each have distinct detection, response, and prevention patterns
 - Operational runbooks for deployment, incident response, capacity planning, and model updates are as important as the code itself
@@ -286,7 +288,7 @@
 
 *To be populated during chapter authoring. Synthesis chapter -- references back to all earlier chapters:*
 
-1. Chapters 1-12 of this book, referenced throughout for specific technical depth.
+1. Chapters 1-14 of this book, referenced throughout for specific technical depth.
 2. "Before the 3 AM Alert: What Every Developer Should Know About API Performance" -- Chapter 1 (empirical discipline), Chapter 9 (scaling), Chapter 12 (geographic optimization), Chapter 14 (synthesis).
 3. OpenAI (2025). "Realtime API: WebRTC and WebSocket Integration Guide."
 4. NVIDIA (2025). "Blackwell Architecture: Inference Performance Benchmarks."

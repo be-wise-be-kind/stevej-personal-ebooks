@@ -1,6 +1,6 @@
-# Chapter 9: Security for Audio ML APIs
+# Chapter 10: Security for Audio ML APIs
 
-![Chapter 9 Opener](../assets/ch09-opener.html)
+![Chapter 10 Opener](../assets/ch10-opener.html)
 
 \newpage
 
@@ -46,7 +46,7 @@
 - Session binding: tie the token to the specific connection/stream ID to prevent token replay on other streams
 - Graceful degradation: if a refresh fails, allow the current operation to complete before terminating the connection
 
-![Streaming Auth Flow](../assets/ch09-streaming-auth-flow.html)
+![Streaming Auth Flow](../assets/ch10-streaming-auth-flow.html)
 
 \newpage
 
@@ -81,7 +81,7 @@
 - Audit trail: log who revoked, when, and why -- compliance requirement for SOC 2
 - Cascading effects: revoking a key mid-stream should gracefully terminate active connections, not silently drop audio
 
-![API Key Lifecycle](../assets/ch09-api-key-lifecycle.html)
+![API Key Lifecycle](../assets/ch10-api-key-lifecycle.html)
 
 \newpage
 
@@ -184,7 +184,7 @@
 - **Voicegain**: 95%+ PII detection accuracy, redaction in both audio and text outputs, on-premise deployment option for maximum data control
 - Feature comparison: what each provider redacts by default, what is configurable, and what requires custom implementation
 
-![PII Redaction Pipeline](../assets/ch09-pii-redaction-pipeline.html)
+![PII Redaction Pipeline](../assets/ch10-pii-redaction-pipeline.html)
 
 \newpage
 
@@ -208,7 +208,7 @@
 
 - Emotion detection from voice is an active area of AI -- tone, pitch, and cadence reveal stress, anger, sadness
 - Health indicators: speech patterns can indicate cognitive decline, intoxication, respiratory conditions
-- EU AI Act implications: emotion recognition in workplace and educational contexts is restricted (effective Aug 2026)
+- EU AI Act implications: emotion recognition in workplace or educational contexts is restricted (effective Aug 2026)
 - Ethical considerations: even if technically possible, inferring emotional or health states without explicit consent raises significant ethical concerns
 
 ## Common Pitfalls
@@ -244,4 +244,4 @@
 
 ---
 
-**Next: [Chapter 10: Compliance & Data Governance](./10-compliance-data-governance.md)**
+**Next: [Chapter 11: Compliance & Data Governance](./11-compliance-data-governance.md)**

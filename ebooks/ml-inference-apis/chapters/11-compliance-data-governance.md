@@ -1,6 +1,6 @@
-# Chapter 10: Compliance & Data Governance
+# Chapter 11: Compliance & Data Governance
 
-![Chapter 10 Opener](../assets/ch10-opener.html)
+![Chapter 11 Opener](../assets/ch11-opener.html)
 
 \newpage
 
@@ -25,7 +25,7 @@
 - **Availability**: SLOs for inference uptime, redundancy for model serving infrastructure, failover procedures
 - **Processing Integrity**: model versioning audit trails, ensuring the correct model version processes each request
 - **Confidentiality**: customer audio data isolation (multi-tenant separation), data classification policies for audio vs. transcripts vs. metadata
-- **Privacy**: PII handling procedures (cross-reference Chapter 9), data retention and deletion policies, consent management
+- **Privacy**: PII handling procedures (cross-reference Chapter 10), data retention and deletion policies, consent management
 
 ### SOC 2 Evidence for ML-Specific Controls
 
@@ -120,7 +120,7 @@
 - **August 2, 2026**: High-risk AI system requirements and transparency obligations for AI systems that interact with natural persons
 - **August 2, 2027**: Requirements for AI systems embedded in regulated products (medical devices, vehicles, etc.)
 
-![EU AI Act Timeline](../assets/ch10-eu-ai-act-timeline.html)
+![EU AI Act Timeline](../assets/ch11-eu-ai-act-timeline.html)
 
 \newpage
 
@@ -203,7 +203,7 @@
 - **Audit logging**: comprehensive, tamper-proof logging of all inference operations and data access events
 - **Consent management**: record and enforce user consent for audio processing, biometric analysis, and data retention
 
-![Compliance Matrix](../assets/ch10-compliance-matrix.html)
+![Compliance Matrix](../assets/ch11-compliance-matrix.html)
 
 \newpage
 
@@ -214,7 +214,7 @@
 - Example: retrofitting zero-retention into a system that was designed with persistent storage is a major rewrite; designing for zero-retention from the start is a configuration choice
 - The cost of bolt-on is 5-10x higher than built-in -- both in engineering time and in audit remediation
 
-![Data Lifecycle](../assets/ch10-data-lifecycle.html)
+![Data Lifecycle](../assets/ch11-data-lifecycle.html)
 
 \newpage
 
@@ -253,4 +253,4 @@
 
 ---
 
-**Next: [Chapter 11: SLOs for Streaming ML Systems](./11-slos-streaming-ml.md)**
+**Next: [Chapter 12: SLOs for Streaming ML Systems](./12-slos-streaming-ml.md)**
