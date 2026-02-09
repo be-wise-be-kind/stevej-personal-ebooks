@@ -1,0 +1,107 @@
+# {{FEATURE_NAME}} - Progress Tracker & AI Agent Handoff Document
+
+**Scope**: {{FEATURE_SCOPE_DESCRIPTION}}
+
+---
+
+## Document Purpose
+This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on {{FEATURE_NAME}}. When starting work:
+1. **Read this document FIRST** to understand current progress
+2. **Check the "Next Milestone to Work On" section** for what to do
+3. **Reference linked documents** for detailed instructions
+4. **Update this document** after completing each milestone
+
+## Current Status
+**Current Milestone**: {{CURRENT_MILESTONE_STATUS}}
+**Book State**: {{BOOK_STATE}}
+**Target**: {{TARGET_DESCRIPTION}}
+
+## Required Documents Location
+```
+.roadmap/{{ROADMAP_PHASE}}/{{FEATURE_FOLDER}}/
+├── AI_CONTEXT.md          # Book architecture and context
+├── MILESTONE_BREAKDOWN.md # Detailed plans for each milestone
+├── PROGRESS_TRACKER.md    # THIS FILE - Current progress and handoff notes
+```
+
+## Next Milestone to Work On
+
+### START HERE: {{NEXT_MILESTONE_TITLE}}
+
+**Quick Summary**:
+{{NEXT_MILESTONE_SUMMARY}}
+
+**Pre-flight Checklist**:
+{{PREFLIGHT_CHECKLIST}}
+
+---
+
+## Overall Progress
+**Total Completion**: {{COMPLETION_PERCENTAGE}}% ({{COMPLETED_MILESTONES}}/{{TOTAL_MILESTONES}} milestones completed)
+
+```
+[{{PROGRESS_BAR}}] {{COMPLETION_PERCENTAGE}}% Complete
+```
+
+---
+
+## Milestone Status Dashboard
+
+| Milestone | Title | Status | Completion | Notes |
+|-----------|-------|--------|------------|-------|
+{{MILESTONE_STATUS_TABLE}}
+
+### Status Legend
+- 🔴 Not Started
+- 🟡 In Progress
+- 🟢 Complete
+- 🔵 Blocked
+
+---
+
+## Chapter Progress Matrix
+
+| Ch | Title | Research | Outline | Draft | Review | Diagrams | Final |
+|----|-------|----------|---------|-------|--------|----------|-------|
+{{CHAPTER_PROGRESS_TABLE}}
+
+### Word Count Targets
+
+| Chapter | Target Words | Actual Words | Status |
+|---------|-------------|--------------|--------|
+{{WORD_COUNT_TABLE}}
+
+### Diagram Counts
+
+| Chapter | Planned | Completed | Status |
+|---------|---------|-----------|--------|
+{{DIAGRAM_COUNT_TABLE}}
+
+---
+
+## Update Protocol
+
+After completing each milestone:
+1. Update the milestone status to 🟢 Complete
+2. Fill in completion percentage
+3. Add any important notes or blockers
+4. Update the "Next Milestone to Work On" section
+5. Update overall progress percentage
+6. Update chapter progress matrix
+7. Commit changes to this document
+
+## Notes for AI Agents
+
+### Critical Context
+{{CRITICAL_CONTEXT}}
+
+### Common Pitfalls to Avoid
+{{COMMON_PITFALLS}}
+
+### Resources
+{{RESOURCES}}
+
+## Definition of Done
+
+The ebook is considered complete when:
+{{DEFINITION_OF_DONE}}

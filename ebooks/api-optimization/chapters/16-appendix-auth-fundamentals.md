@@ -45,7 +45,7 @@ A traveler (the user) wants to visit a foreign country (use a third-party app). 
 
 1. The traveler arrives at the foreign country's border and requests entry
 2. The border agent says "Before we let you in, we'd like to access some of your records from your home government—your photo, travel history, and vaccination status."
-3. The traveler goes to the home government (identity provider like Google). The home government asks: "This country is requesting access to your photo, travel history, and vaccination records. Do you authorize us to share this information?" (These are the *scopes*—specific data being requested)
+3. The traveler goes to the home government (identity provider like Google). The home government asks: "This country is requesting access to your photo, travel history, and vaccination records. Do you authorize us to share this information?" (These are the *scopes*, the specific data being requested)
 4. The traveler approves. The home government gives the traveler a **claim ticket** (authorization code).
 5. The traveler brings the claim ticket back to the foreign country's border.
 6. The border agent takes the claim ticket and contacts the home government directly: "The traveler authorized us to access their records. Here's the claim ticket." The home government sends an **access pass** (access token) that lets the foreign country retrieve those specific records.
@@ -54,6 +54,8 @@ A traveler (the user) wants to visit a foreign country (use a third-party app). 
 The traveler never handed over a password. The traveler just authorized the home government to share specific information with the foreign country.
 
 **Refresh tokens** are like standing authorizations the foreign country keeps on file, allowing the foreign country to request updated records without asking the traveler again each time.
+
+Table: Authentication Mechanism Comparison
 
 | Mechanism | Metaphor | Who Stores Info | Revocation | Use Case |
 |-----------|----------|-----------------|------------|----------|

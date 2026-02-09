@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Test Results Dashboard</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 680" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="dropShadow" x="-5%" y="-5%" width="110%" height="110%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.08"/>
+                </filter>
+                <linearGradient id="userAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.4"/>
+                    <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0.05"/>
+                </linearGradient>
+            </defs>
+
+            <!-- Dashboard background -->
+            <rect x="0" y="0" width="900" height="680" rx="8" fill="#1e1e2e"/>
+
+            <!-- Dashboard header -->
+            <rect x="0" y="0" width="900" height="50" rx="8" fill="#2a2a3e"/>
+            <rect x="0" y="40" width="900" height="10" fill="#2a2a3e"/>
+            <text x="20" y="32" font-size="16" font-weight="600" fill="white" font-family="Liberation Sans, Arial, sans-serif">Load Test Results Dashboard</text>
+
+            <!-- Summary stats in header -->
+            <rect x="520" y="12" width="360" height="26" rx="4" fill="#3a3a4e"/>
+            <text x="540" y="30" font-size="11" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">100 Users</text>
+            <text x="618" y="30" font-size="11" fill="#4a4a5e" font-family="Liberation Sans, Arial, sans-serif">|</text>
+            <text x="632" y="30" font-size="11" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">~75 RPS</text>
+            <text x="700" y="30" font-size="11" fill="#4a4a5e" font-family="Liberation Sans, Arial, sans-serif">|</text>
+            <text x="714" y="30" font-size="11" fill="#f97316" font-family="Liberation Sans, Arial, sans-serif">3% Failures</text>
+            <text x="800" y="30" font-size="11" fill="#4a4a5e" font-family="Liberation Sans, Arial, sans-serif">|</text>
+            <text x="814" y="30" font-size="11" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">5 min</text>
+
+            <!-- ============================================ -->
+            <!-- Panel 1: Total Requests per Second           -->
+            <!-- ============================================ -->
+            <g transform="translate(15, 60)">
+                <rect x="0" y="0" width="870" height="180" rx="6" fill="#2a2a3e" filter="url(#dropShadow)"/>
+                <text x="15" y="22" font-size="13" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Total Requests per Second</text>
+
+                <!-- Legend -->
+                <rect x="710" y="12" width="8" height="8" rx="1" fill="#22c55e"/>
+                <text x="722" y="20" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">RPS</text>
+                <rect x="770" y="12" width="8" height="8" rx="1" fill="#ef4444"/>
+                <text x="782" y="20" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">Failures/s</text>
+
+                <!-- Y-axis labels -->
+                <text x="40" y="58" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">100</text>
+                <text x="40" y="85" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">75</text>
+                <text x="40" y="113" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">50</text>
+                <text x="40" y="140" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">25</text>
+                <text x="40" y="168" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">0</text>
+
+                <!-- Grid lines -->
+                <line x1="55" y1="55" x2="850" y2="55" stroke="#3a3a4e" stroke-width="1"/>
+                <line x1="55" y1="83" x2="850" y2="83" stroke="#3a3a4e" stroke-width="1"/>
+                <line x1="55" y1="110" x2="850" y2="110" stroke="#3a3a4e" stroke-width="1"/>
+                <line x1="55" y1="138" x2="850" y2="138" stroke="#3a3a4e" stroke-width="1"/>
+                <line x1="55" y1="165" x2="850" y2="165" stroke="#3a3a4e" stroke-width="1"/>
+
+                <!-- RPS line (green) -->
+                <!-- Data: 0, 25, 55, 72, 78, 75, 77, 76, 74, 40, 0 RPS -->
+                <polyline points="55,165 135,138 214,105 294,86 373,79 453,83 532,80 612,81 691,84 771,121 850,165"
+                          stroke="#22c55e" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+
+                <!-- Failures line (red) -->
+                <!-- Data: 0, 0, 1, 2, 3, 2, 2, 2, 2, 1, 0 failures/s -->
+                <polyline points="55,165 135,165 214,164 294,163 373,162 453,163 532,163 612,163 691,163 771,164 850,165"
+                          stroke="#ef4444" stroke-width="2" fill="none" stroke-linejoin="round"/>
+            </g>
+
+            <!-- ============================================ -->
+            <!-- Panel 2: Response Time (ms)                  -->
+            <!-- ============================================ -->
+            <g transform="translate(15, 255)">
+                <rect x="0" y="0" width="870" height="180" rx="6" fill="#2a2a3e" filter="url(#dropShadow)"/>
+                <text x="15" y="22" font-size="13" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Response Time (ms)</text>
+
+                <!-- Legend -->
+                <rect x="710" y="12" width="8" height="8" rx="1" fill="#eab308"/>
+                <text x="722" y="20" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">p50</text>
+                <rect x="770" y="12" width="8" height="8" rx="1" fill="#8b5cf6"/>
+                <text x="782" y="20" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">p95</text>
+
+                <!-- Y-axis labels -->
+                <text x="40" y="58" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">1000</text>
+                <text x="40" y="85" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">750</text>
+                <text x="40" y="113" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">500</text>
+                <text x="40" y="140" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">250</text>
+                <text x="40" y="168" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">0</text>
+
+                <!-- Grid lines -->
+                <line x1="55" y1="55" x2="850" y2="55" stroke="#3a3a4e" stroke-width="1"/>
+                <line x1="55" y1="83" x2="850" y2="83" stroke="#3a3a4e" stroke-width="1"/>
+                <line x1="55" y1="110" x2="850" y2="110" stroke="#3a3a4e" stroke-width="1"/>
+                <line x1="55" y1="138" x2="850" y2="138" stroke="#3a3a4e" stroke-width="1"/>
+                <line x1="55" y1="165" x2="850" y2="165" stroke="#3a3a4e" stroke-width="1"/>
+
+                <!-- p50 line (yellow/orange) -->
+                <!-- Data: 0, 80, 55, 50, 48, 50, 50, 48, 45, 35, 0 ms -->
+                <polyline points="55,165 135,156 214,159 294,160 373,160 453,160 532,160 612,160 691,160 771,161 850,165"
+                          stroke="#eab308" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+
+                <!-- p95 line (purple) -->
+                <!-- Data: 0, 800, 350, 150, 120, 115, 118, 120, 115, 80, 0 ms -->
+                <polyline points="55,165 135,77 214,127 294,149 373,152 453,152 532,152 612,152 691,152 771,156 850,165"
+                          stroke="#8b5cf6" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+
+                <!-- Spike annotation -->
+                <circle cx="135" cy="77" r="4" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+                <line x1="142" y1="74" x2="175" y2="62" stroke="#64748b" stroke-width="1"/>
+                <text x="178" y="58" font-size="10" fill="#c4b5fd" font-family="Liberation Sans, Arial, sans-serif">Cache-cold spike (800ms)</text>
+
+                <!-- Steady-state p95 annotation -->
+                <text x="555" y="146" font-size="10" fill="#8b5cf6" font-family="Liberation Sans, Arial, sans-serif">~120ms</text>
+
+                <!-- Steady-state p50 annotation -->
+                <text x="555" y="172" font-size="10" fill="#eab308" font-family="Liberation Sans, Arial, sans-serif">~50ms</text>
+            </g>
+
+            <!-- ============================================ -->
+            <!-- Panel 3: Concurrent Users                    -->
+            <!-- ============================================ -->
+            <g transform="translate(15, 450)">
+                <rect x="0" y="0" width="870" height="180" rx="6" fill="#2a2a3e" filter="url(#dropShadow)"/>
+                <text x="15" y="22" font-size="13" font-weight="500" fill="white" font-family="Liberation Sans, Arial, sans-serif">Concurrent Users</text>
+
+                <!-- Legend -->
+                <rect x="760" y="12" width="8" height="8" rx="1" fill="#3b82f6"/>
+                <text x="772" y="20" font-size="10" fill="#94a3b8" font-family="Liberation Sans, Arial, sans-serif">Users</text>
+
+                <!-- Y-axis labels -->
+                <text x="40" y="58" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">120</text>
+                <text x="40" y="85" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">90</text>
+                <text x="40" y="113" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">60</text>
+                <text x="40" y="140" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">30</text>
+                <text x="40" y="168" text-anchor="end" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">0</text>
+
+                <!-- Grid lines -->
+                <line x1="55" y1="55" x2="850" y2="55" stroke="#3a3a4e" stroke-width="1"/>
+                <line x1="55" y1="83" x2="850" y2="83" stroke="#3a3a4e" stroke-width="1"/>
+                <line x1="55" y1="110" x2="850" y2="110" stroke="#3a3a4e" stroke-width="1"/>
+                <line x1="55" y1="138" x2="850" y2="138" stroke="#3a3a4e" stroke-width="1"/>
+                <line x1="55" y1="165" x2="850" y2="165" stroke="#3a3a4e" stroke-width="1"/>
+
+                <!-- Phase divider lines -->
+                <line x1="294" y1="40" x2="294" y2="165" stroke="#4a4a5e" stroke-width="1" stroke-dasharray="4,3"/>
+                <line x1="691" y1="40" x2="691" y2="165" stroke="#4a4a5e" stroke-width="1" stroke-dasharray="4,3"/>
+
+                <!-- Phase labels -->
+                <text x="175" y="176" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Ramp-up</text>
+                <text x="493" y="176" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Steady State</text>
+                <text x="771" y="176" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Ramp-down</text>
+
+                <!-- User count area fill -->
+                <!-- Data: 0, 35, 70, 100, 100, 100, 100, 100, 100, 50, 0 users -->
+                <polygon points="55,165 135,133 214,101 294,73 373,73 453,73 532,73 612,73 691,73 771,119 850,165"
+                         fill="url(#userAreaGradient)"/>
+
+                <!-- User count line (blue) -->
+                <polyline points="55,165 135,133 214,101 294,73 373,73 453,73 532,73 612,73 691,73 771,119 850,165"
+                          stroke="#3b82f6" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+
+                <!-- 100 users annotation -->
+                <text x="495" y="67" text-anchor="middle" font-size="10" fill="#3b82f6" font-family="Liberation Sans, Arial, sans-serif">100 users</text>
+            </g>
+
+            <!-- Shared X-axis time labels -->
+            <text x="70" y="648" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">0:00</text>
+            <text x="229" y="648" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">1:00</text>
+            <text x="388" y="648" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">2:00</text>
+            <text x="547" y="648" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">3:00</text>
+            <text x="706" y="648" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">4:00</text>
+            <text x="865" y="648" text-anchor="middle" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">5:00</text>
+            <text x="468" y="668" text-anchor="middle" font-size="10" fill="#4a4a5e" font-family="Liberation Sans, Arial, sans-serif">Elapsed Time (minutes)</text>
+        </svg>
+    </div>
+</body>
+</html>
