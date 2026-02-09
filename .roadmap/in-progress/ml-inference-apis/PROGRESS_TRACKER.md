@@ -14,8 +14,8 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the ml-inferen
 6. **Update this document** after completing each PR
 
 ## Current Status
-**Current PR**: PR1 — Outline Review
-**Book State**: Scaffolded with README.md and PROPOSAL.md; no chapter files yet
+**Current PR**: PR1 -- Outline Review (submitted for review)
+**Book State**: All 14 chapter outlines complete, supporting docs created
 **Target**: Complete ebook with 13 chapters across 5 parts
 
 ## Required Documents Location
@@ -31,33 +31,32 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the ml-inferen
 
 ## Next PR to Work On
 
-### START HERE: PR1 — Outline Review
+### START HERE: PR2 -- Chapter 1: The Serving Problem
 
 **Quick Summary**:
-Produce the complete book outline: README.md with TOC, all 14 chapter files (00-preface + 01 through 13) as outlines only (section headings + bullet points, no prose), WORKS_CITED.md skeleton, DIAGRAM_INVENTORY.md, and CHAPTER_ASSIGNMENTS.md. Submit for Steve's review before any authoring begins.
+Author Chapter 1 in full prose. This is the most important chapter -- it sets the tone and philosophy for the entire book. See PR_BREAKDOWN.md for detailed instructions.
 
 **Pre-flight Checklist**:
-- [x] Research completed (8 topics, synthesized in research/RESEARCH_SUMMARY.md)
-- [x] Ebook scaffolded (ebooks/ml-inference-apis/ exists with README.md)
-- [x] PROPOSAL.md copied into ebook directory
-- [ ] Review research findings before starting outlines
+- [x] PR1 outline review approved by Steve
+- [ ] Review research Topics 1, 2, 3, 8 in RESEARCH_SUMMARY.md
+- [ ] Review Chapter 1 outline in chapters/01-the-serving-problem.md
 
-**Deliverables**:
-- [ ] README.md with full TOC and book metadata
-- [ ] chapters/00-preface.md (outline)
-- [ ] chapters/01-the-serving-problem.md through chapters/13-putting-it-all-together.md (outlines)
-- [ ] WORKS_CITED.md skeleton
-- [ ] DIAGRAM_INVENTORY.md
-- [ ] edits/CHAPTER_ASSIGNMENTS.md
-- [ ] `just validate ml-inference-apis` passes
+**PR1 Deliverables (completed)**:
+- [x] README.md with full TOC and book metadata
+- [x] chapters/00-preface.md (outline)
+- [x] chapters/01-the-serving-problem.md through chapters/13-putting-it-all-together.md (outlines)
+- [x] WORKS_CITED.md skeleton
+- [x] DIAGRAM_INVENTORY.md
+- [x] edits/CHAPTER_ASSIGNMENTS.md
+- [x] `just validate ml-inference-apis` passes
 
 ---
 
 ## Overall Progress
-**Total Completion**: 0% (0/15 PRs completed)
+**Total Completion**: 7% (1/15 PRs completed)
 
 ```
-[░░░░░░░░░░░░░░░░░░░░] 0% Complete
+[█░░░░░░░░░░░░░░░░░░░] 7% Complete
 ```
 
 ---
@@ -66,7 +65,7 @@ Produce the complete book outline: README.md with TOC, all 14 chapter files (00-
 
 | PR | Title | Status | Completion | Notes |
 |----|-------|--------|------------|-------|
-| PR1 | Outline Review | 🟡 In Progress | 0% | Current — produce all outlines |
+| PR1 | Outline Review | 🟢 Complete | 100% | All 14 outlines + supporting docs |
 | PR2 | Chapter 1: The Serving Problem | 🔴 Not Started | 0% | Most important chapter |
 | PR3 | Chapter 2: Model Serving Frameworks | 🔴 Not Started | 0% | |
 | PR4 | Chapter 3: GPU Optimization & Cold Starts | 🔴 Not Started | 0% | |
@@ -94,20 +93,20 @@ Produce the complete book outline: README.md with TOC, all 14 chapter files (00-
 
 | Ch | Title | Research | Outline | Draft | Review | Diagrams | Final |
 |----|-------|----------|---------|-------|--------|----------|-------|
-| 00 | Preface | - | ⬜ | ⬜ | ⬜ | - | ⬜ |
-| 01 | The Serving Problem | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 02 | Model Serving Frameworks | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 03 | GPU Optimization & Cold Starts | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 04 | Streaming Audio Architecture | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 05 | Protocol Selection for Audio | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 06 | Streaming Inference Pipelines | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 07 | Designing ML-Facing APIs | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 08 | Usage Metering & Billing | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 09 | Security for Audio ML APIs | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 10 | Compliance & Data Governance | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 11 | SLOs for Streaming ML Systems | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 12 | Scaling Inference Globally | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 13 | Putting It All Together | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 00 | Preface | - | ✅ | ⬜ | ⬜ | - | ⬜ |
+| 01 | The Serving Problem | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 02 | Model Serving Frameworks | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 03 | GPU Optimization & Cold Starts | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 04 | Streaming Audio Architecture | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 05 | Protocol Selection for Audio | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 06 | Streaming Inference Pipelines | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 07 | Designing ML-Facing APIs | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 08 | Usage Metering & Billing | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 09 | Security for Audio ML APIs | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 10 | Compliance & Data Governance | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 11 | SLOs for Streaming ML Systems | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 12 | Scaling Inference Globally | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 13 | Putting It All Together | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 
 Legend: ✅ Done | 🔄 In Progress | ⬜ Not Started | - Not Applicable
 
