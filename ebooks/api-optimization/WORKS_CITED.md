@@ -72,6 +72,18 @@ A comprehensive bibliography of all sources referenced in "API Performance Optim
 
 7. **Fielding, Roy T. and Julian Reschke.** "Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing." RFC 7230, IETF, June 2014.
 
+8. **IETF.** "WebTransport over HTTP/3." draft-ietf-webtrans-http3-14, Internet Engineering Task Force, October 2025. [WebTransport protocol specification]
+
+9. **W3C.** "WebTransport API." Editor's Draft, February 2026. [WebTransport browser API specification]
+
+10. **MDN Web Docs.** "WebTransport API." Mozilla, 2025. [WebTransport API reference and browser compatibility]
+
+11. **Sh3b0.** "Real-Time Web Protocols: Empirical Comparison." GitHub, 2023. [Benchmark study comparing WebSocket, WebRTC, and WebTransport under packet loss]
+
+12. **Cloudflare.** "Media over QUIC." Cloudflare Blog, 2024. [MoQ protocol and WebTransport deployment]
+
+13. **Ably.** "Can WebTransport Replace WebSockets?" Ably Blog, 2024. [WebTransport adoption analysis and fallback strategies]
+
 ---
 
 ## Chapter 5: Caching Strategies
