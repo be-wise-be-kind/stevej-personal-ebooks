@@ -1,6 +1,6 @@
 # Chapter 6: Streaming Inference Pipelines
 
-![Chapter 6 Opener](../assets/ch06-opener.html)
+<!-- DIAGRAM: ch06-opener.html - Chapter 6 Opener -->
 
 \newpage
 
@@ -15,9 +15,9 @@
 ### The Pipeline Abstraction
 
 - A streaming inference pipeline is a directed graph of processing stages, each with its own latency budget and failure modes
-- The fundamental tension: transport layers deal in bytes and frames, inference layers deal in tensors and batches -- the pipeline bridges this impedance mismatch
+- The fundamental tension: transport layers deal in bytes and frames, inference layers deal in tensors and batches; the pipeline bridges this impedance mismatch
 - Pipeline stages: network receive -> codec decode -> VAD -> chunking -> batching -> GPU inference -> post-processing -> response encoding -> network send
-- Each stage can be synchronous or asynchronous, CPU-bound or GPU-bound -- the pipeline scheduler must account for both
+- Each stage can be synchronous or asynchronous, CPU-bound or GPU-bound; the pipeline scheduler must account for both
 
 ### Where Chapters 4-5 End and Chapter 6 Begins
 
@@ -31,7 +31,7 @@
 
 ### Queue Architecture for Streaming Workloads
 
-- Streaming inference cannot use simple FIFO queues -- chunks from the same stream must maintain ordering while chunks from different streams can be interleaved
+- Streaming inference cannot use simple FIFO queues; chunks from the same stream must maintain ordering while chunks from different streams can be interleaved
 - Per-stream ordering guarantee: chunks within a single audio stream are processed sequentially; parallelism happens across streams
 - Queue depth as a load signal: when queue depth exceeds a threshold, the system should begin shedding load rather than accumulating unbounded latency
 - Memory-bounded queues: each queued audio chunk consumes memory; unbounded queues during load spikes can cause OOM before the GPU becomes the bottleneck
@@ -40,7 +40,7 @@
 
 - Not all streams are equal: paid tiers, real-time vs batch, short utterances vs long-form transcription
 - Priority classes: interactive (sub-300ms SLO), standard (sub-1s SLO), batch (best-effort)
-- Starvation prevention: even low-priority streams must make forward progress -- use weighted fair queuing rather than strict priority
+- Starvation prevention: even low-priority streams must make forward progress; use weighted fair queuing rather than strict priority
 - Priority inversion risk: a long-running low-priority inference on the GPU can block a high-priority request if preemption is not supported
 
 ### Continuous Batching for Streaming
@@ -50,7 +50,7 @@
 - Batch formation for audio: group chunks by model type and configuration (language, sample rate) to enable efficient GPU execution
 - The batch size vs latency tradeoff: larger batches improve GPU utilization but increase queue wait time for individual chunks
 
-![Streaming Inference Pipeline Architecture](../assets/ch06-streaming-pipeline.html)
+<!-- DIAGRAM: ch06-streaming-pipeline.html - Streaming Inference Pipeline Architecture -->
 
 \newpage
 
@@ -65,10 +65,10 @@
 
 ### Incremental Decoding Strategies
 
-- Token-by-token streaming: emit each decoded token as it is produced by the model -- lowest latency, highest message overhead
-- Chunk-based streaming: accumulate tokens until a natural boundary (word, phrase, sentence) and emit as a group -- lower overhead, slightly higher latency
+- Token-by-token streaming: emit each decoded token as it is produced by the model; lowest latency, highest message overhead
+- Chunk-based streaming: accumulate tokens until a natural boundary (word, phrase, sentence) and emit as a group; lower overhead, slightly higher latency
 - Hybrid approach: emit token-by-token for the first few tokens (to show responsiveness), then switch to chunk-based for efficiency
-- Buffering and debouncing: avoid sending updates faster than the client can render -- 50-100ms debounce is common for transcription UIs
+- Buffering and debouncing: avoid sending updates faster than the client can render; 50-100ms debounce is common for transcription UIs
 
 ### Handling Revisions and Corrections
 
@@ -84,23 +84,23 @@
 - Each active stream consumes GPU memory for its model state (KV cache for transformers, hidden states for RNNs/CTC models)
 - The memory budget determines the maximum number of concurrent streams per GPU: total GPU memory / per-stream memory footprint
 - Example: a Whisper-large model with 1.5GB base + ~50MB per active stream context allows roughly 20-30 concurrent streams on an A100 (80GB)
-- Memory fragmentation: streams starting and ending at different times create fragmented GPU memory -- PagedAttention concepts (Chapter 1) help here
+- Memory fragmentation: streams starting and ending at different times create fragmented GPU memory; PagedAttention concepts (Chapter 1) help here
 
 ### Compute Multiplexing
 
-- GPU compute is shared across streams via batching -- more streams in a batch means better utilization but higher per-stream latency
+- GPU compute is shared across streams via batching; more streams in a batch means better utilization but higher per-stream latency
 - The compute budget: total GPU FLOPS / per-chunk inference FLOPS determines maximum sustained throughput
 - CUDA streams for overlapping: use separate CUDA streams to overlap data transfer (CPU-to-GPU) with computation on the previous batch
 - CPU-bound stages (VAD, codec decode, post-processing) should be parallelized on CPU cores to avoid becoming the bottleneck for GPU-bound inference
 
 ### Stream Lifecycle Management
 
-- Stream creation: allocate per-stream state (buffers, sequence counters, model context) -- this allocation must be fast to avoid first-chunk latency spikes
+- Stream creation: allocate per-stream state (buffers, sequence counters, model context); this allocation must be fast to avoid first-chunk latency spikes
 - Stream maintenance: track per-stream metrics (chunks processed, cumulative latency, error count) for SLO monitoring
 - Stream teardown: release GPU memory and buffers promptly on stream close to free resources for new streams
-- Zombie stream detection: streams that stop sending audio but never close the connection -- implement idle timeouts (e.g., 30s of silence) to reclaim resources
+- Zombie stream detection: streams that stop sending audio but never close the connection; implement idle timeouts (e.g., 30s of silence) to reclaim resources
 
-![Concurrent Streams Sharing GPU Resources](../assets/ch06-concurrent-streams.html)
+<!-- DIAGRAM: ch06-concurrent-streams.html - Concurrent Streams Sharing GPU Resources -->
 
 \newpage
 
@@ -108,21 +108,21 @@
 
 ### Load Detection Signals
 
-- Queue depth: the most direct signal -- if chunks are accumulating faster than inference can process them, the system is overloaded
+- Queue depth: the most direct signal; if chunks are accumulating faster than inference can process them, the system is overloaded
 - GPU utilization: sustained >90% utilization with growing queue depth indicates saturation
 - Per-stream latency: if p95 latency exceeds the SLO threshold, the system should proactively shed load before SLO breach
 - Memory pressure: approaching GPU memory limits means new streams cannot be accepted
 
 ### Quality Reduction Strategies
 
-- Lower sample rate: downsample 48kHz to 16kHz before inference -- reduces compute per chunk at the cost of some accuracy
-- Simpler model variant: switch from a large model to a distilled/smaller variant -- e.g., Whisper-large to Whisper-small
+- Lower sample rate: downsample 48kHz to 16kHz before inference; reduces compute per chunk at the cost of some accuracy
+- Simpler model variant: switch from a large model to a distilled/smaller variant; e.g., Whisper-large to Whisper-small
 - Reduced post-processing: skip optional enrichment steps (punctuation restoration, speaker diarization) to reduce pipeline latency
 - Lower interim update frequency: reduce how often interim results are emitted to save compute on partial decoding
 
 ### Request Rejection Strategies
 
-- HTTP 503 with Retry-After header: tell the client exactly when to retry -- prevents thundering herd on recovery
+- HTTP 503 with Retry-After header: tell the client exactly when to retry; prevents thundering herd on recovery
 - Connection admission control: reject new stream connections at the transport layer before they consume any GPU resources
 - Selective rejection by priority: shed batch and standard-tier streams before interactive-tier streams
 - Circuit breaker pattern: if error rate exceeds a threshold, temporarily reject all new streams and drain existing ones
@@ -135,7 +135,7 @@
 - Step 4: Still overloaded? Reject all new streams with 503 + Retry-After, continue serving existing streams
 - Step 5: Memory pressure critical? Begin gracefully closing longest-running low-priority streams
 
-![Degradation Strategy Decision Tree](../assets/ch06-degradation-strategies.html)
+<!-- DIAGRAM: ch06-degradation-strategies.html - Degradation Strategy Decision Tree -->
 
 \newpage
 
@@ -143,8 +143,8 @@
 
 ### Adapting Distributed Tracing for Continuous Streams
 
-- Traditional request/response tracing (one span per request) does not fit streaming -- a single stream may last minutes to hours
-- Per-chunk tracing: create a span for each audio chunk as it passes through the pipeline -- link all chunk spans to a parent stream span
+- Traditional request/response tracing (one span per request) does not fit streaming; a single stream may last minutes to hours
+- Per-chunk tracing: create a span for each audio chunk as it passes through the pipeline; link all chunk spans to a parent stream span
 - The parent stream span captures the entire stream lifecycle (connect, first chunk, last chunk, close) while child spans capture per-chunk processing
 - Span attributes for streaming: `stream.id`, `chunk.sequence_number`, `chunk.duration_ms`, `model.variant`, `batch.size`
 
@@ -153,35 +153,35 @@
 ### Key Latency Breakpoints to Instrument
 
 - Chunk arrival to queue entry: measures transport layer overhead
-- Queue entry to batch formation: measures queue wait time -- the primary indicator of load
+- Queue entry to batch formation: measures queue wait time; the primary indicator of load
 - Batch formation to GPU submission: measures CPU-side batch preparation
-- GPU submission to inference complete: measures model execution time -- varies with batch size and model complexity
+- GPU submission to inference complete: measures model execution time; varies with batch size and model complexity
 - Inference complete to response sent: measures post-processing and response serialization
 - Total chunk-to-response latency: the end-to-end metric clients care about
 
 ### Streaming-Specific Metrics
 
-- Time to first result (TTFR): how long from the first audio chunk arriving to the first interim result being sent -- the "perceived latency" for users
+- Time to first result (TTFR): how long from the first audio chunk arriving to the first interim result being sent; the "perceived latency" for users
 - Interim result freshness: the age of the most recent audio data reflected in the latest interim result
 - Final result delay: time between the speech endpoint and the final result emission
-- Stream setup latency: time from connection establishment to readiness to accept audio -- includes model loading if applicable
-- Jitter: variance in per-chunk processing time -- high jitter causes stuttering in real-time playback scenarios
+- Stream setup latency: time from connection establishment to readiness to accept audio; includes model loading if applicable
+- Jitter: variance in per-chunk processing time; high jitter causes stuttering in real-time playback scenarios
 
 ## Pipeline Composition
 
 ### The Standard Audio Inference Pipeline
 
-- **Stage 1 -- VAD (Voice Activity Detection)**: detect speech segments within the audio stream, skip silence -- reduces unnecessary inference by 30-70% depending on the audio
-- **Stage 2 -- Chunking**: segment continuous audio into inference-sized chunks (typically 1-30 seconds) based on VAD boundaries and maximum chunk length
-- **Stage 3 -- Pre-processing**: resample, normalize volume, apply noise reduction if configured -- CPU-bound, parallelizable
-- **Stage 4 -- Inference**: the GPU-bound core -- run the ML model on the prepared chunk, produce raw output (logits, tokens, embeddings)
-- **Stage 5 -- Post-processing**: decode model output into human-readable form -- apply punctuation restoration, capitalization, formatting, confidence scoring
-- **Stage 6 -- Response streaming**: serialize the result and send it back through the transport layer (WebSocket message, gRPC response, SSE event)
+- **Stage 1; VAD (Voice Activity Detection)**: detect speech segments within the audio stream, skip silence; reduces unnecessary inference by 30-70% depending on the audio
+- **Stage 2; Chunking**: segment continuous audio into inference-sized chunks (typically 1-30 seconds) based on VAD boundaries and maximum chunk length
+- **Stage 3; Pre-processing**: resample, normalize volume, apply noise reduction if configured; CPU-bound, parallelizable
+- **Stage 4; Inference**: the GPU-bound core; run the ML model on the prepared chunk, produce raw output (logits, tokens, embeddings)
+- **Stage 5; Post-processing**: decode model output into human-readable form; apply punctuation restoration, capitalization, formatting, confidence scoring
+- **Stage 6; Response streaming**: serialize the result and send it back through the transport layer (WebSocket message, gRPC response, SSE event)
 
 ### Pipeline Parallelism
 
 - Pipeline stages can overlap: while Stage 4 processes chunk N on the GPU, Stage 1-3 can prepare chunk N+1 on the CPU
-- The pipeline throughput is limited by its slowest stage -- usually GPU inference (Stage 4)
+- The pipeline throughput is limited by its slowest stage; usually GPU inference (Stage 4)
 - Pre-fetching: begin preparing the next chunk before the current inference completes to minimize GPU idle time between batches
 - Pipeline depth: deeper pipelines (more stages) increase total latency but enable better resource utilization through parallelism
 
@@ -189,7 +189,7 @@
 
 - Not all streams need the same pipeline: a simple transcription stream can skip diarization and NER stages
 - Feature flags on the pipeline: client-specified options (e.g., `enable_diarization=true`) add or remove pipeline stages at stream creation time
-- Cost implications: each additional stage increases compute time and cost -- this feeds directly into metering (Chapter 13)
+- Cost implications: each additional stage increases compute time and cost; this feeds directly into metering (Chapter 13)
 - Runtime reconfiguration: some systems allow changing pipeline configuration mid-stream (e.g., enabling punctuation after stream start)
 
 ### Error Handling Across Pipeline Stages
@@ -201,19 +201,19 @@
 
 ## Common Pitfalls
 
-- **Treating streaming as repeated request/response**: streaming pipelines require continuous state management, not stateless per-request processing -- reusing a request/response framework leads to excessive overhead per chunk
+- **Treating streaming as repeated request/response**: streaming pipelines require continuous state management, not stateless per-request processing; reusing a request/response framework leads to excessive overhead per chunk
 - **Unbounded queue growth**: without queue depth limits and backpressure, a load spike causes OOM before the GPU becomes saturated
-- **Ignoring pipeline stage imbalance**: if CPU-bound pre-processing is slower than GPU inference, the GPU sits idle between batches -- profile each stage independently
+- **Ignoring pipeline stage imbalance**: if CPU-bound pre-processing is slower than GPU inference, the GPU sits idle between batches; profile each stage independently
 - **No graceful degradation strategy**: systems that work perfectly at 80% load and crash at 100% load are missing the degradation layer between those points
-- **Over-tracing in production**: per-chunk tracing at full fidelity generates enormous telemetry volume -- use sampling (e.g., trace 1 in 100 streams) for production, full tracing for debugging
+- **Over-tracing in production**: per-chunk tracing at full fidelity generates enormous telemetry volume; use sampling (e.g., trace 1 in 100 streams) for production, full tracing for debugging
 - **Zombie stream accumulation**: streams that stop sending audio but never disconnect slowly consume all available GPU memory and connection slots
 
 ## Summary
 
 - A streaming inference pipeline bridges the transport layer (Chapters 4-5) and the inference layer (Chapters 2-3) through a multi-stage processing graph
 - Request queuing must maintain per-stream ordering while enabling cross-stream parallelism through continuous batching
-- Partial results (interim vs final) are essential for user experience -- the Deepgram/AssemblyAI pattern of streaming interim results with endpoint-triggered finals is the industry standard
-- Concurrent stream management requires careful GPU memory and compute budgeting -- each stream has a per-stream memory footprint that limits concurrency
+- Partial results (interim vs final) are essential for user experience; the Deepgram/AssemblyAI pattern of streaming interim results with endpoint-triggered finals is the industry standard
+- Concurrent stream management requires careful GPU memory and compute budgeting; each stream has a per-stream memory footprint that limits concurrency
 - Graceful degradation follows a hierarchy: quality reduction first (simpler model, lower sample rate), then selective rejection, then full load shedding with 503 + Retry-After
 - End-to-end tracing for streams uses per-chunk spans linked to a parent stream span, with TTFR and jitter as streaming-specific metrics
 - The standard pipeline is VAD -> chunking -> pre-processing -> inference -> post-processing -> response streaming, with pipeline parallelism overlapping CPU and GPU stages
@@ -225,9 +225,9 @@
 
 1. vLLM Documentation (2025). "Continuous Batching and PagedAttention."
 2. SGLang (2025). "RadixAttention for Efficient KV Cache Reuse."
-3. Deepgram (2025). "Streaming API Reference -- Interim and Final Results."
+3. Deepgram (2025). "Streaming API Reference; Interim and Final Results."
 4. AssemblyAI (2025). "Real-Time Streaming Transcription Documentation."
-5. BentoML (2025). "LLM Inference Handbook -- Pipeline Composition."
+5. BentoML (2025). "LLM Inference Handbook; Pipeline Composition."
 6. OpenTelemetry (2025). "Distributed Tracing for Streaming Systems."
 
 ---

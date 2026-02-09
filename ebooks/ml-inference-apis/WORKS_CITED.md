@@ -24,15 +24,43 @@ The following works are referenced across multiple chapters and form the foundat
 
 1. **AssemblyAI** (2025). "The 300ms Rule: Why Latency Makes or Breaks Voice AI." https://www.assemblyai.com/blog/the-300ms-rule
 
-2. **BentoML** (2025). "LLM Inference Handbook — Choosing the Right Framework." https://www.bentoml.com/blog/llm-inference-handbook
+2. **BentoML** (2025). "LLM Inference Handbook: Choosing the Right Framework." https://www.bentoml.com/blog/llm-inference-handbook
 
-3. **Stixor** (2025). "The New LLM Inference Stack 2025: FA-3, FP8 & FP4." https://stixor.com/the-new-llm-inference-stack-2025
+3. **Clarifai** (2025). "Comparing SGLang, vLLM, and TensorRT-LLM with GPT-OSS-120B." https://www.clarifai.com/blog/comparing-sglang-vllm-tensorrt-llm
 
-4. **Clarifai** (2025). "Comparing SGLang, vLLM, and TensorRT-LLM with GPT-OSS-120B." https://www.clarifai.com/blog/comparing-sglang-vllm-tensorrt-llm
+4. **Stixor** (2025). "The New LLM Inference Stack 2025: FA-3, FP8 & FP4." https://stixor.com/the-new-llm-inference-stack-2025
 
-5. **MarkTechPost** (2025). "Comparing Top 6 Inference Runtimes for LLM Serving in 2025." https://www.marktechpost.com/
+5. **NVIDIA** (2025). "Optimizing Inference for Long Context with NVFP4 KV Cache." https://developer.nvidia.com/blog/nvfp4-kv-cache
 
-6. **OpenMeter** (2025). Usage metering documentation. https://openmeter.io
+6. **OpenMeter** (2025). "Real-Time Usage Metering." https://openmeter.io/docs
+
+7. **Deepgram** (2025). "Pricing: Pay-as-you-go." https://deepgram.com/pricing
+
+8. **AssemblyAI** (2025). "Pricing and Feature Add-ons." https://assemblyai.com/pricing
+
+9. **ElevenLabs** (2025). "Pricing: Per-character TTS." https://elevenlabs.io/pricing
+
+10. **OpenAI** (2025). "Realtime API Documentation." https://platform.openai.com/docs/guides/realtime
+
+11. **Google Cloud** (2025). "Cloud Speech-to-Text V2 API Reference." https://cloud.google.com/speech-to-text/v2/docs
+
+12. **Google** (2024). "RAIL Performance Model." https://web.dev/rail
+
+13. **MarkTechPost** (2025). "Comparing Top 6 Inference Runtimes for LLM Serving in 2025." https://www.marktechpost.com/
+
+14. **Dao, T., et al.** (2024). "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision." arXiv preprint.
+
+15. **AWS** (2025). "EC2 On-Demand Instance Pricing." https://aws.amazon.com/ec2/pricing/on-demand
+
+16. **Ankur's Newsletter** (2025). "The Real Price of AI: Pre-Training Vs. Inference Costs." https://ankursnewsletter.com
+
+17. **CloudZero** (2025). "Your Guide To Inference Cost (And Turning It Into Margin Advantage)." https://cloudzero.com/blog/inference-cost
+
+18. **NVIDIA** (2025). "LLM Inference Benchmarking: Performance Tuning with TensorRT-LLM." https://developer.nvidia.com/blog/llm-inference-benchmarking-performance-tuning-with-tensorrt-llm
+
+19. **vLLM** (2025). "Inside vLLM: Anatomy of a High-Throughput LLM Inference System." https://blog.vllm.ai/2025/09/05/anatomy-of-vllm.html
+
+20. **Chen, Y., et al.** (2024). "A Systematic Characterization of LLM Inference on GPUs." arXiv:2512.01644.
 
 ---
 
