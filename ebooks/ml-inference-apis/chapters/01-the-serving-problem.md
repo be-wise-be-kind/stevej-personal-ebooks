@@ -56,7 +56,7 @@ This book uses speech and audio as its primary running example, and for good rea
 
 The period from 2024 through 2026 represents the most rapid expansion of ML inference infrastructure in the history of computing. Large language models that were research curiosities in 2022 are now embedded in production applications serving millions of users daily. Every chatbot, coding assistant, document summarizer, and voice agent runs on inference infrastructure, and the scale of demand has shifted the industry's focus from training to serving.
 
-The economic logic is straightforward: training happens once (or periodically), but serving happens millions of times per day. A model that costs $10 million to train may cost $1 million per month to serve at production scale. Over the model's lifetime, serving costs dwarf training costs, and the efficiency of the serving infrastructure becomes the dominant factor in the business's unit economics. GPU supply constraints have accelerated this focus. When GPU availability is limited, using each GPU efficiently is not optional; it is existential.
+The economic logic is straightforward: training happens once (or periodically), but serving happens millions of times per day. Inference accounts for 80-90% of total compute spending over a model's production lifecycle [Source: Ankur's Newsletter, 2025]. The scale is staggering: OpenAI spent approximately $8.7 billion on Azure inference compute in the first three quarters of 2025, and Anthropic burns roughly $2.7 million per day serving Claude [Source: CloudZero, 2025]. Over a model's lifetime, serving costs dwarf training costs, and the efficiency of the serving infrastructure becomes the dominant factor in the business's unit economics. GPU supply constraints have accelerated this focus. When GPU availability is limited, using each GPU efficiently is not optional; it is existential.
 
 ### The Speech and Audio AI Renaissance
 
@@ -295,6 +295,8 @@ The book is organized into five parts, each building on the foundations laid her
 13. MarkTechPost (2025). "Comparing Top 6 Inference Runtimes for LLM Serving in 2025."
 14. Dao, T. et al. (2024). "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision." arXiv preprint.
 15. AWS (2025). "EC2 On-Demand Instance Pricing." aws.amazon.com/ec2/pricing/on-demand
+16. Ankur's Newsletter (2025). "The Real Price of AI: Pre-Training Vs. Inference Costs." ankursnewsletter.com
+17. CloudZero (2025). "Your Guide To Inference Cost (And Turning It Into Margin Advantage)." cloudzero.com/blog/inference-cost
 
 ---
 
