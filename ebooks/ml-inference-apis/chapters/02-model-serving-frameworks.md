@@ -1,6 +1,6 @@
 # Chapter 2: Model Serving Frameworks
 
-![Chapter 2 Opener](../assets/ch02-opener.html)
+<!-- DIAGRAM: ch02-opener.html - Chapter 2 Opener -->
 
 \newpage
 
@@ -21,7 +21,7 @@
 
 ### Generation 2: Multi-Framework Orchestration
 
-- **Triton Inference Server**: NVIDIA's multi-framework orchestration layer -- supports TensorRT, PyTorch, TensorFlow, ONNX
+- **Triton Inference Server**: NVIDIA's multi-framework orchestration layer; supports TensorRT, PyTorch, TensorFlow, ONNX
   - GPU scheduling, ensemble pipelines, model repository management
   - Often paired with TensorRT-LLM for model execution
 - **KServe**: Kubernetes-native serverless inference
@@ -29,12 +29,12 @@
   - Best fit for organizations heavily invested in Kubernetes
   - Standardized inference protocol across frameworks
 - **BentoML**: Developer-friendly, Python-class based model serving
-  - Works without Kubernetes -- good for startups and small teams
+  - Works without Kubernetes; good for startups and small teams
   - Rapid prototyping to production path
   - Growing LLM support via OpenLLM
 - **Ray Serve**: Distributed AI applications on Ray
   - Flexible composition of models and business logic
-  - Heavier operational footprint -- best when already using Ray ecosystem
+  - Heavier operational footprint; best when already using Ray ecosystem
 
 ### Generation 3: LLM-Optimized Engines
 
@@ -50,7 +50,7 @@
 - **TensorRT-LLM**: NVIDIA's optimized runtime
   - FP8/FP4/INT4 quantization, inflight batching
   - Outperforms SGLang and vLLM on Blackwell (B200) GPUs
-  - Higher setup complexity -- requires NVIDIA-specific toolchain
+  - Higher setup complexity; requires NVIDIA-specific toolchain
   - Best when squeezing maximum performance from NVIDIA hardware
 
 ## Framework Selection Criteria
@@ -80,7 +80,7 @@
 - Moderate: KServe, Triton
 - Highest: TensorRT-LLM (build pipeline), Ray Serve (cluster management)
 
-![Framework Selection Decision Tree](../assets/ch02-framework-decision-tree.html)
+<!-- DIAGRAM: ch02-framework-decision-tree.html - Framework Selection Decision Tree -->
 
 \newpage
 
@@ -88,8 +88,8 @@
 
 ### Model Loading Strategies
 
-- Eager loading: load all models at startup -- predictable but slow cold starts
-- Lazy loading: load on first request -- fast startup but unpredictable first-request latency
+- Eager loading: load all models at startup; predictable but slow cold starts
+- Lazy loading: load on first request; fast startup but unpredictable first-request latency
 - Pre-warming: load models during health check period before accepting traffic
 
 ### Version Management
@@ -109,7 +109,7 @@
 
 ### GPU Memory Management
 
-- A single GPU can host multiple small models -- but memory is the constraint
+- A single GPU can host multiple small models; but memory is the constraint
 - MPS (Multi-Process Service): share a GPU across multiple inference processes
 - MIG (Multi-Instance GPU): hardware-level GPU partitioning on A100/H100
 - When to use which: MPS for lightweight models, MIG for isolation guarantees
@@ -121,7 +121,7 @@
 - Latency implications: each model in the chain adds to total response time
 - Optimization: pipeline parallelism where models process different chunks concurrently
 
-![Multi-Model Serving Architecture](../assets/ch02-multi-model-architecture.html)
+<!-- DIAGRAM: ch02-multi-model-architecture.html - Multi-Model Serving Architecture -->
 
 \newpage
 
@@ -139,16 +139,16 @@
 - Adopt when: standard models, standard protocols, team lacks GPU-level expertise
 - The 80/20 rule: frameworks handle 80% of serving needs; the remaining 20% is your competitive advantage
 
-![Framework Generations Timeline](../assets/ch02-framework-generations.html)
+<!-- DIAGRAM: ch02-framework-generations.html - Framework Generations Timeline -->
 
 \newpage
 
 ## Common Pitfalls
 
-- **Choosing based on benchmarks alone**: benchmarks test specific models on specific hardware -- your workload will differ
+- **Choosing based on benchmarks alone**: benchmarks test specific models on specific hardware; your workload will differ
 - **Over-engineering for scale too early**: start with vLLM or BentoML, migrate to more complex setups when bottlenecks emerge
 - **Ignoring operational cost**: TensorRT-LLM may be 15% faster but requires significantly more operational expertise
-- **Framework lock-in**: design your API layer independently of the serving framework -- swap the engine without changing the contract
+- **Framework lock-in**: design your API layer independently of the serving framework; swap the engine without changing the contract
 - **Neglecting model loading time**: a framework that serves fast but takes 5 minutes to load a model creates terrible auto-scaling behavior
 
 ## Summary
@@ -159,7 +159,7 @@
 - Framework selection depends on: model type, latency requirements, scaling model, operational complexity
 - The hybrid approach (framework for inference + custom layers) is the most common production pattern
 - Model loading, versioning, and hot-swapping are operational concerns that matter as much as raw performance
-- Design your API layer independently of the framework -- you will likely swap engines over time
+- Design your API layer independently of the framework; you will likely swap engines over time
 
 ## References
 
@@ -167,7 +167,7 @@
 
 1. Clarifai (2025). "Comparing SGLang, vLLM, and TensorRT-LLM with GPT-OSS-120B."
 2. MarkTechPost (2025). "Comparing Top 6 Inference Runtimes for LLM Serving in 2025."
-3. BentoML (2025). "LLM Inference Handbook -- Choosing the Right Framework."
+3. BentoML (2025). "LLM Inference Handbook; Choosing the Right Framework."
 4. Northflank (2025). "vLLM vs TensorRT-LLM: Key differences, performance."
 
 ---
