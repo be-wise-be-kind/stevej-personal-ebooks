@@ -14,8 +14,8 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the ml-inferen
 6. **Update this document** after completing each PR
 
 ## Current Status
-**Current PR**: PR1 -- Outline Review (submitted for review)
-**Book State**: All 16 chapter outlines complete, supporting docs created
+**Current PR**: PR2 + PR17 (partial); Preface and Chapter 1 authored as prose
+**Book State**: Preface and Ch 1 in full prose with 4 diagrams; Ch 2-15 as outlines (lint-clean)
 **Target**: Complete ebook with 15 chapters across 5 parts
 
 ## Required Documents Location
@@ -31,15 +31,16 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the ml-inferen
 
 ## Next PR to Work On
 
-### START HERE: PR2 -- Chapter 1: The Serving Problem
+### START HERE: PR3; Chapter 2: Model Serving Frameworks
 
 **Quick Summary**:
-Author Chapter 1 in full prose. This is the most important chapter -- it sets the tone and philosophy for the entire book. See PR_BREAKDOWN.md for detailed instructions.
+Author Chapter 2 in full prose. This chapter covers the three generations of serving frameworks with benchmark data and a decision framework. See PR_BREAKDOWN.md for detailed instructions.
 
 **Pre-flight Checklist**:
 - [x] PR1 outline review approved by Steve
-- [ ] Review research Topics 1, 2, 3, 8 in RESEARCH_SUMMARY.md
-- [ ] Review Chapter 1 outline in chapters/01-the-serving-problem.md
+- [x] PR2 + PR17 (partial): Preface and Chapter 1 authored as prose with 4 diagrams
+- [ ] Review research Topic 1 in RESEARCH_SUMMARY.md
+- [ ] Review Chapter 2 outline in chapters/02-model-serving-frameworks.md
 
 **PR1 Deliverables (completed)**:
 - [x] README.md with full TOC and book metadata
@@ -53,10 +54,10 @@ Author Chapter 1 in full prose. This is the most important chapter -- it sets th
 ---
 
 ## Overall Progress
-**Total Completion**: 6% (1/17 PRs completed)
+**Total Completion**: 18% (3/17 PRs completed)
 
 ```
-[█░░░░░░░░░░░░░░░░░░░] 6% Complete
+[███░░░░░░░░░░░░░░░░░] 18% Complete
 ```
 
 ---
@@ -66,7 +67,7 @@ Author Chapter 1 in full prose. This is the most important chapter -- it sets th
 | PR | Title | Status | Completion | Notes |
 |----|-------|--------|------------|-------|
 | PR1 | Outline Review | 🟢 Complete | 100% | All 16 outlines + supporting docs |
-| PR2 | Chapter 1: The Serving Problem | 🔴 Not Started | 0% | Most important chapter |
+| PR2 | Chapter 1: The Serving Problem | 🟢 Complete | 100% | ~5850 words, 4 diagrams |
 | PR3 | Chapter 2: Model Serving Frameworks | 🔴 Not Started | 0% | |
 | PR4 | Chapter 3: GPU Optimization & Cold Starts | 🔴 Not Started | 0% | |
 | PR5 | Chapter 4: Streaming Audio Architecture | 🔴 Not Started | 0% | |
@@ -81,7 +82,7 @@ Author Chapter 1 in full prose. This is the most important chapter -- it sets th
 | PR14 | Chapter 13: Usage Metering & Billing | 🔴 Not Started | 0% | |
 | PR15 | Chapter 14: Scaling Inference Globally | 🔴 Not Started | 0% | |
 | PR16 | Chapter 15: Putting It All Together | 🔴 Not Started | 0% | |
-| PR17 | Preface & Final Polish | 🔴 Not Started | 0% | Preface written last |
+| PR17 | Preface & Final Polish | 🟡 In Progress | 50% | Preface authored (~1340 words); final polish pending |
 
 ### Status Legend
 - 🔴 Not Started
@@ -95,8 +96,8 @@ Author Chapter 1 in full prose. This is the most important chapter -- it sets th
 
 | Ch | Title | Research | Outline | Draft | Review | Diagrams | Final |
 |----|-------|----------|---------|-------|--------|----------|-------|
-| 00 | Preface | - | ✅ | ⬜ | ⬜ | - | ⬜ |
-| 01 | The Serving Problem | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 00 | Preface | - | ✅ | ✅ | ⬜ | - | ⬜ |
+| 01 | The Serving Problem | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
 | 02 | Model Serving Frameworks | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 03 | GPU Optimization & Cold Starts | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 04 | Streaming Audio Architecture | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |

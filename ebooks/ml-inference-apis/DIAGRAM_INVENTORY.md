@@ -1,7 +1,7 @@
 # Diagram Inventory
 
 **Total Planned Diagrams**: 60
-**Status**: All diagrams pending -- to be created during chapter authoring PRs
+**Status**: 4 complete (Ch 1), 56 pending
 **Template**: `.ai/templates/html-diagram.html`
 **Quality Guide**: `.ai/howto/evaluating-diagram-quality.md`
 **Location**: `ebooks/ml-inference-apis/assets/`
@@ -12,10 +12,10 @@
 
 | Filename | Description | Status |
 |----------|-------------|--------|
-| ch01-opener.html | Chapter opener illustration -- the serving engineer's role bridging trained models and production APIs | Pending |
-| ch01-latency-breakdown.html | Inference request latency anatomy: network transit, request parsing, queue wait, model loading, GPU compute, post-processing, response serialization, network transit -- with ms annotations at each stage | Pending |
-| ch01-serving-landscape.html | ML inference framework ecosystem map showing three generations (TF Serving/TorchServe, Triton/KServe/BentoML, vLLM/SGLang/TensorRT-LLM) and their relationships | Pending |
-| ch01-innovation-timeline.html | Timeline of key ML inference innovations: PagedAttention, continuous batching, FlashAttention versions, FP8/FP4 quantization, speculative decoding | Pending |
+| ch01-opener.html | Chapter opener illustration; the serving engineer's role bridging trained models and production APIs | Complete |
+| ch01-latency-breakdown.html | Inference request latency anatomy: network transit, queue wait, preprocess, GPU inference, postprocess, network return; with ms annotations at each stage and 300ms threshold | Complete |
+| ch01-serving-landscape.html | ML inference framework ecosystem map showing three generations (TF Serving/TorchServe, Triton/KServe/BentoML, vLLM/SGLang/TensorRT-LLM) with benchmark data | Complete |
+| ch01-innovation-timeline.html | Timeline of key ML inference innovations 2022-2026: FlashAttention, continuous batching, PagedAttention, SGLang, FA-3, FP8/FP4, speculative decoding, Blackwell | Complete |
 
 ---
 
@@ -177,7 +177,7 @@
 
 | Chapter | Diagrams | Status |
 |---------|----------|--------|
-| Ch 1: The Serving Problem | 4 | All Pending |
+| Ch 1: The Serving Problem | 4 | All Complete |
 | Ch 2: Model Serving Frameworks | 4 | All Pending |
 | Ch 3: GPU Optimization & Cold Starts | 5 | All Pending |
 | Ch 4: Streaming Audio Architecture | 4 | All Pending |
@@ -192,7 +192,7 @@
 | Ch 13: Usage Metering & Billing | 4 | All Pending |
 | Ch 14: Scaling Inference Globally | 4 | All Pending |
 | Ch 15: Putting It All Together | 4 | All Pending |
-| **Total** | **60** | **All Pending** |
+| **Total** | **60** | **4 Complete, 56 Pending** |
 
 ---
 

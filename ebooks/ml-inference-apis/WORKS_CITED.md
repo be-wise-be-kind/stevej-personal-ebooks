@@ -24,15 +24,31 @@ The following works are referenced across multiple chapters and form the foundat
 
 1. **AssemblyAI** (2025). "The 300ms Rule: Why Latency Makes or Breaks Voice AI." https://www.assemblyai.com/blog/the-300ms-rule
 
-2. **BentoML** (2025). "LLM Inference Handbook — Choosing the Right Framework." https://www.bentoml.com/blog/llm-inference-handbook
+2. **BentoML** (2025). "LLM Inference Handbook: Choosing the Right Framework." https://www.bentoml.com/blog/llm-inference-handbook
 
-3. **Stixor** (2025). "The New LLM Inference Stack 2025: FA-3, FP8 & FP4." https://stixor.com/the-new-llm-inference-stack-2025
+3. **Clarifai** (2025). "Comparing SGLang, vLLM, and TensorRT-LLM with GPT-OSS-120B." https://www.clarifai.com/blog/comparing-sglang-vllm-tensorrt-llm
 
-4. **Clarifai** (2025). "Comparing SGLang, vLLM, and TensorRT-LLM with GPT-OSS-120B." https://www.clarifai.com/blog/comparing-sglang-vllm-tensorrt-llm
+4. **Stixor** (2025). "The New LLM Inference Stack 2025: FA-3, FP8 & FP4." https://stixor.com/the-new-llm-inference-stack-2025
 
-5. **MarkTechPost** (2025). "Comparing Top 6 Inference Runtimes for LLM Serving in 2025." https://www.marktechpost.com/
+5. **NVIDIA** (2025). "Optimizing Inference for Long Context with NVFP4 KV Cache." https://developer.nvidia.com/blog/nvfp4-kv-cache
 
-6. **OpenMeter** (2025). Usage metering documentation. https://openmeter.io
+6. **OpenMeter** (2025). "Real-Time Usage Metering." https://openmeter.io/docs
+
+7. **Deepgram** (2025). "Pricing: Pay-as-you-go." https://deepgram.com/pricing
+
+8. **AssemblyAI** (2025). "Pricing and Feature Add-ons." https://assemblyai.com/pricing
+
+9. **ElevenLabs** (2025). "Pricing: Per-character TTS." https://elevenlabs.io/pricing
+
+10. **OpenAI** (2025). "Realtime API Documentation." https://platform.openai.com/docs/guides/realtime
+
+11. **Google Cloud** (2025). "Cloud Speech-to-Text V2 API Reference." https://cloud.google.com/speech-to-text/v2/docs
+
+12. **Google** (2024). "RAIL Performance Model." https://web.dev/rail
+
+13. **MarkTechPost** (2025). "Comparing Top 6 Inference Runtimes for LLM Serving in 2025." https://www.marktechpost.com/
+
+14. **Dao, T., et al.** (2024). "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision." arXiv preprint.
 
 ---
 
