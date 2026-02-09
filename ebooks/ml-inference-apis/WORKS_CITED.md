@@ -50,6 +50,18 @@ The following works are referenced across multiple chapters and form the foundat
 
 14. **Dao, T., et al.** (2024). "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision." arXiv preprint.
 
+15. **AWS** (2025). "EC2 On-Demand Instance Pricing." https://aws.amazon.com/ec2/pricing/on-demand
+
+16. **Ankur's Newsletter** (2025). "The Real Price of AI: Pre-Training Vs. Inference Costs." https://ankursnewsletter.com
+
+17. **CloudZero** (2025). "Your Guide To Inference Cost (And Turning It Into Margin Advantage)." https://cloudzero.com/blog/inference-cost
+
+18. **NVIDIA** (2025). "LLM Inference Benchmarking: Performance Tuning with TensorRT-LLM." https://developer.nvidia.com/blog/llm-inference-benchmarking-performance-tuning-with-tensorrt-llm
+
+19. **vLLM** (2025). "Inside vLLM: Anatomy of a High-Throughput LLM Inference System." https://blog.vllm.ai/2025/09/05/anatomy-of-vllm.html
+
+20. **Chen, Y., et al.** (2024). "A Systematic Characterization of LLM Inference on GPUs." arXiv:2512.01644.
+
 ---
 
 ## Chapter 2: Model Serving Frameworks

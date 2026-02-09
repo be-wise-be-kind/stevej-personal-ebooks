@@ -103,17 +103,17 @@
                 <rect x="0" y="0" width="345" height="120" rx="8" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
                 <text x="172" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #9a3412; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">GPU Inference Breakdown</text>
 
-                <text x="20" y="48" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #78350f; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">KV cache allocation</text>
-                <text x="325" y="48" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #9a3412; text-anchor: end;" font-family="Liberation Sans, Arial, sans-serif">2-5ms</text>
+                <text x="20" y="48" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #78350f; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">Encode / prefill (process input)</text>
+                <text x="325" y="48" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #9a3412; text-anchor: end;" font-family="Liberation Sans, Arial, sans-serif">varies by input</text>
 
-                <text x="20" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #78350f; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">Attention computation</text>
-                <text x="325" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #9a3412; text-anchor: end;" font-family="Liberation Sans, Arial, sans-serif">30-100ms</text>
+                <text x="20" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #78350f; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">Decode (per output token)</text>
+                <text x="325" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #9a3412; text-anchor: end;" font-family="Liberation Sans, Arial, sans-serif">~5-8ms/tok</text>
 
-                <text x="20" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #78350f; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">Token generation (autoregressive)</text>
-                <text x="325" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #9a3412; text-anchor: end;" font-family="Liberation Sans, Arial, sans-serif">15-80ms</text>
+                <text x="20" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #78350f; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">Scheduling overhead (per step)</text>
+                <text x="325" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #9a3412; text-anchor: end;" font-family="Liberation Sans, Arial, sans-serif">~4ms</text>
 
-                <text x="20" y="108" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #78350f; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">Batch scheduling overhead</text>
-                <text x="325" y="108" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #9a3412; text-anchor: end;" font-family="Liberation Sans, Arial, sans-serif">1-10ms</text>
+                <text x="20" y="108" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #78350f; text-anchor: start;" font-family="Liberation Sans, Arial, sans-serif">~90% of compute is matrix multiplication</text>
+                <text x="325" y="108" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #64748b; text-anchor: end;" font-family="Liberation Sans, Arial, sans-serif">[sourced]</text>
 
                 <!-- Queue Wait detail -->
                 <rect x="375" y="0" width="345" height="120" rx="8" fill="#fefce8" stroke="#fde047" stroke-width="1.5"/>

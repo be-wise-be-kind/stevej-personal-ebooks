@@ -102,7 +102,7 @@ Understanding where milliseconds go in an inference request is essential for opt
 
 **Preprocessing** (5-20ms): audio decoding (if encoded), voice activity detection to identify speech segments, feature extraction, and input normalization. These run on CPU and are typically fast.
 
-**GPU inference** (50-200ms): the model forward pass. This includes KV cache allocation, attention computation, and token generation. For speech-to-text, this includes the acoustic model pass. This is the largest single stage and the focus of GPU optimization efforts.
+**GPU inference** (50-200ms): the model forward pass through all transformer layers, where each layer performs self-attention (reading from and writing to the KV cache) followed by feed-forward computation. For speech-to-text, the encoder forward pass typically dominates. For autoregressive text generation, each output token requires a full forward pass at roughly 5-8ms per token on current hardware [Source: NVIDIA, 2025]. Scheduling overhead between decode iterations adds approximately 4ms per step [Source: vLLM, 2025]. This is the largest single stage and the focus of GPU optimization efforts in Chapter 3.
 
 **Postprocessing** (5-15ms): decoding model output into text, applying punctuation, formatting, and any feature processing (diarization, PII redaction). These run on CPU.
 
@@ -297,6 +297,9 @@ The book is organized into five parts, each building on the foundations laid her
 15. AWS (2025). "EC2 On-Demand Instance Pricing." aws.amazon.com/ec2/pricing/on-demand
 16. Ankur's Newsletter (2025). "The Real Price of AI: Pre-Training Vs. Inference Costs." ankursnewsletter.com
 17. CloudZero (2025). "Your Guide To Inference Cost (And Turning It Into Margin Advantage)." cloudzero.com/blog/inference-cost
+18. NVIDIA (2025). "LLM Inference Benchmarking: Performance Tuning with TensorRT-LLM." developer.nvidia.com/blog/llm-inference-benchmarking-performance-tuning-with-tensorrt-llm
+19. vLLM (2025). "Inside vLLM: Anatomy of a High-Throughput LLM Inference System." blog.vllm.ai/2025/09/05/anatomy-of-vllm.html
+20. Chen, Y. et al. (2024). "A Systematic Characterization of LLM Inference on GPUs." arXiv:2512.01644.
 
 ---
 
