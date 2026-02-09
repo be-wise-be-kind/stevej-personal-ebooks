@@ -26,7 +26,7 @@ This role is underserved in technical literature. Most ML books focus on trainin
 
 Five characteristics make ML inference serving fundamentally different from traditional API development.
 
-**GPU costs are high and unforgiving.** Inference-grade GPU instances cost $2-8 per hour depending on the GPU class and cloud provider. An H100 instance on AWS runs approximately $5.50 per hour; an A100 is roughly $3.50 per hour. Unlike CPU-based web servers that cost cents per hour, leaving a GPU idle for even a few hours represents meaningful waste. Naive serving, where each request gets exclusive access to a GPU, wastes 90% or more of available compute because the GPU sits idle between requests [Source: BentoML, 2025]. The economic pressure to maximize GPU utilization is constant and shapes every architectural decision.
+**GPU costs are high and unforgiving.** Inference-grade GPU instances range from about $1 per hour for a single NVIDIA L4 to over $55 per hour for an 8xH100 instance. On AWS, a p5.48xlarge (8x H100) runs approximately $55 per hour on-demand, and a p4d.24xlarge (8x A100) runs approximately $27 per hour [Source: AWS, 2025]. Even single-GPU inference instances like the g5.xlarge (A10G) cost $1.24 per hour. Unlike CPU-based web servers that cost cents per hour, leaving a GPU idle for even a few hours represents meaningful waste. Naive serving, where each request gets exclusive access to a GPU, wastes 90% or more of available compute because the GPU sits idle between requests [Source: BentoML, 2025]. The economic pressure to maximize GPU utilization is constant and shapes every architectural decision.
 
 **Latency budgets are tight.** Real-time applications demand sub-second responses, but model inference is inherently compute-heavy. A single forward pass through a large language model can take 50-200 milliseconds of GPU time, and that is before accounting for network transit, queue wait, preprocessing, and postprocessing. For voice AI applications, the total end-to-end latency budget is 300 milliseconds [Source: AssemblyAI, 2025]. Every stage in the pipeline must be optimized to fit within this budget, and a single slow component can blow it entirely.
 
@@ -86,7 +86,7 @@ This book focuses primarily on real-time and streaming inference, with batch as 
 
 ### GPU Utilization and Cost
 
-The economic reality of GPU inference is stark. A single H100 GPU instance costs approximately $5.50 per hour. If that GPU serves one request at a time and each request takes 100 milliseconds, the GPU is idle for over 99% of its time at low traffic levels. Even at moderate traffic (100 requests per second), a one-request-at-a-time approach leaves substantial GPU capacity on the table.
+The economic reality of GPU inference is stark. An 8xH100 instance costs approximately $55 per hour on-demand; even a single-GPU A10G instance costs $1.24 per hour [Source: AWS, 2025]. If a GPU serves one request at a time and each request takes 100 milliseconds, the GPU is idle for over 99% of its time at low traffic levels. Even at moderate traffic (100 requests per second), a one-request-at-a-time approach leaves substantial GPU capacity on the table.
 
 Dynamic batching addresses part of the problem by collecting multiple requests and processing them together in a single GPU forward pass. Continuous batching goes further: rather than waiting for a fixed batch to fill, it dynamically inserts new requests into an in-progress batch and evicts completed ones, achieving 2-4x throughput improvement over static batching at equivalent latency [Source: BentoML, 2025]. This technique, which we cover in depth shortly, has become table stakes for production LLM serving.
 
@@ -206,7 +206,7 @@ Cold starts create a different kind of experience degradation. A user whose firs
 
 ### Cost
 
-GPU inference is frequently the largest infrastructure line item for AI-powered companies. A fleet of 20 H100 instances running continuously costs approximately $80,000 per month in cloud compute alone. Optimized serving, through continuous batching, quantization, right-sized GPU selection, and scheduled scaling, can reduce this cost by 2-5x without degrading the user experience.
+GPU inference is frequently the largest infrastructure line item for AI-powered companies. A fleet of just four 8xH100 instances (p5.48xlarge) running continuously costs over $160,000 per month in cloud compute alone [Source: AWS, 2025]. Optimized serving, through continuous batching, quantization, right-sized GPU selection, and scheduled scaling, can reduce this cost by 2-5x without degrading the user experience.
 
 Billing model choices also affect unit economics. Per-second billing (used by Deepgram and AssemblyAI) charges for exact audio duration, while per-block billing (AWS Transcribe's 15-second blocks) charges for the full block even when the utterance is shorter. For workloads with many short utterances (voice assistants, IVR systems), per-block billing can overcharge by up to 36% compared to per-second billing. These are not minor differences; at scale, they determine whether the service's margins are positive or negative.
 
@@ -294,6 +294,7 @@ The book is organized into five parts, each building on the foundations laid her
 12. Google (2024). "RAIL Performance Model." web.dev/rail
 13. MarkTechPost (2025). "Comparing Top 6 Inference Runtimes for LLM Serving in 2025."
 14. Dao, T. et al. (2024). "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision." arXiv preprint.
+15. AWS (2025). "EC2 On-Demand Instance Pricing." aws.amazon.com/ec2/pricing/on-demand
 
 ---
 
