@@ -32,18 +32,20 @@ This is a companion to "Before the 3 AM Alert: What Every Developer Should Know 
 ### Part III: API Design
 
 7. [Designing ML-Facing APIs](chapters/07-designing-ml-apis.md)
-8. [Usage Metering & Billing](chapters/08-usage-metering-billing.md)
+8. [Streaming Response Contracts](chapters/08-streaming-response-contracts.md)
+9. [API Versioning & Developer Experience](chapters/09-api-versioning-dx.md)
 
 ### Part IV: Enterprise
 
-9. [Security for Audio ML APIs](chapters/09-security-audio-ml.md)
-10. [Compliance & Data Governance](chapters/10-compliance-data-governance.md)
-11. [SLOs for Streaming ML Systems](chapters/11-slos-streaming-ml.md)
+10. [Security for Audio ML APIs](chapters/10-security-audio-ml.md)
+11. [Compliance & Data Governance](chapters/11-compliance-data-governance.md)
+12. [SLOs for Streaming ML Systems](chapters/12-slos-streaming-ml.md)
+13. [Usage Metering & Billing](chapters/13-usage-metering-billing.md)
 
 ### Part V: Scale
 
-12. [Scaling Inference Globally](chapters/12-scaling-inference-globally.md)
-13. [Putting It All Together](chapters/13-putting-it-all-together.md)
+14. [Scaling Inference Globally](chapters/14-scaling-inference-globally.md)
+15. [Putting It All Together](chapters/15-putting-it-all-together.md)
 
 ## Prerequisites
 
