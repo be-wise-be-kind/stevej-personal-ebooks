@@ -47,6 +47,10 @@ This is a companion to "Before the 3 AM Alert: What Every Developer Should Know 
 14. [Scaling Inference Globally](chapters/14-scaling-inference-globally.md)
 15. [Putting It All Together](chapters/15-putting-it-all-together.md)
 
+### Appendices
+
+- [Appendix A: ML Inference for API Engineers](chapters/16-appendix-ml-inference-primer.md)
+
 ## Prerequisites
 
 - Experience building backend APIs in at least one language

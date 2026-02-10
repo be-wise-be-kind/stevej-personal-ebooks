@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Where the Milliseconds Go</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 680" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <marker id="arrowDown" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto">
+                    <polygon points="0 0, 6 2.5, 0 5" fill="#94a3b8"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="35" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Where the Milliseconds Go</text>
+            <text x="450" y="55" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">Server-side latency breakdown: traditional API vs ML inference API (excludes network RTT)</text>
+
+            <!-- Divider -->
+            <line x1="450" y1="70" x2="450" y2="600" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="6,4"/>
+
+            <!-- === LEFT: Traditional API === -->
+            <text x="210" y="90" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1e40af; text-anchor: middle;">Traditional API</text>
+            <text x="210" y="106" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">REST / database-backed service</text>
+
+            <!-- Connection arrows -->
+            <line x1="210" y1="150" x2="210" y2="170" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+            <line x1="210" y1="202" x2="210" y2="222" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+            <line x1="210" y1="254" x2="210" y2="274" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+            <line x1="210" y1="346" x2="210" y2="366" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+            <line x1="210" y1="398" x2="210" y2="418" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+            <line x1="210" y1="450" x2="210" y2="474" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+
+            <!-- Stage 1: Network In (y=120, h=30) -->
+            <rect x="110" y="120" width="200" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+            <text x="160" y="140" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #1e40af;">Network In</text>
+            <text x="290" y="140" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #3b82f6; text-anchor: end;">2ms</text>
+
+            <!-- Stage 2: Routing (y=172, h=30) -->
+            <rect x="110" y="172" width="200" height="30" rx="6" fill="#e0e7ff" stroke="#a5b4fc" stroke-width="1.5"/>
+            <text x="160" y="192" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #3730a3;">Routing</text>
+            <text x="290" y="192" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #4f46e5; text-anchor: end;">1ms</text>
+
+            <!-- Stage 3: Auth (y=224, h=30) -->
+            <rect x="110" y="224" width="200" height="30" rx="6" fill="#c7d2fe" stroke="#818cf8" stroke-width="1.5"/>
+            <text x="160" y="244" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #3730a3;">Auth</text>
+            <text x="290" y="244" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #4f46e5; text-anchor: end;">5ms</text>
+
+            <!-- Stage 4: DB Query (y=276, h=70) -->
+            <rect x="110" y="276" width="200" height="70" rx="6" fill="#bfdbfe" stroke="#60a5fa" stroke-width="2"/>
+            <text x="160" y="306" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #1e40af;">DB Query</text>
+            <text x="290" y="306" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #2563eb; text-anchor: end;">50ms</text>
+            <text x="210" y="326" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #3b82f6; text-anchor: middle;">(dominant cost)</text>
+
+            <!-- Stage 5: Serialize (y=368, h=30) -->
+            <rect x="110" y="368" width="200" height="30" rx="6" fill="#e0e7ff" stroke="#a5b4fc" stroke-width="1.5"/>
+            <text x="160" y="388" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #3730a3;">Serialize</text>
+            <text x="290" y="388" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #4f46e5; text-anchor: end;">2ms</text>
+
+            <!-- Stage 6: Network Out (y=420, h=30) -->
+            <rect x="110" y="420" width="200" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+            <text x="160" y="440" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #1e40af;">Network Out</text>
+            <text x="290" y="440" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #3b82f6; text-anchor: end;">2ms</text>
+
+            <!-- Total for Traditional (y=476, h=36) -->
+            <rect x="110" y="476" width="200" height="36" rx="8" fill="#1e3a5f"/>
+            <text x="210" y="491" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #93c5fd; text-anchor: middle;">TOTAL</text>
+            <text x="210" y="506" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #ffffff; text-anchor: middle;">~62ms</text>
+
+            <!-- === RIGHT: ML Inference API === -->
+            <text x="680" y="90" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #7c3aed; text-anchor: middle;">ML Inference API</text>
+            <text x="680" y="106" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">GPU-accelerated model serving</text>
+
+            <!-- Connection arrows -->
+            <line x1="680" y1="150" x2="680" y2="170" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+            <line x1="680" y1="207" x2="680" y2="227" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+            <line x1="680" y1="259" x2="680" y2="279" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+            <line x1="680" y1="401" x2="680" y2="421" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+            <line x1="680" y1="458" x2="680" y2="478" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+            <line x1="680" y1="510" x2="680" y2="530" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+
+            <!-- Stage 1: Network In (y=120, h=30) -->
+            <rect x="580" y="120" width="200" height="30" rx="6" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1.5"/>
+            <text x="630" y="140" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #5b21b6;">Network In</text>
+            <text x="760" y="140" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #7c3aed; text-anchor: end;">2ms</text>
+
+            <!-- Stage 2: Queue Wait (y=172, h=35) -->
+            <rect x="580" y="172" width="200" height="35" rx="6" fill="#fef3c7" stroke="#fcd34d" stroke-width="1.5"/>
+            <text x="630" y="194" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #92400e;">Queue Wait</text>
+            <text x="760" y="194" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #b45309; text-anchor: end;">10-50ms</text>
+
+            <!-- Stage 3: Preprocess (y=229, h=30) -->
+            <rect x="580" y="229" width="200" height="30" rx="6" fill="#e0e7ff" stroke="#a5b4fc" stroke-width="1.5"/>
+            <text x="630" y="249" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #3730a3;">Preprocess</text>
+            <text x="760" y="249" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #4f46e5; text-anchor: end;">5ms</text>
+
+            <!-- Stage 4: GPU Inference (y=281, h=120) -->
+            <rect x="580" y="281" width="200" height="120" rx="6" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2.5"/>
+            <text x="680" y="315" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #5b21b6; text-anchor: middle;">GPU Inference</text>
+            <text x="680" y="333" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #7c3aed; text-anchor: middle;">Prefill + Decode</text>
+            <text x="680" y="355" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #6d28d9; text-anchor: middle;">50-200ms</text>
+            <text x="680" y="375" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #8b5cf6; text-anchor: middle;">(dominant cost)</text>
+
+            <!-- 300ms threshold line -->
+            <line x1="560" y1="360" x2="800" y2="360" stroke="#dc2626" stroke-width="2" stroke-dasharray="8,4"/>
+            <text x="810" y="357" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 700; fill: #dc2626; text-anchor: start;">300ms voice</text>
+            <text x="810" y="369" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 700; fill: #dc2626; text-anchor: start;">AI threshold</text>
+
+            <!-- Stage 5: Decode (y=423, h=35) -->
+            <rect x="580" y="423" width="200" height="35" rx="6" fill="#faf5ff" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text x="630" y="445" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #7e22ce;">Decode</text>
+            <text x="760" y="445" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #9333ea; text-anchor: end;">variable</text>
+
+            <!-- Stage 6: Postprocess (y=480, h=30) -->
+            <rect x="580" y="480" width="200" height="30" rx="6" fill="#e0e7ff" stroke="#a5b4fc" stroke-width="1.5"/>
+            <text x="630" y="500" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #3730a3;">Postprocess</text>
+            <text x="760" y="500" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #4f46e5; text-anchor: end;">5ms</text>
+
+            <!-- Stage 7: Network Out (y=532, h=30) -->
+            <rect x="580" y="532" width="200" height="30" rx="6" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1.5"/>
+            <text x="630" y="552" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #5b21b6;">Network Out</text>
+            <text x="760" y="552" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #7c3aed; text-anchor: end;">2ms</text>
+
+            <!-- Total for ML Inference (y=584, h=36) -->
+            <rect x="580" y="584" width="200" height="36" rx="8" fill="#4c1d95"/>
+            <text x="680" y="599" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #c4b5fd; text-anchor: middle;">TOTAL</text>
+            <text x="680" y="614" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #ffffff; text-anchor: middle;">80-300ms+</text>
+
+            <!-- Bottom annotation -->
+            <g transform="translate(40, 640)">
+                <rect x="0" y="0" width="820" height="22" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="410" y="15" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle; font-style: italic;">GPU inference is 50-200ms vs 50ms DB query -- similar magnitude, but with higher variance and harder-to-optimize bottlenecks</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

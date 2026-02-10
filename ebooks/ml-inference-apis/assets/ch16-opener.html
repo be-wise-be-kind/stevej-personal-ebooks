@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Inference for API Engineers</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 550" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <marker id="arrowGray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #64748b;"/>
+                </marker>
+                <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #16a34a;"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">ML Inference for API Engineers</text>
+            <text x="450" y="54" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">The restaurant kitchen metaphor: from orders in to dishes out</text>
+
+            <!-- === CONNECTION LINES (drawn first for z-order) === -->
+            <!-- Orders In arrows -->
+            <line x1="165" y1="170" x2="230" y2="170" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+            <line x1="165" y1="220" x2="230" y2="220" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+            <line x1="165" y1="270" x2="230" y2="270" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+            <!-- Dishes Out arrows -->
+            <line x1="650" y1="170" x2="730" y2="170" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <line x1="650" y1="220" x2="730" y2="220" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <line x1="650" y1="270" x2="730" y2="270" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+            <!-- Internal kitchen flow arrows -->
+            <line x1="360" y1="155" x2="410" y2="155" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <line x1="360" y1="215" x2="410" y2="215" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <line x1="360" y1="275" x2="410" y2="275" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <line x1="540" y1="215" x2="570" y2="215" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+            <!-- === LEFT SIDE: Orders In === -->
+            <g transform="translate(30, 80)">
+                <rect x="0" y="0" width="135" height="32" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="68" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #92400e; text-anchor: middle;">ORDERS IN</text>
+
+                <rect x="10" y="50" width="115" height="36" rx="5" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
+                <text x="68" y="65" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #92400e; text-anchor: middle;">POST /transcribe</text>
+                <text x="68" y="78" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #b45309; text-anchor: middle;">{audio_data}</text>
+
+                <rect x="10" y="100" width="115" height="36" rx="5" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
+                <text x="68" y="115" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #92400e; text-anchor: middle;">POST /generate</text>
+                <text x="68" y="128" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #b45309; text-anchor: middle;">{prompt}</text>
+
+                <rect x="10" y="150" width="115" height="36" rx="5" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
+                <text x="68" y="165" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #92400e; text-anchor: middle;">POST /classify</text>
+                <text x="68" y="178" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #b45309; text-anchor: middle;">{image}</text>
+            </g>
+
+            <!-- === CENTER: Kitchen === -->
+            <rect x="230" y="80" width="440" height="260" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6,4"/>
+            <text x="450" y="102" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #475569; text-anchor: middle;">THE KITCHEN (Inference Server)</text>
+
+            <!-- Prep Area -->
+            <rect x="250" y="120" width="100" height="80" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+            <text x="300" y="148" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #1e40af; text-anchor: middle;">Prep Area</text>
+            <text x="300" y="166" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #3b82f6; text-anchor: middle;">Tokenize</text>
+            <text x="300" y="180" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #3b82f6; text-anchor: middle;">Resize</text>
+
+            <!-- Prep Area lower -->
+            <rect x="250" y="215" width="100" height="55" rx="6" fill="#faf5ff" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="300" y="238" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #6d28d9; text-anchor: middle;">Recipe Book</text>
+            <text x="300" y="258" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #7c3aed; text-anchor: middle;">Model Weights</text>
+
+            <!-- Cooking Stations (GPU Cores) -->
+            <rect x="410" y="120" width="130" height="80" rx="6" fill="#fef2f2" stroke="#f87171" stroke-width="1.5"/>
+            <text x="475" y="146" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #991b1b; text-anchor: middle;">Cooking Stations</text>
+            <text x="475" y="163" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #dc2626; text-anchor: middle;">GPU Cores</text>
+            <!-- Mini cooking icons (5 blocks, 16px wide, 5px gap, centered in 130px box starting at x=410) -->
+            <rect x="430" y="172" width="16" height="16" rx="2" fill="#fca5a5" stroke="#f87171" stroke-width="1"/>
+            <rect x="451" y="172" width="16" height="16" rx="2" fill="#fca5a5" stroke="#f87171" stroke-width="1"/>
+            <rect x="472" y="172" width="16" height="16" rx="2" fill="#fca5a5" stroke="#f87171" stroke-width="1"/>
+            <rect x="493" y="172" width="16" height="16" rx="2" fill="#fca5a5" stroke="#f87171" stroke-width="1"/>
+            <rect x="514" y="172" width="16" height="16" rx="2" fill="#fca5a5" stroke="#f87171" stroke-width="1"/>
+
+            <!-- Counter Space (VRAM) -->
+            <rect x="410" y="215" width="130" height="55" rx="6" fill="#ecfdf5" stroke="#34d399" stroke-width="1.5"/>
+            <text x="475" y="238" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #065f46; text-anchor: middle;">Counter Space</text>
+            <text x="475" y="258" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle;">GPU VRAM</text>
+
+            <!-- Output staging -->
+            <rect x="575" y="150" width="75" height="100" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+            <text x="612" y="193" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #166534; text-anchor: middle;">Plating</text>
+            <text x="612" y="208" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #16a34a; text-anchor: middle;">Post-</text>
+            <text x="612" y="221" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #16a34a; text-anchor: middle;">process</text>
+
+            <!-- === RIGHT SIDE: Dishes Out === -->
+            <g transform="translate(730, 80)">
+                <rect x="0" y="0" width="135" height="32" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+                <text x="68" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #166534; text-anchor: middle;">DISHES OUT</text>
+
+                <rect x="10" y="50" width="115" height="36" rx="5" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+                <text x="68" y="65" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #166534; text-anchor: middle;">200 OK</text>
+                <text x="68" y="78" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #15803d; text-anchor: middle;">{transcript}</text>
+
+                <rect x="10" y="100" width="115" height="36" rx="5" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+                <text x="68" y="115" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #166534; text-anchor: middle;">200 OK</text>
+                <text x="68" y="128" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #15803d; text-anchor: middle;">{completion}</text>
+
+                <rect x="10" y="150" width="115" height="36" rx="5" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+                <text x="68" y="165" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #166534; text-anchor: middle;">200 OK</text>
+                <text x="68" y="178" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #15803d; text-anchor: middle;">{label, score}</text>
+            </g>
+
+            <!-- === BOTTOM: Legend mapping kitchen terms to ML terms === -->
+            <g transform="translate(30, 370)">
+                <line x1="0" y1="0" x2="840" y2="0" stroke="#e2e8f0" stroke-width="1.5"/>
+
+                <text x="420" y="30" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #475569; text-anchor: middle;">KITCHEN-TO-ML GLOSSARY</text>
+
+                <!-- Row 1 -->
+                <rect x="0" y="48" width="190" height="52" rx="6" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
+                <text x="95" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #92400e; text-anchor: middle;">Orders In</text>
+                <text x="95" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #b45309; text-anchor: middle;">API Requests (input data)</text>
+
+                <rect x="218" y="48" width="190" height="52" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+                <text x="313" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #1e40af; text-anchor: middle;">Prep Area</text>
+                <text x="313" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #3b82f6; text-anchor: middle;">Preprocessing / Tokenization</text>
+
+                <rect x="436" y="48" width="190" height="52" rx="6" fill="#faf5ff" stroke="#a78bfa" stroke-width="1"/>
+                <text x="531" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #6d28d9; text-anchor: middle;">Recipe Book</text>
+                <text x="531" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #7c3aed; text-anchor: middle;">Model Weights (parameters)</text>
+
+                <rect x="654" y="48" width="190" height="52" rx="6" fill="#fef2f2" stroke="#f87171" stroke-width="1"/>
+                <text x="749" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #991b1b; text-anchor: middle;">Cooking Stations</text>
+                <text x="749" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #dc2626; text-anchor: middle;">GPU Cores (compute)</text>
+
+                <!-- Row 2 -->
+                <rect x="0" y="115" width="190" height="52" rx="6" fill="#ecfdf5" stroke="#34d399" stroke-width="1"/>
+                <text x="95" y="135" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #065f46; text-anchor: middle;">Counter Space</text>
+                <text x="95" y="155" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle;">GPU Memory (VRAM)</text>
+
+                <rect x="218" y="115" width="190" height="52" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+                <text x="313" y="135" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #166534; text-anchor: middle;">Plating</text>
+                <text x="313" y="155" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #16a34a; text-anchor: middle;">Postprocessing / Decoding</text>
+
+                <rect x="436" y="115" width="190" height="52" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1"/>
+                <text x="531" y="135" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #166534; text-anchor: middle;">Dishes Out</text>
+                <text x="531" y="155" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #15803d; text-anchor: middle;">API Responses (output)</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

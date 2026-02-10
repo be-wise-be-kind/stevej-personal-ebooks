@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batching: From Taxi to Bus</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 650" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="reqA" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="reqB" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="reqC" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="reqD" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#d97706;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#fbbf24;stop-opacity:1" />
+                </linearGradient>
+                <pattern id="idlePattern" patternUnits="userSpaceOnUse" width="6" height="6">
+                    <path d="M0,6 L6,0" stroke="#e2e8f0" stroke-width="1" fill="none"/>
+                </pattern>
+                <pattern id="wasteHatch" patternUnits="userSpaceOnUse" width="6" height="6">
+                    <path d="M0,6 L6,0" stroke="#fca5a5" stroke-width="1" fill="none"/>
+                </pattern>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="35" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Batching: From Taxi to Bus</text>
+            <text x="450" y="55" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">How three batching strategies handle four requests of varying length</text>
+
+            <!-- ============================================ -->
+            <!-- PANEL 1: STATIC BATCHING -->
+            <!-- ============================================ -->
+            <rect x="20" y="70" width="860" height="170" rx="8" fill="#fafafa" stroke="#e2e8f0" stroke-width="1"/>
+            <text x="40" y="92" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #dc2626;">Static Batching</text>
+            <text x="250" y="92" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8;">Wait for batch to fill, process all together, all complete together</text>
+
+            <!-- Time axis -->
+            <line x1="120" y1="222" x2="840" y2="222" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="120" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">0ms</text>
+            <text x="280" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">50ms</text>
+            <text x="550" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">150ms</text>
+            <text x="750" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">250ms</text>
+
+            <!-- Request lane labels -->
+            <text x="110" y="115" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">Req A</text>
+            <text x="110" y="140" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">Req B</text>
+            <text x="110" y="165" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">Req C</text>
+            <text x="110" y="190" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">Req D</text>
+
+            <!-- Arrival markers (staggered) -->
+            <circle cx="130" cy="112" r="3" fill="#3b82f6"/>
+            <circle cx="155" cy="137" r="3" fill="#8b5cf6"/>
+            <circle cx="200" cy="162" r="3" fill="#059669"/>
+            <circle cx="240" cy="187" r="3" fill="#d97706"/>
+
+            <!-- GPU idle during collection -->
+            <rect x="130" y="105" width="150" height="20" rx="3" fill="url(#idlePattern)" stroke="#cbd5e1" stroke-width="0.5"/>
+            <rect x="155" y="130" width="125" height="20" rx="3" fill="url(#idlePattern)" stroke="#cbd5e1" stroke-width="0.5"/>
+            <rect x="200" y="155" width="80" height="20" rx="3" fill="url(#idlePattern)" stroke="#cbd5e1" stroke-width="0.5"/>
+
+            <!-- Batch start line -->
+            <line x1="280" y1="100" x2="280" y2="210" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text x="285" y="100" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #dc2626;">batch starts</text>
+
+            <!-- Processing blocks (all same end) -->
+            <rect x="280" y="105" width="100" height="20" rx="3" fill="url(#reqA)"/>
+            <text x="330" y="119" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">A (short)</text>
+            <rect x="380" y="105" width="370" height="20" rx="3" fill="url(#wasteHatch)" stroke="#fca5a5" stroke-width="0.5"/>
+
+            <rect x="280" y="130" width="200" height="20" rx="3" fill="url(#reqB)"/>
+            <text x="380" y="144" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">B (medium)</text>
+            <rect x="480" y="130" width="270" height="20" rx="3" fill="url(#wasteHatch)" stroke="#fca5a5" stroke-width="0.5"/>
+
+            <rect x="280" y="155" width="470" height="20" rx="3" fill="url(#reqC)"/>
+            <text x="515" y="169" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">C (long -- sets batch duration)</text>
+
+            <rect x="280" y="180" width="130" height="20" rx="3" fill="url(#reqD)"/>
+            <text x="345" y="194" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">D (short)</text>
+            <rect x="410" y="180" width="340" height="20" rx="3" fill="url(#wasteHatch)" stroke="#fca5a5" stroke-width="0.5"/>
+
+            <!-- All return line -->
+            <line x1="750" y1="100" x2="750" y2="210" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,2"/>
+            <text x="760" y="100" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #dc2626;">all return here</text>
+
+            <!-- Waste callout -->
+            <text x="820" y="155" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #dc2626; text-anchor: middle; font-weight: 600;">Wasted</text>
+            <text x="820" y="167" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #dc2626; text-anchor: middle; font-weight: 600;">GPU time</text>
+
+            <!-- ============================================ -->
+            <!-- PANEL 2: DYNAMIC BATCHING -->
+            <!-- ============================================ -->
+            <rect x="20" y="250" width="860" height="170" rx="8" fill="#fafafa" stroke="#e2e8f0" stroke-width="1"/>
+            <text x="40" y="272" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #d97706;">Dynamic Batching</text>
+            <text x="250" y="272" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8;">Collect within 50ms window, batch as unit. Short still waits for long.</text>
+
+            <!-- Time axis -->
+            <line x1="120" y1="402" x2="840" y2="402" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="120" y="416" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">0ms</text>
+            <text x="200" y="416" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">50ms</text>
+            <text x="450" y="416" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">150ms</text>
+            <text x="700" y="416" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">250ms</text>
+
+            <!-- Request lane labels -->
+            <text x="110" y="295" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">Req A</text>
+            <text x="110" y="320" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">Req B</text>
+            <text x="110" y="345" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">Req C</text>
+            <text x="110" y="370" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">Req D</text>
+
+            <!-- Arrival markers -->
+            <circle cx="130" cy="292" r="3" fill="#3b82f6"/>
+            <circle cx="145" cy="317" r="3" fill="#8b5cf6"/>
+            <circle cx="160" cy="342" r="3" fill="#059669"/>
+            <circle cx="175" cy="367" r="3" fill="#d97706"/>
+
+            <!-- 50ms collection window -->
+            <rect x="120" y="282" width="80" height="105" rx="3" fill="#fef3c7" opacity="0.3" stroke="#fcd34d" stroke-width="1"/>
+            <text x="160" y="280" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #92400e; text-anchor: middle;">50ms window</text>
+
+            <!-- Batch starts at 200 -->
+            <line x1="200" y1="280" x2="200" y2="395" stroke="#d97706" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+            <!-- Processing blocks -->
+            <rect x="200" y="285" width="100" height="20" rx="3" fill="url(#reqA)"/>
+            <text x="250" y="299" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">A (short)</text>
+            <rect x="300" y="285" width="350" height="20" rx="3" fill="url(#wasteHatch)" stroke="#fca5a5" stroke-width="0.5"/>
+
+            <rect x="200" y="310" width="200" height="20" rx="3" fill="url(#reqB)"/>
+            <text x="300" y="324" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">B (medium)</text>
+            <rect x="400" y="310" width="250" height="20" rx="3" fill="url(#wasteHatch)" stroke="#fca5a5" stroke-width="0.5"/>
+
+            <rect x="200" y="335" width="450" height="20" rx="3" fill="url(#reqC)"/>
+            <text x="425" y="349" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">C (long -- sets batch duration)</text>
+
+            <rect x="200" y="360" width="130" height="20" rx="3" fill="url(#reqD)"/>
+            <text x="265" y="374" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">D (short)</text>
+            <rect x="330" y="360" width="320" height="20" rx="3" fill="url(#wasteHatch)" stroke="#fca5a5" stroke-width="0.5"/>
+
+            <!-- All return line -->
+            <line x1="650" y1="280" x2="650" y2="395" stroke="#d97706" stroke-width="2" stroke-dasharray="4,2"/>
+            <text x="660" y="280" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #d97706;">all return here</text>
+
+            <!-- Annotation -->
+            <text x="790" y="335" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #d97706; text-anchor: middle; font-weight: 600;">Less idle</text>
+            <text x="790" y="347" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #d97706; text-anchor: middle; font-weight: 600;">but still</text>
+            <text x="790" y="359" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #d97706; text-anchor: middle; font-weight: 600;">wasteful</text>
+
+            <!-- ============================================ -->
+            <!-- PANEL 3: CONTINUOUS BATCHING -->
+            <!-- ============================================ -->
+            <rect x="20" y="430" width="860" height="170" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+            <text x="40" y="452" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #059669;">Continuous Batching</text>
+            <text x="260" y="452" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669;">Requests enter immediately, leave when done. New requests fill empty slots.</text>
+
+            <!-- "The Breakthrough" badge -->
+            <rect x="730" y="438" width="130" height="22" rx="11" fill="#059669"/>
+            <text x="795" y="453" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 700; fill: #ffffff; text-anchor: middle;">The Breakthrough</text>
+
+            <!-- Time axis -->
+            <line x1="120" y1="582" x2="840" y2="582" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="120" y="596" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">0ms</text>
+            <text x="280" y="596" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">50ms</text>
+            <text x="450" y="596" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">100ms</text>
+            <text x="630" y="596" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">150ms</text>
+
+            <!-- Request lane labels -->
+            <text x="110" y="478" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">Slot 1</text>
+            <text x="110" y="503" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">Slot 2</text>
+            <text x="110" y="528" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">Slot 3</text>
+            <text x="110" y="553" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">Slot 4</text>
+
+            <!-- Req A: starts immediately, short, ends early. New req E fills slot. -->
+            <rect x="130" y="468" width="130" height="20" rx="3" fill="url(#reqA)"/>
+            <text x="195" y="482" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">A (short)</text>
+            <!-- A done marker -->
+            <line x1="260" y1="468" x2="260" y2="488" stroke="#16a34a" stroke-width="2"/>
+            <!-- New Req E fills slot -->
+            <rect x="265" y="468" width="160" height="20" rx="3" fill="#06b6d4"/>
+            <text x="345" y="482" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req E (new)</text>
+            <rect x="430" y="468" width="120" height="20" rx="3" fill="#ec4899"/>
+            <text x="490" y="482" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req H (new)</text>
+
+            <!-- Req B: arrives slightly later, medium length -->
+            <rect x="145" y="493" width="250" height="20" rx="3" fill="url(#reqB)"/>
+            <text x="270" y="507" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">B (medium)</text>
+            <line x1="395" y1="493" x2="395" y2="513" stroke="#16a34a" stroke-width="2"/>
+            <rect x="400" y="493" width="150" height="20" rx="3" fill="#6366f1"/>
+            <text x="475" y="507" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req F (new)</text>
+
+            <!-- Req C: long, occupies full width -->
+            <rect x="160" y="518" width="450" height="20" rx="3" fill="url(#reqC)"/>
+            <text x="385" y="532" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">C (long -- but only blocks its own slot)</text>
+
+            <!-- Req D: arrives later, short -->
+            <rect x="190" y="543" width="130" height="20" rx="3" fill="url(#reqD)"/>
+            <text x="255" y="557" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">D (short)</text>
+            <line x1="320" y1="543" x2="320" y2="563" stroke="#16a34a" stroke-width="2"/>
+            <rect x="325" y="543" width="180" height="20" rx="3" fill="#f43f5e"/>
+            <text x="415" y="557" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req G (new)</text>
+
+            <!-- No wasted GPU annotation -->
+            <text x="780" y="505" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle; font-weight: 700;">No wasted</text>
+            <text x="780" y="519" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle; font-weight: 700;">GPU time</text>
+            <text x="780" y="535" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #16a34a; text-anchor: middle;">2-4x throughput</text>
+
+            <!-- Legend -->
+            <g transform="translate(40, 620)">
+                <rect x="0" y="0" width="820" height="24" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <rect x="15" y="5" width="14" height="14" rx="2" fill="url(#reqA)"/>
+                <text x="37" y="16" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;">Active compute</text>
+                <rect x="140" y="5" width="14" height="14" rx="2" fill="url(#wasteHatch)" stroke="#fca5a5" stroke-width="0.5"/>
+                <text x="162" y="16" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;">Wasted (padding)</text>
+                <rect x="280" y="5" width="14" height="14" rx="2" fill="url(#idlePattern)" stroke="#cbd5e1" stroke-width="0.5"/>
+                <text x="302" y="16" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;">Idle (waiting)</text>
+                <rect x="400" y="5" width="14" height="14" rx="2" fill="#06b6d4"/>
+                <text x="422" y="16" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;">New request fills freed slot</text>
+                <line x1="600" y1="6" x2="600" y2="18" stroke="#16a34a" stroke-width="2"/>
+                <text x="612" y="16" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;">Request completes</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

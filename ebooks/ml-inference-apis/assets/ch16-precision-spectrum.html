@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantization: The Precision Spectrum</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 450" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="fp32Grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#1e3a5f;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="fp16Grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="fp8Grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#0369a1;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0ea5e9;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="int4Grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#b45309;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="qualityBar" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#1e3a5f;stop-opacity:1" />
+                    <stop offset="35%" style="stop-color:#1e40af;stop-opacity:1" />
+                    <stop offset="65%" style="stop-color:#0ea5e9;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+                </linearGradient>
+                <marker id="arrowRight" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="35" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Quantization: The Precision Spectrum</text>
+            <text x="450" y="55" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">How reducing numeric precision trades quality for memory and speed (7B parameter model)</text>
+
+            <!-- Connection arrows drawn BEFORE boxes -->
+            <!-- Arrow FP32 -> FP16 -->
+            <line x1="222" y1="170" x2="258" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowRight)"/>
+            <text x="240" y="155" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle;">2x</text>
+
+            <!-- Arrow FP16 -> FP8 -->
+            <line x1="422" y1="170" x2="458" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowRight)"/>
+            <text x="440" y="155" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle;">2x</text>
+
+            <!-- Arrow FP8 -> INT4 -->
+            <line x1="622" y1="170" x2="658" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowRight)"/>
+            <text x="640" y="155" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle;">2x</text>
+
+            <!-- FP32 Box -->
+            <g transform="translate(60, 80)">
+                <rect x="0" y="0" width="160" height="200" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <!-- Color header -->
+                <rect x="0" y="0" width="160" height="50" rx="10" fill="url(#fp32Grad)"/>
+                <rect x="0" y="30" width="160" height="20" fill="url(#fp32Grad)"/>
+                <text x="80" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #ffffff; text-anchor: middle;">FP32</text>
+                <text x="80" y="44" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #94a3b8; text-anchor: middle;">32 bits per param</text>
+                <!-- Memory -->
+                <text x="80" y="75" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: middle;">Memory for 7B model:</text>
+                <text x="80" y="96" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">28 GB</text>
+                <!-- Memory bar (full width) -->
+                <rect x="15" y="108" width="130" height="12" rx="3" fill="url(#fp32Grad)" opacity="0.7"/>
+                <!-- Info -->
+                <text x="80" y="140" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">Full precision</text>
+                <text x="80" y="155" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">Training reference</text>
+                <!-- Quality note -->
+                <rect x="20" y="168" width="120" height="22" rx="4" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1"/>
+                <text x="80" y="183" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle; font-weight: 600;">Zero quality loss</text>
+            </g>
+
+            <!-- FP16/BF16 Box -->
+            <g transform="translate(260, 80)">
+                <rect x="0" y="0" width="160" height="200" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <rect x="0" y="0" width="160" height="50" rx="10" fill="url(#fp16Grad)"/>
+                <rect x="0" y="30" width="160" height="20" fill="url(#fp16Grad)"/>
+                <text x="80" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #ffffff; text-anchor: middle;">FP16 / BF16</text>
+                <text x="80" y="44" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #bfdbfe; text-anchor: middle;">16 bits per param</text>
+                <text x="80" y="75" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: middle;">Memory for 7B model:</text>
+                <text x="80" y="96" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">14 GB</text>
+                <!-- Memory bar (half width) -->
+                <rect x="15" y="108" width="65" height="12" rx="3" fill="url(#fp16Grad)" opacity="0.7"/>
+                <rect x="80" y="108" width="65" height="12" rx="3" fill="#e2e8f0"/>
+                <text x="80" y="140" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">Standard inference</text>
+                <text x="80" y="155" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">baseline format</text>
+                <rect x="20" y="168" width="120" height="22" rx="4" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1"/>
+                <text x="80" y="183" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle; font-weight: 600;">Negligible loss</text>
+            </g>
+
+            <!-- FP8 Box (highlighted) -->
+            <g transform="translate(460, 80)">
+                <!-- Highlight glow -->
+                <rect x="-6" y="-6" width="172" height="212" rx="13" fill="none" stroke="#059669" stroke-width="2.5"/>
+                <rect x="0" y="0" width="160" height="200" rx="10" fill="#f0fdf4" stroke="#059669" stroke-width="1.5"/>
+                <rect x="0" y="0" width="160" height="50" rx="10" fill="url(#fp8Grad)"/>
+                <rect x="0" y="30" width="160" height="20" fill="url(#fp8Grad)"/>
+                <text x="80" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #ffffff; text-anchor: middle;">FP8</text>
+                <text x="80" y="44" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #bae6fd; text-anchor: middle;">8 bits per param</text>
+                <text x="80" y="75" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: middle;">Memory for 7B model:</text>
+                <text x="80" y="96" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">7 GB</text>
+                <!-- Memory bar (quarter width) -->
+                <rect x="15" y="108" width="33" height="12" rx="3" fill="url(#fp8Grad)" opacity="0.7"/>
+                <rect x="48" y="108" width="97" height="12" rx="3" fill="#e2e8f0"/>
+                <text x="80" y="140" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">H100 / B200 native</text>
+                <text x="80" y="155" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">hardware support</text>
+                <rect x="20" y="168" width="120" height="22" rx="4" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1"/>
+                <text x="80" y="183" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle; font-weight: 600;">Minimal loss</text>
+
+                <!-- Star badge -->
+                <rect x="20" y="-22" width="120" height="20" rx="4" fill="#059669"/>
+                <text x="80" y="-8" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 700; fill: #ffffff; text-anchor: middle;">PRODUCTION STANDARD</text>
+            </g>
+
+            <!-- INT4 Box -->
+            <g transform="translate(660, 80)">
+                <rect x="0" y="0" width="160" height="200" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <rect x="0" y="0" width="160" height="50" rx="10" fill="url(#int4Grad)"/>
+                <rect x="0" y="30" width="160" height="20" fill="url(#int4Grad)"/>
+                <text x="80" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #ffffff; text-anchor: middle;">INT4</text>
+                <text x="80" y="44" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #fef3c7; text-anchor: middle;">4 bits per param</text>
+                <text x="80" y="75" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: middle;">Memory for 7B model:</text>
+                <text x="80" y="96" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">3.5 GB</text>
+                <!-- Memory bar (eighth width) -->
+                <rect x="15" y="108" width="16" height="12" rx="3" fill="url(#int4Grad)" opacity="0.7"/>
+                <rect x="31" y="108" width="114" height="12" rx="3" fill="#e2e8f0"/>
+                <text x="80" y="140" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">Edge deployment</text>
+                <text x="80" y="155" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">consumer GPUs</text>
+                <rect x="20" y="168" width="120" height="22" rx="4" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+                <text x="80" y="183" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #92400e; text-anchor: middle; font-weight: 600;">Some quality loss</text>
+            </g>
+
+            <!-- Memory reduction labels between boxes -->
+            <text x="240" y="195" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle;">2x memory</text>
+            <text x="240" y="206" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle;">reduction</text>
+
+            <text x="440" y="195" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle;">2x memory</text>
+            <text x="440" y="206" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle;">reduction</text>
+
+            <text x="640" y="195" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle;">2x memory</text>
+            <text x="640" y="206" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle;">reduction</text>
+
+            <!-- Quality spectrum bar at bottom -->
+            <rect x="60" y="330" width="780" height="6" rx="3" fill="url(#qualityBar)" opacity="0.6"/>
+            <text x="60" y="356" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #1e3a5f; text-anchor: start; font-weight: 600;">Highest quality</text>
+            <text x="840" y="356" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #b45309; text-anchor: end; font-weight: 600;">Some quality loss</text>
+            <text x="450" y="356" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: middle;">Quality vs. efficiency tradeoff</text>
+
+            <!-- Spectrum arrow markers -->
+            <polygon points="55,333 45,329 45,337" fill="#1e3a5f"/>
+            <polygon points="845,333 855,329 855,337" fill="#b45309"/>
+
+            <!-- Bottom summary -->
+            <rect x="180" y="380" width="540" height="44" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+            <text x="450" y="400" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #475569; text-anchor: middle;">FP32 to INT4 = 8x memory reduction (28 GB to 3.5 GB for a 7B model)</text>
+            <text x="450" y="416" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">Each halving of precision approximately doubles throughput and halves memory</text>
+        </svg>
+    </div>
+</body>
+</html>

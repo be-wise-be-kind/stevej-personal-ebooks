@@ -1,7 +1,7 @@
 # Diagram Inventory
 
-**Total Planned Diagrams**: 60
-**Status**: 4 complete (Ch 1), 56 pending
+**Total Planned Diagrams**: 73
+**Status**: 17 complete (Ch 1 + Appendix A), 56 pending
 **Template**: `.ai/templates/html-diagram.html`
 **Quality Guide**: `.ai/howto/evaluating-diagram-quality.md`
 **Location**: `ebooks/ml-inference-apis/assets/`
@@ -173,6 +173,26 @@
 
 ---
 
+## Appendix A: ML Inference for API Engineers (13 diagrams)
+
+| Filename | Description | Status |
+|----------|-------------|--------|
+| ch16-opener.html | Chapter opener illustration; the restaurant kitchen metaphor mapped to ML inference components | Complete |
+| ch16-model-anatomy.html | Model file anatomy: architecture + weights, with size comparison to API binaries (50 MB–140 GB spectrum) | Complete |
+| ch16-training-vs-inference.html | Training (dataset + cluster + days = weights) vs inference (input + GPU + ms = output); cost dominance | Complete |
+| ch16-cpu-vs-gpu.html | CPU (8–64 cores, 256 GB RAM, $0.10/hr) vs GPU (10,000+ cores, 16–192 GB VRAM, $1.50–7/hr) comparison | Complete |
+| ch16-tokenization.html | Text split into tokens + audio waveform split into frames, with cost/latency/memory implications | Complete |
+| ch16-latency-comparison.html | Inference latency timeline vs traditional API latency timeline (side by side) with 300ms threshold | Complete |
+| ch16-batching-strategies.html | Static vs dynamic vs continuous batching swim lanes, highlighting idle GPU time and throughput | Complete |
+| ch16-kv-cache-memory.html | GPU memory box: model weights (fixed) + KV caches (per-user, growing) + PagedAttention comparison | Complete |
+| ch16-cold-start-timeline.html | Cold start phases (container pull → CUDA init → model load → warmup) vs web server startup | Complete |
+| ch16-precision-spectrum.html | FP32 → FP16 → FP8 → INT4 spectrum with memory, GPU requirement, and quality at each step | Complete |
+| ch16-attention-simplified.html | Token sequence with "looking back" attention lines of varying thickness showing attention weights | Complete |
+| ch16-audio-encoding.html | Same 1s audio as PCM (32 KB) vs Opus (2 KB) vs FLAC (16 KB) vs MP3 (4 KB) | Complete |
+| ch16-vad-pipeline.html | Audio waveform with speech/silence overlay, showing what goes to GPU and 40–60% cost savings | Complete |
+
+---
+
 ## Summary
 
 | Chapter | Diagrams | Status |
@@ -192,7 +212,8 @@
 | Ch 13: Usage Metering & Billing | 4 | All Pending |
 | Ch 14: Scaling Inference Globally | 4 | All Pending |
 | Ch 15: Putting It All Together | 4 | All Pending |
-| **Total** | **60** | **4 Complete, 56 Pending** |
+| Appendix A: ML Inference for API Engineers | 13 | All Complete |
+| **Total** | **73** | **17 Complete, 56 Pending** |
 
 ---
 

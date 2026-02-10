@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Encoding: Same Sound, Different Sizes</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 450" xmlns="http://www.w3.org/2000/svg">
+            <!-- Title -->
+            <text x="450" y="35" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Audio Encoding: Same Sound, Different Sizes</text>
+            <text x="450" y="55" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">How encoding format affects bandwidth for the same audio content</text>
+
+            <!-- Waveform illustration -->
+            <g transform="translate(250, 70)">
+                <rect x="0" y="0" width="400" height="55" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <!-- Simplified waveform using polyline -->
+                <polyline points="20,28 30,15 40,35 50,10 60,40 70,18 80,32 90,12 100,38 110,20 120,30 130,8 140,42 150,16 160,34 170,14 180,36 190,22 200,28 210,12 220,38 230,18 240,32 250,10 260,40 270,16 280,34 290,20 300,30 310,15 320,35 330,22 340,28 350,18 360,32 370,25 380,28" stroke="#3b82f6" stroke-width="2" fill="none"/>
+                <text x="200" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">1 second of speech at 16 kHz sample rate</text>
+            </g>
+
+            <!-- Bar chart area -->
+            <!-- Scale: 0 KB = x:120, 32 KB = x:760 (640px range, 20px per KB) -->
+
+            <!-- PCM bar (32 KB - full width) -->
+            <g transform="translate(0, 145)">
+                <text x="110" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e40af; text-anchor: end;">PCM (raw)</text>
+                <text x="110" y="35" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: end;">Uncompressed</text>
+                <rect x="120" y="5" width="640" height="36" rx="6" fill="#3b82f6" opacity="0.85"/>
+                <text x="440" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #ffffff; text-anchor: middle;">32 KB</text>
+                <text x="770" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e40af; text-anchor: start;">Zero decode latency,</text>
+                <text x="770" y="34" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e40af; text-anchor: start;">highest bandwidth</text>
+            </g>
+
+            <!-- FLAC bar (~16 KB - half width) -->
+            <g transform="translate(0, 210)">
+                <text x="110" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #059669; text-anchor: end;">FLAC</text>
+                <text x="110" y="35" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: end;">Lossless</text>
+                <rect x="120" y="5" width="320" height="36" rx="6" fill="#059669" opacity="0.85"/>
+                <text x="280" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #ffffff; text-anchor: middle;">~16 KB</text>
+                <text x="450" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: start;">Lossless compression,</text>
+                <text x="450" y="34" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: start;">moderate bandwidth</text>
+            </g>
+
+            <!-- MP3 bar (~4 KB) -->
+            <g transform="translate(0, 275)">
+                <text x="110" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #d97706; text-anchor: end;">MP3</text>
+                <text x="110" y="35" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: end;">Lossy, legacy</text>
+                <rect x="120" y="5" width="80" height="36" rx="6" fill="#d97706" opacity="0.85"/>
+                <text x="160" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #ffffff; text-anchor: middle;">~4 KB</text>
+                <text x="210" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #d97706; text-anchor: start;">Legacy format, lossy</text>
+                <text x="210" y="34" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #d97706; text-anchor: start;">compression</text>
+            </g>
+
+            <!-- Opus bar (~2 KB) -->
+            <g transform="translate(0, 340)">
+                <text x="110" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #7c3aed; text-anchor: end;">Opus</text>
+                <text x="110" y="35" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: end;">Modern codec</text>
+                <rect x="120" y="5" width="40" height="36" rx="6" fill="#7c3aed" opacity="0.85"/>
+                <text x="140" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #ffffff; text-anchor: middle;">~2 KB</text>
+                <text x="170" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #7c3aed; text-anchor: start;">Modern standard, excellent</text>
+                <text x="170" y="34" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #7c3aed; text-anchor: start;">quality at low bitrate</text>
+            </g>
+
+            <!-- Scale bar at bottom -->
+            <g transform="translate(0, 395)">
+                <line x1="120" y1="0" x2="760" y2="0" stroke="#cbd5e1" stroke-width="1.5"/>
+                <!-- Tick marks -->
+                <line x1="120" y1="-4" x2="120" y2="4" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="120" y="18" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">0 KB</text>
+
+                <line x1="200" y1="-4" x2="200" y2="4" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="200" y="18" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">4 KB</text>
+
+                <line x1="280" y1="-4" x2="280" y2="4" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="280" y="18" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">8 KB</text>
+
+                <line x1="440" y1="-4" x2="440" y2="4" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="440" y="18" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">16 KB</text>
+
+                <line x1="600" y1="-4" x2="600" y2="4" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="600" y="18" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">24 KB</text>
+
+                <line x1="760" y1="-4" x2="760" y2="4" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="760" y="18" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">32 KB</text>
+            </g>
+
+            <!-- Annotation: 16x difference -->
+            <rect x="320" y="415" width="260" height="28" rx="6" fill="#1e293b"/>
+            <text x="450" y="434" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #ffffff; text-anchor: middle;">16x bandwidth difference: PCM vs Opus</text>
+        </svg>
+    </div>
+</body>
+</html>

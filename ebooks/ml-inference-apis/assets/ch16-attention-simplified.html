@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Attention Mechanism</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 450" xmlns="http://www.w3.org/2000/svg">
+            <!-- Title -->
+            <text x="450" y="35" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #1e293b; text-anchor: middle;">The Attention Mechanism</text>
+            <text x="450" y="55" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">Each new token "looks back" at all previous tokens to decide what comes next</text>
+
+            <!-- Attention lines drawn BEFORE token boxes (z-order) -->
+            <!-- Lines from "the" (token 8, cx=695) back to each previous token -->
+            <!-- "The" - thin/light (low attention) -->
+            <line x1="695" y1="130" x2="95" y2="130" stroke="#3b82f6" stroke-width="1" opacity="0.2"/>
+            <!-- "chef" - thick/dark (high attention) -->
+            <line x1="695" y1="130" x2="181" y2="130" stroke="#3b82f6" stroke-width="5" opacity="0.85"/>
+            <!-- "who" - thin/light (low attention) -->
+            <line x1="695" y1="130" x2="267" y2="130" stroke="#3b82f6" stroke-width="1.5" opacity="0.2"/>
+            <!-- "trained" - medium (moderate attention) -->
+            <line x1="695" y1="130" x2="353" y2="130" stroke="#3b82f6" stroke-width="3" opacity="0.5"/>
+            <!-- "in" - thin/light (low attention) -->
+            <line x1="695" y1="130" x2="439" y2="130" stroke="#3b82f6" stroke-width="1" opacity="0.15"/>
+            <!-- "Paris" - thick/dark (high attention) -->
+            <line x1="695" y1="130" x2="525" y2="130" stroke="#3b82f6" stroke-width="5" opacity="0.85"/>
+            <!-- "made" - medium (moderate attention) -->
+            <line x1="695" y1="130" x2="611" y2="130" stroke="#3b82f6" stroke-width="3" opacity="0.5"/>
+
+            <!-- Curved attention arcs for visual clarity -->
+            <!-- "chef" arc -->
+            <path d="M 695 105 Q 438 30 181 105" stroke="#2563eb" stroke-width="3" fill="none" opacity="0.6"/>
+            <!-- "Paris" arc -->
+            <path d="M 695 105 Q 610 60 525 105" stroke="#2563eb" stroke-width="3" fill="none" opacity="0.6"/>
+            <!-- "trained" arc -->
+            <path d="M 695 105 Q 524 55 353 105" stroke="#2563eb" stroke-width="2" fill="none" opacity="0.35"/>
+            <!-- "made" arc -->
+            <path d="M 695 105 Q 653 85 611 105" stroke="#2563eb" stroke-width="2" fill="none" opacity="0.35"/>
+
+            <!-- Token boxes (drawn AFTER lines for proper z-order) -->
+            <!-- Token 1: "The" -->
+            <rect x="60" y="105" width="70" height="50" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+            <text x="95" y="135" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 600; fill: #475569; text-anchor: middle;">The</text>
+
+            <!-- Token 2: "chef" (high attention) -->
+            <rect x="146" y="105" width="70" height="50" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+            <text x="181" y="135" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e40af; text-anchor: middle;">chef</text>
+
+            <!-- Token 3: "who" -->
+            <rect x="232" y="105" width="70" height="50" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+            <text x="267" y="135" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 600; fill: #475569; text-anchor: middle;">who</text>
+
+            <!-- Token 4: "trained" (medium attention) -->
+            <rect x="318" y="105" width="70" height="50" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+            <text x="353" y="135" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 600; fill: #3b82f6; text-anchor: middle;">trained</text>
+
+            <!-- Token 5: "in" -->
+            <rect x="404" y="105" width="70" height="50" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+            <text x="439" y="135" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 600; fill: #475569; text-anchor: middle;">in</text>
+
+            <!-- Token 6: "Paris" (high attention) -->
+            <rect x="490" y="105" width="70" height="50" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+            <text x="525" y="135" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e40af; text-anchor: middle;">Paris</text>
+
+            <!-- Token 7: "made" (medium attention) -->
+            <rect x="576" y="105" width="70" height="50" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+            <text x="611" y="135" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 600; fill: #3b82f6; text-anchor: middle;">made</text>
+
+            <!-- Token 8: "the" (current token being generated) -->
+            <rect x="660" y="105" width="70" height="50" rx="6" fill="#1e40af" stroke="#1e3a8a" stroke-width="2"/>
+            <text x="695" y="135" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #ffffff; text-anchor: middle;">the</text>
+            <text x="695" y="172" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e40af; text-anchor: middle; font-weight: 600;">current token</text>
+
+            <!-- Attention weight legend -->
+            <g transform="translate(60, 195)">
+                <text x="0" y="15" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #1e293b;">Attention Weight:</text>
+                <line x1="130" y1="10" x2="165" y2="10" stroke="#3b82f6" stroke-width="5" opacity="0.85"/>
+                <text x="172" y="15" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #475569;">High (chef, Paris)</text>
+                <line x1="310" y1="10" x2="345" y2="10" stroke="#3b82f6" stroke-width="3" opacity="0.5"/>
+                <text x="352" y="15" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #475569;">Medium (trained, made)</text>
+                <line x1="510" y1="10" x2="545" y2="10" stroke="#3b82f6" stroke-width="1" opacity="0.2"/>
+                <text x="552" y="15" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #475569;">Low (The, who, in)</text>
+            </g>
+
+            <!-- Bottom section: Quadratic growth explanation -->
+            <line x1="60" y1="230" x2="620" y2="230" stroke="#e2e8f0" stroke-width="1"/>
+
+            <!-- Left: Growth examples -->
+            <g transform="translate(60, 250)">
+                <text x="0" y="15" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e293b;">Why This Gets Expensive</text>
+
+                <rect x="0" y="30" width="260" height="35" rx="6" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="15" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #475569;">7 tokens</text>
+                <text x="245" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #1e293b; text-anchor: end;">7 lookups per new token</text>
+
+                <rect x="0" y="75" width="260" height="35" rx="6" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+                <text x="15" y="97" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #475569;">700 tokens</text>
+                <text x="245" y="97" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #92400e; text-anchor: end;">700 lookups per new token</text>
+
+                <rect x="0" y="120" width="260" height="35" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+                <text x="15" y="142" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #475569;">70,000 tokens</text>
+                <text x="245" y="142" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #dc2626; text-anchor: end;">70,000 lookups per token</text>
+
+                <rect x="40" y="165" width="180" height="28" rx="6" fill="#1e293b"/>
+                <text x="130" y="184" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Quadratic growth O(n^2)</text>
+            </g>
+
+            <!-- Right: KV Cache callout -->
+            <g transform="translate(630, 240)">
+                <rect x="0" y="0" width="250" height="185" rx="10" fill="#f0fdf4" stroke="#059669" stroke-width="2"/>
+                <text x="125" y="25" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #059669; text-anchor: middle;">Why KV Cache Exists</text>
+
+                <line x1="15" y1="35" x2="235" y2="35" stroke="#bbf7d0" stroke-width="1"/>
+
+                <text x="125" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #1e293b; text-anchor: middle;">Each token computes a Key</text>
+                <text x="125" y="74" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #1e293b; text-anchor: middle;">and Value that later tokens</text>
+                <text x="125" y="90" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #1e293b; text-anchor: middle;">need to look at.</text>
+
+                <text x="125" y="115" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #475569; text-anchor: middle; font-weight: 600;">Without cache:</text>
+                <text x="125" y="131" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #dc2626; text-anchor: middle;">Recompute all KVs every step</text>
+
+                <text x="125" y="153" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #475569; text-anchor: middle; font-weight: 600;">With KV cache:</text>
+                <text x="125" y="169" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #059669; text-anchor: middle;">Store once, reuse forever</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

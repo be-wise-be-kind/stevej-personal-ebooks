@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPU Memory: The Central Bottleneck</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 580" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="modelWeightsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="kvGradA" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="kvGradB" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#047857;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="kvGradC" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#d97706;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#b45309;stop-opacity:1" />
+                </linearGradient>
+                <pattern id="fragPattern" patternUnits="userSpaceOnUse" width="8" height="8">
+                    <path d="M0,8 L8,0" stroke="#fca5a5" stroke-width="1.5" fill="none"/>
+                </pattern>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="35" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">GPU Memory: The Central Bottleneck</text>
+            <text x="450" y="55" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">KV cache allocation without and with PagedAttention</text>
+
+            <!-- Divider -->
+            <line x1="450" y1="68" x2="450" y2="490" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="6,4"/>
+
+            <!-- === LEFT SIDE: Without PagedAttention === -->
+            <text x="210" y="85" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 15px; font-weight: 700; fill: #dc2626; text-anchor: middle;">Without PagedAttention</text>
+            <text x="210" y="100" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">Contiguous pre-allocation per sequence</text>
+
+            <!-- VRAM outline -->
+            <rect x="50" y="115" width="320" height="370" rx="8" fill="#fafafa" stroke="#94a3b8" stroke-width="2"/>
+            <text x="210" y="133" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #525252; text-anchor: middle;">GPU VRAM (24 GB)</text>
+
+            <!-- Model Weights (Fixed) - bottom section -->
+            <rect x="60" y="335" width="300" height="140" rx="6" fill="url(#modelWeightsGrad)"/>
+            <text x="210" y="395" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Model Weights (Fixed)</text>
+            <text x="210" y="415" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #93c5fd; text-anchor: middle;">~14 GB</text>
+
+            <!-- KV Cache block 1 -->
+            <rect x="60" y="145" width="300" height="42" rx="4" fill="url(#kvGradA)"/>
+            <text x="210" y="168" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">KV Cache - Seq A (2.5 GB allocated)</text>
+
+            <!-- Fragmentation gap 1 -->
+            <rect x="60" y="187" width="300" height="18" rx="2" fill="url(#fragPattern)" stroke="#fca5a5" stroke-width="0.5"/>
+            <text x="210" y="200" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #dc2626; text-anchor: middle; font-weight: 600;">Fragmentation waste</text>
+
+            <!-- KV Cache block 2 -->
+            <rect x="60" y="205" width="300" height="35" rx="4" fill="url(#kvGradB)"/>
+            <text x="210" y="226" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">KV Cache - Seq B (1.8 GB allocated)</text>
+
+            <!-- Fragmentation gap 2 -->
+            <rect x="60" y="240" width="300" height="15" rx="2" fill="url(#fragPattern)" stroke="#fca5a5" stroke-width="0.5"/>
+
+            <!-- KV Cache block 3 -->
+            <rect x="60" y="255" width="300" height="30" rx="4" fill="url(#kvGradC)"/>
+            <text x="210" y="274" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">KV Cache - Seq C (1.2 GB)</text>
+
+            <!-- Fragmentation gap 3 / wasted gray space -->
+            <rect x="60" y="285" width="300" height="50" rx="2" fill="#e5e7eb" stroke="#d1d5db" stroke-width="0.5"/>
+            <text x="210" y="308" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #6b7280; text-anchor: middle; font-weight: 600;">Wasted / unusable</text>
+            <text x="210" y="322" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #9ca3af; text-anchor: middle;">Cannot fit another sequence</text>
+
+            <!-- Waste annotation bracket -->
+            <line x1="375" y1="145" x2="385" y2="145" stroke="#dc2626" stroke-width="1.5"/>
+            <line x1="385" y1="145" x2="385" y2="335" stroke="#dc2626" stroke-width="1.5"/>
+            <line x1="375" y1="335" x2="385" y2="335" stroke="#dc2626" stroke-width="1.5"/>
+            <text x="400" y="235" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #dc2626; font-weight: 700;" transform="rotate(90, 400, 235)">~10 GB total</text>
+
+            <!-- === RIGHT SIDE: With PagedAttention === -->
+            <text x="680" y="85" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 15px; font-weight: 700; fill: #059669; text-anchor: middle;">With PagedAttention</text>
+            <text x="680" y="100" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">Small uniform pages, mapped dynamically</text>
+
+            <!-- VRAM outline -->
+            <rect x="520" y="115" width="320" height="370" rx="8" fill="#fafafa" stroke="#94a3b8" stroke-width="2"/>
+            <text x="680" y="133" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #525252; text-anchor: middle;">GPU VRAM (24 GB)</text>
+
+            <!-- Model Weights (Fixed) - bottom section -->
+            <rect x="530" y="335" width="300" height="140" rx="6" fill="url(#modelWeightsGrad)"/>
+            <text x="680" y="395" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Model Weights (Fixed)</text>
+            <text x="680" y="415" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #93c5fd; text-anchor: middle;">~14 GB</text>
+
+            <!-- Paged KV cache - tightly packed small pages -->
+            <!-- Row 1 -->
+            <rect x="530" y="145" width="36" height="22" rx="3" fill="url(#kvGradA)"/>
+            <text x="548" y="160" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">A-1</text>
+            <rect x="568" y="145" width="36" height="22" rx="3" fill="url(#kvGradA)"/>
+            <text x="586" y="160" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">A-2</text>
+            <rect x="606" y="145" width="36" height="22" rx="3" fill="url(#kvGradA)"/>
+            <text x="624" y="160" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">A-3</text>
+            <rect x="644" y="145" width="36" height="22" rx="3" fill="url(#kvGradB)"/>
+            <text x="662" y="160" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">B-1</text>
+            <rect x="682" y="145" width="36" height="22" rx="3" fill="url(#kvGradB)"/>
+            <text x="700" y="160" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">B-2</text>
+            <rect x="720" y="145" width="36" height="22" rx="3" fill="url(#kvGradC)"/>
+            <text x="738" y="160" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">C-1</text>
+            <rect x="758" y="145" width="36" height="22" rx="3" fill="url(#kvGradC)"/>
+            <text x="776" y="160" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">C-2</text>
+            <rect x="796" y="145" width="36" height="22" rx="3" fill="#e11d48"/>
+            <text x="814" y="160" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">D-1</text>
+
+            <!-- Row 2 -->
+            <rect x="530" y="170" width="36" height="22" rx="3" fill="#e11d48"/>
+            <text x="548" y="185" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">D-2</text>
+            <rect x="568" y="170" width="36" height="22" rx="3" fill="#06b6d4"/>
+            <text x="586" y="185" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">E-1</text>
+            <rect x="606" y="170" width="36" height="22" rx="3" fill="#06b6d4"/>
+            <text x="624" y="185" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">E-2</text>
+            <rect x="644" y="170" width="36" height="22" rx="3" fill="#06b6d4"/>
+            <text x="662" y="185" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">E-3</text>
+            <rect x="682" y="170" width="36" height="22" rx="3" fill="#ec4899"/>
+            <text x="700" y="185" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">F-1</text>
+            <rect x="720" y="170" width="36" height="22" rx="3" fill="#ec4899"/>
+            <text x="738" y="185" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">F-2</text>
+            <rect x="758" y="170" width="36" height="22" rx="3" fill="#6366f1"/>
+            <text x="776" y="185" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">G-1</text>
+            <rect x="796" y="170" width="36" height="22" rx="3" fill="#6366f1"/>
+            <text x="814" y="185" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">G-2</text>
+
+            <!-- Row 3 -->
+            <rect x="530" y="195" width="36" height="22" rx="3" fill="#6366f1"/>
+            <text x="548" y="210" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">G-3</text>
+            <rect x="568" y="195" width="36" height="22" rx="3" fill="#f43f5e"/>
+            <text x="586" y="210" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">H-1</text>
+            <rect x="606" y="195" width="36" height="22" rx="3" fill="#f43f5e"/>
+            <text x="624" y="210" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">H-2</text>
+            <rect x="644" y="195" width="36" height="22" rx="3" fill="#14b8a6"/>
+            <text x="662" y="210" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">I-1</text>
+            <rect x="682" y="195" width="36" height="22" rx="3" fill="#14b8a6"/>
+            <text x="700" y="210" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">I-2</text>
+            <!-- Free pages -->
+            <rect x="720" y="195" width="36" height="22" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="738" y="210" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="758" y="195" width="36" height="22" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="776" y="210" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="796" y="195" width="36" height="22" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="814" y="210" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+
+            <!-- Row 4: all free -->
+            <rect x="530" y="220" width="36" height="22" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="548" y="235" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="568" y="220" width="36" height="22" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="586" y="235" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="606" y="220" width="36" height="22" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="624" y="235" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="644" y="220" width="36" height="22" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="662" y="235" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="682" y="220" width="36" height="22" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="700" y="235" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="720" y="220" width="36" height="22" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="738" y="235" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="758" y="220" width="36" height="22" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="776" y="235" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="796" y="220" width="36" height="22" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="814" y="235" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+
+            <!-- More free rows -->
+            <rect x="530" y="245" width="302" height="22" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="681" y="260" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: middle;">available for new sequences</text>
+
+            <!-- Annotation for right side -->
+            <text x="680" y="285" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle; font-weight: 600;">9 sequences served (A-I)</text>
+            <text x="680" y="300" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle;">Pages mapped dynamically</text>
+            <text x="680" y="315" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #16a34a; text-anchor: middle;">Pages reclaimed instantly on completion</text>
+
+            <!-- Efficiency stat -->
+            <rect x="560" y="323" width="240" height="6" rx="3" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+
+            <!-- Center callout -->
+            <rect x="310" y="495" width="280" height="40" rx="8" fill="#fef2f2" stroke="#fca5a5" stroke-width="2"/>
+            <text x="450" y="513" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #dc2626; text-anchor: middle;">KV cache can exceed model weight</text>
+            <text x="450" y="527" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #dc2626; text-anchor: middle;">memory at high concurrency</text>
+
+            <!-- Bottom memory usage bar -->
+            <g transform="translate(40, 545)">
+                <rect x="0" y="0" width="820" height="30" rx="6" fill="#1e293b"/>
+                <text x="410" y="13" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">MEMORY PRESSURE AT SCALE</text>
+                <text x="410" y="25" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #fbbf24; text-anchor: middle;">50 concurrent users x 4K context = 30+ GB KV cache (more than many GPUs have total)</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

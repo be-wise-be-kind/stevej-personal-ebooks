@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Startup Takes Minutes</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="goGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#16a34a;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#22c55e;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="containerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#fbbf24;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="cudaGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#d97706;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="modelLoadGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#dc2626;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="warmupGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#ea580c;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
+                </linearGradient>
+                <marker id="scaleArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#475569"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="35" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Why Startup Takes Minutes</text>
+            <text x="450" y="55" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">Cold start comparison: traditional web server vs ML inference server</text>
+
+            <!-- ============================================ -->
+            <!-- TOP TIMELINE: Go Web Server -->
+            <!-- ============================================ -->
+            <text x="40" y="100" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #16a34a;">Go Web Server</text>
+
+            <!-- Go startup bar - very short -->
+            <rect x="120" y="88" width="18" height="50" rx="6" fill="url(#goGrad)"/>
+            <text x="129" y="118" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;" transform="rotate(-90, 129, 118)">Start</text>
+
+            <!-- Ready marker -->
+            <line x1="138" y1="88" x2="138" y2="138" stroke="#16a34a" stroke-width="2.5"/>
+            <text x="148" y="100" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #16a34a;">Ready!</text>
+
+            <!-- Time label -->
+            <rect x="148" y="105" width="120" height="22" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+            <text x="208" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #16a34a; text-anchor: middle;">~50-200ms total</text>
+
+            <!-- Annotation for how fast it is -->
+            <text x="300" y="100" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b;">Container start + binary ready</text>
+
+            <!-- Rest of the timeline is empty (to show contrast) -->
+            <line x1="138" y1="113" x2="840" y2="113" stroke="#dcfce7" stroke-width="1" stroke-dasharray="6,4"/>
+
+            <!-- ============================================ -->
+            <!-- BOTTOM TIMELINE: ML Inference Server -->
+            <!-- ============================================ -->
+            <text x="40" y="195" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #ea580c;">ML Inference Server</text>
+
+            <!-- Phase 1: Container Pull (1-5s) -->
+            <rect x="120" y="210" width="55" height="60" rx="6" fill="url(#containerGrad)"/>
+            <text x="147" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">Container</text>
+            <text x="147" y="250" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">Pull</text>
+            <text x="147" y="286" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #92400e; text-anchor: middle;">1-5s</text>
+
+            <!-- Phase 2: CUDA Init (2-5s) -->
+            <rect x="180" y="210" width="55" height="60" rx="6" fill="url(#cudaGrad)"/>
+            <text x="207" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">CUDA</text>
+            <text x="207" y="250" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">Init</text>
+            <text x="207" y="286" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #92400e; text-anchor: middle;">2-5s</text>
+
+            <!-- Phase 3: Model Load (10s-minutes) - DOMINANT -->
+            <rect x="240" y="200" width="410" height="80" rx="8" fill="url(#modelLoadGrad)" stroke="#b91c1c" stroke-width="2"/>
+            <text x="445" y="235" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Model Load</text>
+            <text x="445" y="255" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #fecaca; text-anchor: middle;">Transfer weights from storage to GPU memory</text>
+            <text x="445" y="298" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #991b1b; text-anchor: middle;">10s - several minutes (dominant cost)</text>
+
+            <!-- Dominant cost callout arrow -->
+            <line x1="445" y1="310" x2="445" y2="325" stroke="#dc2626" stroke-width="1.5"/>
+            <rect x="365" y="325" width="160" height="20" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+            <text x="445" y="339" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 700; fill: #dc2626; text-anchor: middle;">7B model = ~14 GB weights</text>
+
+            <!-- Phase 4: Warmup (2-10s) -->
+            <rect x="655" y="210" width="75" height="60" rx="6" fill="url(#warmupGrad)"/>
+            <text x="692" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">Warmup</text>
+            <text x="692" y="250" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #ffffff; text-anchor: middle;">JIT+CUDA</text>
+            <text x="692" y="286" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #9a3412; text-anchor: middle;">2-10s</text>
+
+            <!-- Ready marker -->
+            <line x1="730" y1="200" x2="730" y2="280" stroke="#16a34a" stroke-width="2.5"/>
+            <text x="745" y="218" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #16a34a;">Ready!</text>
+
+            <!-- Total bracket -->
+            <line x1="120" y1="308" x2="120" y2="318" stroke="#1e293b" stroke-width="1.5"/>
+            <line x1="120" y1="318" x2="730" y2="318" stroke="#1e293b" stroke-width="1.5"/>
+            <line x1="730" y1="308" x2="730" y2="318" stroke="#1e293b" stroke-width="1.5"/>
+
+            <!-- Total label -->
+            <rect x="760" y="220" width="120" height="36" rx="8" fill="#7c2d12"/>
+            <text x="820" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #fdba74; text-anchor: middle;">TOTAL</text>
+            <text x="820" y="250" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #ffffff; text-anchor: middle;">30s - minutes</text>
+
+            <!-- ============================================ -->
+            <!-- SCALE MARKERS -->
+            <!-- ============================================ -->
+            <line x1="120" y1="360" x2="840" y2="360" stroke="#475569" stroke-width="2" marker-end="url(#scaleArrow)"/>
+
+            <!-- Tick marks and labels -->
+            <line x1="120" y1="355" x2="120" y2="365" stroke="#475569" stroke-width="1.5"/>
+            <text x="120" y="380" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">0s</text>
+
+            <line x1="240" y1="355" x2="240" y2="365" stroke="#475569" stroke-width="1.5"/>
+            <text x="240" y="380" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">10s</text>
+
+            <line x1="360" y1="355" x2="360" y2="365" stroke="#475569" stroke-width="1.5"/>
+            <text x="360" y="380" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">30s</text>
+
+            <line x1="480" y1="355" x2="480" y2="365" stroke="#475569" stroke-width="1.5"/>
+            <text x="480" y="380" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">60s</text>
+
+            <line x1="660" y1="355" x2="660" y2="365" stroke="#475569" stroke-width="1.5"/>
+            <text x="660" y="380" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">120s</text>
+
+            <text x="850" y="380" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">Time</text>
+
+            <!-- ============================================ -->
+            <!-- ANNOTATION: 100-1000x slower -->
+            <!-- ============================================ -->
+            <rect x="320" y="392" width="260" height="26" rx="13" fill="#dc2626"/>
+            <text x="450" y="410" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #ffffff; text-anchor: middle;">100-1000x slower startup</text>
+        </svg>
+    </div>
+</body>
+</html>
