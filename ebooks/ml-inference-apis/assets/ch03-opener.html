@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPU Optimization &amp; Cold Starts</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="centerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0891b2;stop-opacity:1" />
+                </linearGradient>
+                <marker id="arrowOut" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" style="fill: #94a3b8;"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="380" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">GPU Optimization &amp; Cold Starts</text>
+            <text x="380" y="54" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">The full optimization stack for inference cost and latency</text>
+
+            <!-- Radiating lines (drawn first for z-order) -->
+            <line x1="380" y1="190" x2="380" y2="110" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowOut)"/>
+            <line x1="505" y1="205" x2="590" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowOut)"/>
+            <line x1="505" y1="245" x2="590" y2="310" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowOut)"/>
+            <line x1="380" y1="260" x2="380" y2="340" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowOut)"/>
+            <line x1="255" y1="205" x2="170" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowOut)"/>
+            <line x1="255" y1="245" x2="170" y2="310" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowOut)"/>
+
+            <!-- Center hub -->
+            <rect x="255" y="190" width="250" height="70" rx="12" fill="url(#centerGrad)"/>
+            <text x="380" y="220" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 15px; font-weight: 700; fill: #ffffff; text-anchor: middle;">GPU Optimization</text>
+            <text x="380" y="240" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 15px; font-weight: 700; fill: #ffffff; text-anchor: middle;">&amp; Cold Starts</text>
+
+            <!-- Top: Batching -->
+            <rect x="300" y="76" width="160" height="34" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.5"/>
+            <text x="380" y="98" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #065f46; text-anchor: middle;">Batching Strategies</text>
+
+            <!-- Top-right: KV Cache -->
+            <rect x="592" y="112" width="150" height="44" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+            <text x="667" y="132" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #1e40af; text-anchor: middle;">KV Cache</text>
+            <text x="667" y="148" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #1e40af; text-anchor: middle;">Management</text>
+
+            <!-- Bottom-right: Attention -->
+            <rect x="592" y="290" width="150" height="44" rx="6" fill="#fef3c7" stroke="#fcd34d" stroke-width="1.5"/>
+            <text x="667" y="310" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #92400e; text-anchor: middle;">Attention</text>
+            <text x="667" y="326" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #92400e; text-anchor: middle;">Optimization</text>
+
+            <!-- Bottom: Speculative Decoding -->
+            <rect x="290" y="342" width="180" height="34" rx="6" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1.5"/>
+            <text x="380" y="364" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #9d174d; text-anchor: middle;">Speculative Decoding</text>
+
+            <!-- Top-left: Quantization -->
+            <rect x="18" y="112" width="150" height="44" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+            <text x="93" y="138" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #5b21b6; text-anchor: middle;">Quantization</text>
+
+            <!-- Bottom-left: Cold Starts -->
+            <rect x="18" y="290" width="150" height="44" rx="6" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+            <text x="93" y="310" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #9a3412; text-anchor: middle;">Cold Start</text>
+            <text x="93" y="326" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #9a3412; text-anchor: middle;">Mitigation</text>
+
+            <!-- Bottom section: key metrics -->
+            <g transform="translate(30, 410)">
+                <line x1="0" y1="0" x2="700" y2="0" stroke="#e2e8f0" stroke-width="1.5"/>
+
+                <text x="350" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #475569; text-anchor: middle;">KEY OPTIMIZATION TARGETS</text>
+
+                <!-- Metric tiles -->
+                <rect x="0" y="46" width="160" height="44" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+                <text x="80" y="64" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #166534; text-anchor: middle;">Throughput</text>
+                <text x="80" y="80" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #15803d; text-anchor: middle;">2-4x via continuous batching</text>
+
+                <rect x="180" y="46" width="160" height="44" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+                <text x="260" y="64" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e40af; text-anchor: middle;">Memory Efficiency</text>
+                <text x="260" y="80" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #2563eb; text-anchor: middle;">&lt;4% waste via PagedAttention</text>
+
+                <rect x="360" y="46" width="160" height="44" rx="6" fill="#fefce8" stroke="#fde047" stroke-width="1"/>
+                <text x="440" y="64" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #854d0e; text-anchor: middle;">Precision</text>
+                <text x="440" y="80" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #a16207; text-anchor: middle;">FP8 standard, FP4 emerging</text>
+
+                <rect x="540" y="46" width="160" height="44" rx="6" fill="#fdf2f8" stroke="#f9a8d4" stroke-width="1"/>
+                <text x="620" y="64" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #9d174d; text-anchor: middle;">Cold Start</text>
+                <text x="620" y="80" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #be185d; text-anchor: middle;">30s-minutes → seconds</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

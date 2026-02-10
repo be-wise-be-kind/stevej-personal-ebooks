@@ -17,6 +17,10 @@ The following works are referenced across multiple chapters and form the foundat
 | AIMultiple (2026). "LLM Inference Engines: vLLM vs LMDeploy vs SGLang." | 1, 2 |
 | Stixor (2025). "The New LLM Inference Stack 2025: FA-3, FP8 & FP4." | 1, 3 |
 | OpenAI Realtime API Documentation (2025). | 4, 5, 7 |
+| Kwon, W., et al. (2023). "PagedAttention." *SOSP '23*. | 1, 2, 3 |
+| Dao, T., et al. (2024). "FlashAttention-3." arXiv:2407.08608. | 1, 3 |
+| NVIDIA (2025). "NVFP4 KV Cache." | 1, 3 |
+| LMSYS (2024). "SGLang: RadixAttention." | 2, 3 |
 | Deepgram Compliance Docs (2025). "Standard Compliance Speech-to-Text: HIPAA, SOC 2, GDPR." | 10, 11 |
 
 ---
@@ -137,19 +141,39 @@ The following works are referenced across multiple chapters and form the foundat
 
 ## Chapter 3: GPU Optimization & Cold Starts
 
-1. **NVIDIA** (2025). "Optimizing Inference for Long Context with NVFP4 KV Cache." NVIDIA Blog. https://developer.nvidia.com/blog/
+1. **Kwon, W., et al.** (2023). "Efficient Memory Management for Large Language Model Serving with PagedAttention." *Proceedings of the ACM Symposium on Operating Systems Principles (SOSP '23)*. arXiv:2309.06180. https://arxiv.org/abs/2309.06180
 
-2. **Stixor** (2025). "The New LLM Inference Stack 2025: FA-3, FP8 & FP4." https://stixor.com/the-new-llm-inference-stack-2025
+2. **Dao, T., et al.** (2024). "FlashAttention-3: Fast and Exact Attention with Asynchrony and Low-Precision." arXiv:2407.08608. https://tridao.me/blog/2024/flash3/
 
-3. **Nebius** (2025). "Serving LLMs with vLLM: A Practical Inference Guide." https://nebius.com/blog/serving-llms-with-vllm
+3. **NVIDIA** (2025). "Optimizing Inference for Long Context and Large Batch Sizes with NVFP4 KV Cache." https://developer.nvidia.com/blog/optimizing-inference-for-long-context-and-large-batch-sizes-with-nvfp4-kv-cache/
 
-4. **Dao, T., et al.** (2024). "FlashAttention-3: Fast and Exact Attention with Asynchrony and Low-Precision." arXiv preprint.
+4. **Stixor** (2025). "The New LLM Inference Stack 2025: FA-3, FP8 & FP4." https://www.stixor.com/blogs/new-inference-stack-2025
 
-5. **Kwon, W., et al.** (2023). "Efficient Memory Management for Large Language Model Serving with PagedAttention." *Proceedings of the ACM Symposium on Operating Systems Principles (SOSP '23)*.
+5. **BentoML** (2025). "LLM Inference Handbook: Static, Dynamic, and Continuous Batching." https://bentoml.com/llm/inference-optimization/static-dynamic-continuous-batching
 
-6. **BentoML** (2025). "LLM Inference Handbook — Continuous Batching and Beyond." https://www.bentoml.com/blog/llm-inference-handbook
+6. **vLLM** (2023). "Easy, Fast, and Cheap LLM Serving with PagedAttention." https://blog.vllm.ai/2023/06/20/vllm.html
 
-7. **Clarifai** (2025). "Comparing SGLang, vLLM, and TensorRT-LLM with GPT-OSS-120B." https://www.clarifai.com/blog/comparing-sglang-vllm-tensorrt-llm
+7. **LMSYS** (2024). "SGLang: Efficient Execution of Structured Language Model Programs." https://lmsys.org/blog/2024-01-17-sglang/
+
+8. **NVIDIA** (2025). "Reducing Cold Start Latency for LLM Inference with NVIDIA Run:ai Model Streamer." https://developer.nvidia.com/blog/reducing-cold-start-latency-for-llm-inference-with-nvidia-runai-model-streamer/
+
+9. **Tensorfuse** (2025). "Reducing GPU Cold Start Time with vLLM." https://tensorfuse.io/docs/blogs/reducing_gpu_cold_start
+
+10. **AWS** (2025). "EC2 On-Demand Instance Pricing." https://aws.amazon.com/ec2/pricing/on-demand/
+
+11. **AWS** (2025). "EC2 Spot Instances." https://aws.amazon.com/ec2/spot/
+
+12. **NVIDIA** (2025). "NVIDIA H100 Tensor Core GPU." https://www.nvidia.com/en-us/data-center/h100/
+
+13. **NVIDIA** (2025). "NVIDIA B200 Tensor Core GPU." https://www.nvidia.com/en-us/data-center/dgx-b200/
+
+14. **ASCII News** (2026). "FlashAttention-4 Achieves 2.4x Speedup on Blackwell GPUs." https://ascii.co.uk/news/article/news-20260123-e5a5676f/flashattention-4-achieves-24x-speedup-on-blackwell-gpus
+
+15. **Modal** (2026). "We Reverse-Engineered Flash Attention 4." https://modal.com/blog/reverse-engineer-flash-attention-4
+
+16. **BentoML** (2025). "LLM Inference Handbook: Prefix Caching." https://bentoml.com/llm/inference-optimization/prefix-caching
+
+17. **RunPod** (2025). "GPU Cloud Pricing." https://www.runpod.io/pricing
 
 ---
 
