@@ -13,6 +13,14 @@
 
 > **From Book 1:** For a deep dive on WebSocket, SSE, gRPC, and WebTransport fundamentals (handshakes, framing, multiplexing, flow control), see "Before the 3 AM Alert" Chapter 5: Network and Connection.
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter explains why protocol choice matters for inference APIs. Protocols define how data moves between client and server: the rules for establishing connections, sending data, and signaling completion. Load balancers distribute incoming traffic across multiple server instances and must understand the protocol to route correctly; a load balancer that does not support WebSocket will silently break persistent audio connections. Proxies (reverse proxies, API gateways) sit between clients and servers and may interfere with long-lived connections by enforcing idle timeouts. Flow control is a mechanism where the receiver tells the sender to slow down when it cannot keep up, which is critical when GPU inference is the bottleneck and audio chunks arrive faster than the model can process them.
+
+**From the API side**, this chapter explains why audio streaming cannot use standard HTTP request-response. Audio is a continuous, unbounded stream with no single "request" to send and no single "response" to wait for. The system must send and receive data simultaneously (bidirectional communication) because the client is still recording while the server is already returning transcription results. Binary framing means sending raw audio bytes directly rather than text-encoding them, which matters because base64-encoding audio for JSON transmission adds 33% bandwidth overhead and measurable CPU cost on both client and server.
+
 ## WebSocket for Audio Streaming
 
 ### Why WebSocket Dominates

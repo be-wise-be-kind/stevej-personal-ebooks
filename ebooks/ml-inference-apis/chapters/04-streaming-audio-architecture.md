@@ -11,6 +11,14 @@
 - This chapter covers the end-to-end architecture from microphone capture to inference response, including the audio fundamentals every serving engineer must understand
 - Reference architectures from production providers (Deepgram, AssemblyAI, Google, Amazon, OpenAI) illustrate the design space and trade-offs
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter introduces persistent connections, a networking model that differs from standard HTTP. In a typical HTTP interaction, the client sends a request, the server returns a response, and the connection is done. Streaming audio requires a connection that stays open for seconds to minutes, with data flowing continuously in both directions. WebSocket and gRPC provide this persistent, bidirectional communication. Codecs (Opus, FLAC, PCM) are compression formats for audio data that trade bandwidth for decode cost and quality, and the choice of codec affects the entire pipeline from network transfer to GPU preprocessing. Bandwidth planning matters because audio generates a steady, predictable stream of bytes per second per connection, and the aggregate bandwidth across thousands of concurrent streams is a hard infrastructure constraint.
+
+**From the API side**, this chapter covers audio signal processing fundamentals that determine data rates, memory requirements, and GPU workload. A sample rate (e.g., 16kHz) means 16,000 audio measurements per second. Bit depth (e.g., 16-bit) means each measurement is represented with 16 bits of precision. Together they determine the raw data rate: 16kHz × 16-bit = 256 kbps for mono audio. Voice Activity Detection (VAD) is a lightweight model that detects when someone is actually speaking versus silence or background noise, which saves GPU compute by skipping segments where there is nothing to transcribe.
+
 ## End-to-End Architecture
 
 ### The Full Request Path

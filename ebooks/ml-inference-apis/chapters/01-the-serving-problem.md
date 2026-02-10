@@ -12,6 +12,14 @@ Then someone asks: "How do we serve this to ten thousand users at once?"
 
 That question opens a chasm that most organizations are not prepared for. The gap between a trained model and a production inference API is where months disappear, budgets inflate, and teams discover that the hard part was never training the model. The hard part is serving it: reliably, at low latency, at scale, at a cost the business can sustain. This chapter introduces the serving problem, explains why it constitutes a distinct engineering discipline, and establishes the measurement-driven philosophy that guides the rest of this book.
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter assumes familiarity with APIs and why their design matters for inference. An API (Application Programming Interface) is a contract between a client and a server: the client sends an HTTP request containing input data, the server processes it and returns a response. API contracts define what inputs are accepted, what outputs are guaranteed, and how errors are communicated. SLOs (Service Level Objectives) are targets a team sets for measurable metrics like response latency and availability. They are how you define "good enough" and decide when to stop optimizing.
+
+**From the API side**, this chapter assumes familiarity with what a trained model is and what "serving" it means. A model is a large file of numerical weights learned during training, often billions of parameters for modern language models. A forward pass feeds input data through these weights to produce a prediction: audio bytes become a transcript, a text prompt becomes generated tokens. This computation happens on a GPU because it involves massive parallel matrix multiplications that CPUs handle orders of magnitude more slowly. "Serving" means making this forward pass available as an API that handles real traffic.
+
 ## The Serving Engineer's Role
 
 The serving engineer occupies a space that few job descriptions fully capture. They are not ML researchers; they do not design model architectures or tune hyperparameters. They are not traditional backend engineers; the workloads they manage involve GPU memory hierarchies, KV cache pressure, and model version lifecycle rather than database connection pools and HTTP routing. They sit at the intersection of ML infrastructure and API engineering, taking a trained model artifact and making it fast, reliable, cost-effective, and compliant at scale.

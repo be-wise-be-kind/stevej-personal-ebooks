@@ -13,6 +13,14 @@
 
 > **From Book 1:** For a deep dive on observability fundamentals (OpenTelemetry, distributed tracing, log aggregation), see "Before the 3 AM Alert" Chapters 3-4. For SLO fundamentals (SLI/SLO/SLA definitions, error budgets, burn rates), see "Before the 3 AM Alert" Chapter 2.
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter builds on SLI/SLO/SLA definitions that are standard in site reliability engineering. An SLI (Service Level Indicator) is a metric you measure, like response time or availability. An SLO (Service Level Objective) is a target for that metric, like "99% of requests complete within 300ms." An SLA (Service Level Agreement) is a contractual commitment with financial consequences if the SLO is missed. Error budgets are the allowed failure rate derived from the SLO. A 99.9% availability target means you can fail 0.1% of the time, which works out to approximately 43 minutes of downtime per month. Burn rate measures how fast you are consuming your error budget; a burn rate of 2x means you will exhaust the budget in half the expected time.
+
+**From the API side**, streaming ML systems require SLIs that differ fundamentally from traditional API metrics. TTFT (Time to First Token) measures when the first output appears. For voice AI, this is more important than total duration because it determines perceived responsiveness. TPOT (Time Per Output Token) measures generation speed after the first token, capturing whether the stream keeps up. RTF (Real-Time Factor) equals processing time divided by audio duration; it must be below 1.0 or the system falls behind the live audio stream. Goodput is the percentage of requests that meet ALL SLO criteria simultaneously, a quality-adjusted throughput metric that is more meaningful than raw requests per second. KV cache pressure (GPU memory consumed by intermediate computation state for active requests) limits concurrency before compute saturates, making it a leading indicator of capacity exhaustion.
+
 ## Streaming-Specific SLIs
 
 ### Time to First Token / Time to First Byte (TTFT)

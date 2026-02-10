@@ -32,6 +32,8 @@ This book is written for engineers who build, operate, and scale ML inference sy
 
 **API Engineers** working on speech, audio, or real-time ML products. You will learn how providers like Deepgram, AssemblyAI, Google, and OpenAI architect their streaming APIs, and how to apply those patterns to your own services.
 
+This book sits at a crossroads. ML engineers will find chapters on API design, SLOs, and billing that cover ground they have not worked before. API engineers will find chapters on GPU optimization, model serving, and streaming inference that are equally new. Neither audience should feel patronized by material aimed at the other; we have structured each chapter to briefly ground both readers before diving in. You will encounter concepts you already understand, and that is by design.
+
 You should have experience building backend services and a basic familiarity with HTTP, APIs, and distributed systems. Prior ML experience is helpful but not required; we explain the inference-specific concepts from first principles.
 
 ## How to Read This Book {-}
@@ -49,6 +51,8 @@ This book is organized into five parts, each building on the previous:
 **Part V: Scale (Chapters 14-15)** brings everything together. Chapter 14 covers GPU-aware auto-scaling, multi-region deployment, edge inference, and cost optimization. Chapter 15 synthesizes the entire book into a complete inference platform architecture.
 
 If you are facing a specific problem, each chapter is self-contained enough to be a useful reference on its own. Struggling with GPU cold starts? Jump to Chapter 3. Need to design a streaming API contract? Chapter 8. Evaluating serving frameworks? Chapter 2 has benchmark data and a decision framework.
+
+Each chapter opens with a **Bridging the Gap** section that identifies the ML and API concepts the chapter builds on and provides a brief refresher. If you are already comfortable with the concepts listed, skip ahead to the next section. If they are new, invest the two minutes; the rest of the chapter will make more sense.
 
 ## Relationship to "Before the 3 AM Alert" {-}
 

@@ -95,6 +95,13 @@ Concrete guidance:
 - **Don't assume Book 1 knowledge.** Many readers will pick up this book without reading "Before the 3 AM Alert." Brief recaps are always welcome; "see Book 1 Chapter N" cross-references are good but should not be the only explanation.
 - **Chapters 1-2 set the pattern.** Their Overviews explain what model serving is and what a serving framework does before diving in. Later chapters should follow suit for their respective domains.
 
+### Bridging the Gap Section (Mandatory)
+Every chapter MUST include a `## Bridging the Gap` section immediately after the Overview. This section grounds both primary reader archetypes before the chapter dives into content:
+- **From the ML side**: Explain API/infrastructure concepts the chapter uses (2-3 sentences each)
+- **From the API side**: Explain ML/GPU concepts the chapter uses (2-3 sentences each)
+- Keep it to 3-5 paragraphs total
+- See the Per-Chapter Bridge Content section below for guidance on what to cover
+
 ### Chapter 1 Philosophy
 Chapter 1 is a comprehensive introduction (like Book 1's Ch 1 "The Empirical Discipline"):
 - Direct, informative exposition — no fictional scenario or narrative hook
@@ -166,3 +173,68 @@ Research is stored in `.roadmap/in-progress/ml-inference-apis/research/`:
 - **Decision trees/frameworks**: Each chapter should help the reader make concrete decisions
 - **Cross-reference boxes**: `> **From Book 1:** For a deep dive on [topic], see "Before the 3 AM Alert" Chapter N.`
 - **The 300ms rule**: Reference this latency threshold frequently — it's the book's equivalent of Book 1's "measure first"
+- **Bridging the Gap sections**: `## Bridging the Gap` after Overview in every chapter. Two subsections: "From the ML side" (explains API/infra concepts for ML engineers) and "From the API side" (explains ML concepts for API engineers). See Per-Chapter Bridge Content below.
+
+## Per-Chapter Bridge Content
+
+Guidance for what each chapter's Bridging the Gap section should cover. Chapters 1-3 have full prose already written; chapters 4-15 have outlines written and should be expanded to full prose when those chapters are authored.
+
+### Chapter 1: The Serving Problem
+- **ML side**: APIs, request/response model, API contracts, SLOs
+- **API side**: Trained models, forward passes, GPUs for matrix multiplication
+
+### Chapter 2: Model Serving Frameworks
+- **ML side**: Serving frameworks as analogous to web servers/app frameworks, container orchestration (Kubernetes)
+- **API side**: Model loading (why it's slow — gigabytes of weights into GPU memory), batching (grouping requests for GPU efficiency)
+
+### Chapter 3: GPU Optimization & Cold Starts
+- **ML side**: GPU utilization metrics, cost-per-request analysis, auto-scaling and cold start delays
+- **API side**: GPU architecture (SIMD cores), GPU memory (VRAM/HBM), precision formats (FP32/FP16/INT8/FP4)
+
+### Chapter 4: Streaming Audio Architecture
+- **ML side**: Persistent connections (WebSocket, gRPC), codecs (Opus, FLAC, PCM), bandwidth planning
+- **API side**: Sample rate, bit depth, data rate calculation, Voice Activity Detection (VAD)
+
+### Chapter 5: Protocol Selection
+- **ML side**: Protocol impact on load balancers, proxies, idle timeouts, flow control
+- **API side**: Why HTTP request-response is insufficient for audio, bidirectional communication, binary framing vs base64 overhead
+
+### Chapter 6: Streaming Inference Pipelines
+- **ML side**: Distributed tracing (OpenTelemetry, spans), queue theory (queue depth, Little's Law), backpressure
+- **API side**: GPU layer-by-layer computation, KV cache reads/writes, batching across streams, pipeline parallelism (CPU/GPU overlap)
+
+### Chapter 7: Designing ML APIs
+- **ML side**: REST conventions (resources, methods, status codes), idempotency, JSON schemas
+- **API side**: Variable cost per request (60x range for audio), "model not loaded" (503) failure mode, streaming response delivery
+
+### Chapter 8: Streaming Response Contracts
+- **ML side**: SSE, WebSocket, gRPC as transport mechanisms, Protocol Buffers, message framing
+- **API side**: Autoregressive token-by-token generation, interim vs final speech results, incremental delivery
+
+### Chapter 9: API Versioning & Developer Experience
+- **ML side**: URL path versioning, deprecation policies, SDKs, developer onboarding metrics
+- **API side**: Two-axis versioning (API schema + model version), model pinning for reproducibility
+
+### Chapter 10: Security for Audio ML APIs
+- **ML side**: JWT, OAuth 2.0 Client Credentials, token bucket rate limiting, TLS/mTLS
+- **API side**: Voice as biometric data, background conversation capture, GPU-aware rate limiting (compute-seconds), audio PII redaction
+
+### Chapter 11: Compliance & Data Governance
+- **ML side**: SOC 2 auditing, GDPR data rights, HIPAA BAAs, audit logging requirements
+- **API side**: Voice as biometric data under GDPR/BIPA, EU AI Act obligations (Aug 2026), model lifecycle auditability
+
+### Chapter 12: SLOs for Streaming ML Systems
+- **ML side**: SLI/SLO/SLA definitions, error budgets (allowed failure rate), burn rate
+- **API side**: TTFT, TPOT, RTF (must be <1.0), goodput (quality-adjusted throughput), KV cache pressure as capacity signal
+
+### Chapter 13: Usage Metering & Billing
+- **ML side**: Metering event pipelines (collection → aggregation → invoicing), idempotency keys, billing-tier rate limiting
+- **API side**: 60x cost variance per request, feature-based pricing complexity, per-block billing overcharge on short utterances
+
+### Chapter 14: Scaling Inference Globally
+- **ML side**: Horizontal scaling, auto-scaling signals, multi-region deployment, spot vs reserved instances
+- **API side**: Model loading delay (30-120s), GPU memory as binding constraint, KV cache determines max concurrency, GPU right-sizing
+
+### Chapter 15: Putting It All Together
+- **ML side**: Deployment checklists, incident response process, capacity planning, runbooks
+- **API side**: GPU OOM (crashes all active requests), cold start storms, model rollback (accuracy degradation vs crash)

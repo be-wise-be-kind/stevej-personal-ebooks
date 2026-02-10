@@ -12,6 +12,14 @@ Yet most organizations dramatically underutilize the GPUs they are paying for. T
 
 We cover the full GPU optimization stack: batching strategies that keep the GPU fed, KV cache management that prevents the memory bottleneck from throttling throughput, cold start mitigation that eliminates the minutes-long penalty of bringing new instances online, quantization techniques that trade precision for capacity, attention kernels that squeeze more FLOPS from the hardware, and speculative decoding that accelerates autoregressive generation. Each technique addresses a different bottleneck, and the most effective serving stacks apply them in combination.
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter discusses GPU performance using operational metrics and cost analysis that will be familiar from infrastructure management. GPU utilization is tracked the same way you monitor CPU or memory: as a percentage of capacity in use, surfaced through tools like Prometheus and Grafana. Cost-per-request thinking means dividing your hourly GPU cost by the number of requests served to get a unit cost, then optimizing to bring that number down. Auto-scaling adds or removes GPU instances based on demand signals like queue depth or utilization, but unlike CPU instances that start in seconds, new GPUs take minutes to become ready because the model weights must be loaded. This is the "cold start" problem that dominates scaling behavior.
+
+**From the API side**, this chapter dives into GPU hardware and numerical precision, which are unique to ML infrastructure. A GPU contains thousands of small cores that execute the same operation on many data points simultaneously (SIMD, or Single Instruction Multiple Data). GPU memory (VRAM, specifically HBM) is fast but limited, typically 16-80 GB on current hardware, and both the model weights and per-request computation state (the KV cache) must fit within it. "Precision" (FP32, FP16, INT8, FP4) refers to how many bits represent each number in the model's weights and calculations; lower precision uses less memory and computes faster, with carefully managed accuracy trade-offs. Understanding these constraints is essential because every optimization in this chapter works within the hard boundaries of GPU memory and compute capacity.
+
 ## Why GPUs Sit Idle
 
 ### The Utilization Problem

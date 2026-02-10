@@ -11,6 +11,14 @@
 - Resource-oriented design principles from Google AIPs applied to inference, the sync vs async vs streaming decision framework, and long-running operations for batch workloads
 - ML-specific error handling patterns that go beyond standard HTTP errors; model not loaded, GPU OOM, inference timeout, and how to communicate them clearly to clients
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter applies REST API design conventions to inference services. Resources are the nouns of your API (`/models`, `/transcriptions`, `/deployments`), each representing a thing that can be created, read, updated, or deleted. Methods are the verbs: GET retrieves, POST creates, DELETE removes. Status codes communicate outcomes: 200 means success, 400 means the client sent bad input, 503 means the service is temporarily unavailable. Idempotency means that sending the same request twice produces the same result without duplicate side effects, which is essential when network retries happen automatically and you do not want to bill a customer twice for the same transcription. JSON schemas define the expected structure of request and response bodies so clients can validate data programmatically.
+
+**From the API side**, ML inference requests are fundamentally different from typical API calls in ways that affect every design decision. Each inference request consumes expensive GPU compute. A 60-second audio transcription costs roughly 60x more than a 1-second one, unlike web requests where cost is roughly uniform regardless of payload. "Model not loaded" (HTTP 503) is a failure mode that does not exist in traditional services. It means the GPU has not yet loaded the multi-gigabyte weight file, and the client should retry after a delay rather than treating it as a permanent error. For streaming endpoints, responses may arrive as a sequence of partial results over seconds or minutes, not as a single JSON object.
+
 ## Resource-Oriented Design for Inference
 
 ### Applying Google AIP Principles

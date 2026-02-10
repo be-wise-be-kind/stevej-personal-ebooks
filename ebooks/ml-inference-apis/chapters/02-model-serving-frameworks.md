@@ -16,6 +16,14 @@ The challenge is that the landscape moves fast. A framework that was the obvious
 
 This chapter provides that mental model. We trace three generations of serving frameworks, each solving the previous generation's primary limitation. We then present a decision framework grounded in model type, latency requirements, scaling model, and operational complexity. From there, we cover the operational mechanics that matter regardless of which framework you choose: model loading, version management, hot-swapping, multi-model serving, and GPU memory partitioning. We close with the hybrid approach that most production systems actually use, and the pitfalls that trip teams up along the way.
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter discusses serving frameworks in terms that will be familiar if you have worked with web servers or application frameworks. A serving framework is analogous to a web server like Nginx or an application framework like FastAPI or Express. It handles the mechanics of accepting requests over the network, routing them to the right handler, and returning responses, so you can focus on the logic rather than the plumbing. Container orchestration (Kubernetes) manages running multiple instances of your server across machines and scaling them up or down based on demand. If you have deployed a model from a notebook but never thought about how to handle thousands of concurrent users, the framework is the layer that bridges that gap.
+
+**From the API side**, this chapter covers model loading and GPU memory management, which have no direct analog in traditional web services. Loading a model means transferring gigabytes of weight files from storage into GPU memory and initializing the compute graphs that execute inference. This is why startup takes minutes, not milliseconds. A 70B parameter model at FP16 is roughly 140 GB of data that must be resident in GPU memory before the first request can be served. Batching means grouping multiple incoming requests and processing them together in a single GPU operation rather than one at a time. It is the primary lever for GPU efficiency: the GPU does roughly the same amount of work whether the batch contains one request or thirty-two.
+
 ## The Three Generations of Serving Frameworks
 
 The evolution of ML inference serving frameworks follows a clear arc: from framework-locked servers to framework-agnostic platforms to attention-aware engines. Each generation emerged because the previous one could not handle a new class of workload.

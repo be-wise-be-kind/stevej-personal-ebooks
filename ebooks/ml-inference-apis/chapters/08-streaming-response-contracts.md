@@ -11,6 +11,14 @@
 - Chapter 5 (Protocol Selection) answers "which transport?"; this chapter answers "what do the messages look like on top of that transport?"
 - Connection lifecycle management, backpressure, and reconnection strategies that make streaming APIs reliable in production
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter discusses three transport mechanisms for streaming responses. Server-Sent Events (SSE) is a simple HTTP-based protocol where the server pushes text events to the client over a long-lived connection. It is unidirectional (server to client only), easy to implement, and works through most proxies and firewalls. WebSocket provides a persistent, bidirectional channel over TCP, suitable when both sides need to send data continuously. gRPC uses HTTP/2 with Protocol Buffers (a binary serialization format that defines typed message schemas) for efficient, strongly-typed communication. Message framing means how each individual message is delimited within the continuous byte stream, so the receiver knows where one message ends and the next begins.
+
+**From the API side**, ML inference results arrive incrementally for a reason rooted in how the models work. Autoregressive models (like large language models) generate output one token at a time. Each token depends on all previous tokens, so the model cannot produce the full result upfront. Speech-to-text models produce "interim" results that may be revised as more audio context arrives (the word "cat" might be corrected to "catch" once the next syllable is heard), then "final" results that are stable and will not change. This incremental delivery is fundamentally different from database lookups or API calls where the full result is computed and available instantly.
+
 ## Server-Sent Events (SSE); The OpenAI Pattern
 
 ### The Chat Completions Streaming Contract

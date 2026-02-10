@@ -10,6 +10,14 @@
 - Walking through common failure modes, operational runbooks, and the recovery patterns that keep inference systems running
 - Looking ahead at the evolving landscape and the serving engineer's ongoing discipline
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter applies operational practices that are standard in production software engineering. Deployment checklists ensure nothing is missed during rollouts by codifying the sequence of validation, staging, canary, and full deployment steps. Incident response follows a structured process: detect (alerts fire) → triage (assess severity and impact) → contain (stop the bleeding) → resolve (fix the root cause) → postmortem (document what happened and prevent recurrence). Capacity planning means projecting future demand based on growth trends and procuring GPU resources months ahead, because GPU availability is constrained and lead times are long. Runbooks are step-by-step procedures for common operational scenarios that turn crises into routine procedures any on-call engineer can execute.
+
+**From the API side**, ML inference introduces failure modes that do not exist in traditional services. GPU OOM (Out of Memory) means the GPU ran out of its limited fast memory. Unlike CPU services where the OS can swap to disk, a GPU OOM typically crashes every active request on that GPU simultaneously. Cold start storms happen when many new instances launch at once (after a deployment or a scaling event), all competing to download and load multi-gigabyte model weights from the same storage backend, potentially saturating network bandwidth and slowing each other down. Model rollback means reverting to a previous model version when a new one degrades quality. It is similar to a code rollback, but the "bug" is degraded accuracy or increased word error rate rather than a crash or exception.
+
 ## Case Study: Building a Production Streaming Speech API
 
 ### The Scenario
