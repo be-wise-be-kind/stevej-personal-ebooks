@@ -70,6 +70,10 @@ Vanity metrics make us feel good but do not drive action. Total users, lifetime 
 
 Ask of every dashboard element: "What action would someone take based on this?" If the answer is "none," the metric is informational at best, distracting at worst. Reserve dashboards for actionable metrics; put informational metrics in reports.
 
+**Panel-Level Descriptions for Operators**
+
+Every dashboard panel should include a description (most dashboard tools support a collapsible description or tooltip) that answers three questions for the on-call engineer encountering it at 3 AM: (1) What am I looking at? Explain the metric, its source, and any transformations applied. (2) How do I interpret the values? What is normal, what is concerning, and what is critical. (3) What do I do when this looks wrong? Link to the relevant runbook or describe the immediate next step. Panels without descriptions force engineers to reverse-engineer PromQL queries or guess at thresholds during incidents, exactly when cognitive load should be lowest.
+
 ### Traffic and Throughput Monitoring
 
 Chapter 2 introduced throughput as requests per second (RPS), transactions per second (TPS), or bytes per second. Here we cover how to instrument, visualize, and act on throughput metrics in practice.
@@ -269,6 +273,8 @@ sum(rate(http_requests_total{status_code=~"2.."}[5m]))
   /
 sum(rate(http_requests_total{status_code!~"4(00|04|29)"}[5m]))
 ```
+
+> **The `or vector(0)` Pattern:** Error rate queries return "No data" when the numerator has no matching series, which happens during healthy periods when zero errors exist. Dashboard panels then show a gap or "No data" instead of 0%, which is confusing for operators and can mask the moment errors actually begin. Append `or vector(0)` to the error rate numerator so the panel displays 0% during healthy periods: `sum(rate(http_requests_total{status_code=~"5.."}[5m])) or vector(0)`. This small addition makes the difference between a panel that looks broken and one that clearly communicates "no errors right now."
 
 ![Errors Monitoring Dashboard](../assets/ch04-errors-dashboard.html)
 

@@ -386,6 +386,8 @@ Common bucket strategies:
 
 A practical approach: start with exponential buckets that span your expected range (perhaps 5ms to 10s for API latency), then add custom boundaries at SLO thresholds. Review your histograms after a week of production traffic. If you see most values concentrated in one or two buckets, you need finer granularity in that range.
 
+> **OTel SDK Default Buckets: A Common Trap:** OpenTelemetry SDK default histogram boundaries differ from Prometheus defaults and are designed for millisecond-scale values (e.g., 0, 5, 10, 25, 50, 75, 100, 250, 500, 750, 1000...). However, many web frameworks record HTTP request durations in seconds, not milliseconds. If your framework reports a 200ms response as `0.2` and your buckets start at `5`, every observation falls into the first bucket, making percentile calculations meaningless. When using OTel SDKs, always verify the unit your framework emits and configure explicit bucket boundaries that match. For frameworks reporting in seconds, use sub-second boundaries: `[0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0]`. This mismatch is easy to miss because dashboards still render data. They just show every request in the same bucket with no visible distribution.
+
 **When to Optimize p50, p95, or p99**
 
 Different percentiles tell different stories and warrant different responses:
