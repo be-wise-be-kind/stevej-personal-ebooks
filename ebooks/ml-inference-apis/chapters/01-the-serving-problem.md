@@ -26,7 +26,7 @@ This role is underserved in technical literature. Most ML books focus on trainin
 
 Five characteristics make ML inference serving fundamentally different from traditional API development.
 
-**GPU costs are high and unforgiving.** Inference-grade GPU instances range from about $1 per hour for a single NVIDIA L4 to over $55 per hour for an 8xH100 instance. On AWS, a p5.48xlarge (8x H100) runs approximately $55 per hour on-demand, and a p4d.24xlarge (8x A100) runs approximately $27 per hour [Source: AWS, 2025]. Even single-GPU inference instances like the g5.xlarge (A10G) cost $1.24 per hour. Unlike CPU-based web servers that cost cents per hour, leaving a GPU idle for even a few hours represents meaningful waste. Naive serving, where each request gets exclusive access to a GPU, wastes 90% or more of available compute because the GPU sits idle between requests [Source: BentoML, 2025]. The economic pressure to maximize GPU utilization is constant and shapes every architectural decision.
+**GPU costs are high and unforgiving.** Inference-grade GPU instances cost 10-100x more per hour than the CPU instances that serve traditional web traffic. Unlike CPU-based web servers that cost cents per hour, leaving a GPU idle for even a few hours represents meaningful waste. Naive serving, where each request gets exclusive access to a GPU, wastes the vast majority of available compute because the GPU sits idle between requests. The economic pressure to maximize GPU utilization is constant and shapes every architectural decision. Chapter 3 covers the specific cost landscape and the optimization techniques that address this waste.
 
 **Latency budgets are tight.** Real-time applications demand sub-second responses, but model inference is inherently compute-heavy. A single forward pass through a large language model can take 50-200 milliseconds of GPU time, and that is before accounting for network transit, queue wait, preprocessing, and postprocessing. For voice AI applications, the total end-to-end latency budget is 300 milliseconds [Source: AssemblyAI, 2025]. Every stage in the pipeline must be optimized to fit within this budget, and a single slow component can blow it entirely.
 
@@ -56,19 +56,19 @@ This book uses speech and audio as its primary running example, and for good rea
 
 The period from 2024 through 2026 represents the most rapid expansion of ML inference infrastructure in the history of computing. Large language models that were research curiosities in 2022 are now embedded in production applications serving millions of users daily. Every chatbot, coding assistant, document summarizer, and voice agent runs on inference infrastructure, and the scale of demand has shifted the industry's focus from training to serving.
 
-The economic logic is straightforward: training happens once (or periodically), but serving happens millions of times per day. Inference accounts for 80-90% of total compute spending over a model's production lifecycle [Source: Ankur's Newsletter, 2025]. The scale is staggering: OpenAI spent approximately $8.7 billion on Azure inference compute in the first three quarters of 2025, and Anthropic burns roughly $2.7 million per day serving Claude [Source: CloudZero, 2025]. Over a model's lifetime, serving costs dwarf training costs, and the efficiency of the serving infrastructure becomes the dominant factor in the business's unit economics. GPU supply constraints have accelerated this focus. When GPU availability is limited, using each GPU efficiently is not optional; it is existential.
+The economic logic is straightforward: training happens once (or periodically), but serving happens millions of times per day. Inference accounts for the vast majority of total compute spending over a model's production lifecycle, with leading AI companies spending billions of dollars annually on inference infrastructure alone [Source: Ankur's Newsletter, 2025; CloudZero, 2025]. Over a model's lifetime, serving costs dwarf training costs, and the efficiency of the serving infrastructure becomes the dominant factor in the business's unit economics. GPU supply constraints have accelerated this focus. When GPU availability is limited, using each GPU efficiently is not optional; it is existential.
 
 ### The Speech and Audio AI Renaissance
 
-Speech and audio AI has entered a period of rapid capability expansion. The landscape in early 2026 includes:
+Speech and audio AI has entered a period of rapid capability expansion. The landscape in early 2026 spans three domains:
 
-**Speech-to-text** has reached human-level accuracy for many use cases. Deepgram's Nova-3 model delivers sub-200ms latency with per-second billing at $0.0043-0.0077 per minute [Source: Deepgram, 2025]. AssemblyAI's Universal-2 and Slam-1 models offer sub-300ms latency at $0.0025 per minute base, with feature add-ons for diarization, PII redaction, and sentiment analysis [Source: AssemblyAI, 2025]. Google's Chirp 3 (GA 2025) serves via gRPC bidirectional streaming exclusively [Source: Google Cloud, 2025]. OpenAI's Whisper remains a strong open-source baseline.
+**Speech-to-text** has reached human-level accuracy for many use cases. Deepgram, AssemblyAI, and Google Cloud Speech offer streaming recognition with sub-second latency, while OpenAI's Whisper remains a strong open-source baseline. The leading providers have pushed latency below the 300ms threshold that makes voice AI feel conversational.
 
-**Text-to-speech** is approaching human-indistinguishable quality. ElevenLabs' Flash v2.5 achieves approximately 75ms latency per character-based generation [Source: ElevenLabs, 2025]. Azure Neural TTS offers low-latency synthesis with SSML control.
+**Text-to-speech** is approaching human-indistinguishable quality. ElevenLabs and Azure Neural TTS deliver low-latency synthesis that makes real-time voice agents practical.
 
-**Speech-to-speech** is the frontier. The OpenAI Realtime API reached general availability in August 2025, supporting three protocols: WebRTC for browser and mobile clients, WebSocket for server-to-server integration, and SIP for telephony [Source: OpenAI, 2025]. This is not just speech recognition plus text generation plus speech synthesis; it is a unified model that processes audio input and produces audio output with conversational latency.
+**Speech-to-speech** is the frontier. OpenAI's Realtime API represents a new class of unified model that processes audio input and produces audio output directly, bypassing the traditional pipeline of separate recognition, generation, and synthesis stages.
 
-The competitive landscape is intense. Providers compete on four dimensions: latency (how fast), accuracy (how correct), pricing (how cheap), and protocol support (how easy to integrate). Each of these dimensions is shaped by infrastructure decisions that this book covers in detail.
+The competitive landscape is intense. Providers compete on four dimensions: latency (how fast), accuracy (how correct), pricing (how cheap), and protocol support (how easy to integrate). Each of these dimensions is shaped by infrastructure decisions that this book covers in detail. We examine specific providers' architectures, protocols, and pricing throughout Parts II-IV.
 
 ### Batch vs Real-Time vs Streaming Inference
 
@@ -86,11 +86,9 @@ This book focuses primarily on real-time and streaming inference, with batch as 
 
 ### GPU Utilization and Cost
 
-The economic reality of GPU inference is stark. An 8xH100 instance costs approximately $55 per hour on-demand; even a single-GPU A10G instance costs $1.24 per hour [Source: AWS, 2025]. If a GPU serves one request at a time and each request takes 100 milliseconds, the GPU is idle for over 99% of its time at low traffic levels. Even at moderate traffic (100 requests per second), a one-request-at-a-time approach leaves substantial GPU capacity on the table.
+GPU inference is expensive, and naive serving wastes the vast majority of that expense. If a GPU serves one request at a time and each request takes 100 milliseconds, the GPU is idle for most of its time even at moderate traffic levels. The gap between what organizations pay for GPU compute and what they actually use is often enormous.
 
-Dynamic batching addresses part of the problem by collecting multiple requests and processing them together in a single GPU forward pass. Continuous batching goes further: rather than waiting for a fixed batch to fill, it dynamically inserts new requests into an in-progress batch and evicts completed ones, achieving 2-4x throughput improvement over static batching at equivalent latency [Source: BentoML, 2025]. This technique, which we cover in depth shortly, has become table stakes for production LLM serving.
-
-But batching alone does not solve the cost problem. Right-sizing GPU instances (matching the GPU class to the model's actual requirements), using spot instances for interruptible workloads, scheduling capacity to follow demand curves, and monitoring utilization to detect waste are all part of a comprehensive cost strategy. Chapter 3 covers GPU optimization in detail, and Chapter 14 addresses cost optimization at scale.
+A series of innovations, from batching strategies to memory management to precision reduction, have dramatically closed this gap. But even with these techniques, right-sizing GPU instances, using spot instances for interruptible workloads, scheduling capacity to follow demand curves, and monitoring utilization to detect waste are all part of a comprehensive cost strategy. Chapter 3 covers GPU optimization in detail, and Chapter 14 addresses cost optimization at scale.
 
 ### Latency Anatomy of an Inference Request
 
@@ -118,13 +116,11 @@ One subtlety that trips up many teams: *measuring* these stages correctly for st
 
 ### The Cold Start Problem
 
-Cold start is the delay between launching a new inference instance and that instance being ready to serve traffic. For ML workloads, this delay is dominated by model loading: transferring multi-gigabyte weight files from storage into GPU memory and initializing the model for inference.
+Cold start is the delay between launching a new inference instance and that instance being ready to serve traffic. For ML workloads, this delay is dominated by model loading: transferring multi-gigabyte weight files from storage into GPU memory and initializing the model for inference. A large model can take 30 seconds to several minutes to load, orders of magnitude longer than a typical web application startup. For context, a standard web server starts in tens of milliseconds to a few seconds.
 
-The numbers are sobering. A 7B parameter model in FP16 occupies approximately 14GB of GPU memory. Loading that from network storage takes 10-30 seconds depending on storage throughput. Larger models (70B parameters, 140GB in FP16) take proportionally longer. Add container startup time (2-5 seconds), runtime initialization (1-3 seconds for CUDA context creation), and a warm-up inference pass to populate caches, and the total cold start can reach 30-120 seconds.
+This matters in three scenarios. First, **auto-scaling events**: when traffic spikes and new instances spin up, those instances cannot serve traffic during the loading window. Existing instances must absorb the overflow, or requests queue and latency degrades. Second, **deployments**: rolling out a new model version requires loading the new model on fresh instances. If the rollout is too aggressive, the service loses capacity during the loading window. Third, **recovery**: when an instance fails and is replaced, the replacement instance has the same cold start delay.
 
-This matters in three scenarios. First, **auto-scaling events**: when traffic spikes and new instances spin up, those instances cannot serve traffic for 30 seconds or more. During that window, existing instances must absorb the overflow, or requests queue and latency degrades. Second, **deployments**: rolling out a new model version requires loading the new model on fresh instances. If the rollout is too aggressive, the service loses capacity during the loading window. Third, **recovery**: when an instance fails and is replaced, the replacement instance has the same cold start delay.
-
-Mitigation strategies exist: warm pools (pre-provisioned instances with models pre-loaded), model caching on local NVMe storage (reducing reload time from minutes to seconds), optimized container images (pre-downloading model weights into the image), and Kubernetes readiness probes that gate traffic until the model is verified as loaded. Chapter 3 covers these strategies in detail.
+Mitigation strategies exist: warm pools, model caching on fast local storage, optimized container images, and readiness probes that gate traffic until models are verified as loaded. Chapter 3 covers the cold start anatomy and these mitigation strategies in detail.
 
 ### Model Lifecycle in Production
 
@@ -140,61 +136,21 @@ A production model is not a static artifact. It evolves, and the serving infrast
 
 ## The Innovations
 
-The inference serving landscape has transformed between 2022 and 2026. A series of innovations, each building on the previous, has improved throughput by an order of magnitude, reduced memory requirements by a factor of 4-8x, and driven the cost per token down by roughly 100x. Understanding these innovations is essential background for the rest of this book.
+The inference serving landscape has transformed between 2022 and 2026. A series of innovations, each building on the previous, has dramatically improved throughput, reduced memory requirements, and driven down the cost per token. Understanding what these innovations do and why they matter is essential background for the rest of this book. Chapter 3 covers each technique in depth with benchmarks, mechanics, and tuning guidance.
 
-### Continuous Batching
+**Continuous batching** keeps GPUs fed by dynamically inserting new requests as completed ones finish, rather than waiting for an entire batch to complete before accepting new work. The result is substantially higher throughput at equivalent latency, and it has become table stakes for production LLM serving.
 
-Traditional (static) batching collects a fixed number of requests, processes them as a batch, and returns all results before accepting the next batch. This is simple but wasteful: short requests wait for long ones, and new arrivals must wait for the entire batch to complete.
+**PagedAttention** applies virtual memory concepts to the KV cache, the data structure that stores intermediate attention results during generation. Traditional allocation wastes the majority of KV cache memory through fragmentation; PagedAttention nearly eliminates that waste, enabling far more concurrent requests on the same hardware.
 
-Continuous batching (also called iteration-level batching or in-flight batching) breaks this rigidity. After each model iteration (one decoding step for autoregressive models), completed sequences are evicted from the batch and new arrivals are inserted in their place. The GPU is never idle waiting for a batch to fill, and no request waits longer than one iteration step for an open slot.
+**Quantization** reduces model precision from 32-bit to 16-bit, 8-bit, or even 4-bit, roughly halving memory requirements at each step. Lower precision means smaller models, faster computation, and lower cost, with carefully managed quality trade-offs. The progression from FP32 to FP4 has made models that once required multi-GPU clusters feasible on a single GPU.
 
-The impact is substantial: the original vLLM paper reported 2-4x throughput improvement over static batching at equivalent per-request latency [Source: Kwon et al., 2023]. Real-world results are often higher; Anyscale benchmarks show typical improvements of 4-8x, with up to 23x under high output variance, while GPU utilization improves from 30-60% (static batching) to 80-95% (continuous batching) [Source: Anyscale, 2023]. Continuous batching is now implemented in vLLM, SGLang, and TensorRT-LLM. It is effectively table stakes for production LLM serving in 2026.
-
-### PagedAttention and KV Cache Management
-
-The key-value (KV) cache stores precomputed attention keys and values from previous tokens, avoiding redundant computation during autoregressive generation. As sequence length and batch size grow, the KV cache becomes the dominant consumer of GPU memory, not the model weights themselves. Managing this cache efficiently is the central challenge of modern inference serving.
-
-PagedAttention, introduced by vLLM in 2023, treats the KV cache like virtual memory. Instead of allocating a contiguous block of GPU memory for each sequence's cache (which leads to fragmentation and waste), PagedAttention breaks the cache into fixed-size pages that can be allocated and freed independently. This reduces memory fragmentation dramatically, reducing KV cache waste from 60-80% under traditional allocation to less than 4% [Source: Red Hat, 2025; Kwon et al., 2023]. The result is higher batch sizes and longer sequences on the same hardware.
-
-The insight behind PagedAttention is profound: the winning inference runtimes are the ones that treat the KV cache as a first-class data structure with sophisticated allocation, deallocation, and sharing strategies [Source: Clarifai, 2025]. SGLang's RadixAttention extends this further with prefix caching, reusing KV cache entries across requests that share common prefixes (such as the system prompt in a chat application). This enables SGLang to achieve 16,200 tokens per second, roughly 29% faster than vLLM on H100 hardware with Llama 3.1 8B [Source: AIMultiple, 2026].
-
-### Quantization
-
-Quantization reduces the numerical precision of model weights and activations, trading a small amount of accuracy for large gains in memory efficiency and throughput. The progression has been rapid:
-
-**FP32 to FP16/BF16** (2x memory reduction, minimal quality impact) was the first widely adopted step. FP16 inference became standard by 2022.
-
-**FP16 to FP8** (another 2x reduction) became production-stable in 2024-2025 with proper calibration techniques. FP8 inference on H100 GPUs delivers significant throughput gains with negligible quality degradation for most models [Source: Stixor, 2025].
-
-**FP8 to FP4/INT4** (another 2x reduction) is the current frontier. NVIDIA's NVFP4 KV cache quantization reduces KV cache memory by 50% compared to FP8, enabling doubled context lengths and batch sizes on Blackwell (B200) GPUs [Source: NVIDIA, 2025]. Quality impact varies by model and task; careful evaluation is required.
-
-Each quantization step roughly halves the memory footprint and increases throughput proportionally. For a 70B parameter model: FP32 requires 280GB (does not fit on a single GPU), FP16 requires 140GB (requires multi-GPU), FP8 requires 70GB (fits on one H100), and FP4 requires 35GB (fits on one A100 with room for KV cache). The practical impact on deployment cost and complexity is enormous.
-
-### Speculative Decoding
-
-Autoregressive generation (producing one token at a time, each depending on the previous) is inherently sequential. Speculative decoding breaks this bottleneck by using a small, fast draft model to generate candidate tokens in parallel, then validating those candidates with the full model in a single forward pass. If the draft model's predictions are correct (which they often are for common token sequences), multiple tokens are confirmed in one step.
-
-The speedup is typically 2-3x for decoding-dominated workloads, with no quality loss: the full model has final say on every token. Speculative decoding is particularly effective for text generation and speech synthesis, where the output is long and the draft model can predict common patterns accurately. This technique is listed as "upcoming" or "experimental" in several serving frameworks as of early 2026, but its adoption is accelerating rapidly.
-
-![ML Inference Serving Innovation Timeline](../assets/ch01-innovation-timeline.html)
-
-\newpage
+**Speculative decoding** uses a small, fast draft model to predict multiple tokens ahead, then validates them in a single pass through the full model. When the draft model predicts correctly (which it often does for predictable output), multiple tokens are confirmed in one step, accelerating generation without any quality loss.
 
 ## The Serving Framework Landscape
 
-Three generations of serving frameworks have emerged, each solving the previous generation's primary limitation.
+Three generations of serving frameworks have emerged since 2016, each solving the previous generation's core limitation. Framework-locked servers (TensorFlow Serving, TorchServe) gave way to multi-framework orchestration platforms (Triton, KServe, BentoML, Ray Serve), which gave way to LLM-optimized engines (vLLM, SGLang, TensorRT-LLM) purpose-built for transformer inference with innovations like continuous batching and PagedAttention as core features.
 
-**Generation 1: Framework-Native Serving (2017-2020).** TensorFlow Serving and TorchServe were the first purpose-built inference servers. Each was tightly coupled to its parent framework: TF Serving served TensorFlow models only, TorchServe served PyTorch models only. They provided basic HTTP and gRPC APIs with simple batching but lacked GPU-aware scheduling, multi-model management, or framework-agnostic model support. These tools were a significant step up from wrapping a model in a Flask server, but they could not keep pace with the diversity of model frameworks that followed. As of August 2025, TorchServe's repository has been archived and is no longer actively maintained [Source: GitHub, 2025], underscoring the consolidation toward later-generation frameworks.
-
-**Generation 2: Multi-Framework Platforms (2020-2023).** Triton Inference Server (NVIDIA), KServe, BentoML, and Ray Serve broke the framework coupling. Triton supports models from TensorFlow, PyTorch, ONNX, and TensorRT within a single server, with GPU scheduling and ensemble pipeline support. KServe provides Kubernetes-native model serving with Knative autoscaling, including scale-to-zero capability. BentoML offers a developer-friendly Python-class-based interface that works without Kubernetes. Ray Serve extends the Ray distributed computing framework to model serving with flexible composition. These platforms solved the "one framework per server" problem but were designed for general ML workloads, not the specific demands of LLM inference.
-
-**Generation 3: LLM-Optimized Engines (2023-present).** vLLM, SGLang, and TensorRT-LLM are purpose-built for transformer-based LLM inference. They implement continuous batching, PagedAttention (or RadixAttention in SGLang's case), and KV cache management as core features. vLLM (4,741 tokens per second at 100 concurrent requests on GPT-OSS-120B benchmarks [Source: Clarifai, 2025]) is the safe default for most deployments. SGLang (16,200 tokens per second, 29% faster than vLLM on Llama 3.1 8B [Source: AIMultiple, 2026]) excels in chat and RAG scenarios where prefix caching provides its greatest advantage. TensorRT-LLM delivers the highest single-request performance at low concurrency, particularly on NVIDIA's latest hardware, but at the cost of significantly higher setup complexity and NVIDIA lock-in.
-
-The consolidation trend is clear. For LLM workloads, vLLM, SGLang, and TensorRT-LLM dominate. For general ML workloads (computer vision, recommendation models, traditional NLP), KServe and BentoML remain the pragmatic choices. Triton often serves as an orchestration layer that can host any of these engines as backends. The selection depends on model type, latency requirements, scaling model, operational complexity, and team expertise. Chapter 2 covers this landscape in detail with a decision framework for choosing the right tool.
-
-![ML Inference Framework Landscape](../assets/ch01-serving-landscape.html)
-
-\newpage
+The consolidation trend is clear. For LLM workloads, Gen 3 engines dominate. For general ML workloads, Gen 2 platforms remain the pragmatic choice. The selection depends on model type, latency requirements, scaling model, operational complexity, and team expertise. Chapter 2 covers this landscape in detail with benchmark data and a decision framework for choosing the right tool.
 
 ## The Business Case
 
@@ -208,11 +164,11 @@ Cold starts create a different kind of experience degradation. A user whose firs
 
 ### Cost
 
-GPU inference is frequently the largest infrastructure line item for AI-powered companies. A fleet of just four 8xH100 instances (p5.48xlarge) running continuously costs over $160,000 per month in cloud compute alone [Source: AWS, 2025]. Optimized serving, through continuous batching, quantization, right-sized GPU selection, and scheduled scaling, can reduce this cost by 2-5x without degrading the user experience.
+GPU inference is frequently the largest infrastructure line item for AI-powered companies. Even a modest GPU fleet running continuously can cost tens to hundreds of thousands of dollars per month in cloud compute alone. Optimized serving, through the techniques covered in Chapters 3 and 14, can reduce this cost dramatically without degrading the user experience.
 
-Billing model choices also affect unit economics. Per-second billing (used by Deepgram and AssemblyAI) charges for exact audio duration, while per-block billing (AWS Transcribe's 15-second blocks) charges for the full block even when the utterance is shorter. For workloads with many short utterances (voice assistants, IVR systems), per-block billing can overcharge by up to 36% compared to per-second billing. These are not minor differences; at scale, they determine whether the service's margins are positive or negative.
+Billing model choices also affect unit economics. Per-second billing charges for exact usage duration, while per-block billing charges for a minimum block even when actual usage is shorter. For workloads with many short interactions (voice assistants, IVR systems), the billing model can meaningfully impact whether margins are positive or negative. Chapter 13 covers usage metering and billing in detail.
 
-The broader reality is that 2026 is the year organizations must get serious about AI unit economics. AI services without financial governance bleed margins [Source: OpenMeter, 2025]. Metering both revenue (what customers pay) and cost-to-serve (what the GPU compute costs) per customer and per feature is essential. Chapter 13 covers usage metering and billing in detail.
+The broader reality is that 2026 is the year organizations must get serious about AI unit economics. AI services without financial governance bleed margins [Source: OpenMeter, 2025]. Metering both revenue (what customers pay) and cost-to-serve (what the GPU compute costs) per customer and per feature is essential.
 
 ### Competitive Advantage
 
@@ -277,38 +233,20 @@ The book is organized into five parts, each building on the foundations laid her
 - Five characteristics make inference serving hard: high GPU costs, tight latency budgets, painful cold starts, continuous model lifecycle, and a cross-disciplinary talent gap
 - Speech and audio inference is among the most demanding serving workloads: streaming, real-time, codec-dependent, bidirectional, and intolerant of dropped data
 - The 300ms rule for voice AI is the anchor latency target throughout this book
-- Key innovations since 2022 (continuous batching, PagedAttention, quantization, speculative decoding) have improved throughput by 10-20x and reduced cost per token by roughly 100x
-- The framework landscape has consolidated: vLLM, SGLang, and TensorRT-LLM for LLMs; KServe and BentoML for general ML; Triton as an orchestration layer
+- Key innovations since 2022 (continuous batching, PagedAttention, quantization, speculative decoding) have dramatically improved throughput and reduced cost per token
+- Three generations of serving frameworks have consolidated into a landscape where LLM-optimized engines handle transformer workloads and multi-framework platforms serve general ML
 - The business case spans user experience (latency determines usability), cost (GPU inference is the largest line item), and competitive advantage (infrastructure quality is a moat)
 - This book takes a measurement-driven approach, focuses on serving not training, and uses audio as the running example because it combines the hardest constraints
 
 ## References
 
 1. AssemblyAI (2025). "The 300ms Rule: Why Latency Makes or Breaks Voice AI." assemblyai.com/research/the-300ms-rule
-2. BentoML (2025). "LLM Inference Handbook: Choosing the Right Framework." bentoml.com/blog/llm-inference-handbook
-3. Clarifai (2025). "Comparing SGLang, vLLM, and TensorRT-LLM with GPT-OSS-120B." clarifai.com/blog/comparing-sglang-vllm-tensorrt-llm
-4. Stixor (2025). "The New LLM Inference Stack 2025: FA-3, FP8 & FP4." stixor.com/llm-inference-stack-2025
-5. NVIDIA (2025). "Optimizing Inference for Long Context with NVFP4 KV Cache." developer.nvidia.com/blog/nvfp4-kv-cache
-6. OpenMeter (2025). "Real-Time Usage Metering." openmeter.io/docs
-7. Deepgram (2025). "Pricing: Pay-as-you-go." deepgram.com/pricing
-8. AssemblyAI (2025). "Pricing and Feature Add-ons." assemblyai.com/pricing
-9. ElevenLabs (2025). "Pricing: Per-character TTS." elevenlabs.io/pricing
-10. OpenAI (2025). "Realtime API Documentation." platform.openai.com/docs/guides/realtime
-11. Google Cloud (2025). "Cloud Speech-to-Text V2 API Reference." cloud.google.com/speech-to-text/v2/docs
-12. Google (2024). "RAIL Performance Model." web.dev/rail
-13. MarkTechPost (2025). "Comparing Top 6 Inference Runtimes for LLM Serving in 2025."
-14. Dao, T. et al. (2024). "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision." arXiv preprint.
-15. AWS (2025). "EC2 On-Demand Instance Pricing." aws.amazon.com/ec2/pricing/on-demand
-16. Ankur's Newsletter (2025). "The Real Price of AI: Pre-Training Vs. Inference Costs." ankursnewsletter.com
-17. CloudZero (2025). "Your Guide To Inference Cost (And Turning It Into Margin Advantage)." cloudzero.com/blog/inference-cost
-18. NVIDIA (2025). "LLM Inference Benchmarking: Performance Tuning with TensorRT-LLM." developer.nvidia.com/blog/llm-inference-benchmarking-performance-tuning-with-tensorrt-llm
-19. vLLM (2025). "Inside vLLM: Anatomy of a High-Throughput LLM Inference System." blog.vllm.ai/2025/09/05/anatomy-of-vllm.html
-20. Chen, Y. et al. (2024). "A Systematic Characterization of LLM Inference on GPUs." arXiv:2512.01644.
-21. AIMultiple (2026). "LLM Inference Engines: vLLM vs LMDeploy vs SGLang." research.aimultiple.com/inference-engines
-22. Red Hat (2025). "How PagedAttention Resolves Memory Waste in LLM Systems." developers.redhat.com/articles/2025/07/24/how-pagedattention-resolves-memory-waste-llm-systems
-23. Anyscale (2023). "Continuous Batching in LLM Inference." anyscale.com/blog/continuous-batching-llm-inference
-24. Kwon, W. et al. (2023). "Efficient Memory Management for Large Language Model Serving with PagedAttention." Proceedings of the ACM SOSP '23. arXiv:2309.06180
-25. GitHub (2025). "TorchServe Repository Archived." github.com/pytorch/serve/issues/3396
+2. Google (2024). "RAIL Performance Model." web.dev/rail
+3. Ankur's Newsletter (2025). "The Real Price of AI: Pre-Training Vs. Inference Costs." ankursnewsletter.com
+4. CloudZero (2025). "Your Guide To Inference Cost (And Turning It Into Margin Advantage)." cloudzero.com/blog/inference-cost
+5. NVIDIA (2025). "LLM Inference Benchmarking: Performance Tuning with TensorRT-LLM." developer.nvidia.com/blog/llm-inference-benchmarking-performance-tuning-with-tensorrt-llm
+6. vLLM (2025). "Inside vLLM: Anatomy of a High-Throughput LLM Inference System." blog.vllm.ai/2025/09/05/anatomy-of-vllm.html
+7. OpenMeter (2025). "Real-Time Usage Metering." openmeter.io/docs
 
 ---
 

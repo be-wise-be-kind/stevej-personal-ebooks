@@ -29,53 +29,17 @@ The following works are referenced across multiple chapters and form the foundat
 
 1. **AssemblyAI** (2025). "The 300ms Rule: Why Latency Makes or Breaks Voice AI." https://www.assemblyai.com/blog/the-300ms-rule
 
-2. **BentoML** (2025). "LLM Inference Handbook: Choosing the Right Framework." https://www.bentoml.com/blog/llm-inference-handbook
+2. **Google** (2024). "RAIL Performance Model." https://web.dev/rail
 
-3. **Clarifai** (2025). "Comparing SGLang, vLLM, and TensorRT-LLM with GPT-OSS-120B." https://www.clarifai.com/blog/comparing-sglang-vllm-tensorrt-llm
+3. **Ankur's Newsletter** (2025). "The Real Price of AI: Pre-Training Vs. Inference Costs." https://ankursnewsletter.com
 
-4. **Stixor** (2025). "The New LLM Inference Stack 2025: FA-3, FP8 & FP4." https://stixor.com/the-new-llm-inference-stack-2025
+4. **CloudZero** (2025). "Your Guide To Inference Cost (And Turning It Into Margin Advantage)." https://cloudzero.com/blog/inference-cost
 
-5. **NVIDIA** (2025). "Optimizing Inference for Long Context with NVFP4 KV Cache." https://developer.nvidia.com/blog/nvfp4-kv-cache
+5. **NVIDIA** (2025). "LLM Inference Benchmarking: Performance Tuning with TensorRT-LLM." https://developer.nvidia.com/blog/llm-inference-benchmarking-performance-tuning-with-tensorrt-llm
 
-6. **OpenMeter** (2025). "Real-Time Usage Metering." https://openmeter.io/docs
+6. **vLLM** (2025). "Inside vLLM: Anatomy of a High-Throughput LLM Inference System." https://blog.vllm.ai/2025/09/05/anatomy-of-vllm.html
 
-7. **Deepgram** (2025). "Pricing: Pay-as-you-go." https://deepgram.com/pricing
-
-8. **AssemblyAI** (2025). "Pricing and Feature Add-ons." https://assemblyai.com/pricing
-
-9. **ElevenLabs** (2025). "Pricing: Per-character TTS." https://elevenlabs.io/pricing
-
-10. **OpenAI** (2025). "Realtime API Documentation." https://platform.openai.com/docs/guides/realtime
-
-11. **Google Cloud** (2025). "Cloud Speech-to-Text V2 API Reference." https://cloud.google.com/speech-to-text/v2/docs
-
-12. **Google** (2024). "RAIL Performance Model." https://web.dev/rail
-
-13. **MarkTechPost** (2025). "Comparing Top 6 Inference Runtimes for LLM Serving in 2025." https://www.marktechpost.com/
-
-14. **Dao, T., et al.** (2024). "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision." arXiv preprint.
-
-15. **AWS** (2025). "EC2 On-Demand Instance Pricing." https://aws.amazon.com/ec2/pricing/on-demand
-
-16. **Ankur's Newsletter** (2025). "The Real Price of AI: Pre-Training Vs. Inference Costs." https://ankursnewsletter.com
-
-17. **CloudZero** (2025). "Your Guide To Inference Cost (And Turning It Into Margin Advantage)." https://cloudzero.com/blog/inference-cost
-
-18. **NVIDIA** (2025). "LLM Inference Benchmarking: Performance Tuning with TensorRT-LLM." https://developer.nvidia.com/blog/llm-inference-benchmarking-performance-tuning-with-tensorrt-llm
-
-19. **vLLM** (2025). "Inside vLLM: Anatomy of a High-Throughput LLM Inference System." https://blog.vllm.ai/2025/09/05/anatomy-of-vllm.html
-
-20. **Chen, Y., et al.** (2024). "A Systematic Characterization of LLM Inference on GPUs." arXiv:2512.01644.
-
-21. **AIMultiple** (2026). "LLM Inference Engines: vLLM vs LMDeploy vs SGLang." https://research.aimultiple.com/inference-engines/
-
-22. **Red Hat** (2025). "How PagedAttention Resolves Memory Waste in LLM Systems." https://developers.redhat.com/articles/2025/07/24/how-pagedattention-resolves-memory-waste-llm-systems
-
-23. **Anyscale** (2023). "Continuous Batching in LLM Inference." https://www.anyscale.com/blog/continuous-batching-llm-inference
-
-24. **Kwon, W., et al.** (2023). "Efficient Memory Management for Large Language Model Serving with PagedAttention." *Proceedings of the ACM SOSP '23*. arXiv:2309.06180
-
-25. **GitHub** (2025). "TorchServe Repository Archived." https://github.com/pytorch/serve/issues/3396
+7. **OpenMeter** (2025). "Real-Time Usage Metering." https://openmeter.io/docs
 
 ---
 
