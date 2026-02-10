@@ -11,6 +11,14 @@
 - Audio data carries heightened regulatory obligations because voice is classified as biometric and personal data under most privacy frameworks
 - This chapter maps specific compliance requirements (SOC 2, GDPR, CCPA, HIPAA, EU AI Act) to concrete architectural decisions and implementation patterns
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter explains what compliance frameworks require and why they matter commercially. SOC 2 is a security auditing standard. Enterprise customers will not sign contracts without a SOC 2 Type II report, making it effectively mandatory for B2B AI companies. GDPR (the EU's General Data Protection Regulation) gives individuals rights over their personal data including the right to access, correction, and deletion. HIPAA protects health data in the US and requires signed Business Associate Agreements (BAAs) with every entity in the data processing chain. Audit logging means recording every significant event (who accessed what data, when, and why) in tamper-proof storage retained for years, so that auditors can verify compliance after the fact.
+
+**From the API side**, ML audio services face heightened compliance obligations because of the nature of the data they process. Voice recordings are classified as biometric data under GDPR and many US state laws (Illinois BIPA, Texas CDBPA), triggering stricter consent requirements and processing restrictions than text data. The EU AI Act (effective August 2026) imposes transparency obligations on AI systems that interact with humans, requires risk assessments for high-risk applications, and prohibits emotion recognition in workplaces and educational settings. Model lifecycle events (version deployments, A/B tests, rollbacks) must be auditable because the model version determines output quality, and a regulator may need to know which model produced a specific result months after the fact.
+
 ## SOC 2 for ML APIs
 
 ### Why SOC 2 Is Effectively Mandatory

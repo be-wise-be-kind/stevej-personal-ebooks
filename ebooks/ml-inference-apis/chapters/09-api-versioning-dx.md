@@ -11,6 +11,14 @@
 - SDK design, documentation patterns, and developer onboarding strategies that determine whether developers adopt your API or a competitor's
 - Multimodality as a design consideration for 2025+ APIs; how to extend single-modality APIs to handle text, audio, and images without breaking existing clients
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter covers API versioning conventions that govern how services evolve without breaking clients. URL path versioning (`/v1/`, `/v2/`) is the most common approach. Incrementing the version number signals breaking changes that require client updates. Deprecation means marking an old version as "will be removed by date X" and giving clients a migration window. SDKs (Software Development Kits) are client libraries that wrap your API in language-native code (Python, JavaScript, Go). They are how most developers interact with your service rather than making raw HTTP calls. Developer onboarding, measured as time-to-first-API-call, is a key adoption metric that determines whether developers choose your API or a competitor's.
+
+**From the API side**, ML APIs face a two-axis versioning problem that does not exist in traditional services. Unlike standard APIs where only the API contract (endpoints, schemas) changes, ML APIs have two things that change independently: the API schema and the underlying model. A model upgrade might improve transcription accuracy by 15% without changing any API field, endpoint, or response format. Clients need "model pinning," the ability to lock to a specific model version (e.g., `nova-3` vs `nova-2`) for reproducible results, especially in regulated industries where output consistency is a compliance requirement.
+
 ## API Versioning Strategies
 
 ### URL Path Versioning

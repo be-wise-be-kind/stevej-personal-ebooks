@@ -11,6 +11,14 @@
 - Audio data is uniquely sensitive; it contains voice biometrics, background conversations, and emotional states alongside any explicit content
 - This chapter covers auth for persistent connections, API key lifecycle, rate limiting for expensive compute, and PII handling in transcripts
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter covers authentication and rate limiting patterns used in API security. JWT (JSON Web Tokens) are self-contained tokens that carry identity and permissions in a signed, base64-encoded payload. The server can verify them without a database lookup. OAuth 2.0 is a framework for delegated authorization; the "Client Credentials" flow is the standard for server-to-server communication where no human user is involved. Rate limiting caps how many requests a client can make per time window; algorithms like token bucket allow controlled bursts above the steady-state rate. TLS (Transport Layer Security) encrypts data in transit between client and server; mTLS (mutual TLS) adds client-side certificate verification so both sides prove their identity.
+
+**From the API side**, audio data introduces security concerns that do not exist for text or structured data. Voice is biometric data that identifies a person as reliably as a fingerprint, which triggers stricter regulatory handling under GDPR and US state biometric privacy laws. Audio recordings may capture background conversations from bystanders who never consented to being recorded. GPU-aware rate limiting means measuring cost in compute-seconds rather than request count, because a 60-second audio request consumes roughly 60x the GPU resources of a 1-second request, and a flat request-count limit would allow a single long request to consume disproportionate capacity. PII redaction for audio means detecting spoken personal information (names, SSNs, credit card numbers) in transcripts and optionally in the audio stream itself.
+
 ## Authentication for Streaming Connections
 
 ### The Streaming Auth Challenge

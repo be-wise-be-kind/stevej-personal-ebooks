@@ -11,6 +11,14 @@
 - The end-to-end journey of audio data: from network arrival through queuing, inference, post-processing, and response streaming
 - Managing multiple concurrent streams on shared GPU resources while maintaining latency SLOs and graceful degradation under load
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter uses distributed tracing and queue theory concepts from backend engineering. Distributed tracing (OpenTelemetry) tracks a request across multiple services by attaching a unique trace ID; each processing step creates a "span" with timing data, so you can see exactly where latency accumulates. Queue theory describes requests waiting for processing: queue depth (how many are waiting) is a key load signal, and Little's Law relates average queue size to arrival rate and processing time. Backpressure means the system pushes back on incoming requests when it cannot keep up, rather than accepting unbounded work that would eventually crash the pipeline or blow latency SLOs.
+
+**From the API side**, this chapter describes what happens inside the GPU during inference. The model processes audio through multiple "layers" of computation. Each layer reads intermediate results (stored in the KV cache), performs matrix multiplications on the input, and writes new results for the next layer. Batching groups multiple audio streams so these matrix operations process all of them in a single GPU pass, dramatically improving throughput at the cost of slightly higher per-request latency. Pipeline parallelism means overlapping CPU preprocessing of the next audio chunk with GPU inference on the current chunk, so neither the CPU nor GPU is idle waiting for the other.
+
 ## Bridging Transport and Inference
 
 ### The Pipeline Abstraction

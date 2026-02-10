@@ -11,6 +11,14 @@
 - The billing models used by speech/audio and LLM providers (per-second, per-block, per-character, per-token, per-hour) and when each makes sense
 - Modern metering infrastructure: Stripe Meters API, OpenMeter, and the architecture of idempotent event collection and real-time aggregation
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter covers usage-based billing infrastructure, which connects API consumption to revenue. Metering events are records of what each customer consumed (e.g., 47.3 audio seconds processed at the "nova-3" model tier). These events flow through a pipeline: collection (emitted from the inference server at request completion) → aggregation (summing per customer per billing period) → invoicing (through Stripe, a custom billing system, or similar). Idempotency keys on metering events prevent double-billing when network retries cause the same event to be submitted twice. Rate limiting tied to billing tiers means a free-tier customer gets fewer concurrent streams or lower priority than an enterprise customer paying for dedicated capacity.
+
+**From the API side**, ML metering is harder than traditional API metering because request cost varies dramatically. A single API call can vary 60x in resource consumption. A 1-second audio transcription uses a fraction of the GPU time that a 60-second one does, unlike web requests where cost per request is roughly uniform. Flat per-request pricing loses money on long requests and overcharges short ones. Feature-based pricing (base rate plus increments for diarization, speaker identification, PII redaction, etc.) means the metering system must track which features were enabled per request, not just the request itself. Per-block billing (charging in 15-second increments) simplifies metering but can overcharge by 36% on short-utterance workloads like voice commands.
+
 ## What to Meter
 
 ### Audio-Specific Metering Units

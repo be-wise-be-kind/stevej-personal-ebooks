@@ -11,6 +11,14 @@
 - GPU-aware scaling is fundamentally different from traditional web service scaling; signals, policies, and cold start tradeoffs all change
 - Multi-region deployment introduces model replication, request routing, and data sovereignty constraints that do not exist in single-region setups
 
+## Bridging the Gap
+
+This chapter draws on concepts from both ML infrastructure and API engineering. If you have not encountered these before, this section provides the context you will need.
+
+**From the ML side**, this chapter covers scaling and deployment patterns that are standard in backend infrastructure. Horizontal scaling means adding more instances behind a load balancer rather than upgrading individual machines. Auto-scaling automatically adjusts instance count based on demand signals like CPU utilization, queue depth, or request latency. Multi-region deployment replicates your service across geographic regions (US-East, EU-West, Asia-Pacific) for lower latency to users and compliance with data sovereignty requirements. Spot instances are discounted cloud VMs that can be reclaimed by the provider with short notice, making them useful for fault-tolerant batch workloads. Reserved instances commit to a 1-3 year term in exchange for significant discounts, typically 30-60% off on-demand pricing.
+
+**From the API side**, GPU scaling differs from CPU scaling in fundamental ways that affect every operational decision. Adding a GPU instance means loading a multi-gigabyte model into GPU memory before it can serve any traffic, which takes 30-120 seconds versus milliseconds for a CPU web server. GPU memory (not CPU or RAM) is the binding constraint; each concurrent request holds a KV cache allocation in GPU memory, so "maximum concurrent connections" is a GPU memory calculation, not a file descriptor or thread pool limit. Right-sizing means matching the GPU class (T4, L4, A100, H100) to the model size and concurrency requirements. A 1B-parameter model does not need an H100, and an H100 running a tiny model wastes most of its capacity and budget.
+
 ## Horizontal Scaling for Inference
 
 ### Adding GPU Instances
