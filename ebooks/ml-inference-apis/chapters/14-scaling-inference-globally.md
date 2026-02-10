@@ -42,7 +42,7 @@
 - **GPU utilization**: the most direct signal; sustained >80% utilization indicates the need for more capacity
 - **Request queue depth**: requests waiting for an available inference slot; if the queue grows, throughput is insufficient
 - **Latency P95/P99**: when tail latency exceeds the SLO threshold, scale up even if average latency looks healthy
-- **Active stream count**: for streaming workloads, the number of concurrent open streams is a better signal than request rate
+- **Active stream count**: for streaming workloads, the number of concurrent open streams is a better signal than request rate. **Measurement caveat**: a point-in-time gauge sampled at coarse intervals (e.g., 60 seconds) misses short-lived streams entirely, reporting zero even under heavy load. Use a high-water-mark counter that tracks peak concurrent streams within each export interval, or sample at sub-second granularity. If the scaling signal reads zero, the auto-scaler never triggers (see Chapter 12)
 - **KV cache utilization**: for LLM workloads, KV cache memory pressure limits batch sizes before GPU compute saturates
 - Composite signals: combine multiple metrics with weighted scoring rather than relying on any single signal
 
@@ -175,6 +175,23 @@
 - Per-customer cost tracking: when models serve multiple tenants, allocate inference cost by usage
 - GPU idle time monitoring: track the percentage of provisioned GPU-seconds that are actually used for inference
 - Cost anomaly detection: alert when GPU spend deviates significantly from forecasts; often indicates a scaling policy misconfiguration
+
+### Cost-First Observability Design
+
+- Observability infrastructure itself has cost that scales with inference traffic: every request generates metrics, traces, and logs. At inference scale (thousands of requests per second), telemetry storage and processing become a significant line item
+- **Feature flags for instrumentation**: implement a runtime kill switch (e.g., `OTEL_ENABLED=false`) that disables all telemetry collection. This serves two purposes: zero-overhead operation when debugging is not needed, and an immediate escape valve if telemetry volume causes cost overruns. Use a separate flag for profiling (higher CPU overhead) vs. metrics/traces/logs
+- **Storage consolidation**: use a single object storage bucket with path prefixes (e.g., `s3://observability/metrics/`, `s3://observability/traces/`, `s3://observability/logs/`) rather than separate buckets per telemetry pillar. Reduces management overhead and enables unified lifecycle policies (e.g., 7-day retention for dev, 30-day for production)
+- **Single-binary components**: for small-to-medium deployments, use single-binary mode for observability backends (Loki, Tempo, Mimir all support this). Scale to distributed mode only when data volume requires it. A single t3.medium can run the full Grafana stack for a dev/staging inference environment
+- Design for the progression: start cheap and simple, add complexity only when measurement proves the simpler approach is insufficient
+
+### Workspace Separation (Persistent vs Ephemeral Infrastructure)
+
+- Separate infrastructure into "base" (persistent) and "runtime" (ephemeral) workspaces to protect long-lived data from compute lifecycle events
+- **Base workspace** (persistent): object storage for metrics/logs/traces, model weight caches, model registries, configuration databases, billing records. This is data that must survive infrastructure teardown
+- **Runtime workspace** (ephemeral): GPU instances, inference servers, API gateways, load balancers. This is compute that can be destroyed and recreated without data loss
+- **Benefit**: tearing down all compute during cost-cutting or maintenance (`destroy runtime`) does not destroy historical observability data, model artifacts, or billing records. When runtime is recreated, instances pull cached model artifacts from base storage rather than re-downloading
+- This separation also enables cost optimization: keep expensive GPU instances only during business hours while maintaining 24/7 access to historical dashboards and alerting on base infrastructure
+- In Terraform/OpenTofu: implement as separate state files or workspaces with explicit data dependencies between them
 
 ## GPU Cluster Management
 

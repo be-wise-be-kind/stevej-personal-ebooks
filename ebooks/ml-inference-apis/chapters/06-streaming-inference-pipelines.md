@@ -168,6 +168,24 @@
 - Stream setup latency: time from connection establishment to readiness to accept audio; includes model loading if applicable
 - Jitter: variance in per-chunk processing time; high jitter causes stuttering in real-time playback scenarios
 
+### Pure ASGI Middleware for Streaming Measurement
+
+- Standard HTTP middleware (e.g., Starlette's `BaseHTTPMiddleware`) measures request duration only until response headers are sent, then returns control to the caller. The body streaming phase is invisible to the middleware's timing
+- For streaming audio inference, the response body phase IS the inference: audio bytes or transcript chunks stream for seconds to minutes after headers are flushed. A streaming transcription request that consumes 30 seconds of GPU time shows as sub-millisecond latency in header-only metrics
+- **Solution**: implement pure ASGI middleware that wraps the full `await app(scope, receive, send)` call. This captures the entire request lifecycle including all response body chunks, connection close, and any streaming errors
+- The middleware intercepts the `send` callable to capture the status code from the `http.response.start` message, then records the total duration after the final `http.response.body` message (or after the ASGI app returns for WebSocket/streaming connections)
+- This is not optional for streaming ML APIs: every SLO target, latency alert, and capacity plan depends on accurate duration measurement. Header-only timing makes every downstream decision wrong
+- For batch/synchronous endpoints where the full response is sent in a single body chunk, the difference is negligible; the middleware handles both cases transparently
+
+### Middleware Ordering for Exemplar Support
+
+- For Python ASGI frameworks (FastAPI, Starlette), middleware executes in LIFO order: the last middleware added wraps the outermost layer of the request lifecycle
+- **Tracing middleware must wrap metrics middleware** (i.e., tracing is added after metrics in code, making it outermost in execution) so that the request's active span is available during metric recording
+- Without correct ordering, metrics are recorded outside any span context: OpenTelemetry exemplars cannot attach a `trace_id` to histogram observations, and the link from a metric spike to the specific trace that caused it is impossible
+- **For ML inference debugging, this is critical**: when P99 latency spikes on the golden signals dashboard, exemplars let you click directly from the metric graph to the trace waterfall of the specific slow request. Without exemplars, you can see that latency spiked but cannot determine which request caused it or which pipeline stage was responsible
+- Recommended ordering (innermost to outermost in execution): routing → metrics middleware → tracing middleware → authentication
+- Verify the setup by checking that histogram metric observations include exemplar metadata (`trace_id`, `span_id`) in your metrics backend (e.g., Mimir, Prometheus with exemplar support enabled)
+
 ## Pipeline Composition
 
 ### The Standard Audio Inference Pipeline
