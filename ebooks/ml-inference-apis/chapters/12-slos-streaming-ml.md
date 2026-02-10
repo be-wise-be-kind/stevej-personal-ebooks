@@ -45,6 +45,16 @@
 - Drop rate is a reliability SLI distinct from latency; a fast system that drops 5% of connections is not production-ready
 - Target: connection drop rate < 0.1% (99.9% connection reliability)
 
+### Active Connection Count
+
+- Active concurrent connections (WebSocket sessions, gRPC streams) is a critical capacity and scaling signal for streaming ML systems
+- Unlike request rate, active connections directly reflects GPU memory commitment: each open stream typically holds a KV cache allocation for the duration
+- **Measurement pitfall: point-in-time gauge sampling.** An OpenTelemetry `ObservableGauge` with a callback that reads `len(active_connections)` at each 60-second export interval will read zero for all requests shorter than the interval. For speech-to-text with sub-second utterances or short commands, the gauge systematically reports zero even under heavy load
+- **Solution: peak-tracking (high-water mark) counter.** Increment a counter on connection open, track the peak concurrent count within each export interval, and reset the peak after export. This captures the true maximum concurrency regardless of request duration
+- Alternatively, use a histogram of concurrent connection counts sampled at sub-second granularity, which preserves distribution information
+- Impact on auto-scaling: if the active-connections metric reads zero, the auto-scaler never triggers a scale-up event regardless of actual load; this is a silent failure that only manifests under traffic spikes when scaling is most needed
+- Target: depends on GPU memory and model size; a common starting point is alerting when active connections exceed 80% of the maximum supported by the deployed model's KV cache budget
+
 ### Real-Time Factor (RTF)
 
 - RTF = processing time / audio duration; must be < 1.0 for real-time streaming (the system processes faster than real-time)
@@ -207,6 +217,33 @@
 - Goodput alert: goodput drops below 90% for > 10 minutes; significant quality degradation
 - Connection drop rate alert: drop rate exceeds 1% for > 5 minutes; infrastructure reliability issue
 
+### Label Consistency Across Telemetry Pillars
+
+- Metrics, traces, and logs must use identical label names for service identification; otherwise cross-pillar correlation breaks silently
+- **Concrete failure mode**: if the OpenTelemetry SDK exports traces with resource attribute `service_name=inference-api` but Grafana dashboards query Prometheus metrics with `{service="inference-api"}`, all dashboard panels show "no data" despite telemetry flowing correctly to every backend
+- This failure is silent and insidious: empty panels look the same whether the system is healthy (no problems) or the labels are wrong (no data). Teams waste days debugging "missing telemetry" that is actually present but queried under the wrong label
+- For ML inference systems with multiple services (API gateway, inference worker, post-processing, model registry), the risk multiplies: each service must use the same label name convention across all three pillars
+- **Prevention**: define a service naming convention early. Use OpenTelemetry resource attributes (`service.name`, `deployment.environment`) as the canonical source. Ensure Prometheus metric labels, Tempo trace resource attributes, Loki structured log fields, and Grafana dashboard template variables all reference the same label names
+- Include a "telemetry integration test" in CI: emit a test request through the pipeline, verify that the service label appears in metrics, traces, and logs under the expected name
+
+### The Cross-Pillar Debugging Workflow
+
+- The payoff of four-pillar observability (metrics, traces, logs, profiling) is a connected debugging workflow for ML inference latency issues
+- **The full chain**: Dashboard shows P99 latency spike → Click exemplar link embedded in the metric → Jump to trace waterfall showing the specific slow request → Filter correlated logs by `trace_id` from the trace → Open flame graph (CPU/GPU profile) for the slow span
+- Each link in the chain requires a specific instrumentation capability:
+  - **Metric → Trace (exemplars)**: requires tracing middleware wrapping metrics middleware so the request's active span is available during metric recording; without correct middleware ordering, metrics lack span context and exemplar links are impossible
+  - **Trace → Logs**: requires consistent `trace_id` and `span_id` propagation into structured log fields; every log line emitted during a request must carry the W3C trace context
+  - **Trace → Profile**: requires profiling SDK that correlates profiles with trace spans (e.g., Pyroscope with `trace_id` / `span_id` tags)
+- **For ML inference specifically**, this chain answers: "Why was this particular audio transcription slow?" Was it GPU contention (visible in trace span timing for the inference stage)? Model loading (visible in logs showing cache miss)? A long input (visible in span attributes like `chunk.duration_ms` or `input.token_count`)? Queue wait (visible as gap between request arrival and inference start in the trace waterfall)?
+- Without this chain, debugging reduces to staring at aggregate dashboards and guessing; with it, you can diagnose a single slow request end-to-end in minutes
+
+### Validate Telemetry Format Assumptions
+
+- Before writing dashboard queries, verify the actual format of emitted telemetry by inspecting raw data at the collector
+- **Concrete failure mode**: LogQL queries written for JSON-formatted logs (`{job="app"} | json | level="error"`) return "no data" when the application SDK emits logfmt-formatted logs (`level=error msg="request failed"`). The query parser silently fails to match
+- This is especially common when assembling observability from multiple components: the inference service emits JSON, the ASGI middleware emits logfmt, the GPU exporter emits plaintext, each requiring different LogQL parsing pipelines
+- **Prevention**: emit a test request through the full pipeline, check raw telemetry at the collector (e.g., query Loki with `{job="app"} | line_format "{{.}}"` to see raw lines), then write queries that match the actual format. Do this for every new telemetry source before building dashboards
+
 <!-- DIAGRAM: ch12-burn-rate-alerting.html - Burn Rate Alerting -->
 
 \newpage
@@ -242,6 +279,10 @@
 - **Treating RTF > 1.0 as a latency problem**: RTF > 1.0 means the system fundamentally cannot keep up; no amount of latency optimization fixes a capacity problem
 - **Alerting on every SLO violation individually**: multi-window burn rate alerts prevent alert fatigue; a single spike that self-resolves should not page anyone
 - **Forgetting that model accuracy compounds with infrastructure reliability**: 99% model accuracy on 99.9% infrastructure yields 98.9% end-to-end quality; account for both in error budget planning
+- **Point-in-time sampling of connection gauges for fast requests**: an `ObservableGauge` sampled at 60-second intervals reads zero for all sub-second streams; the metric is useless for capacity planning and auto-scaling. Use peak-tracking counters or high-frequency histograms instead
+- **Measuring streaming latency at response headers instead of response completion**: standard HTTP middleware (e.g., Starlette's `BaseHTTPMiddleware`) reports latency only to headers-sent, then returns. For streaming ML responses, the entire inference duration occurs during body streaming. A request consuming 30 seconds of GPU time shows as 1ms in header-only metrics. Use ASGI-level instrumentation that captures the full `send()` lifecycle (see Chapter 6)
+- **Dashboard queries targeting labels that don't match exporter configuration**: if traces export `service_name` but dashboards query by `service`, every panel silently shows "no data." Always verify label names across metrics, traces, and logs before building dashboards
+- **Writing LogQL/PromQL queries before verifying emitted format**: queries built for JSON parsing (`| json`) fail silently against logfmt-emitting applications. Test against actual raw telemetry output before scaling query patterns across dashboards
 
 ## Summary
 

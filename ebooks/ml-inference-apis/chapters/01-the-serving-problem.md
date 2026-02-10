@@ -110,6 +110,8 @@ Understanding where milliseconds go in an inference request is essential for opt
 
 The total adds up: 100-435ms for a typical request, with 150-300ms being the common range. The critical insight is that every stage contributes, and the compounding effect means that small improvements across multiple stages add up. Ten stages each contributing 30ms yield 300ms total, which exactly hits the voice AI threshold with no margin.
 
+One subtlety that trips up many teams: *measuring* these stages correctly for streaming workloads is harder than it appears. Standard HTTP middleware in most web frameworks measures request duration only until the response headers are sent. For a streaming inference API, headers are flushed immediately while the actual inference (the audio or transcript bytes) streams back over seconds or minutes in the response body. A middleware timer that stops at headers-sent will report sub-millisecond latency for a request that actually consumed 30 seconds of GPU time. Accurate latency measurement for streaming ML APIs requires instrumentation that captures the full response lifecycle, a topic we return to in Chapters 6 and 12.
+
 ![Inference Request Latency Breakdown](../assets/ch01-latency-breakdown.html)
 
 \newpage
@@ -265,6 +267,8 @@ The book is organized into five parts, each building on the foundations laid her
 - **Skipping cold start planning.** Teams that test only with warm instances are surprised when production auto-scaling events cause 30-60 second response times. Plan for cold starts from the beginning: warm pools, readiness probes, model caching, and graceful degradation during scale-up events.
 
 - **Not metering cost alongside performance.** A system that meets its latency SLOs at 3x the necessary GPU cost is not well-optimized. Performance and cost are two sides of the same coin. Track cost per inference request alongside latency, and optimize for the combination.
+
+- **Measuring the wrong interval.** Instrumenting latency with off-the-shelf HTTP middleware and connection gauges with default settings can produce metrics that are technically correct but operationally useless. Point-in-time gauge sampling at 60-second intervals misses all sub-second events: an active connections gauge reads zero despite hundreds of requests per second. Middleware that measures to headers-sent reports microsecond latencies for streaming requests that take minutes of GPU time. The lesson: instrument the full request lifecycle, not just the checkpoint that existing tooling makes easy. Chapters 6 and 12 cover the specific patterns.
 
 ## Summary
 

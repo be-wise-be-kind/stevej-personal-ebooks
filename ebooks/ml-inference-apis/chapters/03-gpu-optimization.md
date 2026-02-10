@@ -32,7 +32,7 @@ Before optimizing, we need to measure. Several metrics capture different aspects
 
 **GPU memory utilization** measures how much of the GPU's HBM is allocated. High memory utilization does not imply high compute efficiency; a fully loaded KV cache can fill memory while the GPU's compute units remain mostly idle.
 
-The key monitoring tools are NVIDIA DCGM (Data Center GPU Manager) for detailed telemetry, `nvidia-smi` for quick spot-checks, and Prometheus exporters for GPU metrics that feed into standard observability stacks. The goal of measurement is not just a utilization number; it is a diagnosis of *which* bottleneck limits throughput: compute, memory bandwidth, or simply idle time between requests.
+The key monitoring tools are NVIDIA DCGM (Data Center GPU Manager) for detailed telemetry, `nvidia-smi` for quick spot-checks, and Prometheus exporters for GPU metrics that feed into standard observability stacks. A common gap: these exporters (DCGM-exporter, node-exporter, cAdvisor) must be explicitly deployed alongside inference workloads. Dashboard queries for GPU utilization, temperature, and memory pressure return "no data" silently if the exporters are missing. Teams mistake empty panels for "no problems" rather than "no data." Verify that your exporters are running and that your dashboard queries match the metric names they emit before trusting the output. The goal of measurement is not just a utilization number; it is a diagnosis of *which* bottleneck limits throughput: compute, memory bandwidth, or simply idle time between requests.
 
 ## Dynamic and Continuous Batching
 

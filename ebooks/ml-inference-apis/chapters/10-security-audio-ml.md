@@ -154,6 +154,14 @@
 - Ephemeral processing: decrypt audio into memory for inference, never write plaintext to disk
 - Encryption for model artifacts: the models themselves may be proprietary and require at-rest encryption
 
+### Securing Operator and Observability Tools
+
+- Observability dashboards (Grafana), tracing backends (Tempo, Jaeger), log aggregators (Loki), and metrics stores (Prometheus, Mimir) are attractive attack targets for ML inference systems. They contain: request metadata revealing business logic, audio processing patterns, customer identifiers, model version information, and potentially PII from structured logs
+- **Anti-pattern: default public exposure.** Many cloud deployments expose Grafana on a public load balancer with anonymous access enabled by default. An attacker gains read access to all dashboards, which may reveal API keys in log queries, customer usage patterns, inference costs, and infrastructure topology
+- **Pattern: default-deny for operator tools.** Observability UIs should never be publicly accessible. Use VPN, SSH tunnel, or SSM port-forwarding to access them. Set `GF_AUTH_ANONYMOUS_ENABLED=false` and configure an identity provider (OIDC, SAML, or at minimum basic auth). The only observability endpoint exposed publicly should be the telemetry collection receiver (e.g., OpenTelemetry collector, Faro receiver), and only if browser-based telemetry is needed
+- **CORS for telemetry collection endpoints.** If using browser-based telemetry collection (Grafana Faro, OpenTelemetry browser SDK), the collection receiver requires CORS configuration. Never use `allowed_origins = ["*"]` in production. A wildcard allows any website to send telemetry to your collector, polluting your data or enabling denial-of-service against the collection pipeline. Template CORS to your specific application domain(s)
+- For ML inference specifically: observability stores may contain audio chunk metadata, transcript fragments in log messages, speaker identifiers, and model confidence scores, all of which have privacy implications under GDPR and HIPAA (see Chapter 11)
+
 ### Why Audio Data Is Uniquely Sensitive
 
 - Voice biometrics: a person's voice is a biometric identifier; audio recordings can be used for speaker identification or voice cloning
