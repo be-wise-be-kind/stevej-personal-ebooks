@@ -6,6 +6,7 @@
 
 ## Overview
 
+- **Ground the reader**: briefly explain what compliance means in this context. Compliance refers to meeting the security, privacy, and governance standards that enterprise customers and regulators require before they will trust a service with their data. Standards like SOC 2 (a security audit framework), GDPR (European privacy law), and HIPAA (US healthcare data protection) each impose specific requirements on how data is stored, accessed, retained, and deleted. For ML inference APIs that process audio, compliance is not a checkbox exercise; it shapes architectural decisions from day one, because retrofitting data isolation, audit logging, and retention controls into a running system is far more expensive than building them in.
 - Compliance for ML inference APIs is not optional; enterprise customers require SOC 2, HIPAA, and GDPR compliance before signing contracts
 - Audio data carries heightened regulatory obligations because voice is classified as biometric and personal data under most privacy frameworks
 - This chapter maps specific compliance requirements (SOC 2, GDPR, CCPA, HIPAA, EU AI Act) to concrete architectural decisions and implementation patterns

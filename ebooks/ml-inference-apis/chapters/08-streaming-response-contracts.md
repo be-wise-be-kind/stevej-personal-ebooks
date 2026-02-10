@@ -6,6 +6,7 @@
 
 ## Overview
 
+- **Ground the reader**: explain what a "response contract" is. When a server streams results back to a client, both sides need to agree on the format and meaning of each message. What does the first message look like? How does the client know a new word was recognized? How does the client know the stream is finished? This agreement is the response contract. It is the layer above the transport protocol: the protocol handles delivering bytes, and the contract defines what those bytes mean. Getting this wrong means clients cannot reliably parse results, handle errors, or reconnect after failures.
 - What streaming inference messages actually look like on the wire; the event schemas, message framing, and lifecycle signals that clients consume on top of SSE, WebSocket, and gRPC transports
 - Chapter 5 (Protocol Selection) answers "which transport?"; this chapter answers "what do the messages look like on top of that transport?"
 - Connection lifecycle management, backpressure, and reconnection strategies that make streaming APIs reliable in production

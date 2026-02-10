@@ -6,6 +6,7 @@
 
 ## Overview
 
+- **Ground the reader**: explain what makes ML APIs different from the web APIs most backend engineers are used to building. A typical web API receives a small JSON request, does a database lookup or some business logic, and returns a small JSON response in milliseconds. An ML inference API receives a large payload (an audio file, an image, a long text prompt), runs it through a neural network on a GPU (which may take hundreds of milliseconds to seconds), and may return results progressively as a stream rather than all at once. The request is expensive to process, hard to retry, and the response format depends on whether the caller wants real-time streaming or a complete result.
 - How to design APIs specifically for ML inference workloads; where request payloads are large, processing is expensive, and responses may arrive synchronously, asynchronously, or as a stream
 - Resource-oriented design principles from Google AIPs applied to inference, the sync vs async vs streaming decision framework, and long-running operations for batch workloads
 - ML-specific error handling patterns that go beyond standard HTTP errors; model not loaded, GPU OOM, inference timeout, and how to communicate them clearly to clients

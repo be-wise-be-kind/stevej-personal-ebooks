@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Model Serving Architecture</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 860 640" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <marker id="arrowR" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" style="fill: #64748b;"/>
+                </marker>
+                <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" style="fill: #059669;"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="430" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Multi-Model Serving Architecture</text>
+            <text x="430" y="54" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">GPU partitioning strategies and ensemble pipeline orchestration</text>
+
+            <!-- === LEFT HALF: GPU Partitioning === -->
+            <text x="220" y="82" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e293b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">GPU Memory Partitioning</text>
+
+            <!-- MPS Section -->
+            <g transform="translate(30, 100)">
+                <rect x="0" y="0" width="380" height="200" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+                <text x="190" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">MPS (Multi-Process Service)</text>
+                <text x="190" y="42" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #3b82f6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Software-based GPU sharing</text>
+
+                <!-- GPU box -->
+                <rect x="20" y="58" width="340" height="100" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                <text x="190" y="78" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">A100 80GB  —  Shared CUDA Context</text>
+
+                <!-- Processes sharing GPU -->
+                <rect x="35" y="90" width="70" height="54" rx="4" fill="#93c5fd" stroke="#3b82f6" stroke-width="1"/>
+                <text x="70" y="112" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e3a8a; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Model A</text>
+                <text x="70" y="126" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">ASR</text>
+
+                <rect x="115" y="90" width="70" height="54" rx="4" fill="#93c5fd" stroke="#3b82f6" stroke-width="1"/>
+                <text x="150" y="112" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e3a8a; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Model B</text>
+                <text x="150" y="126" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">NER</text>
+
+                <rect x="195" y="90" width="70" height="54" rx="4" fill="#93c5fd" stroke="#3b82f6" stroke-width="1"/>
+                <text x="230" y="112" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e3a8a; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Model C</text>
+                <text x="230" y="126" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Punct</text>
+
+                <rect x="275" y="90" width="70" height="54" rx="4" fill="#93c5fd" stroke="#3b82f6" stroke-width="1"/>
+                <text x="310" y="112" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e3a8a; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Model D</text>
+                <text x="310" y="126" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">TTS</text>
+
+                <!-- Stats -->
+                <text x="30" y="180" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e40af;" font-family="Liberation Sans, Arial, sans-serif">50% cost reduction, 7.5% perf impact</text>
+                <text x="30" y="194" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #dc2626;" font-family="Liberation Sans, Arial, sans-serif">No fault isolation — shared-fate risk</text>
+            </g>
+
+            <!-- MIG Section -->
+            <g transform="translate(30, 320)">
+                <rect x="0" y="0" width="380" height="220" rx="8" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1.5"/>
+                <text x="190" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">MIG (Multi-Instance GPU)</text>
+                <text x="190" y="42" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #7c3aed; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Hardware-level spatial partitioning</text>
+
+                <!-- GPU box -->
+                <rect x="20" y="58" width="340" height="110" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+                <text x="190" y="78" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">A100 80GB  —  Hardware Partitions</text>
+
+                <!-- MIG instances with visible borders -->
+                <rect x="30" y="88" width="46" height="68" rx="3" fill="#d8b4fe" stroke="#8b5cf6" stroke-width="1.5"/>
+                <text x="53" y="108" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; font-weight: 600; fill: #3b0764; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">1g.10gb</text>
+                <text x="53" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">10 GB</text>
+
+                <rect x="82" y="88" width="46" height="68" rx="3" fill="#d8b4fe" stroke="#8b5cf6" stroke-width="1.5"/>
+                <text x="105" y="108" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; font-weight: 600; fill: #3b0764; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">1g.10gb</text>
+                <text x="105" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">10 GB</text>
+
+                <rect x="134" y="88" width="46" height="68" rx="3" fill="#d8b4fe" stroke="#8b5cf6" stroke-width="1.5"/>
+                <text x="157" y="108" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; font-weight: 600; fill: #3b0764; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">1g.10gb</text>
+                <text x="157" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">10 GB</text>
+
+                <rect x="186" y="88" width="46" height="68" rx="3" fill="#d8b4fe" stroke="#8b5cf6" stroke-width="1.5"/>
+                <text x="209" y="108" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; font-weight: 600; fill: #3b0764; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">1g.10gb</text>
+                <text x="209" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">10 GB</text>
+
+                <rect x="238" y="88" width="46" height="68" rx="3" fill="#d8b4fe" stroke="#8b5cf6" stroke-width="1.5"/>
+                <text x="261" y="108" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; font-weight: 600; fill: #3b0764; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">1g.10gb</text>
+                <text x="261" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">10 GB</text>
+
+                <rect x="290" y="88" width="46" height="68" rx="3" fill="#d8b4fe" stroke="#8b5cf6" stroke-width="1.5"/>
+                <text x="313" y="108" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; font-weight: 600; fill: #3b0764; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">1g.10gb</text>
+                <text x="313" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">10 GB</text>
+
+                <!-- 7th partition shown as different to show different profiles -->
+                <rect x="342" y="88" width="10" height="68" rx="2" fill="#c4b5fd" stroke="#8b5cf6" stroke-width="1"/>
+
+                <!-- Labels -->
+                <text x="190" y="146" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Up to 7 instances (1g.10gb each) — complete hardware isolation</text>
+
+                <!-- Stats -->
+                <text x="30" y="182" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #5b21b6;" font-family="Liberation Sans, Arial, sans-serif">A100 profiles: 1g.10gb (7x), 2g.20gb (3x), 3g.40gb (2x)</text>
+                <text x="30" y="196" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669;" font-family="Liberation Sans, Arial, sans-serif">Full fault isolation — crash in one instance has no effect on others</text>
+                <text x="30" y="210" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">Ampere+ only (A100, H100, B200)</text>
+            </g>
+
+            <!-- === RIGHT HALF: Ensemble Pipeline === -->
+            <text x="645" y="82" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e293b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Ensemble Pipeline</text>
+
+            <g transform="translate(460, 100)">
+                <rect x="0" y="0" width="370" height="440" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+                <text x="185" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #166534; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Triton Ensemble Scheduler</text>
+                <text x="185" y="42" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #15803d; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Event-driven DAG with minimal overhead</text>
+
+                <!-- Audio Input -->
+                <rect x="115" y="60" width="140" height="36" rx="6" fill="#1e293b"/>
+                <text x="185" y="82" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #ffffff; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Audio Input</text>
+
+                <!-- Arrow -->
+                <line x1="185" y1="96" x2="185" y2="118" stroke="#059669" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+                <!-- VAD -->
+                <rect x="115" y="122" width="140" height="50" rx="6" fill="#d1fae5" stroke="#34d399" stroke-width="1.5"/>
+                <text x="185" y="144" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #065f46; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">VAD</text>
+                <text x="185" y="162" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Voice Activity Detection</text>
+
+                <!-- Arrow -->
+                <line x1="185" y1="172" x2="185" y2="194" stroke="#059669" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+                <!-- ASR -->
+                <rect x="115" y="198" width="140" height="50" rx="6" fill="#d1fae5" stroke="#34d399" stroke-width="1.5"/>
+                <text x="185" y="220" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #065f46; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">ASR</text>
+                <text x="185" y="238" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Speech Recognition</text>
+
+                <!-- Arrow -->
+                <line x1="185" y1="248" x2="185" y2="270" stroke="#059669" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+                <!-- Punctuation -->
+                <rect x="115" y="274" width="140" height="50" rx="6" fill="#d1fae5" stroke="#34d399" stroke-width="1.5"/>
+                <text x="185" y="296" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #065f46; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Punctuation</text>
+                <text x="185" y="314" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Restoration</text>
+
+                <!-- Arrow -->
+                <line x1="185" y1="324" x2="185" y2="346" stroke="#059669" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+                <!-- NER -->
+                <rect x="115" y="350" width="140" height="50" rx="6" fill="#d1fae5" stroke="#34d399" stroke-width="1.5"/>
+                <text x="185" y="372" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #065f46; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">NER</text>
+                <text x="185" y="390" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Named Entity Recognition</text>
+
+                <!-- GPU label on right side -->
+                <text x="280" y="144" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">CPU</text>
+                <text x="280" y="220" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">GPU</text>
+                <text x="280" y="296" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">GPU</text>
+                <text x="280" y="372" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;" font-family="Liberation Sans, Arial, sans-serif">GPU</text>
+
+                <!-- Note -->
+                <text x="185" y="425" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #047857; text-anchor: middle; font-style: italic;" font-family="Liberation Sans, Arial, sans-serif">Data stays in GPU memory between stages</text>
+            </g>
+
+            <!-- === Bottom: Combined note === -->
+            <g transform="translate(30, 560)">
+                <line x1="0" y1="0" x2="800" y2="0" stroke="#e2e8f0" stroke-width="1.5"/>
+                <rect x="60" y="18" width="680" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="400" y="36" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #475569; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">MPS and MIG can be combined: multiple MPS clients per MIG instance, up to 48 total clients per physical GPU</text>
+                <text x="400" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Use MIG for tenant isolation, MPS within instances for fine-grained multiplexing</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

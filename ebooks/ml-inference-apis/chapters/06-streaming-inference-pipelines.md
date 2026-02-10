@@ -6,6 +6,7 @@
 
 ## Overview
 
+- **Ground the reader**: explain what a "pipeline" means here. An inference pipeline is a sequence of processing steps that data flows through on its way to becoming a result. For speech recognition, raw audio bytes arrive from the network, get decoded from their compressed format, pass through voice activity detection (which identifies when someone is actually speaking), get batched together for efficient GPU use, run through the ML model, and then the model's output gets post-processed into readable text before being sent back to the client. Each step has different performance characteristics and failure modes.
 - How to connect the transport layer (Chapters 4-5) to the inference layer (Chapters 2-3) through a coherent streaming pipeline
 - The end-to-end journey of audio data: from network arrival through queuing, inference, post-processing, and response streaming
 - Managing multiple concurrent streams on shared GPU resources while maintaining latency SLOs and graceful degradation under load

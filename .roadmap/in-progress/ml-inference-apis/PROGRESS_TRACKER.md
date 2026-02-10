@@ -14,8 +14,8 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the ml-inferen
 6. **Update this document** after completing each PR
 
 ## Current Status
-**Current PR**: PR2 + PR17 (partial); Preface and Chapter 1 authored as prose
-**Book State**: Preface and Ch 1 in full prose with 4 diagrams; Ch 2-15 as outlines (lint-clean)
+**Current PR**: PR3 complete; Chapter 2 authored as prose with 4 diagrams
+**Book State**: Preface, Ch 1, and Ch 2 in full prose with 8 diagrams; Ch 3-15 as outlines (lint-clean)
 **Target**: Complete ebook with 15 chapters across 5 parts
 
 ## Required Documents Location
@@ -31,33 +31,25 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the ml-inferen
 
 ## Next PR to Work On
 
-### START HERE: PR3; Chapter 2: Model Serving Frameworks
+### START HERE: PR4; Chapter 3: GPU Optimization & Cold Starts
 
 **Quick Summary**:
-Author Chapter 2 in full prose. This chapter covers the three generations of serving frameworks with benchmark data and a decision framework. See PR_BREAKDOWN.md for detailed instructions.
+Author Chapter 3 in full prose. This chapter covers GPU utilization, continuous batching mechanics, KV cache management, quantization techniques, and cold start mitigation. See PR_BREAKDOWN.md for detailed instructions.
 
 **Pre-flight Checklist**:
 - [x] PR1 outline review approved by Steve
 - [x] PR2 + PR17 (partial): Preface and Chapter 1 authored as prose with 4 diagrams
-- [ ] Review research Topic 1 in RESEARCH_SUMMARY.md
-- [ ] Review Chapter 2 outline in chapters/02-model-serving-frameworks.md
-
-**PR1 Deliverables (completed)**:
-- [x] README.md with full TOC and book metadata
-- [x] chapters/00-preface.md (outline)
-- [x] chapters/01-the-serving-problem.md through chapters/15-putting-it-all-together.md (outlines)
-- [x] WORKS_CITED.md skeleton
-- [x] DIAGRAM_INVENTORY.md
-- [x] edits/CHAPTER_ASSIGNMENTS.md
-- [x] `just validate ml-inference-apis` passes
+- [x] PR3: Chapter 2 authored as prose with 4 diagrams
+- [ ] Review research Topic 2 in RESEARCH_SUMMARY.md
+- [ ] Review Chapter 3 outline in chapters/03-gpu-optimization.md
 
 ---
 
 ## Overall Progress
-**Total Completion**: 18% (3/17 PRs completed)
+**Total Completion**: 24% (4/17 PRs completed)
 
 ```
-[███░░░░░░░░░░░░░░░░░] 18% Complete
+[████░░░░░░░░░░░░░░░░] 24% Complete
 ```
 
 ---
@@ -68,7 +60,7 @@ Author Chapter 2 in full prose. This chapter covers the three generations of ser
 |----|-------|--------|------------|-------|
 | PR1 | Outline Review | 🟢 Complete | 100% | All 16 outlines + supporting docs |
 | PR2 | Chapter 1: The Serving Problem | 🟢 Complete | 100% | ~5850 words, 4 diagrams |
-| PR3 | Chapter 2: Model Serving Frameworks | 🔴 Not Started | 0% | |
+| PR3 | Chapter 2: Model Serving Frameworks | 🟢 Complete | 100% | ~5300 words, 4 diagrams, Ch1 corrections |
 | PR4 | Chapter 3: GPU Optimization & Cold Starts | 🔴 Not Started | 0% | |
 | PR5 | Chapter 4: Streaming Audio Architecture | 🔴 Not Started | 0% | |
 | PR6 | Chapter 5: Protocol Selection for Audio | 🔴 Not Started | 0% | |
@@ -98,7 +90,7 @@ Author Chapter 2 in full prose. This chapter covers the three generations of ser
 |----|-------|----------|---------|-------|--------|----------|-------|
 | 00 | Preface | - | ✅ | ✅ | ⬜ | - | ⬜ |
 | 01 | The Serving Problem | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
-| 02 | Model Serving Frameworks | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 02 | Model Serving Frameworks | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
 | 03 | GPU Optimization & Cold Starts | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 04 | Streaming Audio Architecture | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 05 | Protocol Selection for Audio | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |

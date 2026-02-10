@@ -6,6 +6,7 @@
 
 ## Overview
 
+- **Ground the reader**: explain why scaling ML inference is different from scaling traditional web services. When a web application needs more capacity, you add more CPU-based servers behind a load balancer; they start in seconds and cost pennies per hour. When an ML inference system needs more capacity, you add GPU instances that cost $2-8/hour each, take 30-120 seconds to load a multi-gigabyte model into GPU memory before they can serve any traffic, and require careful memory management because each GPU has a fixed amount of fast memory shared across all concurrent requests. Scaling decisions that are trivial for CPU services (like "just add more instances") become engineering problems when GPUs are involved.
 - Taking a single-region inference deployment to a globally distributed, auto-scaling system that handles variable demand while controlling costs
 - GPU-aware scaling is fundamentally different from traditional web service scaling; signals, policies, and cold start tradeoffs all change
 - Multi-region deployment introduces model replication, request routing, and data sovereignty constraints that do not exist in single-region setups

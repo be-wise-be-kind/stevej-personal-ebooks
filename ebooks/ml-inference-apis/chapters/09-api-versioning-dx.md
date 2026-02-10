@@ -6,6 +6,7 @@
 
 ## Overview
 
+- **Ground the reader**: explain the versioning challenge specific to ML APIs. Most web APIs have one thing that changes: the API contract (endpoints, request/response formats). ML APIs have two things that change independently: the API contract and the underlying model. A team might ship a new, more accurate speech recognition model without changing the API, or restructure the API without changing the model. Clients need to know which model version produced their results (for reproducibility) and which API version they are calling (for compatibility). This "two-axis" problem is what makes ML API versioning harder than traditional API versioning.
 - How to version ML inference APIs when both the API contract and the underlying model evolve independently; the two-axis versioning problem
 - SDK design, documentation patterns, and developer onboarding strategies that determine whether developers adopt your API or a competitor's
 - Multimodality as a design consideration for 2025+ APIs; how to extend single-modality APIs to handle text, audio, and images without breaking existing clients

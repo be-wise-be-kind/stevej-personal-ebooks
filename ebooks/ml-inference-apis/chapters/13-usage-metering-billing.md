@@ -6,6 +6,7 @@
 
 ## Overview
 
+- **Ground the reader**: explain what usage metering is and why it is harder for ML APIs than for traditional web services. Metering is the process of measuring how much of a service each customer uses so you can charge them accurately. For a typical SaaS API, you might count API calls or data transferred. For ML inference APIs, the picture is more complex: a 10-second audio transcription request consumes far more GPU compute than a 1-second request, so flat per-request pricing would either overcharge small requests or lose money on large ones. The metering system must track the right unit (audio seconds, tokens, GPU time) at high throughput, aggregate it reliably, and feed it into a billing system, all without losing or double-counting events.
 - How to meter, aggregate, and bill for ML inference usage; the infrastructure that connects API calls to revenue
 - The billing models used by speech/audio and LLM providers (per-second, per-block, per-character, per-token, per-hour) and when each makes sense
 - Modern metering infrastructure: Stripe Meters API, OpenMeter, and the architecture of idempotent event collection and real-time aggregation

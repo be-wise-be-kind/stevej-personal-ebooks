@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Serving Frameworks</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="centerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <marker id="arrowOut" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" style="fill: #94a3b8;"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="380" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Model Serving Frameworks</text>
+            <text x="380" y="54" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">The framework choice shapes every operational decision that follows</text>
+
+            <!-- Center question -->
+            <rect x="255" y="190" width="250" height="70" rx="12" fill="url(#centerGrad)"/>
+            <text x="380" y="220" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 15px; font-weight: 700; fill: #ffffff; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Which framework</text>
+            <text x="380" y="240" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 15px; font-weight: 700; fill: #ffffff; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">runs the models?</text>
+
+            <!-- Radiating lines -->
+            <line x1="380" y1="190" x2="380" y2="110" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowOut)"/>
+            <line x1="505" y1="205" x2="590" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowOut)"/>
+            <line x1="505" y1="245" x2="590" y2="310" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowOut)"/>
+            <line x1="380" y1="260" x2="380" y2="340" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowOut)"/>
+            <line x1="255" y1="205" x2="170" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowOut)"/>
+            <line x1="255" y1="245" x2="170" y2="310" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowOut)"/>
+
+            <!-- Top: Model Type -->
+            <rect x="300" y="80" width="160" height="30" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+            <text x="380" y="100" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Model Type</text>
+
+            <!-- Top-right: Latency Requirements -->
+            <rect x="592" y="112" width="150" height="44" rx="6" fill="#fef3c7" stroke="#fcd34d" stroke-width="1.5"/>
+            <text x="667" y="132" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #92400e; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Latency</text>
+            <text x="667" y="148" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #92400e; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Requirements</text>
+
+            <!-- Bottom-right: Ops Complexity -->
+            <rect x="592" y="290" width="150" height="44" rx="6" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1.5"/>
+            <text x="667" y="310" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #9d174d; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Operational</text>
+            <text x="667" y="326" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #9d174d; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Complexity</text>
+
+            <!-- Bottom: GPU Resources -->
+            <rect x="300" y="342" width="160" height="30" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.5"/>
+            <text x="380" y="362" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #065f46; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">GPU Resources</text>
+
+            <!-- Top-left: Scaling Model -->
+            <rect x="18" y="112" width="150" height="44" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+            <text x="93" y="132" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Scaling</text>
+            <text x="93" y="148" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #5b21b6; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Model</text>
+
+            <!-- Bottom-left: Team Expertise -->
+            <rect x="18" y="290" width="150" height="44" rx="6" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+            <text x="93" y="310" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #9a3412; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Team</text>
+            <text x="93" y="326" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #9a3412; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Expertise</text>
+
+            <!-- Bottom section: framework tiles -->
+            <g transform="translate(30, 410)">
+                <line x1="0" y1="0" x2="700" y2="0" stroke="#e2e8f0" stroke-width="1.5"/>
+
+                <text x="350" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #475569; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">THE FRAMEWORK LANDSCAPE</text>
+
+                <!-- Gen 1 -->
+                <rect x="0" y="46" width="100" height="44" rx="6" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1"/>
+                <text x="50" y="64" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #7c3aed; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">GEN 1</text>
+                <text x="50" y="80" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #7c3aed; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">TF Serving (archived)</text>
+
+                <!-- Gen 2 -->
+                <rect x="120" y="46" width="100" height="44" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                <text x="170" y="64" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Triton</text>
+                <text x="170" y="80" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #2563eb; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Orchestration</text>
+
+                <rect x="240" y="46" width="100" height="44" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                <text x="290" y="64" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">KServe</text>
+                <text x="290" y="80" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #2563eb; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">K8s-native</text>
+
+                <rect x="360" y="46" width="100" height="44" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+                <text x="410" y="64" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e40af; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">BentoML</text>
+                <text x="410" y="80" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #2563eb; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Dev-friendly</text>
+
+                <!-- Gen 3 -->
+                <rect x="480" y="46" width="66" height="44" rx="6" fill="#d1fae5" stroke="#34d399" stroke-width="1.5"/>
+                <text x="513" y="64" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 700; fill: #065f46; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">vLLM</text>
+                <text x="513" y="80" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #059669; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Safe default</text>
+
+                <rect x="556" y="46" width="72" height="44" rx="6" fill="#d1fae5" stroke="#34d399" stroke-width="1.5"/>
+                <text x="592" y="64" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 700; fill: #065f46; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">SGLang</text>
+                <text x="592" y="80" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #059669; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Prefix cache</text>
+
+                <rect x="638" y="46" width="62" height="44" rx="6" fill="#d1fae5" stroke="#34d399" stroke-width="1.5"/>
+                <text x="669" y="64" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 700; fill: #065f46; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">TRT-LLM</text>
+                <text x="669" y="80" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #059669; text-anchor: middle;" font-family="Liberation Sans, Arial, sans-serif">Max perf</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>
