@@ -621,6 +621,8 @@ As systems grow, decomposing monoliths into services allows independent scaling 
 
 - **Health checks that lie**: A readiness probe returning healthy during startup causes failed requests. Only report ready when truly ready.
 
+- **Health check tooling missing from container images**: Slim and distroless container images strip system utilities to reduce image size and attack surface. A health check command that relies on `curl` or `wget` silently fails when those tools are absent, and orchestrators like ECS or Kubernetes interpret the failure as an unhealthy container. The result is a crash loop: the container starts, passes no health checks, gets killed, restarts, and repeats, dropping connections and creating metric gaps every few minutes. Use the language runtime for health checks instead: Python's `urllib`, Node's `http.get`, Go's `net/http`, or a dedicated health check binary baked into the image. Never assume system tools exist in production images.
+
 - **Ignoring cold start impact**: Serverless functions with slow initialization degrade user experience. Profile cold starts and consider provisioned concurrency.
 
 - **Scaling without load testing**: Assuming more instances will help without validating linear scaling. Test scaling behavior before relying on it.

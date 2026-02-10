@@ -171,6 +171,8 @@ Without exemplars, you query traces by time window and hope to find a slow one:
 
 With exemplars, you click the metric spike and land directly on a problematic trace.
 
+> **Middleware Ordering Matters for Exemplars:** For exemplars to contain trace context, the tracing middleware must wrap the metrics middleware, meaning the tracing middleware must be the *outermost* layer. In most frameworks, middleware added last wraps first. If the metrics middleware records a histogram observation before the tracing middleware has created a span, the exemplar has no trace ID to attach and silently produces empty exemplars. The symptom is subtle: your histograms record correctly, exemplar dots appear in Grafana, but clicking them finds no linked trace. If your exemplars are empty, check middleware ordering before debugging the instrumentation code.
+
 #### Trace to Logs: Getting the Details
 
 Traces show the shape of a request - which services were called, how long each took, where errors occurred. Logs provide the details: the actual error message, the query that was executed, the decision that was made.
@@ -186,6 +188,8 @@ When examining a trace in Tempo or Jaeger, you identify a slow or errored span. 
 ```
 
 This query returns every log entry generated during that request's execution, across all services, in chronological order. You see the complete story: what was attempted, what failed, what the error details were.
+
+> **Log Format Must Match Query Parser:** The `| json` parser in the Loki query above assumes logs arrive in JSON format. If your collector, agent, or processing pipeline transforms logs into a different format (logfmt, plain text, or a custom structure), the parser silently returns no results. This is a common trap when using collectors like Grafana Alloy or Fluentd that may reformat log entries during processing. Always verify that the format your logs arrive in at the storage backend matches the parser you use in queries. Test with a simple label-only query first (`{service="checkout-service"}`), examine the raw log format, then add the appropriate parser (`| json`, `| logfmt`, or `| pattern`).
 
 For this to work, every log statement must include the trace ID. Most OpenTelemetry SDKs provide automatic trace context injection into logging frameworks. If not, add it explicitly:
 
@@ -583,6 +587,10 @@ OpenTelemetry SDKs, while lightweight, do consume resources. Misconfigured SDKs 
 - **Excessive span creation**: Creating hundreds of spans per request overwhelms collectors and makes traces unreadable. Aim for 10-50 spans per typical request, covering meaningful operations rather than every function call.
 - **Missing span status**: Always set span status to ERROR on failures. This enables tail-based sampling to capture errors and makes error traces identifiable in the UI.
 
+- **UpDownCounter for active connections**: OTel provides `UpDownCounter` for values that go up and down, which seems natural for tracking concurrent connections (increment on request start, decrement on request end). But if requests complete faster than the metric collection interval (typically 60 seconds), the counter reads zero at collection time because all increments and decrements cancelled out between scrapes. Use an `ObservableGauge` with peak tracking instead: record the high-water mark since the last collection, then reset. This captures actual concurrency even when individual requests are sub-millisecond.
+
+- **OTel histogram bucket defaults vs framework units**: OTel SDK default histogram boundaries assume millisecond-scale values, but many web frameworks (FastAPI, Express, etc.) report durations in seconds. A 200ms response recorded as `0.2` lands in the first bucket when boundaries start at `5`. The result is every observation in a single bucket with no usable distribution. Always configure explicit histogram boundaries matching your framework's unit. For seconds-based frameworks, use sub-second boundaries like `[0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0]`.
+
 ### Choosing an Observability Stack
 
 OpenTelemetry provides vendor-neutral instrumentation, but you still need backends to store and visualize telemetry. The observability market offers many options, from fully managed platforms to self-hosted open-source solutions.
@@ -782,6 +790,8 @@ The fix is straightforward: add the missing index and schedule batch imports dur
 - **Missing trace context propagation**: Forgetting to propagate trace context across async boundaries, message queues, or non-HTTP protocols creates incomplete traces. Audit all service boundaries.
 
 - **Dashboard sprawl**: Creating many one-off dashboards that become unmaintained leads to confusion about which dashboards are authoritative. Establish clear dashboard ownership and lifecycle management.
+
+- **Unsecured observability endpoints**: Grafana dashboards, collector receivers, and profiling endpoints deployed without authentication are security vulnerabilities. Observability UIs expose internal system architecture, metric names, and potentially sensitive data in traces and logs. Collectors with open receivers (OTLP, Faro) can be abused to inject telemetry or overwhelm storage. Always place observability infrastructure behind authentication (SSO, OAuth, or at minimum basic auth), restrict network access to internal networks or VPN, and configure CORS on collector receivers to accept only known origins.
 
 - **Alerting on symptoms without runbooks**: Alerts that fire without documented investigation steps lead to slower incident response. Every alert should link to a runbook.
 
