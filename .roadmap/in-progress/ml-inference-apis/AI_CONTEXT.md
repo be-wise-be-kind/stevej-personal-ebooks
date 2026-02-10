@@ -86,6 +86,15 @@ A serving engineer reads this book and can confidently:
 - Part IV: Enterprise (Ch 9-11) — Security, compliance, SLOs
 - Part V: Scale (Ch 12-13) — Global scaling, synthesis
 
+### Chapter Overview Philosophy: Ground the Reader
+Each chapter's Overview section should be generous about assumed knowledge. The target audience is backend engineers moving into ML infrastructure, not ML researchers. Before diving into the chapter's specifics, the Overview should briefly explain the foundational concepts the chapter builds on. Ask: "Would a backend engineer with no ML experience understand what this chapter is about from the Overview alone?"
+
+Concrete guidance:
+- **Explain what the thing is** before explaining why it's hard. If a chapter covers GPU optimization, briefly explain what a GPU does for ML and why inference uses them. If a chapter covers streaming audio, explain what it means for audio to be streamed vs processed in batch.
+- **One or two paragraphs is enough.** This is not a textbook introduction; it's a bridge so the reader isn't lost before the chapter starts.
+- **Don't assume Book 1 knowledge.** Many readers will pick up this book without reading "Before the 3 AM Alert." Brief recaps are always welcome; "see Book 1 Chapter N" cross-references are good but should not be the only explanation.
+- **Chapters 1-2 set the pattern.** Their Overviews explain what model serving is and what a serving framework does before diving in. Later chapters should follow suit for their respective domains.
+
 ### Chapter 1 Philosophy
 Chapter 1 is a comprehensive introduction (like Book 1's Ch 1 "The Empirical Discipline"):
 - Direct, informative exposition — no fictional scenario or narrative hook

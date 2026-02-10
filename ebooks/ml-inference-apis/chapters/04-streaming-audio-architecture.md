@@ -6,6 +6,7 @@
 
 ## Overview
 
+- **Ground the reader**: explain the difference between batch and streaming audio processing. In batch mode, the client uploads a complete audio file, waits, and receives the full result. In streaming mode, audio is sent in small chunks (typically 100ms at a time) while still being recorded, and results come back continuously as the audio arrives. Streaming is how live captioning, real-time voice assistants, and phone call transcription work. It is harder to build because the system must process audio fast enough to keep up with real time.
 - Streaming audio inference is among the most demanding real-time workloads: continuous data arrival, tight latency budgets, codec-specific requirements, and bidirectional communication
 - This chapter covers the end-to-end architecture from microphone capture to inference response, including the audio fundamentals every serving engineer must understand
 - Reference architectures from production providers (Deepgram, AssemblyAI, Google, Amazon, OpenAI) illustrate the design space and trade-offs

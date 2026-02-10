@@ -6,6 +6,7 @@
 
 ## Overview
 
+- **Ground the reader**: explain why ML inference APIs have security concerns beyond what a typical web API faces. Three things change: first, connections are long-lived (a streaming audio session may last minutes or hours, unlike a single HTTP request), so authentication cannot just happen once at the start. Second, each request consumes expensive GPU compute, so abuse is costlier than for CPU-based services and rate limiting must account for compute cost, not just request count. Third, audio data is inherently sensitive in ways text often is not: a voice recording contains biometric identity, may capture background conversations from bystanders, and can reveal emotional state.
 - Security for ML inference APIs inherits all the challenges of traditional API security and adds streaming-specific, GPU-aware, and audio-specific concerns
 - Audio data is uniquely sensitive; it contains voice biometrics, background conversations, and emotional states alongside any explicit content
 - This chapter covers auth for persistent connections, API key lifecycle, rate limiting for expensive compute, and PII handling in transcripts

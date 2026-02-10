@@ -6,6 +6,7 @@
 
 ## Overview
 
+- **Ground the reader**: briefly explain what a GPU does for ML inference and why inference uses GPUs instead of CPUs. A GPU has thousands of small cores that can perform many matrix multiplications in parallel; since neural network inference is fundamentally matrix math, GPUs can process a batch of predictions far faster than a CPU. This is why inference infrastructure is built around GPUs, and why their cost dominates the budget.
 - GPUs are the most expensive component of inference infrastructure, and most organizations underutilize them dramatically
 - This chapter covers the full optimization stack: batching, KV cache management, quantization, attention kernels, speculative decoding, and cold start mitigation
 - Mastering these techniques is the difference between a serving stack that burns money and one that delivers low-latency inference at sustainable cost

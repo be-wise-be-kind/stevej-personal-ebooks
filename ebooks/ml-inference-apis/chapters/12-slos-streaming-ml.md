@@ -6,6 +6,7 @@
 
 ## Overview
 
+- **Ground the reader**: explain what SLOs and SLIs are for readers who may not have read Book 1. An SLI (Service Level Indicator) is a specific metric you measure, like "the time until the first word of a transcript appears." An SLO (Service Level Objective) is a target you set for that metric, like "the first word appears within 300 milliseconds for 99% of requests." An SLA (Service Level Agreement) is a contractual commitment to meet certain SLOs, with financial consequences if you miss them. SLOs are how a team defines "good enough" and tracks whether the system is meeting user expectations.
 - Streaming ML systems require different SLIs than request/response APIs; time-to-first-token, inter-token latency, and real-time factor matter more than simple response time
 - This chapter focuses on WHAT to measure and WHAT targets to set for ML inference, building on the observability fundamentals covered in Book 1
 - The 300ms rule for voice AI is the anchor target, with specific SLIs and error budget strategies to achieve it

@@ -6,6 +6,7 @@
 
 ## Overview
 
+- **Ground the reader**: briefly explain what "protocol" means in this context. A protocol is the set of rules that govern how a client and server communicate: how a connection is established, how data is framed and sent, and how each side knows when the other is done. HTTP is the protocol most backend engineers know; streaming audio needs different protocols because HTTP's request-response model does not support continuous bidirectional data flow efficiently.
 - Protocol selection for audio streaming is not a general-purpose decision; it is constrained by client capabilities, provider requirements, latency targets, and browser support
 - This chapter focuses on the audio-specific application of protocols, not their general mechanics; Book 1 covers the fundamentals
 - The production reality: WebSocket dominates, gRPC is Google's ecosystem, WebRTC is for browser audio, and WebTransport/MoQ are future technologies not yet production-ready
