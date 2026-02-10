@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batching Comparison: Static vs Dynamic vs Continuous</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 580" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="reqGradA" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="reqGradB" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="reqGradC" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="reqGradD" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#d97706;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#fbbf24;stop-opacity:1" />
+                </linearGradient>
+                <pattern id="wastePattern" patternUnits="userSpaceOnUse" width="6" height="6">
+                    <path d="M0,6 L6,0" stroke="#e2e8f0" stroke-width="1" fill="none"/>
+                </pattern>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Batching Comparison</text>
+            <text x="450" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">How three batching strategies handle four requests of varying length</text>
+
+            <!-- Column headers -->
+            <text x="170" y="86" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Static Batching</text>
+            <text x="450" y="86" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Dynamic Batching</text>
+            <text x="730" y="86" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Continuous Batching</text>
+
+            <!-- Dividers -->
+            <line x1="300" y1="70" x2="300" y2="490" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="580" y1="70" x2="580" y2="490" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+
+            <!-- Time axis labels -->
+            <text x="40" y="115" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">Time →</text>
+
+            <!-- === STATIC BATCHING === -->
+            <g transform="translate(40, 120)">
+                <!-- GPU slot labels -->
+                <text x="0" y="15" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: start;">Slot 1</text>
+                <text x="0" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: start;">Slot 2</text>
+                <text x="0" y="85" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: start;">Slot 3</text>
+                <text x="0" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: start;">Slot 4</text>
+
+                <!-- Batch 1: all 4 requests, padded to longest -->
+                <rect x="40" y="2" width="60" height="22" rx="3" fill="url(#reqGradA)"/>
+                <text x="70" y="17" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req A (short)</text>
+                <!-- Padding waste for A -->
+                <rect x="100" y="2" width="100" height="22" rx="3" fill="url(#wastePattern)" stroke="#cbd5e1" stroke-width="0.5"/>
+
+                <rect x="40" y="37" width="120" height="22" rx="3" fill="url(#reqGradB)"/>
+                <text x="100" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req B (medium)</text>
+                <!-- Padding waste for B -->
+                <rect x="160" y="37" width="40" height="22" rx="3" fill="url(#wastePattern)" stroke="#cbd5e1" stroke-width="0.5"/>
+
+                <rect x="40" y="72" width="160" height="22" rx="3" fill="url(#reqGradC)"/>
+                <text x="120" y="87" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req C (long)</text>
+
+                <rect x="40" y="107" width="80" height="22" rx="3" fill="url(#reqGradD)"/>
+                <text x="80" y="122" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req D (short)</text>
+                <!-- Padding waste for D -->
+                <rect x="120" y="107" width="80" height="22" rx="3" fill="url(#wastePattern)" stroke="#cbd5e1" stroke-width="0.5"/>
+
+                <!-- Batch boundary -->
+                <line x1="200" y1="-5" x2="200" y2="135" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,3"/>
+                <text x="200" y="152" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ef4444; text-anchor: middle;">All return here</text>
+
+                <!-- Annotation -->
+                <text x="120" y="180" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #dc2626; text-anchor: middle; font-weight: 600;">Short requests wait for longest</text>
+                <text x="120" y="195" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: middle;">Hatched = wasted compute (padding)</text>
+            </g>
+
+            <!-- === DYNAMIC BATCHING === -->
+            <g transform="translate(320, 120)">
+                <!-- GPU slot labels -->
+                <text x="0" y="15" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: start;">Slot 1</text>
+                <text x="0" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: start;">Slot 2</text>
+                <text x="0" y="85" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: start;">Slot 3</text>
+                <text x="0" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: start;">Slot 4</text>
+
+                <!-- Wait window -->
+                <rect x="40" y="-5" width="20" height="135" rx="2" fill="#fef3c7" opacity="0.4"/>
+                <text x="50" y="-10" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #92400e; text-anchor: middle;">wait</text>
+
+                <!-- Batch 1: A, B collected in window -->
+                <rect x="60" y="2" width="60" height="22" rx="3" fill="url(#reqGradA)"/>
+                <text x="90" y="17" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req A</text>
+                <rect x="120" y="2" width="60" height="22" rx="3" fill="url(#wastePattern)" stroke="#cbd5e1" stroke-width="0.5"/>
+
+                <rect x="60" y="37" width="120" height="22" rx="3" fill="url(#reqGradB)"/>
+                <text x="120" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req B</text>
+
+                <!-- Batch boundary -->
+                <line x1="180" y1="-5" x2="180" y2="65" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+                <!-- Batch 2: C, D arrive in next window -->
+                <rect x="180" y="72" width="160" height="22" rx="3" fill="url(#reqGradC)"/>
+                <text x="260" y="87" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req C</text>
+
+                <rect x="180" y="107" width="80" height="22" rx="3" fill="url(#reqGradD)"/>
+                <text x="220" y="122" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req D</text>
+                <rect x="260" y="107" width="80" height="22" rx="3" fill="url(#wastePattern)" stroke="#cbd5e1" stroke-width="0.5"/>
+
+                <line x1="340" y1="65" x2="340" y2="135" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+                <!-- Annotation -->
+                <text x="120" y="180" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #d97706; text-anchor: middle; font-weight: 600;">Batches by time window</text>
+                <text x="120" y="195" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: middle;">Better, but still waits within batch</text>
+            </g>
+
+            <!-- === CONTINUOUS BATCHING === -->
+            <g transform="translate(600, 120)">
+                <!-- GPU slot labels -->
+                <text x="0" y="15" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: start;">Slot 1</text>
+                <text x="0" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: start;">Slot 2</text>
+                <text x="0" y="85" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: start;">Slot 3</text>
+                <text x="0" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: start;">Slot 4</text>
+
+                <!-- All requests start promptly, end at natural length -->
+                <rect x="40" y="2" width="60" height="22" rx="3" fill="url(#reqGradA)"/>
+                <text x="70" y="17" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req A</text>
+                <!-- A finishes, new request E takes slot -->
+                <rect x="105" y="2" width="70" height="22" rx="3" fill="#06b6d4" rx="3"/>
+                <text x="140" y="17" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req E (new)</text>
+
+                <rect x="40" y="37" width="120" height="22" rx="3" fill="url(#reqGradB)"/>
+                <text x="100" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req B</text>
+                <!-- B finishes, F takes slot -->
+                <rect x="165" y="37" width="50" height="22" rx="3" fill="#ec4899"/>
+                <text x="190" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req F</text>
+
+                <rect x="40" y="72" width="160" height="22" rx="3" fill="url(#reqGradC)"/>
+                <text x="120" y="87" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req C</text>
+
+                <rect x="40" y="107" width="80" height="22" rx="3" fill="url(#reqGradD)"/>
+                <text x="80" y="122" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req D</text>
+                <!-- D finishes, G takes slot -->
+                <rect x="125" y="107" width="90" height="22" rx="3" fill="#6366f1"/>
+                <text x="170" y="122" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Req G (new)</text>
+
+                <!-- Evict/insert arrows -->
+                <text x="100" y="-10" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #059669; text-anchor: middle;">↓ insert new as slots free</text>
+
+                <!-- Annotation -->
+                <text x="120" y="180" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle; font-weight: 600;">No padding, no waiting</text>
+                <text x="120" y="195" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: middle;">2-4x throughput improvement</text>
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(40, 520)">
+                <rect x="0" y="0" width="820" height="36" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <rect x="20" y="10" width="24" height="14" rx="2" fill="url(#reqGradA)"/>
+                <text x="52" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;">Short request</text>
+                <rect x="140" y="10" width="24" height="14" rx="2" fill="url(#reqGradB)"/>
+                <text x="172" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;">Medium request</text>
+                <rect x="280" y="10" width="24" height="14" rx="2" fill="url(#reqGradC)"/>
+                <text x="312" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;">Long request</text>
+                <rect x="410" y="10" width="24" height="14" rx="2" fill="url(#wastePattern)" stroke="#cbd5e1" stroke-width="0.5"/>
+                <text x="442" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;">Wasted compute (padding)</text>
+                <rect x="600" y="10" width="24" height="14" rx="2" fill="#06b6d4"/>
+                <text x="632" y="21" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b;">New request fills freed slot</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

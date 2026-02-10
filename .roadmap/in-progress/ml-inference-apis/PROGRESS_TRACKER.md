@@ -14,8 +14,8 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the ml-inferen
 6. **Update this document** after completing each PR
 
 ## Current Status
-**Current PR**: PR3 complete; Chapter 2 authored as prose with 4 diagrams
-**Book State**: Preface, Ch 1, and Ch 2 in full prose with 8 diagrams; Ch 3-15 as outlines (lint-clean)
+**Current PR**: PR4 complete; Chapter 3 authored as prose with 5 diagrams
+**Book State**: Preface, Ch 1, Ch 2, and Ch 3 in full prose with 13 diagrams; Ch 4-15 as outlines (lint-clean)
 **Target**: Complete ebook with 15 chapters across 5 parts
 
 ## Required Documents Location
@@ -31,25 +31,26 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the ml-inferen
 
 ## Next PR to Work On
 
-### START HERE: PR4; Chapter 3: GPU Optimization & Cold Starts
+### START HERE: PR5; Chapter 4: Streaming Audio Architecture
 
 **Quick Summary**:
-Author Chapter 3 in full prose. This chapter covers GPU utilization, continuous batching mechanics, KV cache management, quantization techniques, and cold start mitigation. See PR_BREAKDOWN.md for detailed instructions.
+Author Chapter 4 in full prose. This chapter covers real-time audio streaming architecture, including audio codec selection, streaming pipeline design, and integration with speech-to-text and text-to-speech services. See PR_BREAKDOWN.md for detailed instructions.
 
 **Pre-flight Checklist**:
 - [x] PR1 outline review approved by Steve
 - [x] PR2 + PR17 (partial): Preface and Chapter 1 authored as prose with 4 diagrams
 - [x] PR3: Chapter 2 authored as prose with 4 diagrams
-- [ ] Review research Topic 2 in RESEARCH_SUMMARY.md
-- [ ] Review Chapter 3 outline in chapters/03-gpu-optimization.md
+- [x] PR4: Chapter 3 authored as prose with 5 diagrams
+- [ ] Review research Topic 3 in RESEARCH_SUMMARY.md
+- [ ] Review Chapter 4 outline in chapters/04-streaming-audio-architecture.md
 
 ---
 
 ## Overall Progress
-**Total Completion**: 24% (4/17 PRs completed)
+**Total Completion**: 29% (5/17 PRs completed)
 
 ```
-[████░░░░░░░░░░░░░░░░] 24% Complete
+[██████░░░░░░░░░░░░░░] 29% Complete
 ```
 
 ---
@@ -61,7 +62,7 @@ Author Chapter 3 in full prose. This chapter covers GPU utilization, continuous 
 | PR1 | Outline Review | 🟢 Complete | 100% | All 16 outlines + supporting docs |
 | PR2 | Chapter 1: The Serving Problem | 🟢 Complete | 100% | ~5850 words, 4 diagrams |
 | PR3 | Chapter 2: Model Serving Frameworks | 🟢 Complete | 100% | ~5300 words, 4 diagrams, Ch1 corrections |
-| PR4 | Chapter 3: GPU Optimization & Cold Starts | 🔴 Not Started | 0% | |
+| PR4 | Chapter 3: GPU Optimization & Cold Starts | 🟢 Complete | 100% | ~5500 words, 5 diagrams |
 | PR5 | Chapter 4: Streaming Audio Architecture | 🔴 Not Started | 0% | |
 | PR6 | Chapter 5: Protocol Selection for Audio | 🔴 Not Started | 0% | |
 | PR7 | Chapter 6: Streaming Inference Pipelines | 🔴 Not Started | 0% | |
@@ -91,7 +92,7 @@ Author Chapter 3 in full prose. This chapter covers GPU utilization, continuous 
 | 00 | Preface | - | ✅ | ✅ | ⬜ | - | ⬜ |
 | 01 | The Serving Problem | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
 | 02 | Model Serving Frameworks | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
-| 03 | GPU Optimization & Cold Starts | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 03 | GPU Optimization & Cold Starts | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
 | 04 | Streaming Audio Architecture | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 05 | Protocol Selection for Audio | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 06 | Streaming Inference Pipelines | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |

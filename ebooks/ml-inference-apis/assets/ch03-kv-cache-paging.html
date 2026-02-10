@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KV Cache: Traditional vs PagedAttention</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 540" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="usedGradA" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="usedGradB" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="usedGradC" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#047857;stop-opacity:1" />
+                </linearGradient>
+                <pattern id="wastedPattern" patternUnits="userSpaceOnUse" width="6" height="6">
+                    <path d="M0,6 L6,0" stroke="#fca5a5" stroke-width="1" fill="none"/>
+                </pattern>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #1e293b; text-anchor: middle;">KV Cache Memory Allocation</text>
+            <text x="450" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">Traditional contiguous allocation vs PagedAttention</text>
+
+            <!-- Divider -->
+            <line x1="450" y1="68" x2="450" y2="460" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="6,4"/>
+
+            <!-- === LEFT PANEL: Traditional === -->
+            <text x="225" y="82" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #dc2626; text-anchor: middle;">Traditional (Contiguous)</text>
+            <text x="225" y="98" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">Pre-allocates max sequence length per request</text>
+
+            <!-- GPU Memory block -->
+            <rect x="40" y="115" width="370" height="300" rx="8" fill="#fafafa" stroke="#d4d4d4" stroke-width="1.5"/>
+            <text x="225" y="135" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #525252; text-anchor: middle;">GPU Memory (80 GB)</text>
+
+            <!-- Seq A: short actual, long reserved -->
+            <rect x="60" y="150" width="330" height="55" rx="4" fill="none" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="65" y="165" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 600; fill: #1e293b;">Seq A — reserved for 128K tokens</text>
+            <rect x="60" y="170" width="80" height="30" rx="3" fill="url(#usedGradA)"/>
+            <text x="100" y="189" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Used (2K)</text>
+            <rect x="140" y="170" width="250" height="30" rx="3" fill="url(#wastedPattern)" stroke="#fca5a5" stroke-width="0.5"/>
+            <text x="265" y="189" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #dc2626; text-anchor: middle;">Wasted — 98% unused</text>
+
+            <!-- Seq B: medium actual -->
+            <rect x="60" y="215" width="330" height="55" rx="4" fill="none" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="65" y="230" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 600; fill: #1e293b;">Seq B — reserved for 128K tokens</text>
+            <rect x="60" y="235" width="140" height="30" rx="3" fill="url(#usedGradB)"/>
+            <text x="130" y="254" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Used (8K)</text>
+            <rect x="200" y="235" width="190" height="30" rx="3" fill="url(#wastedPattern)" stroke="#fca5a5" stroke-width="0.5"/>
+            <text x="295" y="254" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #dc2626; text-anchor: middle;">Wasted — 94% unused</text>
+
+            <!-- Seq C: short actual -->
+            <rect x="60" y="280" width="330" height="55" rx="4" fill="none" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="65" y="295" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 600; fill: #1e293b;">Seq C — reserved for 128K tokens</text>
+            <rect x="60" y="300" width="55" height="30" rx="3" fill="url(#usedGradC)"/>
+            <text x="88" y="319" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #ffffff; text-anchor: middle;">Used (1K)</text>
+            <rect x="115" y="300" width="275" height="30" rx="3" fill="url(#wastedPattern)" stroke="#fca5a5" stroke-width="0.5"/>
+            <text x="253" y="319" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #dc2626; text-anchor: middle;">Wasted — 99% unused</text>
+
+            <!-- No room indicator -->
+            <rect x="60" y="345" width="330" height="30" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+            <text x="225" y="365" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #dc2626; text-anchor: middle; font-weight: 600;">No room for Seq D — memory full!</text>
+
+            <!-- Waste stat -->
+            <rect x="80" y="390" width="290" height="30" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+            <text x="225" y="410" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #dc2626; text-anchor: middle;">60-80% memory wasted</text>
+
+            <!-- === RIGHT PANEL: PagedAttention === -->
+            <text x="675" y="82" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #059669; text-anchor: middle;">PagedAttention (Paged)</text>
+            <text x="675" y="98" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">Allocates fixed-size pages on demand</text>
+
+            <!-- GPU Memory block -->
+            <rect x="490" y="115" width="370" height="300" rx="8" fill="#fafafa" stroke="#d4d4d4" stroke-width="1.5"/>
+            <text x="675" y="135" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #525252; text-anchor: middle;">GPU Memory (80 GB)</text>
+
+            <!-- Page grid - 8 columns x 5 rows of pages -->
+            <!-- Row 1: Seq A pages (blue) -->
+            <rect x="510" y="150" width="38" height="28" rx="3" fill="url(#usedGradA)"/>
+            <text x="529" y="168" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">A-1</text>
+            <rect x="552" y="150" width="38" height="28" rx="3" fill="url(#usedGradA)"/>
+            <text x="571" y="168" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">A-2</text>
+            <rect x="594" y="150" width="38" height="28" rx="3" fill="url(#usedGradB)"/>
+            <text x="613" y="168" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">B-1</text>
+            <rect x="636" y="150" width="38" height="28" rx="3" fill="url(#usedGradB)"/>
+            <text x="655" y="168" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">B-2</text>
+            <rect x="678" y="150" width="38" height="28" rx="3" fill="url(#usedGradB)"/>
+            <text x="697" y="168" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">B-3</text>
+            <rect x="720" y="150" width="38" height="28" rx="3" fill="url(#usedGradB)"/>
+            <text x="739" y="168" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">B-4</text>
+            <rect x="762" y="150" width="38" height="28" rx="3" fill="url(#usedGradB)"/>
+            <text x="781" y="168" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">B-5</text>
+            <rect x="804" y="150" width="38" height="28" rx="3" fill="url(#usedGradC)"/>
+            <text x="823" y="168" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">C-1</text>
+
+            <!-- Row 2 -->
+            <rect x="510" y="184" width="38" height="28" rx="3" fill="url(#usedGradC)"/>
+            <text x="529" y="202" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">C-2</text>
+            <rect x="552" y="184" width="38" height="28" rx="3" fill="#f59e0b"/>
+            <text x="571" y="202" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">D-1</text>
+            <rect x="594" y="184" width="38" height="28" rx="3" fill="#f59e0b"/>
+            <text x="613" y="202" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">D-2</text>
+            <rect x="636" y="184" width="38" height="28" rx="3" fill="#f59e0b"/>
+            <text x="655" y="202" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">D-3</text>
+            <rect x="678" y="184" width="38" height="28" rx="3" fill="#06b6d4"/>
+            <text x="697" y="202" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">E-1</text>
+            <rect x="720" y="184" width="38" height="28" rx="3" fill="#06b6d4"/>
+            <text x="739" y="202" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">E-2</text>
+            <rect x="762" y="184" width="38" height="28" rx="3" fill="#06b6d4"/>
+            <text x="781" y="202" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">E-3</text>
+            <rect x="804" y="184" width="38" height="28" rx="3" fill="#ec4899"/>
+            <text x="823" y="202" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">F-1</text>
+
+            <!-- Row 3: more sequences + free pages -->
+            <rect x="510" y="218" width="38" height="28" rx="3" fill="#ec4899"/>
+            <text x="529" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">F-2</text>
+            <rect x="552" y="218" width="38" height="28" rx="3" fill="#ec4899"/>
+            <text x="571" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">F-3</text>
+            <rect x="594" y="218" width="38" height="28" rx="3" fill="#6366f1"/>
+            <text x="613" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">G-1</text>
+            <rect x="636" y="218" width="38" height="28" rx="3" fill="#6366f1"/>
+            <text x="655" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #ffffff; text-anchor: middle;">G-2</text>
+            <!-- Free pages -->
+            <rect x="678" y="218" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="697" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="720" y="218" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="739" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="762" y="218" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="781" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="804" y="218" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="823" y="236" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+
+            <!-- Row 4: all free -->
+            <rect x="510" y="252" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="529" y="270" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="552" y="252" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="571" y="270" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="594" y="252" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="613" y="270" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="636" y="252" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="655" y="270" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="678" y="252" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="697" y="270" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="720" y="252" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="739" y="270" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="762" y="252" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="781" y="270" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="804" y="252" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="823" y="270" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+
+            <!-- Row 5: more free -->
+            <rect x="510" y="286" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="529" y="304" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="552" y="286" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="571" y="304" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="594" y="286" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="613" y="304" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="636" y="286" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="655" y="304" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="678" y="286" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="697" y="304" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="720" y="286" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="739" y="304" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="762" y="286" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="781" y="304" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+            <rect x="804" y="286" width="38" height="28" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="823" y="304" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #94a3b8; text-anchor: middle;">free</text>
+
+            <!-- Annotations for right side -->
+            <text x="675" y="340" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #059669; text-anchor: middle;">7 sequences served (A-G) — pages allocated on demand</text>
+            <text x="675" y="355" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #059669; text-anchor: middle;">Pages reclaimed immediately when sequences complete</text>
+            <text x="675" y="370" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: middle;">Non-contiguous: Seq B pages scattered across memory</text>
+
+            <!-- Efficiency stat -->
+            <rect x="530" y="390" width="290" height="30" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.5"/>
+            <text x="675" y="410" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #059669; text-anchor: middle;">&lt;4% memory wasted</text>
+
+            <!-- Bottom comparison -->
+            <g transform="translate(40, 460)">
+                <rect x="0" y="0" width="820" height="50" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="205" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #dc2626; text-anchor: middle;">Traditional: 3 sequences max</text>
+                <text x="205" y="38" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: middle;">Memory wasted on unused reservations</text>
+                <line x1="410" y1="8" x2="410" y2="42" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="615" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #059669; text-anchor: middle;">PagedAttention: 7 sequences (2.3x more)</text>
+                <text x="615" y="38" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: middle;">Same GPU memory, dramatically higher concurrency</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>
