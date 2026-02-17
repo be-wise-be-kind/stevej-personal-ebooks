@@ -14,8 +14,8 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the ml-inferen
 6. **Update this document** after completing each PR
 
 ## Current Status
-**Current PR**: PR4 complete; Chapter 3 authored as prose with 5 diagrams
-**Book State**: Preface, Ch 1, Ch 2, Ch 3, and Ch 4 in full prose with 19 diagrams; Ch 5-16 as outlines (lint-clean); Appendix A (Ch 17) in full prose with 13 diagrams
+**Current PR**: PR6 complete; Chapter 5 authored as prose with 4 diagrams
+**Book State**: Preface, Ch 1, Ch 2, Ch 3, Ch 4, and Ch 5 in full prose with 23 diagrams; Ch 6-16 as outlines (lint-clean); Appendix A (Ch 17) in full prose with 13 diagrams
 **Target**: Complete ebook with 16 chapters + 1 appendix across 5 parts
 
 ## Required Documents Location
@@ -31,10 +31,10 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the ml-inferen
 
 ## Next PR to Work On
 
-### START HERE: PR6; Chapter 5: Streaming Audio Architecture
+### START HERE: PR7; Chapter 6: Protocol Selection for Audio
 
 **Quick Summary**:
-Author Chapter 5 (formerly Chapter 4) in full prose. This chapter covers real-time audio streaming architecture, including audio codec selection, streaming pipeline design, and integration with speech-to-text and text-to-speech services. See PR_BREAKDOWN.md for detailed instructions.
+Author Chapter 6 in full prose. This chapter covers protocol selection for audio streaming — WebSocket, gRPC, WebRTC, and emerging options like WebTransport — comparing their trade-offs for different streaming scenarios. See PR_BREAKDOWN.md for detailed instructions.
 
 **Pre-flight Checklist**:
 - [x] PR1 outline review approved by Steve
@@ -42,16 +42,17 @@ Author Chapter 5 (formerly Chapter 4) in full prose. This chapter covers real-ti
 - [x] PR3: Chapter 2 authored as prose with 4 diagrams
 - [x] PR4: Chapter 3 authored as prose with 5 diagrams
 - [x] PR5: Chapter 4 (Deployment Architecture Strategies) authored as prose with 6 diagrams
-- [ ] Review research Topic 3 in RESEARCH_SUMMARY.md
-- [ ] Review Chapter 5 outline in chapters/05-streaming-audio-architecture.md
+- [x] PR6: Chapter 5 (Streaming Audio Architecture) authored as prose with 4 diagrams
+- [ ] Review research Topic 4 in RESEARCH_SUMMARY.md
+- [ ] Review Chapter 6 outline in chapters/06-protocol-selection.md
 
 ---
 
 ## Overall Progress
-**Total Completion**: 33% (6/18 PRs completed)
+**Total Completion**: 39% (7/18 PRs completed)
 
 ```
-[███████░░░░░░░░░░░░░] 33% Complete
+[████████░░░░░░░░░░░░] 39% Complete
 ```
 
 ---
@@ -65,7 +66,7 @@ Author Chapter 5 (formerly Chapter 4) in full prose. This chapter covers real-ti
 | PR3 | Chapter 2: Model Serving Frameworks | 🟢 Complete | 100% | ~5300 words, 4 diagrams, Ch1 corrections |
 | PR4 | Chapter 3: GPU Optimization & Cold Starts | 🟢 Complete | 100% | ~5500 words, 5 diagrams |
 | PR5 | Chapter 4: Deployment Architecture Strategies | 🟢 Complete | 100% | New chapter, ~4500 words, 6 diagrams |
-| PR6 | Chapter 5: Streaming Audio Architecture | 🔴 Not Started | 0% | |
+| PR6 | Chapter 5: Streaming Audio Architecture | 🟢 Complete | 100% | ~4800 words, 4 diagrams |
 | PR7 | Chapter 6: Protocol Selection for Audio | 🔴 Not Started | 0% | |
 | PR8 | Chapter 7: Streaming Inference Pipelines | 🔴 Not Started | 0% | |
 | PR9 | Chapter 8: Designing ML-Facing APIs | 🔴 Not Started | 0% | |
@@ -96,7 +97,7 @@ Author Chapter 5 (formerly Chapter 4) in full prose. This chapter covers real-ti
 | 02 | Model Serving Frameworks | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
 | 03 | GPU Optimization & Cold Starts | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
 | 04 | Deployment Architecture Strategies | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
-| 05 | Streaming Audio Architecture | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 05 | Streaming Audio Architecture | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
 | 06 | Protocol Selection for Audio | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 07 | Streaming Inference Pipelines | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 | 08 | Designing ML-Facing APIs | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |

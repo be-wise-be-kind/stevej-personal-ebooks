@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Comparison Matrix</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 920 560" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="headerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#475569;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="dgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="aaiGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="gcpGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#047857;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="awsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#d97706;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#b45309;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="oaiGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#475569;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+
+            <!-- Title -->
+            <text x="460" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Streaming Speech Provider Comparison</text>
+            <text x="460" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">Five major providers and their architectural trade-offs (as of early 2026)</text>
+
+            <!-- === TABLE HEADER ROW === -->
+            <g transform="translate(20, 70)">
+                <!-- Header background -->
+                <rect x="0" y="0" width="880" height="36" rx="6" fill="url(#headerGrad)"/>
+
+                <!-- Column headers -->
+                <text x="70" y="23" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Provider</text>
+                <text x="210" y="23" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Protocol</text>
+                <text x="340" y="23" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Latency</text>
+                <text x="470" y="23" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Audio Formats</text>
+                <text x="610" y="23" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Billing</text>
+                <text x="780" y="23" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Key Differentiator</text>
+
+                <!-- === ROW 1: Deepgram === -->
+                <g transform="translate(0, 46)">
+                    <rect x="0" y="0" width="880" height="76" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+
+                    <!-- Provider name -->
+                    <rect x="10" y="10" width="120" height="28" rx="4" fill="url(#dgGrad)"/>
+                    <text x="70" y="29" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Deepgram</text>
+                    <text x="70" y="56" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e40af; text-anchor: middle;">Nova-3 / Nova-2</text>
+
+                    <!-- Protocol -->
+                    <text x="210" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e40af; text-anchor: middle;">WebSocket</text>
+                    <text x="210" y="44" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">Binary frames</text>
+                    <text x="210" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">(no base64)</text>
+
+                    <!-- Latency -->
+                    <text x="340" y="36" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #065f46; text-anchor: middle;">Sub-200ms</text>
+                    <text x="340" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">E2E streaming</text>
+
+                    <!-- Audio -->
+                    <text x="470" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">PCM, Opus, FLAC,</text>
+                    <text x="470" y="42" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">MP3, and others</text>
+                    <text x="470" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">8kHz - 48kHz</text>
+
+                    <!-- Billing -->
+                    <text x="610" y="36" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #475569; text-anchor: middle;">Per-second</text>
+                    <text x="610" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">of audio processed</text>
+
+                    <!-- Differentiator -->
+                    <text x="780" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e40af; text-anchor: middle;">Speed + developer</text>
+                    <text x="780" y="48" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e40af; text-anchor: middle;">experience</text>
+                </g>
+
+                <!-- === ROW 2: AssemblyAI === -->
+                <g transform="translate(0, 132)">
+                    <rect x="0" y="0" width="880" height="76" rx="6" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1"/>
+
+                    <rect x="10" y="10" width="120" height="28" rx="4" fill="url(#aaiGrad)"/>
+                    <text x="70" y="29" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #ffffff; text-anchor: middle;">AssemblyAI</text>
+                    <text x="70" y="56" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #5b21b6; text-anchor: middle;">Universal-2 / Slam-1</text>
+
+                    <text x="210" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #5b21b6; text-anchor: middle;">WebSocket</text>
+                    <text x="210" y="44" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">Base64 JSON</text>
+                    <text x="210" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">messages</text>
+
+                    <text x="340" y="36" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #065f46; text-anchor: middle;">Sub-300ms</text>
+                    <text x="340" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">E2E streaming</text>
+
+                    <text x="470" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">16kHz PCM</text>
+                    <text x="470" y="42" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">recommended;</text>
+                    <text x="470" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">Opus supported</text>
+
+                    <text x="610" y="36" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #475569; text-anchor: middle;">Per-second</text>
+                    <text x="610" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">of audio processed</text>
+
+                    <text x="780" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #5b21b6; text-anchor: middle;">Real-time PII</text>
+                    <text x="780" y="48" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #5b21b6; text-anchor: middle;">redaction</text>
+                </g>
+
+                <!-- === ROW 3: Google Cloud === -->
+                <g transform="translate(0, 218)">
+                    <rect x="0" y="0" width="880" height="76" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1"/>
+
+                    <rect x="10" y="10" width="120" height="28" rx="4" fill="url(#gcpGrad)"/>
+                    <text x="70" y="29" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Google Cloud</text>
+                    <text x="70" y="56" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #065f46; text-anchor: middle;">Chirp 3</text>
+
+                    <text x="210" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #065f46; text-anchor: middle;">gRPC only</text>
+                    <text x="210" y="44" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">Bidirectional</text>
+                    <text x="210" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">streaming</text>
+
+                    <text x="340" y="36" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #92400e; text-anchor: middle;">Varies</text>
+                    <text x="340" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">Accuracy-optimized</text>
+
+                    <text x="470" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">16kHz recommended;</text>
+                    <text x="470" y="42" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">8kHz for telephony</text>
+                    <text x="470" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">25KB/msg limit</text>
+
+                    <text x="610" y="36" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #475569; text-anchor: middle;">Per 15-second</text>
+                    <text x="610" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">block</text>
+
+                    <text x="780" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #065f46; text-anchor: middle;">GCP ecosystem +</text>
+                    <text x="780" y="48" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #065f46; text-anchor: middle;">gRPC native</text>
+                </g>
+
+                <!-- === ROW 4: Amazon Transcribe === -->
+                <g transform="translate(0, 304)">
+                    <rect x="0" y="0" width="880" height="76" rx="6" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+
+                    <rect x="10" y="10" width="120" height="28" rx="4" fill="url(#awsGrad)"/>
+                    <text x="70" y="29" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #ffffff; text-anchor: middle;">AWS Transcribe</text>
+                    <text x="70" y="56" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #92400e; text-anchor: middle;">Custom models</text>
+
+                    <text x="210" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #92400e; text-anchor: middle;">WebSocket +</text>
+                    <text x="210" y="44" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">HTTP/2</text>
+                    <text x="210" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">streaming</text>
+
+                    <text x="340" y="36" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #92400e; text-anchor: middle;">Moderate</text>
+                    <text x="340" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">Throughput-focused</text>
+
+                    <text x="470" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">PCM, FLAC, Opus</text>
+                    <text x="470" y="42" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">8kHz telephony;</text>
+                    <text x="470" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">16kHz general</text>
+
+                    <text x="610" y="36" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #475569; text-anchor: middle;">Per 15-second</text>
+                    <text x="610" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">block</text>
+
+                    <text x="780" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #92400e; text-anchor: middle;">AWS integration +</text>
+                    <text x="780" y="48" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #92400e; text-anchor: middle;">custom vocabulary</text>
+                </g>
+
+                <!-- === ROW 5: OpenAI Realtime === -->
+                <g transform="translate(0, 390)">
+                    <rect x="0" y="0" width="880" height="76" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+
+                    <rect x="10" y="10" width="120" height="28" rx="4" fill="url(#oaiGrad)"/>
+                    <text x="70" y="29" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #ffffff; text-anchor: middle;">OpenAI Realtime</text>
+                    <text x="70" y="56" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">GPT-4o Realtime</text>
+
+                    <text x="210" y="22" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e293b; text-anchor: middle;">WebRTC +</text>
+                    <text x="210" y="36" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">WebSocket +</text>
+                    <text x="210" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">SIP</text>
+                    <text x="210" y="64" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #94a3b8; text-anchor: middle;">(3 protocols)</text>
+
+                    <text x="340" y="36" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #475569; text-anchor: middle;">Varies</text>
+                    <text x="340" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">Model-dependent</text>
+
+                    <text x="470" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">PCM 24kHz/16-bit</text>
+                    <text x="470" y="42" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">mono, Opus</text>
+                    <text x="470" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">Base64 over WS</text>
+
+                    <text x="610" y="36" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #475569; text-anchor: middle;">Per-token</text>
+                    <text x="610" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">(input + output)</text>
+
+                    <text x="780" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e293b; text-anchor: middle;">Speech-to-speech</text>
+                    <text x="780" y="48" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #1e293b; text-anchor: middle;">(no ASR/TTS split)</text>
+                </g>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>
