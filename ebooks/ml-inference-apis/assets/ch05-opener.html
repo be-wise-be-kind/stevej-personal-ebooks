@@ -168,7 +168,10 @@
                 <rect x="0" y="0" width="680" height="50" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
 
                 <!-- Clock icon area -->
-                <text x="25" y="30" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 18px; fill: #dc2626; text-anchor: middle;">&#9201;</text>
+                <!-- Clock icon as SVG circle -->
+                <circle cx="25" cy="22" r="12" fill="none" stroke="#dc2626" stroke-width="2"/>
+                <line x1="25" y1="14" x2="25" y2="22" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+                <line x1="25" y1="22" x2="31" y2="22" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
 
                 <text x="340" y="22" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #991b1b; text-anchor: middle;">The 300ms Rule</text>
                 <text x="340" y="40" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #b91c1c; text-anchor: middle;">Total end-to-end latency budget for voice AI: capture + transport + inference + delivery</text>
