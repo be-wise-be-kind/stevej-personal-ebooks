@@ -1,6 +1,6 @@
-# Chapter 5: Protocol Selection for Audio
+# Chapter 6: Protocol Selection for Audio
 
-<!-- DIAGRAM: ch05-opener.html - Chapter 5 Opener -->
+<!-- DIAGRAM: ch06-opener.html - Chapter 5 Opener -->
 
 \newpage
 
@@ -37,7 +37,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Binary framing at 16kHz/16-bit PCM: 3,200 bytes per 100ms chunk; small enough for a single WebSocket frame
 - Always prefer binary framing when the provider supports it; the bandwidth savings compound across thousands of concurrent sessions
 
-<!-- DIAGRAM: ch05-binary-vs-base64.html - Binary vs Base64 Bandwidth Comparison -->
+<!-- DIAGRAM: ch06-binary-vs-base64.html - Binary vs Base64 Bandwidth Comparison -->
 
 \newpage
 
@@ -186,7 +186,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - OpenAI Realtime -> WebRTC (browser), WebSocket (server), SIP (telephony)
 - Building your own -> WebSocket as the default; add gRPC if your clients are server-side and your team has gRPC experience
 
-<!-- DIAGRAM: ch05-protocol-decision-tree.html - Protocol Decision Tree for Audio -->
+<!-- DIAGRAM: ch06-protocol-decision-tree.html - Protocol Decision Tree for Audio -->
 
 \newpage
 
@@ -200,7 +200,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ## Protocol Comparison Summary
 
-<!-- DIAGRAM: ch05-protocol-comparison-table.html - Protocol Comparison Table -->
+<!-- DIAGRAM: ch06-protocol-comparison-table.html - Protocol Comparison Table -->
 
 \newpage
 
@@ -275,4 +275,4 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ---
 
-**Next: [Chapter 6: Streaming Inference Pipelines](./06-streaming-inference-pipelines.md)**
+**Next: [Chapter 7: Streaming Inference Pipelines](./07-streaming-inference-pipelines.md)**

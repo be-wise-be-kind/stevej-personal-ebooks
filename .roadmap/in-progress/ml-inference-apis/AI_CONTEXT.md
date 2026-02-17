@@ -67,24 +67,26 @@ A serving engineer reads this book and can confidently:
 
 | Book 2 Topic | Book 1 Chapter | Relationship |
 |---------------|----------------|--------------|
-| Protocol selection (Ch 5) | Ch 5: Network & Connection | Book 1 covers fundamentals; Book 2 covers audio-specific application |
-| Observability (Ch 6, 11) | Ch 3: Observability | Book 1 covers OpenTelemetry etc.; Book 2 covers ML-specific metrics |
-| Monitoring/SLOs (Ch 11) | Ch 4: Monitoring | Book 1 covers general; Book 2 covers streaming ML SLOs |
-| Rate limiting (Ch 8, 9) | Ch 10: Traffic Management | Book 1 covers algorithms; Book 2 covers billing-tier integration |
-| Auth (Ch 9) | Ch 11: Auth Performance | Book 1 covers auth perf; Book 2 covers streaming auth design |
-| Scaling (Ch 12) | Ch 9, 12: Compute, Geographic | Book 1 covers general; Book 2 covers GPU-specific scaling |
+| Deployment architecture (Ch 4) | Ch 9: Compute & Scaling | Book 1 covers general infrastructure scaling; Book 2 covers GPU-specific deployment patterns |
+| Protocol selection (Ch 6) | Ch 5: Network & Connection | Book 1 covers fundamentals; Book 2 covers audio-specific application |
+| Observability (Ch 7, 13) | Ch 3: Observability | Book 1 covers OpenTelemetry etc.; Book 2 covers ML-specific metrics |
+| Monitoring/SLOs (Ch 13) | Ch 4: Monitoring | Book 1 covers general; Book 2 covers streaming ML SLOs |
+| Rate limiting (Ch 10, 11) | Ch 10: Traffic Management | Book 1 covers algorithms; Book 2 covers billing-tier integration |
+| Auth (Ch 11) | Ch 11: Auth Performance | Book 1 covers auth perf; Book 2 covers streaming auth design |
+| Scaling (Ch 15) | Ch 9, 12: Compute, Geographic | Book 1 covers general; Book 2 covers GPU-specific scaling |
 
 **Convention**: Where Book 2 needs Book 1 content, provide a brief recap (1-2 paragraphs) + explicit cross-reference: "For a deep dive on [topic], see 'Before the 3 AM Alert' Chapter N."
 
 ## Key Design Decisions
 
 ### Chapter Structure
-- **5 Parts, 13 Chapters + Preface**: Follows Book 1 pattern but with thematic Parts
-- Part I: Foundations (Ch 1-3) — Problem, frameworks, GPU
-- Part II: Audio Streaming (Ch 4-6) — Architecture, protocols, pipelines
-- Part III: API Design (Ch 7-8) — ML APIs, metering
-- Part IV: Enterprise (Ch 9-11) — Security, compliance, SLOs
-- Part V: Scale (Ch 12-13) — Global scaling, synthesis
+- **5 Parts, 16 Chapters + 1 Appendix + Preface**: Follows Book 1 pattern but with thematic Parts
+- Part I: Foundations (Ch 1-4) — Problem, frameworks, GPU, deployment architecture
+- Part II: Audio Streaming (Ch 5-7) — Architecture, protocols, pipelines
+- Part III: API Design (Ch 8-10) — ML APIs, streaming contracts, versioning/DX
+- Part IV: Enterprise (Ch 11-14) — Security, compliance, SLOs, metering/billing
+- Part V: Scale (Ch 15-16) — Global scaling, synthesis
+- Appendix A (Ch 17): ML Inference for API Engineers
 
 ### Chapter Overview Philosophy: Ground the Reader
 Each chapter's Overview section should be generous about assumed knowledge. The target audience is backend engineers moving into ML infrastructure, not ML researchers. Before diving into the chapter's specifics, the Overview should briefly explain the foundational concepts the chapter builds on. Ask: "Would a backend engineer with no ML experience understand what this chapter is about from the Overview alone?"
@@ -177,7 +179,7 @@ Research is stored in `.roadmap/in-progress/ml-inference-apis/research/`:
 
 ## Per-Chapter Bridge Content
 
-Guidance for what each chapter's Bridging the Gap section should cover. Chapters 1-3 have full prose already written; chapters 4-15 have outlines written and should be expanded to full prose when those chapters are authored.
+Guidance for what each chapter's Bridging the Gap section should cover. Chapters 1-4 have full prose already written; chapters 5-16 have outlines written and should be expanded to full prose when those chapters are authored.
 
 ### Chapter 1: The Serving Problem
 - **ML side**: APIs, request/response model, API contracts, SLOs
@@ -191,50 +193,54 @@ Guidance for what each chapter's Bridging the Gap section should cover. Chapters
 - **ML side**: GPU utilization metrics, cost-per-request analysis, auto-scaling and cold start delays
 - **API side**: GPU architecture (SIMD cores), GPU memory (VRAM/HBM), precision formats (FP32/FP16/INT8/FP4)
 
-### Chapter 4: Streaming Audio Architecture
+### Chapter 4: Deployment Architecture Strategies
+- **ML side**: Kubernetes concepts (clusters, namespaces, pods, node pools), IaC (Terraform/OpenTofu), GitOps, golden paths
+- **API side**: Model artifact sizes (1-140 GB), GPU memory as hard constraint (OOM = crash), noisy-neighbor severity on GPUs
+
+### Chapter 5: Streaming Audio Architecture
 - **ML side**: Persistent connections (WebSocket, gRPC), codecs (Opus, FLAC, PCM), bandwidth planning
 - **API side**: Sample rate, bit depth, data rate calculation, Voice Activity Detection (VAD)
 
-### Chapter 5: Protocol Selection
+### Chapter 6: Protocol Selection
 - **ML side**: Protocol impact on load balancers, proxies, idle timeouts, flow control
 - **API side**: Why HTTP request-response is insufficient for audio, bidirectional communication, binary framing vs base64 overhead
 
-### Chapter 6: Streaming Inference Pipelines
+### Chapter 7: Streaming Inference Pipelines
 - **ML side**: Distributed tracing (OpenTelemetry, spans), queue theory (queue depth, Little's Law), backpressure
 - **API side**: GPU layer-by-layer computation, KV cache reads/writes, batching across streams, pipeline parallelism (CPU/GPU overlap)
 
-### Chapter 7: Designing ML APIs
+### Chapter 8: Designing ML APIs
 - **ML side**: REST conventions (resources, methods, status codes), idempotency, JSON schemas
 - **API side**: Variable cost per request (60x range for audio), "model not loaded" (503) failure mode, streaming response delivery
 
-### Chapter 8: Streaming Response Contracts
+### Chapter 9: Streaming Response Contracts
 - **ML side**: SSE, WebSocket, gRPC as transport mechanisms, Protocol Buffers, message framing
 - **API side**: Autoregressive token-by-token generation, interim vs final speech results, incremental delivery
 
-### Chapter 9: API Versioning & Developer Experience
+### Chapter 10: API Versioning & Developer Experience
 - **ML side**: URL path versioning, deprecation policies, SDKs, developer onboarding metrics
 - **API side**: Two-axis versioning (API schema + model version), model pinning for reproducibility
 
-### Chapter 10: Security for Audio ML APIs
+### Chapter 11: Security for Audio ML APIs
 - **ML side**: JWT, OAuth 2.0 Client Credentials, token bucket rate limiting, TLS/mTLS
 - **API side**: Voice as biometric data, background conversation capture, GPU-aware rate limiting (compute-seconds), audio PII redaction
 
-### Chapter 11: Compliance & Data Governance
+### Chapter 12: Compliance & Data Governance
 - **ML side**: SOC 2 auditing, GDPR data rights, HIPAA BAAs, audit logging requirements
 - **API side**: Voice as biometric data under GDPR/BIPA, EU AI Act obligations (Aug 2026), model lifecycle auditability
 
-### Chapter 12: SLOs for Streaming ML Systems
+### Chapter 13: SLOs for Streaming ML Systems
 - **ML side**: SLI/SLO/SLA definitions, error budgets (allowed failure rate), burn rate
 - **API side**: TTFT, TPOT, RTF (must be <1.0), goodput (quality-adjusted throughput), KV cache pressure as capacity signal
 
-### Chapter 13: Usage Metering & Billing
+### Chapter 14: Usage Metering & Billing
 - **ML side**: Metering event pipelines (collection → aggregation → invoicing), idempotency keys, billing-tier rate limiting
 - **API side**: 60x cost variance per request, feature-based pricing complexity, per-block billing overcharge on short utterances
 
-### Chapter 14: Scaling Inference Globally
+### Chapter 15: Scaling Inference Globally
 - **ML side**: Horizontal scaling, auto-scaling signals, multi-region deployment, spot vs reserved instances
 - **API side**: Model loading delay (30-120s), GPU memory as binding constraint, KV cache determines max concurrency, GPU right-sizing
 
-### Chapter 15: Putting It All Together
+### Chapter 16: Putting It All Together
 - **ML side**: Deployment checklists, incident response process, capacity planning, runbooks
 - **API side**: GPU OOM (crashes all active requests), cold start storms, model rollback (accuracy degradation vs crash)

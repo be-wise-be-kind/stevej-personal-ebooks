@@ -1,6 +1,6 @@
-# Chapter 8: Streaming Response Contracts
+# Chapter 9: Streaming Response Contracts
 
-<!-- DIAGRAM: ch08-opener.html - Chapter 8 Opener -->
+<!-- DIAGRAM: ch09-opener.html - Chapter 8 Opener -->
 
 \newpage
 
@@ -8,7 +8,7 @@
 
 - **Ground the reader**: explain what a "response contract" is. When a server streams results back to a client, both sides need to agree on the format and meaning of each message. What does the first message look like? How does the client know a new word was recognized? How does the client know the stream is finished? This agreement is the response contract. It is the layer above the transport protocol: the protocol handles delivering bytes, and the contract defines what those bytes mean. Getting this wrong means clients cannot reliably parse results, handle errors, or reconnect after failures.
 - What streaming inference messages actually look like on the wire; the event schemas, message framing, and lifecycle signals that clients consume on top of SSE, WebSocket, and gRPC transports
-- Chapter 5 (Protocol Selection) answers "which transport?"; this chapter answers "what do the messages look like on top of that transport?"
+- Chapter 6 (Protocol Selection) answers "which transport?"; this chapter answers "what do the messages look like on top of that transport?"
 - Connection lifecycle management, backpressure, and reconnection strategies that make streaming APIs reliable in production
 
 ## Bridging the Gap
@@ -65,7 +65,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - The `is_final` boolean (Deepgram) or `message_type` discrimination (AssemblyAI `PartialTranscript` vs `FinalTranscript`) signals result stability
 - Client rendering strategy: display interim results in a mutable buffer, replace with finals when they arrive, append new interims after the last final
 
-<!-- DIAGRAM: ch08-interim-final-results.html - Interim vs Final Results in Streaming Transcription -->
+<!-- DIAGRAM: ch09-interim-final-results.html - Interim vs Final Results in Streaming Transcription -->
 
 \newpage
 
@@ -108,7 +108,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - This abstraction makes it practical to offer multiple transports for the same API without duplicating business logic
 - Test contracts by defining a transport-agnostic test suite that validates message sequences regardless of wire format
 
-<!-- DIAGRAM: ch08-streaming-response-patterns.html - SSE vs WebSocket vs gRPC Streaming Response Patterns -->
+<!-- DIAGRAM: ch09-streaming-response-patterns.html - SSE vs WebSocket vs gRPC Streaming Response Patterns -->
 
 \newpage
 
@@ -142,7 +142,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Ungraceful close: network drop, client crash, server crash; both sides must handle missing close signals via timeouts
 - Resource cleanup: on any termination, the server must release GPU memory, flush pending results, emit final metering events
 
-<!-- DIAGRAM: ch08-connection-lifecycle.html - Connection Lifecycle: Establishment, Data Flow, and Termination -->
+<!-- DIAGRAM: ch09-connection-lifecycle.html - Connection Lifecycle: Establishment, Data Flow, and Termination -->
 
 \newpage
 
@@ -226,4 +226,4 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ---
 
-**Next: [Chapter 9: API Versioning & Developer Experience](./09-api-versioning-dx.md)**
+**Next: [Chapter 10: API Versioning & Developer Experience](./10-api-versioning-dx.md)**

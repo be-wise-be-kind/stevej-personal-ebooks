@@ -379,4 +379,4 @@ For serving teams, the practical implication is to optimize for current hardware
 
 ---
 
-**Next: [Chapter 4: Streaming Audio Architecture](./04-streaming-audio-architecture.md)**
+**Next: [Chapter 4: Deployment Architecture Strategies](./04-deployment-architecture.md)**

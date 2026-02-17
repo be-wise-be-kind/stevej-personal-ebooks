@@ -54,6 +54,8 @@ If you are facing a specific problem, each chapter is self-contained enough to b
 
 Each chapter opens with a **Bridging the Gap** section that identifies the ML and API concepts the chapter builds on and provides a brief refresher. If you are already comfortable with the concepts listed, skip ahead to the next section. If they are new, invest the two minutes; the rest of the chapter will make more sense.
 
+**If you are an API engineer without ML infrastructure experience**, read [Appendix A: ML Inference for API Engineers](./16-appendix-ml-inference-primer.md) before starting Chapter 1. It is a 30- to 45-minute primer that teaches the foundational ML concepts (models, inference, GPUs, tokens, batching, the KV cache, quantization) using a restaurant kitchen metaphor. Every Bridging the Gap section in the main chapters assumes you either have this background already or have read the appendix. The investment pays off immediately: the entire book will click.
+
 ## Relationship to "Before the 3 AM Alert" {-}
 
 This is a companion book to *Before the 3 AM Alert: A Systematic Approach to API Performance Optimization*, not a replacement for it. Book 1 covers foundational API performance engineering: observability and distributed tracing, caching strategies, network optimization, scaling patterns, traffic management, authentication performance, and edge infrastructure. Those fundamentals apply to any backend service, including ML inference APIs.

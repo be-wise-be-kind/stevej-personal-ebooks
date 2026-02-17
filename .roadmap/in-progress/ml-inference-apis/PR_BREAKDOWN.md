@@ -5,10 +5,12 @@
 ---
 
 ## Overview
-This document breaks down the ml-inference-apis ebook into 15 PRs. The approach is:
+This document breaks down the ml-inference-apis ebook into 18 PRs. The approach is:
 - **PR1**: Produce all outlines, submit for review
-- **PR2-PR14**: Author one chapter at a time, submit each for review
-- **PR15**: Write preface (last, since it references all chapters) + final polish
+- **PR2-PR17**: Author one chapter at a time, submit each for review
+- **PR18**: Write preface (last, since it references all chapters) + final polish
+
+**Note**: Chapter 4 (Deployment Architecture Strategies) was inserted between Chapters 3 and 5, shifting all subsequent chapter and PR numbers by 1.
 
 Each PR is designed to be:
 - Self-contained and reviewable
@@ -135,9 +137,35 @@ Each PR is designed to be:
 
 ---
 
-## PR5: Chapter 4 — Streaming Audio Architecture
+## PR5: Chapter 4 — Deployment Architecture Strategies
 
-**Scope**: Author Chapter 4 in full prose.
+**Scope**: Author Chapter 4 in full prose. NEW chapter inserted between GPU Optimization (Ch 3) and Streaming Audio Architecture (Ch 5).
+
+**Status**: 🟢 Complete
+
+**Content**:
+- Three deployment patterns: shared cluster, container-per-model, platform template
+- Infrastructure-as-code for ML deployments (Terraform module design, Helm charts)
+- CI/CD for model deployments (4 key differences from code CI/CD)
+- Namespace and tenant isolation (RBAC, network policies, resource quotas, GPU partitioning)
+- The noisy neighbor problem (GPU interference patterns, detection, mitigation)
+- Maturity evolution and migration signals
+
+**Diagrams**:
+- ch04-opener.html
+- ch04-three-patterns.html
+- ch04-platform-template.html
+- ch04-cicd-pipeline.html
+- ch04-noisy-neighbor.html
+- ch04-maturity-evolution.html
+
+**Cross-references**: Ch 2 (frameworks), Ch 3 (GPU optimization), Ch 15 (scaling), Book 1 Ch 9 (infrastructure scaling)
+
+---
+
+## PR6: Chapter 5 — Streaming Audio Architecture
+
+**Scope**: Author Chapter 5 in full prose.
 
 **Content**:
 - End-to-end architecture: client -> audio capture -> transport -> inference -> response -> client
@@ -150,18 +178,18 @@ Each PR is designed to be:
 **Research to consult**: Topics 3, 4 in RESEARCH_SUMMARY.md
 
 **Diagrams**:
-- ch04-opener.html
-- ch04-e2e-architecture.html
-- ch04-chunk-size-tradeoff.html
-- ch04-provider-comparison.html
+- ch05-opener.html
+- ch05-e2e-architecture.html
+- ch05-chunk-size-tradeoff.html
+- ch05-provider-comparison.html
 
-**Cross-references**: Book 1 Ch 5 (Network), forward to Ch 5 (protocols), Ch 6 (pipelines)
+**Cross-references**: Book 1 Ch 5 (Network), forward to Ch 6 (protocols), Ch 7 (pipelines)
 
 ---
 
-## PR6: Chapter 5 — Protocol Selection for Audio
+## PR7: Chapter 6 — Protocol Selection for Audio
 
-**Scope**: Author Chapter 5 in full prose.
+**Scope**: Author Chapter 6 in full prose.
 
 **Content**:
 - WebSocket for audio: binary framing, backpressure, 33% bandwidth savings over base64
@@ -174,18 +202,18 @@ Each PR is designed to be:
 **Research to consult**: Topic 4 in RESEARCH_SUMMARY.md
 
 **Diagrams**:
-- ch05-opener.html
-- ch05-protocol-decision-tree.html
-- ch05-binary-vs-base64.html
-- ch05-protocol-comparison-table.html
+- ch06-opener.html
+- ch06-protocol-decision-tree.html
+- ch06-binary-vs-base64.html
+- ch06-protocol-comparison-table.html
 
 **Cross-references**: Book 1 Ch 5 (protocol fundamentals — recap + cross-ref)
 
 ---
 
-## PR7: Chapter 6 — Streaming Inference Pipelines
+## PR8: Chapter 7 — Streaming Inference Pipelines
 
-**Scope**: Author Chapter 6 in full prose.
+**Scope**: Author Chapter 7 in full prose.
 
 **Content**:
 - Connecting transport layer to inference layer
@@ -198,18 +226,18 @@ Each PR is designed to be:
 **Research to consult**: Topics 1, 3, 4 in RESEARCH_SUMMARY.md
 
 **Diagrams**:
-- ch06-opener.html
-- ch06-streaming-pipeline.html
-- ch06-concurrent-streams.html
-- ch06-degradation-strategies.html
+- ch07-opener.html
+- ch07-streaming-pipeline.html
+- ch07-concurrent-streams.html
+- ch07-degradation-strategies.html
 
-**Cross-references**: Book 1 Ch 3 (distributed tracing), Ch 2 (frameworks), Ch 4 (audio arch)
+**Cross-references**: Book 1 Ch 3 (distributed tracing), Ch 2 (frameworks), Ch 5 (audio arch)
 
 ---
 
-## PR8: Chapter 7 — Designing ML-Facing APIs
+## PR9: Chapter 8 — Designing ML-Facing APIs
 
-**Scope**: Author Chapter 7 in full prose.
+**Scope**: Author Chapter 8 in full prose.
 
 **Content**:
 - Resource-oriented design for inference (Google AIPs)
@@ -222,44 +250,54 @@ Each PR is designed to be:
 **Research to consult**: Topic 5 in RESEARCH_SUMMARY.md
 
 **Diagrams**:
-- ch07-opener.html
-- ch07-sync-vs-async-decision.html
-- ch07-streaming-response-patterns.html
-- ch07-versioning-strategies.html
-
-**Cross-references**: Forward to Ch 8 (metering), Book 1 Ch 10 (rate limiting)
-
----
-
-## PR9: Chapter 8 — Usage Metering & Billing
-
-**Scope**: Author Chapter 8 in full prose.
-
-**Content**:
-- What to meter: audio seconds, API calls, compute time, tokens, characters
-- Billing models: per-second vs per-block vs per-character (provider comparison)
-- Metering architecture: idempotent events, aggregation pipelines
-- Stripe Meters API integration (the new standard, legacy removed)
-- OpenMeter as open-source alternative
-- Rate limiting tied to billing tiers
-- Feature-based pricing stacking
-- Audit trail for usage disputes
-
-**Research to consult**: Topic 6 in RESEARCH_SUMMARY.md
-
-**Diagrams**:
 - ch08-opener.html
-- ch08-metering-architecture.html
-- ch08-billing-model-comparison.html
-- ch08-stripe-integration.html
+- ch08-sync-vs-async-decision.html
+- ch08-error-handling-taxonomy.html
 
-**Cross-references**: Book 1 Ch 10 (rate limiting), forward to Ch 9 (security)
+**Cross-references**: Forward to Ch 9 (streaming response contracts), Book 1 Ch 10 (rate limiting)
 
 ---
 
-## PR10: Chapter 9 — Security for Audio ML APIs
+## PR10: Chapter 9 — Streaming Response Contracts
 
 **Scope**: Author Chapter 9 in full prose.
+
+**Content**:
+- Streaming response design patterns (SSE, WebSocket, gRPC)
+- Connection lifecycle management
+- Interim vs final results flow
+- Backpressure and reconnection strategies
+
+**Diagrams**:
+- ch09-opener.html
+- ch09-streaming-response-patterns.html
+- ch09-connection-lifecycle.html
+- ch09-interim-final-results.html
+
+**Cross-references**: Ch 6 (Protocol Selection), Ch 8 (ML API Design)
+
+---
+
+## PR11: Chapter 10 — API Versioning & Developer Experience
+
+**Scope**: Author Chapter 10 in full prose.
+
+**Content**:
+- API versioning strategies for ML APIs
+- Two-axis versioning (API version vs model version)
+- Developer journey and experience optimization
+
+**Diagrams**:
+- ch10-opener.html
+- ch10-versioning-strategies.html
+- ch10-two-axis-versioning.html
+- ch10-developer-journey.html
+
+---
+
+## PR12: Chapter 11 — Security for Audio ML APIs
+
+**Scope**: Author Chapter 11 in full prose.
 
 **Content**:
 - Auth for streaming connections: token-based WebSocket auth, per-stream gRPC auth
@@ -272,18 +310,18 @@ Each PR is designed to be:
 **Research to consult**: Topic 7 in RESEARCH_SUMMARY.md
 
 **Diagrams**:
-- ch09-opener.html
-- ch09-streaming-auth-flow.html
-- ch09-api-key-lifecycle.html
-- ch09-pii-redaction-pipeline.html
+- ch11-opener.html
+- ch11-streaming-auth-flow.html
+- ch11-api-key-lifecycle.html
+- ch11-pii-redaction-pipeline.html
 
 **Cross-references**: Book 1 Ch 11 (auth performance), Book 1 Appendix A (auth fundamentals)
 
 ---
 
-## PR11: Chapter 10 — Compliance & Data Governance
+## PR13: Chapter 12 — Compliance & Data Governance
 
-**Scope**: Author Chapter 10 in full prose.
+**Scope**: Author Chapter 12 in full prose.
 
 **Content**:
 - SOC 2 for ML APIs: Trust Service Criteria applied to inference systems
@@ -298,18 +336,18 @@ Each PR is designed to be:
 **Research to consult**: Topic 7 in RESEARCH_SUMMARY.md
 
 **Diagrams**:
-- ch10-opener.html
-- ch10-eu-ai-act-timeline.html
-- ch10-compliance-matrix.html
-- ch10-data-lifecycle.html
+- ch12-opener.html
+- ch12-eu-ai-act-timeline.html
+- ch12-compliance-matrix.html
+- ch12-data-lifecycle.html
 
-**Cross-references**: Ch 9 (security), forward to Ch 11 (SLOs for monitoring)
+**Cross-references**: Ch 11 (security), forward to Ch 13 (SLOs for monitoring)
 
 ---
 
-## PR12: Chapter 11 — SLOs for Streaming ML Systems
+## PR14: Chapter 13 — SLOs for Streaming ML Systems
 
-**Scope**: Author Chapter 11 in full prose.
+**Scope**: Author Chapter 13 in full prose.
 
 **Content**:
 - Streaming-specific SLIs: TTFT, TPOT, inter-token latency, jitter, connection drops, RTF
@@ -323,18 +361,44 @@ Each PR is designed to be:
 **Research to consult**: Topic 8 in RESEARCH_SUMMARY.md
 
 **Diagrams**:
-- ch11-opener.html
-- ch11-streaming-sli-taxonomy.html
-- ch11-slo-target-framework.html
-- ch11-burn-rate-alerting.html
+- ch13-opener.html
+- ch13-streaming-sli-taxonomy.html
+- ch13-slo-target-framework.html
+- ch13-burn-rate-alerting.html
 
 **Cross-references**: Book 1 Ch 3-4 (observability, monitoring), Book 1 Ch 2 (SLO fundamentals)
 
 ---
 
-## PR13: Chapter 12 — Scaling Inference Globally
+## PR15: Chapter 14 — Usage Metering & Billing
 
-**Scope**: Author Chapter 12 in full prose.
+**Scope**: Author Chapter 14 in full prose.
+
+**Content**:
+- What to meter: audio seconds, API calls, compute time, tokens, characters
+- Billing models: per-second vs per-block vs per-character (provider comparison)
+- Metering architecture: idempotent events, aggregation pipelines
+- Stripe Meters API integration (the new standard, legacy removed)
+- OpenMeter as open-source alternative
+- Rate limiting tied to billing tiers
+- Feature-based pricing stacking
+- Audit trail for usage disputes
+
+**Research to consult**: Topic 6 in RESEARCH_SUMMARY.md
+
+**Diagrams**:
+- ch14-opener.html
+- ch14-metering-architecture.html
+- ch14-billing-model-comparison.html
+- ch14-stripe-integration.html
+
+**Cross-references**: Book 1 Ch 10 (rate limiting), forward to Ch 15 (scaling)
+
+---
+
+## PR16: Chapter 15 — Scaling Inference Globally
+
+**Scope**: Author Chapter 15 in full prose.
 
 **Content**:
 - Horizontal scaling: adding GPU instances, load balancing inference requests
@@ -346,18 +410,18 @@ Each PR is designed to be:
 **Research to consult**: Topics 1, 2 in RESEARCH_SUMMARY.md
 
 **Diagrams**:
-- ch12-opener.html
-- ch12-autoscaling-signals.html
-- ch12-multi-region-architecture.html
-- ch12-cost-optimization-strategies.html
+- ch15-opener.html
+- ch15-autoscaling-signals.html
+- ch15-multi-region-architecture.html
+- ch15-cost-optimization-strategies.html
 
 **Cross-references**: Book 1 Ch 9 (compute scaling), Book 1 Ch 12 (geographic optimization)
 
 ---
 
-## PR14: Chapter 13 — Putting It All Together
+## PR17: Chapter 16 — Putting It All Together
 
-**Scope**: Author Chapter 13 in full prose.
+**Scope**: Author Chapter 16 in full prose.
 
 **Content**:
 - Case study: building a production streaming speech API from scratch
@@ -369,16 +433,16 @@ Each PR is designed to be:
 **Research to consult**: All topics in RESEARCH_SUMMARY.md (synthesis chapter)
 
 **Diagrams**:
-- ch13-opener.html
-- ch13-complete-architecture.html
-- ch13-decision-flowchart.html
-- ch13-runbook-patterns.html
+- ch16-opener.html
+- ch16-complete-architecture.html
+- ch16-decision-flowchart.html
+- ch16-runbook-patterns.html
 
 **Cross-references**: All previous chapters, Book 1 Ch 14 (Putting It All Together)
 
 ---
 
-## PR15: Preface & Final Polish
+## PR18: Preface & Final Polish
 
 **Scope**: Write the preface (last, since it references all chapters) and do final polish.
 

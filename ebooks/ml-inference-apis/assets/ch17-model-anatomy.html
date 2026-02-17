@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Anatomy</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="archGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="weightGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Model Anatomy</text>
+            <text x="450" y="54" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">A model is data, not code</text>
+
+            <!-- === LEFT SIDE: Model file structure === -->
+            <g transform="translate(30, 80)">
+                <text x="140" y="18" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #334155; text-anchor: middle;">What's Inside a Model File</text>
+
+                <!-- Outer model file container -->
+                <rect x="20" y="35" width="240" height="340" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+                <text x="140" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #475569; text-anchor: middle;">model.safetensors</text>
+
+                <!-- Architecture section (small) -->
+                <rect x="40" y="72" width="200" height="60" rx="6" fill="url(#archGrad)"/>
+                <text x="140" y="97" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Architecture (Recipe)</text>
+                <text x="140" y="118" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #dbeafe; text-anchor: middle;">Layer structure, dimensions, config</text>
+
+                <!-- Size label for architecture -->
+                <text x="260" y="102" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #3b82f6; text-anchor: start;">~1 KB</text>
+
+                <!-- Weights section (large) -->
+                <rect x="40" y="147" width="200" height="210" rx="6" fill="url(#weightGrad)"/>
+                <text x="140" y="230" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #ffffff; text-anchor: middle;">Weights</text>
+                <text x="140" y="252" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #fef3c7; text-anchor: middle;">(Ingredients)</text>
+                <text x="140" y="280" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #fef3c7; text-anchor: middle;">Billions of numbers learned</text>
+                <text x="140" y="296" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #fef3c7; text-anchor: middle;">during training</text>
+
+                <!-- Size label for weights -->
+                <text x="260" y="252" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #d97706; text-anchor: start;">99.99%</text>
+                <text x="260" y="266" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #d97706; text-anchor: start;">of file size</text>
+
+                <!-- Arrow showing size difference -->
+                <text x="140" y="395" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle; font-style: italic;">The recipe is tiny; the ingredients are huge</text>
+            </g>
+
+            <!-- === Divider === -->
+            <line x1="340" y1="100" x2="340" y2="460" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="6,4"/>
+
+            <!-- === RIGHT SIDE: Size comparison bars === -->
+            <g transform="translate(380, 80)">
+                <text x="250" y="18" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #334155; text-anchor: middle;">Size Comparison</text>
+
+                <!-- Go binary -->
+                <text x="0" y="60" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #334155; text-anchor: start;">Go binary</text>
+                <text x="0" y="76" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: start;">50-200 MB</text>
+                <rect x="140" y="52" width="14" height="26" rx="3" fill="#94a3b8"/>
+
+                <!-- Node.js app -->
+                <text x="0" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #334155; text-anchor: start;">Node.js app</text>
+                <text x="0" y="136" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: start;">200-500 MB</text>
+                <rect x="140" y="112" width="28" height="26" rx="3" fill="#64748b"/>
+
+                <!-- Whisper large -->
+                <text x="0" y="180" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #334155; text-anchor: start;">Whisper large</text>
+                <text x="0" y="196" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: start;">3 GB</text>
+                <rect x="140" y="172" width="70" height="26" rx="3" fill="#f59e0b"/>
+
+                <!-- Llama 8B -->
+                <text x="0" y="240" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #334155; text-anchor: start;">Llama 8B</text>
+                <text x="0" y="256" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: start;">16 GB</text>
+                <rect x="140" y="232" width="180" height="26" rx="3" fill="#ef4444"/>
+
+                <!-- Llama 70B -->
+                <text x="0" y="300" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #334155; text-anchor: start;">Llama 70B</text>
+                <text x="0" y="316" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: start;">140 GB</text>
+                <rect x="140" y="292" width="360" height="26" rx="3" fill="#dc2626"/>
+
+                <!-- Scale annotation -->
+                <line x1="140" y1="340" x2="500" y2="340" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="140" y="358" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: start;">0</text>
+                <text x="320" y="358" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">70 GB</text>
+                <text x="500" y="358" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: end;">140 GB</text>
+            </g>
+
+            <!-- Bottom annotation -->
+            <text x="450" y="502" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #475569; text-anchor: middle; font-style: italic;">Models are not executables. They are massive lookup tables of learned numerical parameters.</text>
+        </svg>
+    </div>
+</body>
+</html>

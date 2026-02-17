@@ -102,7 +102,7 @@ A series of innovations, from batching strategies to memory management to precis
 
 Understanding where milliseconds go in an inference request is essential for optimization. Without this breakdown, teams waste effort optimizing the wrong stage. A typical real-time speech-to-text request passes through six stages:
 
-**Network transit** (20-50ms each way): the audio data travels from the client to the server and the response travels back. This is largely determined by geographic distance and network quality, which is why multi-region deployment (Chapter 14) matters.
+**Network transit** (20-50ms each way): the audio data travels from the client to the server and the response travels back. This is largely determined by geographic distance and network quality, which is why multi-region deployment (Chapter 15) matters.
 
 **Queue wait** (0-100ms): the request waits for an available inference slot. With continuous batching, this is typically 5-20ms as the request joins the next batch iteration. With static batching, the wait can reach 50-100ms while the batch fills. Under heavy load, the queue grows and this stage dominates.
 

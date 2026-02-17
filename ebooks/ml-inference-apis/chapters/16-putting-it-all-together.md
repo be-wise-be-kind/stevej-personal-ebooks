@@ -1,6 +1,6 @@
-# Chapter 15: Putting It All Together
+# Chapter 16: Putting It All Together
 
-<!-- DIAGRAM: ch15-opener.html - Chapter 15 Opener -->
+<!-- DIAGRAM: ch16-opener.html - Chapter 15 Opener -->
 
 \newpage
 
@@ -54,9 +54,9 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ### Audio Input Path
 
-- Client connects via WebSocket (primary) or gRPC (high-performance clients); protocol selection from Chapter 5
+- Client connects via WebSocket (primary) or gRPC (high-performance clients); protocol selection from Chapter 6
 - Audio arrives as Opus-encoded chunks at 20ms intervals (50 chunks per second)
-- Edge proxy terminates TLS, authenticates the API key, and routes to the correct region based on customer configuration (Chapter 10)
+- Edge proxy terminates TLS, authenticates the API key, and routes to the correct region based on customer configuration (Chapter 11)
 - The WebSocket connection is pinned to a specific inference instance for the duration of the stream; sticky session routing
 
 ### The Inference Pipeline
@@ -69,7 +69,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - **Stage 6: Partial Result Assembly**; Partial transcripts assembled, compared against previous partials, stability markers applied
 - Pipeline from Chapter 6 realized end-to-end with Triton's ensemble scheduler managing the DAG
 
-<!-- DIAGRAM: ch15-complete-architecture.html - Complete System Architecture -->
+<!-- DIAGRAM: ch16-complete-architecture.html - Complete System Architecture -->
 
 \newpage
 
@@ -82,9 +82,9 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ### Supporting Infrastructure
 
-- **API Gateway**: rate limiting, authentication, request routing, protocol translation (Chapter 7, Chapter 10)
-- **Usage Metering**: every audio second processed is metered and attributed to the customer's account (Chapter 13)
-- **Observability Stack**: distributed traces from client connection through every pipeline stage, GPU metrics, per-stream latency histograms (Chapter 12)
+- **API Gateway**: rate limiting, authentication, request routing, protocol translation (Chapter 8, Chapter 11)
+- **Usage Metering**: every audio second processed is metered and attributed to the customer's account (Chapter 14)
+- **Observability Stack**: distributed traces from client connection through every pipeline stage, GPU metrics, per-stream latency histograms (Chapter 13)
 - **Model Registry**: tracks which model version is deployed in each region, supports rollback (Chapter 2)
 - **Configuration Service**: feature flags, per-customer settings, rate limits synchronized across regions
 
@@ -94,28 +94,28 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 - **Which serving framework?** Chapter 2; Framework selection criteria: model type, latency requirements, scaling model, operational complexity
 - **How to optimize GPU usage?** Chapter 3; Quantization (FP8), CUDA graphs, memory pooling, cold start mitigation
-- **How to scale globally?** Chapter 14; GPU-aware load balancing, auto-scaling signals, multi-region deployment, cost optimization
+- **How to scale globally?** Chapter 15; GPU-aware load balancing, auto-scaling signals, multi-region deployment, cost optimization
 
 ### Streaming and Protocol Decisions
 
-- **How to handle streaming audio?** Chapter 4; Chunk-based streaming, jitter buffers, backpressure, codec selection
-- **Which protocol for audio transport?** Chapter 5; WebSocket for broad compatibility, gRPC for high-performance clients, WebRTC for browser-native real-time
-- **How to build the inference pipeline?** Chapter 6; Multi-stage pipeline with VAD gating, overlap buffering, partial result streaming
+- **How to handle streaming audio?** Chapter 5; Chunk-based streaming, jitter buffers, backpressure, codec selection
+- **Which protocol for audio transport?** Chapter 6; WebSocket for broad compatibility, gRPC for high-performance clients, WebRTC for browser-native real-time
+- **How to build the inference pipeline?** Chapter 7; Multi-stage pipeline with VAD gating, overlap buffering, partial result streaming
 
 ### API and Business Decisions
 
-- **How to design the API?** Chapter 7; Streaming endpoint design, error handling, versioning, SDK patterns
-- **How to design streaming response contracts?** Chapter 8; Streaming response formats, partial result semantics, client contract guarantees
-- **How to version APIs and optimize developer experience?** Chapter 9; API versioning strategies, deprecation policies, SDK design, developer portal patterns
-- **How to meter and bill?** Chapter 13; Per-second metering, idempotent usage events, billing pipeline, revenue reconciliation
+- **How to design the API?** Chapter 8; Streaming endpoint design, error handling, versioning, SDK patterns
+- **How to design streaming response contracts?** Chapter 9; Streaming response formats, partial result semantics, client contract guarantees
+- **How to version APIs and optimize developer experience?** Chapter 10; API versioning strategies, deprecation policies, SDK design, developer portal patterns
+- **How to meter and bill?** Chapter 14; Per-second metering, idempotent usage events, billing pipeline, revenue reconciliation
 
 ### Enterprise Decisions
 
-- **How to secure audio data?** Chapter 10; TLS, API key management, audio encryption at rest, tenant isolation
-- **How to meet compliance requirements?** Chapter 11; GDPR for voice biometrics, SOC 2 controls, data retention, audit logging
-- **How to define and monitor SLOs?** Chapter 12; Availability, latency, stream success rate, error budgets for streaming systems
+- **How to secure audio data?** Chapter 11; TLS, API key management, audio encryption at rest, tenant isolation
+- **How to meet compliance requirements?** Chapter 12; GDPR for voice biometrics, SOC 2 controls, data retention, audit logging
+- **How to define and monitor SLOs?** Chapter 13; Availability, latency, stream success rate, error budgets for streaming systems
 
-<!-- DIAGRAM: ch15-decision-flowchart.html - Decision Flowchart: Major Architecture Choices -->
+<!-- DIAGRAM: ch16-decision-flowchart.html - Decision Flowchart: Major Architecture Choices -->
 
 \newpage
 
@@ -181,13 +181,13 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ### Incident Response for Inference Systems
 
-- **Detection**: SLO burn rate alerts (Chapter 12), GPU health alerts, customer-reported quality degradation
+- **Detection**: SLO burn rate alerts (Chapter 13), GPU health alerts, customer-reported quality degradation
 - **Triage**: is this a capacity issue (need more instances), a quality issue (bad model version), an infrastructure issue (GPU failure, network), or a dependency issue (model storage, config service)?
 - **Containment**: for capacity; emergency scale-up; for quality; rollback model version; for infrastructure; drain affected instances; for dependency; activate fallback/cached configuration
 - **Resolution**: root cause analysis after containment, fix applied and verified, postmortem written with action items
 - **Communication**: status page updates during incident, customer-facing RCA for significant events
 
-<!-- DIAGRAM: ch15-runbook-patterns.html - Operational Runbook Decision Tree -->
+<!-- DIAGRAM: ch16-runbook-patterns.html - Operational Runbook Decision Tree -->
 
 \newpage
 
@@ -296,7 +296,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 *To be populated during chapter authoring. Synthesis chapter; references back to all earlier chapters:*
 
-1. Chapters 1-14 of this book, referenced throughout for specific technical depth.
+1. Chapters 1-15 of this book, referenced throughout for specific technical depth.
 2. "Before the 3 AM Alert: What Every Developer Should Know About API Performance"; Chapter 1 (empirical discipline), Chapter 9 (scaling), Chapter 12 (geographic optimization), Chapter 14 (synthesis).
 3. OpenAI (2025). "Realtime API: WebRTC and WebSocket Integration Guide."
 4. NVIDIA (2025). "Blackwell Architecture: Inference Performance Benchmarks."

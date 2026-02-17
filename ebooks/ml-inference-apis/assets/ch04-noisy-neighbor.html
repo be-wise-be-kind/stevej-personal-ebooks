@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPU Noisy Neighbor Effects</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 580" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="modelAGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="modelBGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="kvCacheGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="freeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#e2e8f0;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#cbd5e1;stop-opacity:1" />
+                </linearGradient>
+                <marker id="arrowRed" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#dc2626"/>
+                </marker>
+                <marker id="arrowGray" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+                </marker>
+            </defs>
+
+            <!-- Background -->
+            <rect width="900" height="580" fill="#ffffff" rx="8"/>
+
+            <!-- Main Title -->
+            <text x="450" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #1e293b; text-anchor: middle;">GPU Noisy Neighbor Effects</text>
+            <text x="450" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">How Model A's batch evicts Model B's weights, and the resulting latency impact</text>
+
+            <!-- Divider between panels -->
+            <line x1="480" y1="62" x2="480" y2="490" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="6,4"/>
+
+            <!-- ========== LEFT PANEL: GPU Memory Timeline ========== -->
+            <text x="240" y="80" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e293b; text-anchor: middle;">GPU Memory Timeline</text>
+            <text x="240" y="96" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">80 GB GPU memory across three states</text>
+
+            <!-- === State 1: Normal === -->
+            <text x="95" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #475569; text-anchor: middle;">Normal</text>
+
+            <!-- Memory column 1 -->
+            <rect x="55" y="130" width="80" height="340" rx="4" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+
+            <!-- Model A weights: 20GB = 85px -->
+            <rect x="55" y="130" width="80" height="85" rx="4" fill="url(#modelAGrad)"/>
+            <text x="95" y="168" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #ffffff; text-anchor: middle; font-weight: 600;">Model A</text>
+            <text x="95" y="180" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #dbeafe; text-anchor: middle;">20 GB</text>
+
+            <!-- Model B weights: 20GB = 85px -->
+            <rect x="55" y="215" width="80" height="85" rx="0" fill="url(#modelBGrad)"/>
+            <text x="95" y="253" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #ffffff; text-anchor: middle; font-weight: 600;">Model B</text>
+            <text x="95" y="265" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #dcfce7; text-anchor: middle;">20 GB</text>
+
+            <!-- KV Cache: 10GB = 42.5px -->
+            <rect x="55" y="300" width="80" height="43" rx="0" fill="url(#kvCacheGrad)"/>
+            <text x="95" y="326" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #ffffff; text-anchor: middle; font-weight: 600;">KV Cache</text>
+
+            <!-- Free: 30GB = 127px -->
+            <rect x="55" y="343" width="80" height="127" rx="0" fill="url(#freeGrad)"/>
+            <text x="95" y="406" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle; font-weight: 600;">Free</text>
+            <text x="95" y="418" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">30 GB</text>
+
+            <!-- === State 2: Model A Large Batch === -->
+            <text x="240" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #dc2626; text-anchor: middle;">Model A Large Batch</text>
+
+            <!-- Memory column 2 -->
+            <rect x="200" y="130" width="80" height="340" rx="4" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+
+            <!-- Model A weights: 20GB = 85px -->
+            <rect x="200" y="130" width="80" height="85" rx="4" fill="url(#modelAGrad)"/>
+            <text x="240" y="168" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #ffffff; text-anchor: middle; font-weight: 600;">Model A</text>
+            <text x="240" y="180" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #dbeafe; text-anchor: middle;">20 GB</text>
+
+            <!-- Expanded KV Cache consuming Model B space: ~45GB = 191px -->
+            <rect x="200" y="215" width="80" height="191" rx="0" fill="url(#kvCacheGrad)"/>
+            <text x="240" y="295" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #ffffff; text-anchor: middle; font-weight: 600;">KV Cache</text>
+            <text x="240" y="308" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #fef3c7; text-anchor: middle;">(expanded)</text>
+            <text x="240" y="320" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #fef3c7; text-anchor: middle;">45 GB</text>
+
+            <!-- Small free area: 15GB = 64px -->
+            <rect x="200" y="406" width="80" height="64" rx="0" fill="url(#freeGrad)"/>
+            <text x="240" y="442" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle; font-weight: 600;">Free</text>
+
+            <!-- Eviction arrow from Model B area -->
+            <line x1="282" y1="258" x2="310" y2="258" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowRed)"/>
+
+            <!-- Red X over where Model B was -->
+            <text x="325" y="248" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #dc2626; font-weight: 700;">Model B</text>
+            <text x="325" y="262" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #dc2626; font-weight: 700;">EVICTED</text>
+
+            <!-- Red X marks -->
+            <line x1="314" y1="270" x2="330" y2="286" stroke="#dc2626" stroke-width="2.5"/>
+            <line x1="330" y1="270" x2="314" y2="286" stroke="#dc2626" stroke-width="2.5"/>
+
+            <!-- === State 3: After Eviction === -->
+            <text x="415" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #475569; text-anchor: middle;">After Eviction</text>
+
+            <!-- Memory column 3 -->
+            <rect x="375" y="130" width="80" height="340" rx="4" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+
+            <!-- Model A weights: 20GB = 85px -->
+            <rect x="375" y="130" width="80" height="85" rx="4" fill="url(#modelAGrad)"/>
+            <text x="415" y="168" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #ffffff; text-anchor: middle; font-weight: 600;">Model A</text>
+            <text x="415" y="180" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #dbeafe; text-anchor: middle;">20 GB</text>
+
+            <!-- KV Cache back to normal: 10GB = 43px -->
+            <rect x="375" y="215" width="80" height="43" rx="0" fill="url(#kvCacheGrad)"/>
+            <text x="415" y="241" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #ffffff; text-anchor: middle; font-weight: 600;">KV Cache</text>
+
+            <!-- Dashed outline where Model B needs to reload: 20GB = 85px -->
+            <rect x="375" y="258" width="80" height="85" rx="0" fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="6,3"/>
+            <text x="415" y="296" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #16a34a; text-anchor: middle; font-weight: 600;">Model B</text>
+            <text x="415" y="308" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #16a34a; text-anchor: middle;">reloading...</text>
+
+            <!-- Reload arrow -->
+            <line x1="415" y1="355" x2="415" y2="340" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrowGray)"/>
+            <text x="415" y="368" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #64748b; text-anchor: middle;">from system</text>
+            <text x="415" y="378" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #64748b; text-anchor: middle;">RAM</text>
+
+            <!-- Free space -->
+            <rect x="375" y="388" width="80" height="82" rx="0" fill="url(#freeGrad)"/>
+            <text x="415" y="432" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle; font-weight: 600;">Free</text>
+
+            <!-- Time arrows between columns -->
+            <line x1="140" y1="300" x2="195" y2="300" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+            <line x1="285" y1="400" x2="370" y2="400" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+
+            <!-- ========== RIGHT PANEL: Latency Impact ========== -->
+            <text x="695" y="80" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Latency Impact</text>
+            <text x="695" y="96" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">Model B p99 latency over time</text>
+
+            <!-- Chart area -->
+            <rect x="520" y="110" width="350" height="250" rx="6" fill="#fafafa" stroke="#e2e8f0" stroke-width="1"/>
+
+            <!-- Y-axis -->
+            <line x1="570" y1="130" x2="570" y2="340" stroke="#94a3b8" stroke-width="1.5"/>
+            <!-- Y-axis labels -->
+            <text x="560" y="145" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">250ms</text>
+            <text x="560" y="186" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">200ms</text>
+            <text x="560" y="227" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">150ms</text>
+            <text x="560" y="268" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">100ms</text>
+            <text x="560" y="309" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">50ms</text>
+            <text x="560" y="344" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: end;">0ms</text>
+            <!-- Y-axis gridlines -->
+            <line x1="570" y1="142" x2="840" y2="142" stroke="#e2e8f0" stroke-width="0.5"/>
+            <line x1="570" y1="183" x2="840" y2="183" stroke="#e2e8f0" stroke-width="0.5"/>
+            <line x1="570" y1="224" x2="840" y2="224" stroke="#e2e8f0" stroke-width="0.5"/>
+            <line x1="570" y1="265" x2="840" y2="265" stroke="#e2e8f0" stroke-width="0.5"/>
+            <line x1="570" y1="306" x2="840" y2="306" stroke="#e2e8f0" stroke-width="0.5"/>
+
+            <!-- X-axis -->
+            <line x1="570" y1="340" x2="840" y2="340" stroke="#94a3b8" stroke-width="1.5"/>
+            <text x="705" y="356" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">Time</text>
+
+            <!-- Normal baseline: 45ms line (dashed) -->
+            <!-- 45ms on scale: 340 - (45/250 * 210) = 340 - 37.8 = 302.2 -->
+            <line x1="570" y1="302" x2="840" y2="302" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="845" y="306" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #64748b; text-anchor: start;">45ms</text>
+
+            <!-- Spike region highlight (rendered before polyline for correct z-order) -->
+            <rect x="650" y="130" width="40" height="212" rx="0" fill="#fef2f2" opacity="0.4"/>
+
+            <!-- Latency line: flat at 45ms, spike to 200ms, gradual return -->
+            <!-- 45ms = y302, 200ms: 340 - (200/250 * 210) = 340 - 168 = 172 -->
+            <polyline
+                points="580,302 630,302 650,302 665,172 680,210 700,240 720,265 740,285 760,295 780,300 800,302 830,302"
+                fill="none"
+                stroke="#16a34a"
+                stroke-width="2.5"
+                stroke-linejoin="round"
+                stroke-linecap="round"
+            />
+
+            <!-- Spike annotation -->
+            <line x1="665" y1="172" x2="665" y2="145" stroke="#dc2626" stroke-width="1" stroke-dasharray="3,2"/>
+            <rect x="620" y="124" width="90" height="20" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+            <text x="665" y="138" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #dc2626; text-anchor: middle; font-weight: 600;">Eviction: 200ms</text>
+
+            <!-- Normal annotation -->
+            <text x="600" y="296" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #475569; text-anchor: middle;">Normal: 45ms</text>
+
+            <!-- Weight reload annotation -->
+            <line x1="720" y1="265" x2="720" y2="385" stroke="#64748b" stroke-width="1" stroke-dasharray="3,2"/>
+            <rect x="670" y="380" width="150" height="32" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+            <text x="745" y="394" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle;">Weight reload from</text>
+            <text x="745" y="407" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #64748b; text-anchor: middle;">system RAM</text>
+
+            <!-- Eviction event marker on chart -->
+            <line x1="660" y1="340" x2="660" y2="345" stroke="#dc2626" stroke-width="1.5"/>
+            <text x="660" y="356" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #dc2626; text-anchor: middle;">eviction</text>
+
+            <!-- Recovery label -->
+            <text x="765" y="356" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #475569; text-anchor: middle;">recovery</text>
+
+            <!-- ========== BOTTOM LEGEND ========== -->
+            <g transform="translate(40, 510)">
+                <rect x="0" y="0" width="820" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+
+                <!-- Model A -->
+                <rect x="40" y="12" width="16" height="16" rx="3" fill="url(#modelAGrad)"/>
+                <text x="62" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">Model A Weights</text>
+
+                <!-- Model B -->
+                <rect x="200" y="12" width="16" height="16" rx="3" fill="url(#modelBGrad)"/>
+                <text x="222" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">Model B Weights</text>
+
+                <!-- KV Cache -->
+                <rect x="370" y="12" width="16" height="16" rx="3" fill="url(#kvCacheGrad)"/>
+                <text x="392" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">KV Cache</text>
+
+                <!-- Free Memory -->
+                <rect x="500" y="12" width="16" height="16" rx="3" fill="url(#freeGrad)" stroke="#94a3b8" stroke-width="0.5"/>
+                <text x="522" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">Free Memory</text>
+
+                <!-- Evicted -->
+                <rect x="650" y="12" width="16" height="16" rx="3" fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="4,2"/>
+                <text x="672" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">Reloading</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

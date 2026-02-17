@@ -1,13 +1,13 @@
-# Chapter 6: Streaming Inference Pipelines
+# Chapter 7: Streaming Inference Pipelines
 
-<!-- DIAGRAM: ch06-opener.html - Chapter 6 Opener -->
+<!-- DIAGRAM: ch07-opener.html - Chapter 6 Opener -->
 
 \newpage
 
 ## Overview
 
 - **Ground the reader**: explain what a "pipeline" means here. An inference pipeline is a sequence of processing steps that data flows through on its way to becoming a result. For speech recognition, raw audio bytes arrive from the network, get decoded from their compressed format, pass through voice activity detection (which identifies when someone is actually speaking), get batched together for efficient GPU use, run through the ML model, and then the model's output gets post-processed into readable text before being sent back to the client. Each step has different performance characteristics and failure modes.
-- How to connect the transport layer (Chapters 4-5) to the inference layer (Chapters 2-3) through a coherent streaming pipeline
+- How to connect the transport layer (Chapters 5-6) to the inference layer (Chapters 2-3) through a coherent streaming pipeline
 - The end-to-end journey of audio data: from network arrival through queuing, inference, post-processing, and response streaming
 - Managing multiple concurrent streams on shared GPU resources while maintaining latency SLOs and graceful degradation under load
 
@@ -59,7 +59,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Batch formation for audio: group chunks by model type and configuration (language, sample rate) to enable efficient GPU execution
 - The batch size vs latency tradeoff: larger batches improve GPU utilization but increase queue wait time for individual chunks
 
-<!-- DIAGRAM: ch06-streaming-pipeline.html - Streaming Inference Pipeline Architecture -->
+<!-- DIAGRAM: ch07-streaming-pipeline.html - Streaming Inference Pipeline Architecture -->
 
 \newpage
 
@@ -109,7 +109,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Stream teardown: release GPU memory and buffers promptly on stream close to free resources for new streams
 - Zombie stream detection: streams that stop sending audio but never close the connection; implement idle timeouts (e.g., 30s of silence) to reclaim resources
 
-<!-- DIAGRAM: ch06-concurrent-streams.html - Concurrent Streams Sharing GPU Resources -->
+<!-- DIAGRAM: ch07-concurrent-streams.html - Concurrent Streams Sharing GPU Resources -->
 
 \newpage
 
@@ -144,7 +144,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Step 4: Still overloaded? Reject all new streams with 503 + Retry-After, continue serving existing streams
 - Step 5: Memory pressure critical? Begin gracefully closing longest-running low-priority streams
 
-<!-- DIAGRAM: ch06-degradation-strategies.html - Degradation Strategy Decision Tree -->
+<!-- DIAGRAM: ch07-degradation-strategies.html - Degradation Strategy Decision Tree -->
 
 \newpage
 
@@ -216,7 +216,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 - Not all streams need the same pipeline: a simple transcription stream can skip diarization and NER stages
 - Feature flags on the pipeline: client-specified options (e.g., `enable_diarization=true`) add or remove pipeline stages at stream creation time
-- Cost implications: each additional stage increases compute time and cost; this feeds directly into metering (Chapter 13)
+- Cost implications: each additional stage increases compute time and cost; this feeds directly into metering (Chapter 14)
 - Runtime reconfiguration: some systems allow changing pipeline configuration mid-stream (e.g., enabling punctuation after stream start)
 
 ### Error Handling Across Pipeline Stages
@@ -259,4 +259,4 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ---
 
-**Next: [Chapter 7: Designing ML-Facing APIs](./07-designing-ml-apis.md)**
+**Next: [Chapter 8: Designing ML-Facing APIs](./08-designing-ml-apis.md)**

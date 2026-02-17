@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Models See Your Data</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <marker id="arrowGray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #64748b;"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">How Models See Your Data</text>
+            <text x="450" y="54" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">Tokenization: converting human data into model-readable numbers</text>
+
+            <!-- === TOP ROW: Text Tokenization === -->
+            <!-- Arrow from input text to tokens (drawn first for z-order) -->
+            <line x1="310" y1="130" x2="345" y2="130" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+            <g transform="translate(30, 80)">
+                <!-- Section header -->
+                <rect x="0" y="0" width="620" height="28" rx="6" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1.5"/>
+                <text x="310" y="19" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #7c3aed; text-anchor: middle;">TEXT TOKENIZATION</text>
+
+                <!-- Input text -->
+                <rect x="0" y="38" width="280" height="40" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="140" y="63" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #334155; text-anchor: middle; font-style: italic;">"The tokenizer splits words"</text>
+
+                <!-- Token boxes -->
+                <g transform="translate(325, 38)">
+                    <!-- Token 1: "The" -->
+                    <rect x="0" y="0" width="52" height="40" rx="4" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+                    <text x="26" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #1e40af; text-anchor: middle;">The</text>
+                    <text x="26" y="34" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #60a5fa; text-anchor: middle;">ID: 464</text>
+
+                    <!-- Token 2: " token" -->
+                    <rect x="60" y="0" width="62" height="40" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+                    <text x="91" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #92400e; text-anchor: middle;">_token</text>
+                    <text x="91" y="34" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #d97706; text-anchor: middle;">ID: 5765</text>
+
+                    <!-- Token 3: "izer" -->
+                    <rect x="130" y="0" width="52" height="40" rx="4" fill="#fce7f3" stroke="#ec4899" stroke-width="1.5"/>
+                    <text x="156" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #9d174d; text-anchor: middle;">izer</text>
+                    <text x="156" y="34" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #ec4899; text-anchor: middle;">ID: 2191</text>
+
+                    <!-- Token 4: " splits" -->
+                    <rect x="190" y="0" width="58" height="40" rx="4" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+                    <text x="219" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #166534; text-anchor: middle;">_splits</text>
+                    <text x="219" y="34" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #16a34a; text-anchor: middle;">ID: 9831</text>
+
+                    <!-- Token 5: " words" -->
+                    <rect x="256" y="0" width="58" height="40" rx="4" fill="#e0e7ff" stroke="#6366f1" stroke-width="1.5"/>
+                    <text x="285" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #3730a3; text-anchor: middle;">_words</text>
+                    <text x="285" y="34" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #6366f1; text-anchor: middle;">ID: 3011</text>
+                </g>
+
+                <!-- Annotation below tokens -->
+                <text x="310" y="102" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle; font-style: italic;">Words split into subword tokens; each mapped to a numeric ID</text>
+            </g>
+
+            <!-- === BOTTOM ROW: Audio Tokenization === -->
+            <!-- Arrow from waveform to frames (drawn first for z-order) -->
+            <line x1="290" y1="295" x2="325" y2="295" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+            <g transform="translate(30, 215)">
+                <!-- Section header -->
+                <rect x="0" y="0" width="620" height="28" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.5"/>
+                <text x="310" y="19" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #065f46; text-anchor: middle;">AUDIO TOKENIZATION</text>
+
+                <!-- Audio waveform representation -->
+                <rect x="0" y="38" width="260" height="70" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="130" y="56" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">Audio Waveform (1 second)</text>
+
+                <!-- Stylized waveform -->
+                <polyline points="15,85 30,72 42,90 55,68 65,88 78,60 88,92 100,65 112,88 125,70 135,90 148,62 158,85 170,72 182,92 195,68 208,85 220,72 232,88 245,78"
+                    fill="none" stroke="#16a34a" stroke-width="2"/>
+
+                <!-- Frame boxes -->
+                <g transform="translate(300, 38)">
+                    <rect x="0" y="0" width="55" height="70" rx="4" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+                    <text x="28" y="30" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #166534; text-anchor: middle;">20ms</text>
+                    <text x="28" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #16a34a; text-anchor: middle;">Frame 0</text>
+
+                    <rect x="63" y="0" width="55" height="70" rx="4" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+                    <text x="91" y="30" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #166534; text-anchor: middle;">20ms</text>
+                    <text x="91" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #16a34a; text-anchor: middle;">Frame 1</text>
+
+                    <rect x="126" y="0" width="55" height="70" rx="4" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+                    <text x="154" y="30" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #166534; text-anchor: middle;">20ms</text>
+                    <text x="154" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #16a34a; text-anchor: middle;">Frame 2</text>
+
+                    <!-- Ellipsis -->
+                    <text x="202" y="40" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 16px; fill: #16a34a; text-anchor: middle;">...</text>
+
+                    <rect x="222" y="0" width="55" height="70" rx="4" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+                    <text x="250" y="30" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #166534; text-anchor: middle;">20ms</text>
+                    <text x="250" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #16a34a; text-anchor: middle;">Frame 49</text>
+                </g>
+
+                <!-- Annotation -->
+                <text x="310" y="130" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle; font-style: italic;">1 second of audio = 50 frames at 20ms each (Whisper uses 30ms mel frames)</text>
+            </g>
+
+            <!-- === RIGHT SIDE: Cost Callout === -->
+            <g transform="translate(680, 80)">
+                <rect x="0" y="0" width="190" height="275" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+
+                <text x="95" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #334155; text-anchor: middle;">Cost Impact</text>
+
+                <line x1="20" y1="40" x2="170" y2="40" stroke="#e2e8f0" stroke-width="1"/>
+
+                <!-- Text cost -->
+                <rect x="15" y="55" width="160" height="80" rx="6" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1"/>
+                <text x="95" y="76" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #7c3aed; text-anchor: middle;">Text Token</text>
+                <text x="95" y="100" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #5b21b6; text-anchor: middle;">~$0.000001</text>
+                <text x="95" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #7c3aed; text-anchor: middle;">per token (input)</text>
+
+                <!-- Audio cost -->
+                <rect x="15" y="150" width="160" height="105" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1"/>
+                <text x="95" y="171" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #065f46; text-anchor: middle;">Audio Second</text>
+                <text x="95" y="196" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #065f46; text-anchor: middle;">~50 frames</text>
+                <text x="95" y="216" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #16a34a; text-anchor: middle;">per second of audio</text>
+                <text x="95" y="240" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #065f46; text-anchor: middle;">~$0.006 / min</text>
+            </g>
+
+            <!-- === BOTTOM: Key insight === -->
+            <g transform="translate(30, 380)">
+                <line x1="0" y1="0" x2="840" y2="0" stroke="#e2e8f0" stroke-width="1.5"/>
+
+                <text x="420" y="30" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #475569; text-anchor: middle;">WHY THIS MATTERS FOR API ENGINEERS</text>
+
+                <!-- Three callout boxes -->
+                <rect x="0" y="45" width="260" height="55" rx="6" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1"/>
+                <text x="130" y="66" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #7c3aed; text-anchor: middle;">Input Length = Cost</text>
+                <text x="130" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #7c3aed; text-anchor: middle;">More tokens = more compute = more $</text>
+
+                <rect x="290" y="45" width="260" height="55" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1"/>
+                <text x="420" y="66" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #065f46; text-anchor: middle;">Validate Before Inference</text>
+                <text x="420" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #16a34a; text-anchor: middle;">Reject oversized inputs at the API layer</text>
+
+                <rect x="580" y="45" width="260" height="55" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+                <text x="710" y="66" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #92400e; text-anchor: middle;">Token Limits = Rate Limits</text>
+                <text x="710" y="84" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #b45309; text-anchor: middle;">Bill by tokens, not just requests</text>
+            </g>
+
+            <!-- Bottom annotation -->
+            <text x="450" y="502" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #475569; text-anchor: middle; font-style: italic;">Tokenization determines how much work the GPU does -- and how much it costs</text>
+        </svg>
+    </div>
+</body>
+</html>

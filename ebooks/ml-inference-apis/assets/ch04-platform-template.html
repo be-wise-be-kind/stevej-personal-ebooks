@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Template Architecture (Pattern 3)</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 650" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Platform team gradients (purple/indigo) -->
+                <linearGradient id="platformGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="platformLightGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="guardrailGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Shared services gradient (blue) -->
+                <linearGradient id="serviceBoxGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#dbeafe;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#bfdbfe;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Arrow markers -->
+                <marker id="arrowDown" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#6d28d9"/>
+                </marker>
+                <marker id="arrowUp" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+                </marker>
+                <marker id="arrowDotted" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#94a3b8"/>
+                </marker>
+
+                <!-- Drop shadow -->
+                <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.12"/>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="900" height="650" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="450" y="32" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="18" font-weight="700" fill="#1e293b">Platform Template Architecture (Pattern 3)</text>
+            <text x="450" y="52" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="12" fill="#64748b">Centralized golden path with team-level customization via config</text>
+
+            <!-- ====================== -->
+            <!-- PLATFORM TEAM LAYER    -->
+            <!-- ====================== -->
+
+            <!-- Platform Team background -->
+            <rect x="30" y="72" width="840" height="130" rx="8" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1.5"/>
+            <text x="50" y="92" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="13" font-weight="700" fill="#6d28d9">PLATFORM TEAM</text>
+
+            <!-- Terraform Module box -->
+            <rect x="55" y="104" width="240" height="80" rx="6" fill="url(#platformGrad)" filter="url(#shadow)"/>
+            <text x="175" y="134" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="13" font-weight="600" fill="#ffffff">Terraform Module</text>
+            <text x="175" y="152" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#e9d5ff">GPU provisioning, networking,</text>
+            <text x="175" y="166" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#e9d5ff">autoscaling, node pools</text>
+
+            <!-- Helm Charts box -->
+            <rect x="330" y="104" width="240" height="80" rx="6" fill="url(#platformLightGrad)" filter="url(#shadow)"/>
+            <text x="450" y="134" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="13" font-weight="600" fill="#ffffff">Helm Charts</text>
+            <text x="450" y="152" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#e9d5ff">Deployment templates, service</text>
+            <text x="450" y="166" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#e9d5ff">mesh config, ingress rules</text>
+
+            <!-- OPA/Kyverno Policy Guardrails -->
+            <rect x="605" y="104" width="240" height="80" rx="6" fill="url(#guardrailGrad)" filter="url(#shadow)"/>
+            <text x="725" y="130" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="13" font-weight="600" fill="#ffffff">OPA / Kyverno</text>
+            <text x="725" y="148" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#e9d5ff">Policy Guardrails</text>
+            <text x="725" y="166" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#e9d5ff">Cost limits, GPU quotas, security</text>
+
+            <!-- ======================== -->
+            <!-- CONNECTION LINES (drawn before boxes below for z-order) -->
+            <!-- ======================== -->
+
+            <!-- Solid arrow from Terraform Module down to shared services -->
+            <line x1="175" y1="184" x2="175" y2="218" stroke="#6d28d9" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+
+            <!-- Dotted lines from Terraform Module down to Team A -->
+            <line x1="130" y1="202" x2="130" y2="400" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5,4"/>
+            <line x1="130" y1="400" x2="166" y2="400" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrowDotted)"/>
+
+            <!-- Dotted lines from Terraform Module down to Team B -->
+            <line x1="175" y1="202" x2="175" y2="370" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5,4"/>
+            <line x1="175" y1="370" x2="370" y2="370" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5,4"/>
+            <line x1="370" y1="370" x2="370" y2="400" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrowDotted)"/>
+
+            <!-- Dotted lines from Terraform Module down to Team C -->
+            <line x1="220" y1="202" x2="220" y2="360" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5,4"/>
+            <line x1="220" y1="360" x2="624" y2="360" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5,4"/>
+            <line x1="624" y1="360" x2="624" y2="400" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrowDotted)"/>
+
+            <!-- Blue arrows from teams up to shared services -->
+            <line x1="195" y1="400" x2="195" y2="332" stroke="#3b82f6" stroke-width="1.2" marker-end="url(#arrowUp)"/>
+            <line x1="450" y1="400" x2="450" y2="332" stroke="#3b82f6" stroke-width="1.2" marker-end="url(#arrowUp)"/>
+            <line x1="700" y1="400" x2="700" y2="332" stroke="#3b82f6" stroke-width="1.2" marker-end="url(#arrowUp)"/>
+
+            <!-- ======================== -->
+            <!-- SHARED SERVICES LAYER    -->
+            <!-- ======================== -->
+
+            <!-- Shared services background bar -->
+            <rect x="30" y="218" width="840" height="112" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+            <text x="50" y="240" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="13" font-weight="700" fill="#1d4ed8">SHARED SERVICES</text>
+
+            <!-- Observability -->
+            <rect x="50" y="252" width="145" height="60" rx="5" fill="url(#serviceBoxGrad)" stroke="#93c5fd" stroke-width="1"/>
+            <text x="122" y="274" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="11" font-weight="600" fill="#1e40af">Observability</text>
+            <text x="122" y="290" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="9" fill="#3b82f6">Prometheus / Grafana</text>
+
+            <!-- Model Registry -->
+            <rect x="210" y="252" width="138" height="60" rx="5" fill="url(#serviceBoxGrad)" stroke="#93c5fd" stroke-width="1"/>
+            <text x="279" y="274" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="11" font-weight="600" fill="#1e40af">Model Registry</text>
+            <text x="279" y="290" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="9" fill="#3b82f6">Versioning / Rollback</text>
+
+            <!-- API Gateway -->
+            <rect x="363" y="252" width="138" height="60" rx="5" fill="url(#serviceBoxGrad)" stroke="#93c5fd" stroke-width="1"/>
+            <text x="432" y="274" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="11" font-weight="600" fill="#1e40af">API Gateway</text>
+            <text x="432" y="290" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="9" fill="#3b82f6">Rate Limits / Auth</text>
+
+            <!-- Cert Management -->
+            <rect x="516" y="252" width="138" height="60" rx="5" fill="url(#serviceBoxGrad)" stroke="#93c5fd" stroke-width="1"/>
+            <text x="585" y="274" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="11" font-weight="600" fill="#1e40af">Cert Management</text>
+            <text x="585" y="290" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="9" fill="#3b82f6">TLS / mTLS</text>
+
+            <!-- Cost Attribution -->
+            <rect x="669" y="252" width="180" height="60" rx="5" fill="url(#serviceBoxGrad)" stroke="#93c5fd" stroke-width="1"/>
+            <text x="759" y="274" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="11" font-weight="600" fill="#1e40af">Cost Attribution</text>
+            <text x="759" y="290" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="9" fill="#3b82f6">Per-team GPU spend</text>
+
+            <!-- ======================== -->
+            <!-- TEAM DEPLOYMENTS LAYER   -->
+            <!-- ======================== -->
+
+            <!-- Team deployments background -->
+            <rect x="30" y="352" width="840" height="240" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+            <text x="50" y="378" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="13" font-weight="700" fill="#475569">TEAM DEPLOYMENTS</text>
+
+            <!-- ===== Team A: ASR ===== -->
+            <rect x="50" y="392" width="250" height="130" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2" filter="url(#shadow)"/>
+            <!-- Header background -->
+            <rect x="50" y="392" width="250" height="28" rx="6" fill="#f1f5f9"/>
+            <rect x="50" y="414" width="250" height="6" fill="#ffffff"/>
+            <!-- Team A accent bar -->
+            <rect x="50" y="392" width="4" height="130" rx="2" fill="#7c3aed"/>
+            <!-- Team A header -->
+            <text x="70" y="412" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Team A (ASR)</text>
+            <!-- Config icon badge -->
+            <rect x="260" y="397" width="24" height="18" rx="3" fill="#e2e8f0"/>
+            <text x="272" y="411" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="11" fill="#64748b">&#9881;</text>
+            <!-- Config content -->
+            <text x="68" y="440" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">gpu_class: H100</text>
+            <text x="68" y="456" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">replicas: 2</text>
+            <text x="68" y="472" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">min_replicas: 1</text>
+            <text x="68" y="488" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">max_replicas: 8</text>
+            <text x="68" y="504" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">scaling: gpu_util &gt; 80%</text>
+
+            <!-- ===== Team B: TTS ===== -->
+            <rect x="325" y="392" width="250" height="130" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2" filter="url(#shadow)"/>
+            <!-- Header background -->
+            <rect x="325" y="392" width="250" height="28" rx="6" fill="#f1f5f9"/>
+            <rect x="325" y="414" width="250" height="6" fill="#ffffff"/>
+            <!-- Team B accent bar -->
+            <rect x="325" y="392" width="4" height="130" rx="2" fill="#2563eb"/>
+            <!-- Team B header -->
+            <text x="345" y="412" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Team B (TTS)</text>
+            <!-- Config icon badge -->
+            <rect x="535" y="397" width="24" height="18" rx="3" fill="#e2e8f0"/>
+            <text x="547" y="411" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="11" fill="#64748b">&#9881;</text>
+            <!-- Config content -->
+            <text x="343" y="440" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">gpu_class: A10G</text>
+            <text x="343" y="456" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">replicas: 1</text>
+            <text x="343" y="472" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">min_replicas: 1</text>
+            <text x="343" y="488" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">max_replicas: 4</text>
+            <text x="343" y="504" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">scaling: queue_depth &gt; 10</text>
+
+            <!-- ===== Team C: PII ===== -->
+            <rect x="600" y="392" width="250" height="130" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2" filter="url(#shadow)"/>
+            <!-- Header background -->
+            <rect x="600" y="392" width="250" height="28" rx="6" fill="#f1f5f9"/>
+            <rect x="600" y="414" width="250" height="6" fill="#ffffff"/>
+            <!-- Team C accent bar -->
+            <rect x="600" y="392" width="4" height="130" rx="2" fill="#059669"/>
+            <!-- Team C header -->
+            <text x="620" y="412" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Team C (PII)</text>
+            <!-- Config icon badge -->
+            <rect x="810" y="397" width="24" height="18" rx="3" fill="#e2e8f0"/>
+            <text x="822" y="411" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="11" fill="#64748b">&#9881;</text>
+            <!-- Config content -->
+            <text x="618" y="440" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">gpu_class: L4</text>
+            <text x="618" y="456" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">replicas: 1</text>
+            <text x="618" y="472" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">min_replicas: 1</text>
+            <text x="618" y="488" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">max_replicas: 2</text>
+            <text x="618" y="504" text-anchor="start" font-family="Liberation Sans, Arial, sans-serif" font-size="10" fill="#475569">scaling: requests_per_sec &gt; 50</text>
+
+            <!-- ======================== -->
+            <!-- ANNOTATION              -->
+            <!-- ======================== -->
+            <rect x="30" y="606" width="840" height="30" rx="6" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1"/>
+            <text x="450" y="626" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="11" fill="#6d28d9" font-style="italic">Teams deploy within guardrails; platform provides the golden path</text>
+        </svg>
+    </div>
+</body>
+</html>

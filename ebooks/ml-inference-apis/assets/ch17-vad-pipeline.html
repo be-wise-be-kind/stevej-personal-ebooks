@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAD: The Cost-Saving Gate</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <marker id="arrowDown" markerWidth="8" markerHeight="8" refX="4" refY="8" orient="auto">
+                    <polygon points="0 0, 8 0, 4 8" fill="#64748b"/>
+                </marker>
+                <marker id="arrowDownGreen" markerWidth="8" markerHeight="8" refX="4" refY="8" orient="auto">
+                    <polygon points="0 0, 8 0, 4 8" fill="#059669"/>
+                </marker>
+                <marker id="arrowDownRed" markerWidth="8" markerHeight="8" refX="4" refY="8" orient="auto">
+                    <polygon points="0 0, 8 0, 4 8" fill="#94a3b8"/>
+                </marker>
+                <marker id="arrowRight" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="35" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #1e293b; text-anchor: middle;">VAD: The Cost-Saving Gate</text>
+            <text x="450" y="55" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">Voice Activity Detection filters silence before expensive GPU inference</text>
+
+            <!-- Audio waveform with speech/silence regions -->
+            <g transform="translate(40, 75)">
+                <rect x="0" y="0" width="520" height="70" rx="8" fill="#fafafa" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="260" y="-8" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #1e293b; text-anchor: middle;">Incoming Audio Stream</text>
+
+                <!-- Silence region 1 -->
+                <rect x="5" y="5" width="70" height="60" rx="4" fill="#f1f5f9" opacity="0.7"/>
+                <line x1="15" y1="35" x2="65" y2="35" stroke="#94a3b8" stroke-width="1" opacity="0.5"/>
+                <text x="40" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">silence</text>
+
+                <!-- Speech region 1 -->
+                <rect x="80" y="5" width="110" height="60" rx="4" fill="#dcfce7" opacity="0.6"/>
+                <polyline points="90,35 95,22 100,40 105,15 110,42 115,20 120,38 125,12 130,40 135,18 140,35 145,22 150,38 155,28 160,35 165,18 170,38 175,30 180,35" stroke="#059669" stroke-width="1.5" fill="none"/>
+                <text x="135" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #059669; text-anchor: middle; font-weight: 600;">speech</text>
+
+                <!-- Silence region 2 -->
+                <rect x="195" y="5" width="90" height="60" rx="4" fill="#f1f5f9" opacity="0.7"/>
+                <line x1="205" y1="35" x2="275" y2="35" stroke="#94a3b8" stroke-width="1" opacity="0.5"/>
+                <text x="240" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">silence</text>
+
+                <!-- Speech region 2 -->
+                <rect x="290" y="5" width="80" height="60" rx="4" fill="#dcfce7" opacity="0.6"/>
+                <polyline points="300,35 305,20 310,40 315,18 320,38 325,15 330,40 335,22 340,35 345,20 350,38 355,28 360,35" stroke="#059669" stroke-width="1.5" fill="none"/>
+                <text x="330" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #059669; text-anchor: middle; font-weight: 600;">speech</text>
+
+                <!-- Silence region 3 -->
+                <rect x="375" y="5" width="60" height="60" rx="4" fill="#f1f5f9" opacity="0.7"/>
+                <line x1="385" y1="35" x2="425" y2="35" stroke="#94a3b8" stroke-width="1" opacity="0.5"/>
+                <text x="405" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #94a3b8; text-anchor: middle;">silence</text>
+
+                <!-- Speech region 3 -->
+                <rect x="440" y="5" width="75" height="60" rx="4" fill="#dcfce7" opacity="0.6"/>
+                <polyline points="450,35 455,22 460,38 465,15 470,42 475,20 480,35 485,18 490,38 495,25 500,35 505,28" stroke="#059669" stroke-width="1.5" fill="none"/>
+                <text x="477" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #059669; text-anchor: middle; font-weight: 600;">speech</text>
+            </g>
+
+            <!-- Arrow down to VAD -->
+            <line x1="300" y1="150" x2="300" y2="175" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+
+            <!-- VAD Box -->
+            <rect x="200" y="185" width="200" height="55" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+            <text x="300" y="210" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e40af; text-anchor: middle;">VAD (CPU)</text>
+            <text x="300" y="228" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #3b82f6; text-anchor: middle;">~1ms per frame, lightweight</text>
+
+            <!-- Split arrows from VAD -->
+            <!-- Silence arrow going left to Discarded -->
+            <line x1="250" y1="240" x2="250" y2="255" stroke="#94a3b8" stroke-width="1.5"/>
+            <line x1="250" y1="255" x2="120" y2="255" stroke="#94a3b8" stroke-width="1.5"/>
+            <line x1="120" y1="255" x2="120" y2="290" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDownRed)"/>
+            <text x="185" y="250" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">silence</text>
+
+            <!-- Speech arrow going right to GPU -->
+            <line x1="350" y1="240" x2="350" y2="255" stroke="#059669" stroke-width="2"/>
+            <line x1="350" y1="255" x2="420" y2="255" stroke="#059669" stroke-width="2"/>
+            <line x1="420" y1="255" x2="420" y2="290" stroke="#059669" stroke-width="2" marker-end="url(#arrowDownGreen)"/>
+            <text x="385" y="250" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #059669; text-anchor: middle; font-weight: 600;">speech</text>
+
+            <!-- Discarded bin -->
+            <rect x="40" y="300" width="160" height="65" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+            <text x="120" y="325" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #94a3b8; text-anchor: middle;">Discarded</text>
+            <text x="120" y="345" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">40-60% of audio</text>
+            <text x="120" y="358" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">Cost: ~$0</text>
+
+            <!-- GPU Inference box -->
+            <rect x="310" y="300" width="220" height="65" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+            <text x="420" y="325" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #dc2626; text-anchor: middle;">GPU Inference</text>
+            <text x="420" y="345" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #dc2626; text-anchor: middle;">40-60% of audio (speech only)</text>
+            <text x="420" y="358" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #991b1b; text-anchor: middle;">Expensive: model forward pass</text>
+
+            <!-- Cost comparison panel (right side) -->
+            <g transform="translate(590, 75)">
+                <rect x="0" y="0" width="280" height="290" rx="10" fill="#fafafa" stroke="#e2e8f0" stroke-width="1.5"/>
+                <text x="140" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Cost Comparison</text>
+                <line x1="15" y1="38" x2="265" y2="38" stroke="#e2e8f0" stroke-width="1"/>
+
+                <!-- Without VAD -->
+                <text x="140" y="62" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #dc2626; text-anchor: middle;">Without VAD</text>
+                <rect x="20" y="72" width="240" height="40" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+                <text x="140" y="90" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #991b1b; text-anchor: middle;">100% of audio sent to GPU</text>
+                <text x="140" y="106" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #dc2626; text-anchor: middle;">= $X / hour</text>
+
+                <!-- With VAD -->
+                <text x="140" y="136" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #059669; text-anchor: middle;">With VAD</text>
+                <rect x="20" y="146" width="240" height="40" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1"/>
+                <text x="140" y="164" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #065f46; text-anchor: middle;">40-60% of audio sent to GPU</text>
+                <text x="140" y="180" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #059669; text-anchor: middle;">= $0.4-0.6X / hour</text>
+
+                <!-- Savings -->
+                <rect x="30" y="200" width="220" height="40" rx="8" fill="#059669"/>
+                <text x="140" y="218" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #bbf7d0; text-anchor: middle;">GPU Cost Savings</text>
+                <text x="140" y="235" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #ffffff; text-anchor: middle;">40-60%</text>
+
+                <!-- Note about VAD cost -->
+                <text x="140" y="265" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">VAD itself runs on CPU</text>
+                <text x="140" y="280" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">at negligible cost (~0.1% of GPU cost)</text>
+            </g>
+
+            <!-- Bottom summary bar -->
+            <rect x="40" y="385" width="530" height="36" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+            <text x="305" y="408" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #475569; text-anchor: middle;">Lightweight CPU model gates the expensive GPU -- silence never reaches the model</text>
+
+            <!-- Pipeline flow labels -->
+            <g transform="translate(40, 440)">
+                <rect x="0" y="0" width="820" height="55" rx="8" fill="#fafafa" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="410" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Typical conversation audio breakdown</text>
+                <!-- Speech portion -->
+                <rect x="20" y="30" width="320" height="16" rx="3" fill="#059669" opacity="0.7"/>
+                <text x="180" y="42" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 600; fill: #ffffff; text-anchor: middle;">Speech: 40-60% of stream</text>
+                <!-- Silence portion -->
+                <rect x="340" y="30" width="460" height="16" rx="3" fill="#cbd5e1" opacity="0.6"/>
+                <text x="570" y="42" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 600; fill: #64748b; text-anchor: middle;">Silence / pauses / background: 40-60% of stream</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

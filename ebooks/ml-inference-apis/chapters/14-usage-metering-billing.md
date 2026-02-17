@@ -1,6 +1,6 @@
-# Chapter 13: Usage Metering & Billing
+# Chapter 14: Usage Metering & Billing
 
-<!-- DIAGRAM: ch13-opener.html - Chapter 13 Opener -->
+<!-- DIAGRAM: ch14-opener.html - Chapter 13 Opener -->
 
 \newpage
 
@@ -80,7 +80,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Advantage: predictable cost for sustained, high-volume usage; no per-request cost uncertainty
 - Best for: always-on streaming applications (live captioning, 24/7 monitoring) where utilization is consistently high
 
-<!-- DIAGRAM: ch13-billing-model-comparison.html - Billing Model Comparison -->
+<!-- DIAGRAM: ch14-billing-model-comparison.html - Billing Model Comparison -->
 
 \newpage
 
@@ -115,7 +115,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Batch is sufficient for: monthly invoicing, cost reporting, usage analytics
 - Most production systems use both: real-time for enforcement, batch for invoicing and reconciliation
 
-<!-- DIAGRAM: ch13-metering-architecture.html - Metering Architecture: Event Collection to Billing -->
+<!-- DIAGRAM: ch14-metering-architecture.html - Metering Architecture: Event Collection to Billing -->
 
 \newpage
 
@@ -142,7 +142,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Webhook-driven reconciliation: Stripe sends `invoice.created` and `invoice.finalized` events; the application verifies totals match internal records
 - Failure handling: if Stripe event submission fails, buffer locally and retry; idempotency keys prevent double-billing on retry
 
-<!-- DIAGRAM: ch13-stripe-integration.html - Stripe Meters API Integration Flow -->
+<!-- DIAGRAM: ch14-stripe-integration.html - Stripe Meters API Integration Flow -->
 
 \newpage
 
@@ -275,4 +275,4 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ---
 
-**Next: [Chapter 14: Scaling Inference Globally](./14-scaling-inference-globally.md)**
+**Next: [Chapter 15: Scaling Inference Globally](./15-scaling-inference-globally.md)**

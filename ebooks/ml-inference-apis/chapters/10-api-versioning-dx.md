@@ -1,6 +1,6 @@
-# Chapter 9: API Versioning & Developer Experience
+# Chapter 10: API Versioning & Developer Experience
 
-<!-- DIAGRAM: ch09-opener.html - Chapter 9 Opener -->
+<!-- DIAGRAM: ch10-opener.html - Chapter 9 Opener -->
 
 \newpage
 
@@ -41,7 +41,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Query parameter (`?api_version=2025-03-31`): simpler than headers, visible in URLs, but pollutes the query string
 - Recommendation: URL path versioning for public ML APIs (clarity and discoverability), header versioning for APIs with frequent backward-compatible evolution
 
-<!-- DIAGRAM: ch09-versioning-strategies.html - API Versioning Strategy Comparison -->
+<!-- DIAGRAM: ch10-versioning-strategies.html - API Versioning Strategy Comparison -->
 
 \newpage
 
@@ -69,7 +69,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Breaking model changes require a new API version; the API contract must be stable across model updates within the same version
 - Versioned model output schemas: document which output schema applies to each API version, even when the same model serves both
 
-<!-- DIAGRAM: ch09-two-axis-versioning.html - The Two-Axis Versioning Problem: Model Version vs API Version -->
+<!-- DIAGRAM: ch10-two-axis-versioning.html - The Two-Axis Versioning Problem: Model Version vs API Version -->
 
 \newpage
 
@@ -168,7 +168,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Recorded demo mode: pre-loaded examples that work without an API key; reduces friction for the earliest exploration phase
 - Playground doubles as documentation: developers understand the API's capabilities by experimenting, not just reading
 
-<!-- DIAGRAM: ch09-developer-journey.html - Developer Journey: Discovery to Production Integration -->
+<!-- DIAGRAM: ch10-developer-journey.html - Developer Journey: Discovery to Production Integration -->
 
 \newpage
 
@@ -256,4 +256,4 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ---
 
-**Next: [Chapter 10: Security for Audio ML APIs](./10-security-audio-ml.md)**
+**Next: [Chapter 11: Security for Audio ML APIs](./11-security-audio-ml.md)**

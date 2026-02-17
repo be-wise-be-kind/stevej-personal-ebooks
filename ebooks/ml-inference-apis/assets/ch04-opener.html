@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment Architecture Strategies</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="bridgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="deployGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#475569;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+                </linearGradient>
+                <marker id="arrowDown" markerWidth="8" markerHeight="6" refX="4" refY="6" orient="auto">
+                    <polygon points="0 0, 8 0, 4 6" style="fill: #94a3b8;"/>
+                </marker>
+                <marker id="arrowRight" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #94a3b8;"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="380" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Deployment Architecture Strategies</text>
+            <text x="380" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">The bridge layer between framework selection and global scaling</text>
+
+            <!-- === TOP ROW: Framework Selection (left) and Global Scaling (right) === -->
+
+            <!-- Left: Framework Selection -->
+            <rect x="30" y="72" width="220" height="36" rx="6" fill="#faf5ff" stroke="#d8b4fe" stroke-width="1.5"/>
+            <text x="140" y="95" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #7c3aed; text-anchor: middle;">Framework Selection (Ch 2-3)</text>
+
+            <!-- Right: Global Scaling -->
+            <rect x="510" y="72" width="220" height="36" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+            <text x="620" y="95" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #2563eb; text-anchor: middle;">Global Scaling (Ch 15)</text>
+
+            <!-- Connecting arrows from top boxes down to central area -->
+            <line x1="140" y1="108" x2="140" y2="138" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+            <line x1="620" y1="108" x2="620" y2="138" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDown)"/>
+
+            <!-- Horizontal connecting line across the top of the central area -->
+            <line x1="140" y1="138" x2="620" y2="138" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6,3"/>
+
+            <!-- === CENTRAL AREA: Deployment Architecture === -->
+
+            <!-- Central area background -->
+            <rect x="30" y="148" width="700" height="250" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+
+            <!-- Central area header bar -->
+            <rect x="30" y="148" width="700" height="40" rx="10" fill="url(#deployGrad)"/>
+            <!-- Square off bottom corners of header by overlaying a rect -->
+            <rect x="30" y="168" width="700" height="20" fill="url(#deployGrad)"/>
+
+            <text x="380" y="172" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #ffffff; text-anchor: middle; letter-spacing: 1px;">DEPLOYMENT ARCHITECTURE</text>
+
+            <text x="380" y="210" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: middle;">How you organize the deployment itself</text>
+
+            <!-- === THREE COLUMNS: Deployment Patterns === -->
+
+            <!-- Column 1: Shared Cluster -->
+            <g transform="translate(60, 228)">
+                <!-- Column label -->
+                <text x="90" y="0" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #475569; text-anchor: middle;">Shared Cluster</text>
+
+                <!-- Single large box representing shared cluster -->
+                <rect x="15" y="14" width="150" height="90" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+                <text x="90" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">Model A</text>
+                <text x="90" y="66" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">Model B</text>
+                <text x="90" y="82" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #64748b; text-anchor: middle;">Model C</text>
+
+                <!-- Subtitle -->
+                <text x="90" y="122" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">Single shared resource pool</text>
+            </g>
+
+            <!-- Column 2: Container-per-Model -->
+            <g transform="translate(290, 228)">
+                <!-- Column label -->
+                <text x="90" y="0" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #475569; text-anchor: middle;">Container-per-Model</text>
+
+                <!-- Three isolated boxes -->
+                <rect x="5" y="14" width="50" height="90" rx="4" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+                <text x="30" y="55" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e40af; text-anchor: middle;">A</text>
+                <text x="30" y="70" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #3b82f6; text-anchor: middle;">(GPU)</text>
+
+                <rect x="65" y="14" width="50" height="90" rx="4" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+                <text x="90" y="55" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e40af; text-anchor: middle;">B</text>
+                <text x="90" y="70" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #3b82f6; text-anchor: middle;">(GPU)</text>
+
+                <rect x="125" y="14" width="50" height="90" rx="4" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+                <text x="150" y="55" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e40af; text-anchor: middle;">C</text>
+                <text x="150" y="70" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #3b82f6; text-anchor: middle;">(GPU)</text>
+
+                <!-- Subtitle -->
+                <text x="90" y="122" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">Isolated per model</text>
+            </g>
+
+            <!-- Column 3: Platform Template -->
+            <g transform="translate(520, 228)">
+                <!-- Column label -->
+                <text x="90" y="0" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #475569; text-anchor: middle;">Platform Template</text>
+
+                <!-- Template layer above -->
+                <rect x="5" y="14" width="170" height="28" rx="4" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1.5"/>
+                <text x="90" y="33" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #7c3aed; text-anchor: middle;">Shared Template Layer</text>
+
+                <!-- Dashed lines from template to boxes -->
+                <line x1="40" y1="42" x2="40" y2="52" stroke="#c4b5fd" stroke-width="1" stroke-dasharray="3,2"/>
+                <line x1="90" y1="42" x2="90" y2="52" stroke="#c4b5fd" stroke-width="1" stroke-dasharray="3,2"/>
+                <line x1="140" y1="42" x2="140" y2="52" stroke="#c4b5fd" stroke-width="1" stroke-dasharray="3,2"/>
+
+                <!-- Three boxes generated from template -->
+                <rect x="15" y="52" width="50" height="52" rx="4" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+                <text x="40" y="82" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #5b21b6; text-anchor: middle;">A</text>
+
+                <rect x="65" y="52" width="50" height="52" rx="4" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+                <text x="90" y="82" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #5b21b6; text-anchor: middle;">B</text>
+
+                <rect x="115" y="52" width="50" height="52" rx="4" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+                <text x="140" y="82" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #5b21b6; text-anchor: middle;">C</text>
+
+                <!-- Subtitle -->
+                <text x="90" y="122" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle;">Standardized + isolated</text>
+            </g>
+
+            <!-- Vertical column dividers (subtle) -->
+            <line x1="268" y1="220" x2="268" y2="385" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+            <line x1="498" y1="220" x2="498" y2="385" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+
+            <!-- === BOTTOM: Outcome Labels === -->
+            <g transform="translate(30, 420)">
+                <line x1="0" y1="0" x2="700" y2="0" stroke="#e2e8f0" stroke-width="1.5"/>
+
+                <text x="350" y="28" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #475569; text-anchor: middle;">DEPLOYMENT OUTCOMES</text>
+
+                <!-- Four outcome tiles -->
+                <rect x="0" y="44" width="160" height="44" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+                <text x="80" y="63" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #991b1b; text-anchor: middle;">Blast Radius</text>
+                <text x="80" y="79" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #b91c1c; text-anchor: middle;">Failure isolation scope</text>
+
+                <rect x="180" y="44" width="160" height="44" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1"/>
+                <text x="260" y="63" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #065f46; text-anchor: middle;">Team Velocity</text>
+                <text x="260" y="79" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #047857; text-anchor: middle;">Deploy independence</text>
+
+                <rect x="360" y="44" width="160" height="44" rx="6" fill="#fefce8" stroke="#fde047" stroke-width="1"/>
+                <text x="440" y="63" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #854d0e; text-anchor: middle;">GPU Efficiency</text>
+                <text x="440" y="79" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #a16207; text-anchor: middle;">Hardware utilization</text>
+
+                <rect x="540" y="44" width="160" height="44" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+                <text x="620" y="63" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #1e40af; text-anchor: middle;">Infrastructure Cost</text>
+                <text x="620" y="79" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #2563eb; text-anchor: middle;">Operational overhead</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

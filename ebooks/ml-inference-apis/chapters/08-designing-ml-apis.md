@@ -1,6 +1,6 @@
-# Chapter 7: Designing ML-Facing APIs
+# Chapter 8: Designing ML-Facing APIs
 
-<!-- DIAGRAM: ch07-opener.html - Chapter 7 Opener -->
+<!-- DIAGRAM: ch08-opener.html - Chapter 7 Opener -->
 
 \newpage
 
@@ -65,7 +65,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 - For inference where results arrive incrementally over the lifetime of the connection; real-time transcription, LLM text generation, TTS audio playback
 - Pattern: client opens a persistent connection and receives a series of partial result events as inference progresses
-- Three transport options for streaming: SSE, WebSocket, gRPC; the choice depends on directionality, payload type, and ecosystem (detailed in Chapter 8)
+- Three transport options for streaming: SSE, WebSocket, gRPC; the choice depends on directionality, payload type, and ecosystem (detailed in Chapter 9)
 - The decision of sync vs async vs streaming hinges on: expected inference duration, client tolerance for waiting, payload size, whether results are incremental or all-at-once
 
 ### The Decision Framework
@@ -76,7 +76,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Between 1-10 seconds with an atomic result: consider the client's tolerance; mobile clients prefer async, server-to-server can tolerate sync
 - Batch workloads (hours of audio, thousands of images) are always long-running operations; never hold a connection
 
-<!-- DIAGRAM: ch07-sync-vs-async-decision.html - Sync vs Async vs Streaming Decision Tree -->
+<!-- DIAGRAM: ch08-sync-vs-async-decision.html - Sync vs Async vs Streaming Decision Tree -->
 
 \newpage
 
@@ -115,7 +115,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - **503 Service Unavailable**: model not loaded, GPU unavailable, or system overloaded; `MODEL_NOT_LOADED`, `GPU_UNAVAILABLE`, `SYSTEM_OVERLOADED` with `Retry-After`
 - **504 Gateway Timeout**: inference exceeded the server-side timeout; `INFERENCE_TIMEOUT` with the timeout value and suggestion to use async for long audio
 
-<!-- DIAGRAM: ch07-error-handling-taxonomy.html - ML API Error Handling Taxonomy -->
+<!-- DIAGRAM: ch08-error-handling-taxonomy.html - ML API Error Handling Taxonomy -->
 
 \newpage
 
@@ -174,4 +174,4 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ---
 
-**Next: [Chapter 8: Streaming Response Contracts](./08-streaming-response-contracts.md)**
+**Next: [Chapter 9: Streaming Response Contracts](./09-streaming-response-contracts.md)**

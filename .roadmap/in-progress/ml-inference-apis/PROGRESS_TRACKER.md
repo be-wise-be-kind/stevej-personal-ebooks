@@ -15,8 +15,8 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the ml-inferen
 
 ## Current Status
 **Current PR**: PR4 complete; Chapter 3 authored as prose with 5 diagrams
-**Book State**: Preface, Ch 1, Ch 2, and Ch 3 in full prose with 13 diagrams; Ch 4-15 as outlines (lint-clean)
-**Target**: Complete ebook with 15 chapters across 5 parts
+**Book State**: Preface, Ch 1, Ch 2, Ch 3, and Ch 4 in full prose with 19 diagrams; Ch 5-16 as outlines (lint-clean); Appendix A (Ch 17) in full prose with 13 diagrams
+**Target**: Complete ebook with 16 chapters + 1 appendix across 5 parts
 
 ## Required Documents Location
 ```
@@ -31,26 +31,27 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the ml-inferen
 
 ## Next PR to Work On
 
-### START HERE: PR5; Chapter 4: Streaming Audio Architecture
+### START HERE: PR6; Chapter 5: Streaming Audio Architecture
 
 **Quick Summary**:
-Author Chapter 4 in full prose. This chapter covers real-time audio streaming architecture, including audio codec selection, streaming pipeline design, and integration with speech-to-text and text-to-speech services. See PR_BREAKDOWN.md for detailed instructions.
+Author Chapter 5 (formerly Chapter 4) in full prose. This chapter covers real-time audio streaming architecture, including audio codec selection, streaming pipeline design, and integration with speech-to-text and text-to-speech services. See PR_BREAKDOWN.md for detailed instructions.
 
 **Pre-flight Checklist**:
 - [x] PR1 outline review approved by Steve
 - [x] PR2 + PR17 (partial): Preface and Chapter 1 authored as prose with 4 diagrams
 - [x] PR3: Chapter 2 authored as prose with 4 diagrams
 - [x] PR4: Chapter 3 authored as prose with 5 diagrams
+- [x] PR5: Chapter 4 (Deployment Architecture Strategies) authored as prose with 6 diagrams
 - [ ] Review research Topic 3 in RESEARCH_SUMMARY.md
-- [ ] Review Chapter 4 outline in chapters/04-streaming-audio-architecture.md
+- [ ] Review Chapter 5 outline in chapters/05-streaming-audio-architecture.md
 
 ---
 
 ## Overall Progress
-**Total Completion**: 29% (5/17 PRs completed)
+**Total Completion**: 33% (6/18 PRs completed)
 
 ```
-[██████░░░░░░░░░░░░░░] 29% Complete
+[███████░░░░░░░░░░░░░] 33% Complete
 ```
 
 ---
@@ -63,19 +64,20 @@ Author Chapter 4 in full prose. This chapter covers real-time audio streaming ar
 | PR2 | Chapter 1: The Serving Problem | 🟢 Complete | 100% | ~5850 words, 4 diagrams |
 | PR3 | Chapter 2: Model Serving Frameworks | 🟢 Complete | 100% | ~5300 words, 4 diagrams, Ch1 corrections |
 | PR4 | Chapter 3: GPU Optimization & Cold Starts | 🟢 Complete | 100% | ~5500 words, 5 diagrams |
-| PR5 | Chapter 4: Streaming Audio Architecture | 🔴 Not Started | 0% | |
-| PR6 | Chapter 5: Protocol Selection for Audio | 🔴 Not Started | 0% | |
-| PR7 | Chapter 6: Streaming Inference Pipelines | 🔴 Not Started | 0% | |
-| PR8 | Chapter 7: Designing ML-Facing APIs | 🔴 Not Started | 0% | |
-| PR9 | Chapter 8: Streaming Response Contracts | 🔴 Not Started | 0% | New chapter (split from old Ch 7) |
-| PR10 | Chapter 9: API Versioning & Developer Experience | 🔴 Not Started | 0% | New chapter (split from old Ch 7) |
-| PR11 | Chapter 10: Security for Audio ML APIs | 🔴 Not Started | 0% | |
-| PR12 | Chapter 11: Compliance & Data Governance | 🔴 Not Started | 0% | |
-| PR13 | Chapter 12: SLOs for Streaming ML Systems | 🔴 Not Started | 0% | |
-| PR14 | Chapter 13: Usage Metering & Billing | 🔴 Not Started | 0% | |
-| PR15 | Chapter 14: Scaling Inference Globally | 🔴 Not Started | 0% | |
-| PR16 | Chapter 15: Putting It All Together | 🔴 Not Started | 0% | |
-| PR17 | Preface & Final Polish | 🟡 In Progress | 50% | Preface authored (~1340 words); final polish pending |
+| PR5 | Chapter 4: Deployment Architecture Strategies | 🟢 Complete | 100% | New chapter, ~4500 words, 6 diagrams |
+| PR6 | Chapter 5: Streaming Audio Architecture | 🔴 Not Started | 0% | |
+| PR7 | Chapter 6: Protocol Selection for Audio | 🔴 Not Started | 0% | |
+| PR8 | Chapter 7: Streaming Inference Pipelines | 🔴 Not Started | 0% | |
+| PR9 | Chapter 8: Designing ML-Facing APIs | 🔴 Not Started | 0% | |
+| PR10 | Chapter 9: Streaming Response Contracts | 🔴 Not Started | 0% | Split from old Ch 7 |
+| PR11 | Chapter 10: API Versioning & Developer Experience | 🔴 Not Started | 0% | Split from old Ch 7 |
+| PR12 | Chapter 11: Security for Audio ML APIs | 🔴 Not Started | 0% | |
+| PR13 | Chapter 12: Compliance & Data Governance | 🔴 Not Started | 0% | |
+| PR14 | Chapter 13: SLOs for Streaming ML Systems | 🔴 Not Started | 0% | |
+| PR15 | Chapter 14: Usage Metering & Billing | 🔴 Not Started | 0% | |
+| PR16 | Chapter 15: Scaling Inference Globally | 🔴 Not Started | 0% | |
+| PR17 | Chapter 16: Putting It All Together | 🔴 Not Started | 0% | |
+| PR18 | Preface & Final Polish | 🟡 In Progress | 50% | Preface authored (~1340 words); final polish pending |
 
 ### Status Legend
 - 🔴 Not Started
@@ -93,18 +95,20 @@ Author Chapter 4 in full prose. This chapter covers real-time audio streaming ar
 | 01 | The Serving Problem | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
 | 02 | Model Serving Frameworks | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
 | 03 | GPU Optimization & Cold Starts | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
-| 04 | Streaming Audio Architecture | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 05 | Protocol Selection for Audio | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 06 | Streaming Inference Pipelines | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 07 | Designing ML-Facing APIs | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 08 | Streaming Response Contracts | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 09 | API Versioning & DX | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 10 | Security for Audio ML APIs | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 11 | Compliance & Data Governance | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 12 | SLOs for Streaming ML Systems | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 13 | Usage Metering & Billing | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 14 | Scaling Inference Globally | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
-| 15 | Putting It All Together | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 04 | Deployment Architecture Strategies | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
+| 05 | Streaming Audio Architecture | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 06 | Protocol Selection for Audio | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 07 | Streaming Inference Pipelines | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 08 | Designing ML-Facing APIs | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 09 | Streaming Response Contracts | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 10 | API Versioning & DX | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 11 | Security for Audio ML APIs | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 12 | Compliance & Data Governance | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 13 | SLOs for Streaming ML Systems | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 14 | Usage Metering & Billing | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 15 | Scaling Inference Globally | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| 16 | Putting It All Together | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
+| A  | ML Inference for API Engineers | ✅ | ✅ | ✅ | ⬜ | ✅ | ⬜ |
 
 Legend: ✅ Done | 🔄 In Progress | ⬜ Not Started | - Not Applicable
 
@@ -146,7 +150,7 @@ After completing each PR:
 ## Definition of Done
 
 The ebook is considered complete when:
-- [ ] All 16 chapter files have full prose (not just outlines)
+- [ ] All 17 chapter files (16 chapters + 1 appendix) have full prose (not just outlines)
 - [ ] All diagrams created and referenced
 - [ ] WORKS_CITED.md fully populated with verified sources
 - [ ] `just validate ml-inference-apis` passes
