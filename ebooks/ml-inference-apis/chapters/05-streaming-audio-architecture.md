@@ -100,6 +100,8 @@ At 50ms chunks, the system sends audio 20 times per second. Latency is minimized
 
 The recommended default is 100ms chunks. Deepgram's documentation explicitly recommends streaming buffer sizes between 20ms and 250ms, with 100ms as the sweet spot [Source: Deepgram, 2025]. At 16kHz, a 100ms chunk contains exactly 1,600 samples (3,200 bytes at 16-bit), providing enough context for accurate partial results while keeping chunk latency at a fraction of the 300ms budget.
 
+A natural question arises: 100ms is not long enough to contain a complete spoken word, so how does the model recognize speech that spans chunk boundaries? Streaming ASR models do not process each chunk in isolation. Architectures like RNN-Transducer (used by Deepgram and Google) maintain internal encoder state across chunks, so when chunk N arrives, the model carries forward what it learned from chunks 0 through N-1. CTC-based models use a sliding window with overlap, where each inference pass includes the current chunk plus retained context from previous chunks. In both cases, a word like "streaming" that begins in one chunk and ends in the next is recognized because the model's state spans the boundary. The partial-to-final transcript pattern is the user-facing consequence: the model emits its best guess as a partial transcript ("strea..."), then revises it to the complete word ("streaming") once enough audio context has arrived.
+
 ![Chunk Size: Latency vs Accuracy Trade-off](../assets/ch05-chunk-size-tradeoff.html)
 
 \newpage
