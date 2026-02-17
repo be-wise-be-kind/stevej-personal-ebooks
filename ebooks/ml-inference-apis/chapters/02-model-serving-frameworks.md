@@ -80,7 +80,7 @@ The first filter is the simplest. If you are serving a transformer-based LLM (GP
 
 For traditional ML models (computer vision, recommendation, tabular models like XGBoost and scikit-learn, or custom PyTorch architectures that are not autoregressive transformers), Gen 2 frameworks remain the pragmatic choice. KServe and BentoML handle these workloads well, with straightforward deployment and scaling.
 
-For multi-model ensembles where several models feed into each other (a speech pipeline of VAD, ASR, punctuation, and NER, for example), Triton's ensemble scheduler or Ray Serve's composition API provides native pipeline support. These tools manage data flow between models, schedule GPU resources across the pipeline stages, and handle failures at individual stages without bringing down the entire chain.
+For multi-model ensembles where several models feed into each other (a speech pipeline of VAD, ASR (automatic speech recognition), punctuation, and NER, for example), Triton's ensemble scheduler or Ray Serve's composition API provides native pipeline support. These tools manage data flow between models, schedule GPU resources across the pipeline stages, and handle failures at individual stages without bringing down the entire chain.
 
 ### Latency Requirements
 

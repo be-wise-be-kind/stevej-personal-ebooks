@@ -110,7 +110,7 @@ Understanding where milliseconds go in an inference request is essential for opt
 
 **GPU inference** (50-200ms): the model forward pass through all transformer layers, where each layer performs self-attention (reading from and writing to the KV cache) followed by feed-forward computation. For speech-to-text, the encoder forward pass typically dominates. For autoregressive text generation, each output token requires a full forward pass at roughly 5-8ms per token on current hardware [Source: NVIDIA, 2025]. Scheduling overhead between decode iterations adds approximately 4ms per step [Source: vLLM, 2025]. This is the largest single stage and the focus of GPU optimization efforts in Chapter 3.
 
-**Postprocessing** (5-15ms): decoding model output into text, applying punctuation, formatting, and any feature processing (diarization, PII redaction). These run on CPU.
+**Postprocessing** (5-15ms): decoding model output into text, applying punctuation, formatting, and any feature processing (diarization, PII (personally identifiable information) redaction). These run on CPU.
 
 **Network return** (20-50ms): the response travels back to the client.
 
