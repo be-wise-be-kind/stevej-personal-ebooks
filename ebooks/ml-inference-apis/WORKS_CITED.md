@@ -10,18 +10,18 @@ The following works are referenced across multiple chapters and form the foundat
 
 | Work | Chapters Referenced |
 |------|---------------------|
-| Google SRE Book (Beyer et al., 2016) | 1, 3, 12, 14 |
-| AssemblyAI (2025). "The 300ms Rule: Why Latency Makes or Breaks Voice AI." | 1, 4, 5, 12 |
-| BentoML (2025). "LLM Inference Handbook." | 1, 2, 3, 12 |
+| Google SRE Book (Beyer et al., 2016) | 1, 3, 13, 15 |
+| AssemblyAI (2025). "The 300ms Rule: Why Latency Makes or Breaks Voice AI." | 1, 5, 6, 13 |
+| BentoML (2025). "LLM Inference Handbook." | 1, 2, 3, 4, 13 |
 | Clarifai (2025). "Comparing SGLang, vLLM, and TensorRT-LLM with GPT-OSS-120B." | 1, 2, 3 |
 | AIMultiple (2026). "LLM Inference Engines: vLLM vs LMDeploy vs SGLang." | 1, 2 |
 | Stixor (2025). "The New LLM Inference Stack 2025: FA-3, FP8 & FP4." | 1, 3 |
-| OpenAI Realtime API Documentation (2025). | 4, 5, 7 |
+| OpenAI Realtime API Documentation (2025). | 5, 6, 8 |
 | Kwon, W., et al. (2023). "PagedAttention." *SOSP '23*. | 1, 2, 3 |
 | Dao, T., et al. (2024). "FlashAttention-3." arXiv:2407.08608. | 1, 3 |
 | NVIDIA (2025). "NVFP4 KV Cache." | 1, 3 |
 | LMSYS (2024). "SGLang: RadixAttention." | 2, 3 |
-| Deepgram Compliance Docs (2025). "Standard Compliance Speech-to-Text: HIPAA, SOC 2, GDPR." | 10, 11 |
+| Deepgram Compliance Docs (2025). "Standard Compliance Speech-to-Text: HIPAA, SOC 2, GDPR." | 11, 12 |
 
 ---
 
@@ -141,7 +141,51 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 4: Streaming Audio Architecture
+## Chapter 4: Deployment Architecture Strategies
+
+1. **Uber Engineering** (2022). "Michelangelo: Uber's Machine Learning Platform." Federation layer across multiple K8s clusters with intelligent scheduling.
+
+2. **Anyscale** (2024). "Spotify Hendrix: Ray Clusters on GKE with Kubeflow Orchestration." Spotify's ML platform architecture.
+
+3. **Pinterest Engineering** (2023). "MLEnv: Pinterest's ML Platform." Kubernetes-backed compute platform achieving 95% adoption from under 5%.
+
+4. **Shopify Engineering** (2022). "Merlin: Shopify's ML Platform." Ray clusters as short-lived K8s workspaces; models as standard K8s services.
+
+5. **DoorDash Engineering** (2021). "ML Platform: From Models to Production at DoorDash." 38 models, 6.8M peak predictions/sec, microservice-based K8s pods.
+
+6. **Databricks Summit** (2018). "Bighead: Airbnb's Machine Learning Platform." Evolution from 8-12 week deployment to days.
+
+7. **Netflix/Medium** (2025). "OCI Image Volumes: Separating Model Weights from Runtime Containers."
+
+8. **Stripe Engineering** (2023). "Railyard: Stripe's ML Platform." K8s-based training and 73% inference cost reduction.
+
+9. **LinkedIn Engineering** (2022). "Pro-ML: Model Cloud." Self-service model onboarding with GPU support.
+
+10. **Meta Engineering** (2016). "FBLearner Flow: Managing Facebook's ML Experiments." Per-model containers with auto-scaling.
+
+11. **Lyft Engineering** (2023). "LyftLearn: Hybrid SageMaker-K8s Architecture." Per-team model serving microservices.
+
+12. **AWS** (2023). "SageMaker Multi-Model Endpoints: Cost Optimization." Up to 90% cost reduction vs dedicated endpoints.
+
+13. **Pebble** (2025). "NVIDIA MPS vs Dedicated GPU Allocation for LLM Inference." 50% cost reduction with 7.5% performance impact.
+
+14. **NVIDIA** (2025). "Multi-Instance GPU User Guide." Hardware-level GPU partitioning.
+
+15. **NVIDIA** (2025). "GPU Time-Slicing for Kubernetes." Up to 3x utilization increase for light workloads.
+
+16. **vCluster** (2025). "Noisy Neighbor Effects in GPU Clusters." 45ms inference spiking to 200ms under contention.
+
+17. **Red Hat** (2024). "Golden Paths: Platform Engineering Best Practices."
+
+18. **CNCF** (2024). "Platforms Working Group White Paper." Cloud-native platform engineering patterns.
+
+19. **Skelton, M. & Pais, M.** (2019). *Team Topologies: Organizing Business and Technology Teams for Fast Flow.* IT Revolution Press.
+
+20. **BentoML** (2025). "LLM Inference Handbook." Model artifact sizes and deployment patterns.
+
+---
+
+## Chapter 5: Streaming Audio Architecture
 
 1. **AssemblyAI** (2026). "Top APIs and Models for Real-Time Speech Recognition 2026." https://www.assemblyai.com/blog/
 
@@ -157,7 +201,7 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 5: Protocol Selection for Audio
+## Chapter 6: Protocol Selection for Audio
 
 1. **GetStream** (2025). "WebRTC vs WebSocket: Which Keeps Audio in Sync for AI?" https://getstream.io/blog/
 
@@ -171,9 +215,9 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 6: Streaming Inference Pipelines
+## Chapter 7: Streaming Inference Pipelines
 
-*Combines sources from Chapters 1, 3, and 4. Additional sources to be identified during authoring.*
+*Combines sources from Chapters 1, 3, and 5. Additional sources to be identified during authoring.*
 
 1. **BentoML** (2025). "LLM Inference Handbook." https://www.bentoml.com/blog/llm-inference-handbook [Streaming inference patterns]
 
@@ -185,7 +229,7 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 7: Designing ML-Facing APIs
+## Chapter 8: Designing ML-Facing APIs
 
 1. **Google** (2025). "API Improvement Proposals." https://aip.dev [AIP-121: Resource-oriented design, AIP-133: Standard methods, AIP-136: Custom methods, AIP-151: Long-running operations]
 
@@ -195,7 +239,7 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 8: Streaming Response Contracts
+## Chapter 9: Streaming Response Contracts
 
 1. **OpenAI** (2025). "API Reference — Chat Completions." https://platform.openai.com/docs/api-reference/chat [SSE streaming with `data:` prefix and `[DONE]` signal]
 
@@ -209,7 +253,7 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 9: API Versioning & Developer Experience
+## Chapter 10: API Versioning & Developer Experience
 
 1. **Google** (2025). "API Improvement Proposals." https://aip.dev [AIP-181: Stability levels, AIP-180: Versioning, AIP-182: Deprecation]
 
@@ -219,7 +263,7 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 10: Security for Audio ML APIs
+## Chapter 11: Security for Audio ML APIs
 
 1. **Deepgram** (2025). "Standard Compliance Speech-to-Text: HIPAA, SOC 2, GDPR." https://deepgram.com/compliance [Zero-retention defaults, configurable redaction, sub-300ms]
 
@@ -229,7 +273,7 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 11: Compliance & Data Governance
+## Chapter 12: Compliance & Data Governance
 
 1. **EU AI Act Service Desk** (2025). "Implementation Timeline." [Prohibited practices Feb 2025, GPAI Aug 2025, High-risk Aug 2026, Regulated products Aug 2027]
 
@@ -241,7 +285,7 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 12: SLOs for Streaming ML Systems
+## Chapter 13: SLOs for Streaming ML Systems
 
 1. **Gladia** (2025). "How to Measure Latency in STT: TTFB, Partials, Finals, RTF." https://www.gladia.io/blog/ [Speech-to-text latency taxonomy]
 
@@ -255,7 +299,7 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 13: Usage Metering & Billing
+## Chapter 14: Usage Metering & Billing
 
 1. **Stripe** (2025). "Meters API Reference." https://docs.stripe.com/api/billing/meter [Aggregation, billing periods, event ingestion]
 
@@ -267,7 +311,7 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 14: Scaling Inference Globally
+## Chapter 15: Scaling Inference Globally
 
 *Combines sources from Chapters 1 and 2. Additional sources to be identified during authoring.*
 
@@ -281,11 +325,11 @@ The following works are referenced across multiple chapters and form the foundat
 
 ---
 
-## Chapter 15: Putting It All Together
+## Chapter 16: Putting It All Together
 
 *Synthesis chapter referencing all previous chapters. Sources drawn from across the full bibliography.*
 
-*No unique sources — this chapter integrates findings from Chapters 1-14.*
+*No unique sources — this chapter integrates findings from Chapters 1-15.*
 
 ---
 

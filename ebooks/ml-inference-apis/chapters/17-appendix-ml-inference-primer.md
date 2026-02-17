@@ -2,7 +2,7 @@
 
 This appendix provides the ML inference background you need to read this book. If you are an API engineer who has not worked with ML systems before, start here. Every concept in this appendix appears in the main chapters, and spending 30 to 45 minutes with this material will make the rest of the book significantly easier to follow. If you already have ML infrastructure experience, skip this appendix and proceed directly to Chapter 1.
 
-![ML Inference Primer](../assets/ch16-opener.html)
+![ML Inference Primer](../assets/ch17-opener.html)
 
 \newpage
 
@@ -24,7 +24,7 @@ Each section below introduces one ML concept using the kitchen analog, then expl
 
 The critical insight for API engineers is that a model is data, not code. Your Go binary is 50 to 200 MB of compiled instructions. A model file is 1 to 140 GB of floating-point numbers. Loading a model is not like starting a process; it is like loading an enormous dataset into memory before your service can handle its first request.
 
-![Model Anatomy](../assets/ch16-model-anatomy.html)
+![Model Anatomy](../assets/ch17-model-anatomy.html)
 
 \newpage
 
@@ -52,7 +52,7 @@ When someone says "deploy a model," they mean: move this multi-gigabyte file fro
 
 Training is the process that created those weights in the first place, using massive datasets and significant compute over days or weeks. But here is what matters for API engineers: training happens once (or periodically). Inference happens millions of times per day. Over a model's production lifetime, inference costs dwarf training costs [Source: Ankur's Newsletter, 2025].
 
-![Training vs Inference](../assets/ch16-training-vs-inference.html)
+![Training vs Inference](../assets/ch17-training-vs-inference.html)
 
 \newpage
 
@@ -68,7 +68,7 @@ This distinction shapes the entire infrastructure. Training optimizes for throug
 
 **The technical reality:** GPUs (Graphics Processing Units) excel at ML inference because inference is fundamentally matrix multiplication, and GPUs contain thousands of cores optimized for parallel arithmetic. A modern CPU has 8 to 64 cores. A modern inference GPU has over 10,000 CUDA cores. For the kind of computation that inference requires, a GPU is 10 to 100 times faster than a CPU.
 
-![CPU vs GPU](../assets/ch16-cpu-vs-gpu.html)
+![CPU vs GPU](../assets/ch17-cpu-vs-gpu.html)
 
 \newpage
 
@@ -95,7 +95,7 @@ This cost asymmetry drives nearly every optimization in this book. An idle GPU i
 
 **The technical reality:** Tokenization is the process of converting raw input into the discrete units a model understands. For text, a tokenizer splits strings into subword pieces: "tokenization" might become ["token", "ization"]. For audio, the input is split into fixed-duration frames, typically 10 to 30 milliseconds each. Different models use different tokenizers with different vocabularies, so the same text produces different token sequences depending on the model.
 
-![Tokenization](../assets/ch16-tokenization.html)
+![Tokenization](../assets/ch17-tokenization.html)
 
 \newpage
 
@@ -117,7 +117,7 @@ Tokens matter to API engineers for three reasons:
 
 **The technical reality:** Inference latency is not a single number. It is a pipeline with distinct phases, and different phases dominate depending on whether you are doing text generation, speech recognition, or text-to-speech.
 
-![Latency Comparison](../assets/ch16-latency-comparison.html)
+![Latency Comparison](../assets/ch17-latency-comparison.html)
 
 \newpage
 
@@ -140,7 +140,7 @@ The takeaway for API engineers: the latency optimization toolkit is different. Y
 
 On top of the memory bandwidth issue, a GPU has over 10,000 cores. A single request does not saturate them; most cores sit idle while a few do the work. Batching fills those idle cores with useful work at near-zero additional latency cost. A GPU processing a batch of 8 finishes in barely more time than it takes to process 1. Sending one request at a time to a GPU is like sending a taxi for every passenger. Batching is the bus.
 
-![Batching Strategies](../assets/ch16-batching-strategies.html)
+![Batching Strategies](../assets/ch17-batching-strategies.html)
 
 \newpage
 
@@ -162,7 +162,7 @@ For API engineers, continuous batching is the most important GPU optimization to
 
 **The technical reality:** When a transformer model generates text, it produces key and value vectors at each layer for every token in the sequence. These vectors are needed for the attention mechanism (covered in a later section). Without caching, the model would recompute these vectors for all previous tokens every time it generates a new token. With the KV cache, the model stores these vectors and only computes new ones for each new token.
 
-![KV Cache Memory](../assets/ch16-kv-cache-memory.html)
+![KV Cache Memory](../assets/ch17-kv-cache-memory.html)
 
 \newpage
 
@@ -186,7 +186,7 @@ For API engineers, the KV cache explains several behaviors you will observe: why
 
 **The technical reality:** When an inference server starts, it goes through a sequence of steps that collectively take 30 seconds to several minutes:
 
-![Cold Start Timeline](../assets/ch16-cold-start-timeline.html)
+![Cold Start Timeline](../assets/ch17-cold-start-timeline.html)
 
 \newpage
 
@@ -211,7 +211,7 @@ This cold start penalty fundamentally changes how you think about auto-scaling. 
 
 **The technical reality:** Model weights are stored as floating-point numbers. The precision of those numbers determines memory usage and compute speed:
 
-![Precision Spectrum](../assets/ch16-precision-spectrum.html)
+![Precision Spectrum](../assets/ch17-precision-spectrum.html)
 
 \newpage
 
@@ -236,7 +236,7 @@ For API engineers, quantization explains why the same model can run on vastly di
 
 **The technical reality:** The attention mechanism is the core innovation of the transformer architecture that powers modern language and speech models [Source: Vaswani et al., 2017]. For each new token the model processes, it computes how much "attention" to pay to every previous token in the sequence. This is what allows the model to understand context: it can relate a word at position 500 to a word at position 3.
 
-![Attention Simplified](../assets/ch16-attention-simplified.html)
+![Attention Simplified](../assets/ch17-attention-simplified.html)
 
 \newpage
 
@@ -268,7 +268,7 @@ For API engineers, attention explains three things you will encounter repeatedly
 
 At 16 kHz / 16-bit (the standard for speech recognition), raw PCM audio consumes 256 kilobits per second (32 KB/s). One minute of audio is approximately 1.9 MB.
 
-![Audio Encoding](../assets/ch16-audio-encoding.html)
+![Audio Encoding](../assets/ch17-audio-encoding.html)
 
 \newpage
 
@@ -295,7 +295,7 @@ The codec choice affects the entire pipeline. If your API accepts Opus, you redu
 
 **The technical reality:** In any real-time speech application, the audio stream contains both speech and silence (or background noise). Sending everything to the GPU inference model wastes compute: the model spends GPU cycles processing silence and returns empty results.
 
-![VAD Pipeline](../assets/ch16-vad-pipeline.html)
+![VAD Pipeline](../assets/ch17-vad-pipeline.html)
 
 \newpage
 

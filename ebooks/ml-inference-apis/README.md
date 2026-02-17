@@ -22,34 +22,35 @@ This is a companion to "Before the 3 AM Alert: What Every Developer Should Know 
 1. [The Serving Problem](chapters/01-the-serving-problem.md)
 2. [Model Serving Frameworks](chapters/02-model-serving-frameworks.md)
 3. [GPU Optimization & Cold Starts](chapters/03-gpu-optimization.md)
+4. [Deployment Architecture Strategies](chapters/04-deployment-architecture.md)
 
 ### Part II: Audio Streaming
 
-4. [Streaming Audio Architecture](chapters/04-streaming-audio-architecture.md)
-5. [Protocol Selection for Audio](chapters/05-protocol-selection.md)
-6. [Streaming Inference Pipelines](chapters/06-streaming-inference-pipelines.md)
+5. [Streaming Audio Architecture](chapters/05-streaming-audio-architecture.md)
+6. [Protocol Selection for Audio](chapters/06-protocol-selection.md)
+7. [Streaming Inference Pipelines](chapters/07-streaming-inference-pipelines.md)
 
 ### Part III: API Design
 
-7. [Designing ML-Facing APIs](chapters/07-designing-ml-apis.md)
-8. [Streaming Response Contracts](chapters/08-streaming-response-contracts.md)
-9. [API Versioning & Developer Experience](chapters/09-api-versioning-dx.md)
+8. [Designing ML-Facing APIs](chapters/08-designing-ml-apis.md)
+9. [Streaming Response Contracts](chapters/09-streaming-response-contracts.md)
+10. [API Versioning & Developer Experience](chapters/10-api-versioning-dx.md)
 
 ### Part IV: Enterprise
 
-10. [Security for Audio ML APIs](chapters/10-security-audio-ml.md)
-11. [Compliance & Data Governance](chapters/11-compliance-data-governance.md)
-12. [SLOs for Streaming ML Systems](chapters/12-slos-streaming-ml.md)
-13. [Usage Metering & Billing](chapters/13-usage-metering-billing.md)
+11. [Security for Audio ML APIs](chapters/11-security-audio-ml.md)
+12. [Compliance & Data Governance](chapters/12-compliance-data-governance.md)
+13. [SLOs for Streaming ML Systems](chapters/13-slos-streaming-ml.md)
+14. [Usage Metering & Billing](chapters/14-usage-metering-billing.md)
 
 ### Part V: Scale
 
-14. [Scaling Inference Globally](chapters/14-scaling-inference-globally.md)
-15. [Putting It All Together](chapters/15-putting-it-all-together.md)
+15. [Scaling Inference Globally](chapters/15-scaling-inference-globally.md)
+16. [Putting It All Together](chapters/16-putting-it-all-together.md)
 
 ### Appendices
 
-- [Appendix A: ML Inference for API Engineers](chapters/16-appendix-ml-inference-primer.md)
+- [Appendix A: ML Inference for API Engineers](chapters/17-appendix-ml-inference-primer.md)
 
 ## Prerequisites
 

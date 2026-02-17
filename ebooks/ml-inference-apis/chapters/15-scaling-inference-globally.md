@@ -1,6 +1,6 @@
-# Chapter 14: Scaling Inference Globally
+# Chapter 15: Scaling Inference Globally
 
-<!-- DIAGRAM: ch14-opener.html - Chapter 14 Opener -->
+<!-- DIAGRAM: ch15-opener.html - Chapter 14 Opener -->
 
 \newpage
 
@@ -50,11 +50,11 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - **GPU utilization**: the most direct signal; sustained >80% utilization indicates the need for more capacity
 - **Request queue depth**: requests waiting for an available inference slot; if the queue grows, throughput is insufficient
 - **Latency P95/P99**: when tail latency exceeds the SLO threshold, scale up even if average latency looks healthy
-- **Active stream count**: for streaming workloads, the number of concurrent open streams is a better signal than request rate. **Measurement caveat**: a point-in-time gauge sampled at coarse intervals (e.g., 60 seconds) misses short-lived streams entirely, reporting zero even under heavy load. Use a high-water-mark counter that tracks peak concurrent streams within each export interval, or sample at sub-second granularity. If the scaling signal reads zero, the auto-scaler never triggers (see Chapter 12)
+- **Active stream count**: for streaming workloads, the number of concurrent open streams is a better signal than request rate. **Measurement caveat**: a point-in-time gauge sampled at coarse intervals (e.g., 60 seconds) misses short-lived streams entirely, reporting zero even under heavy load. Use a high-water-mark counter that tracks peak concurrent streams within each export interval, or sample at sub-second granularity. If the scaling signal reads zero, the auto-scaler never triggers (see Chapter 13)
 - **KV cache utilization**: for LLM workloads, KV cache memory pressure limits batch sizes before GPU compute saturates
 - Composite signals: combine multiple metrics with weighted scoring rather than relying on any single signal
 
-<!-- DIAGRAM: ch14-autoscaling-signals.html - Auto-Scaling Signals for GPU Inference -->
+<!-- DIAGRAM: ch15-autoscaling-signals.html - Auto-Scaling Signals for GPU Inference -->
 
 \newpage
 
@@ -100,7 +100,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - **Failover routing**: if a region is unhealthy, automatically redirect traffic to backup regions with health-check-driven DNS failover
 - Anycast for UDP-based protocols: when using WebRTC or RTP for audio, anycast routing naturally selects the nearest edge
 
-<!-- DIAGRAM: ch14-multi-region-architecture.html - Multi-Region Inference Architecture -->
+<!-- DIAGRAM: ch15-multi-region-architecture.html - Multi-Region Inference Architecture -->
 
 \newpage
 
@@ -173,7 +173,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Layer on-demand for predictable peaks and spot for burst capacity above that
 - The three-tier cost model: reserved (baseline) + on-demand (predictable peak) + spot (burst)
 
-<!-- DIAGRAM: ch14-cost-optimization-strategies.html - Cost Optimization Strategies -->
+<!-- DIAGRAM: ch15-cost-optimization-strategies.html - Cost Optimization Strategies -->
 
 \newpage
 
@@ -257,4 +257,4 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ---
 
-**Next: [Chapter 15: Putting It All Together](./15-putting-it-all-together.md)**
+**Next: [Chapter 16: Putting It All Together](./16-putting-it-all-together.md)**

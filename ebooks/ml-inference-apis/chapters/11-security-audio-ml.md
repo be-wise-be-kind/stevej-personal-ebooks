@@ -1,6 +1,6 @@
-# Chapter 10: Security for Audio ML APIs
+# Chapter 11: Security for Audio ML APIs
 
-<!-- DIAGRAM: ch10-opener.html - Chapter 10 Opener -->
+<!-- DIAGRAM: ch11-opener.html - Chapter 10 Opener -->
 
 \newpage
 
@@ -55,7 +55,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Session binding: tie the token to the specific connection/stream ID to prevent token replay on other streams
 - Graceful degradation: if a refresh fails, allow the current operation to complete before terminating the connection
 
-<!-- DIAGRAM: ch10-streaming-auth-flow.html - Streaming Auth Flow -->
+<!-- DIAGRAM: ch11-streaming-auth-flow.html - Streaming Auth Flow -->
 
 \newpage
 
@@ -90,7 +90,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Audit trail: log who revoked, when, and why; compliance requirement for SOC 2
 - Cascading effects: revoking a key mid-stream should gracefully terminate active connections, not silently drop audio
 
-<!-- DIAGRAM: ch10-api-key-lifecycle.html - API Key Lifecycle -->
+<!-- DIAGRAM: ch11-api-key-lifecycle.html - API Key Lifecycle -->
 
 \newpage
 
@@ -168,7 +168,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - **Anti-pattern: default public exposure.** Many cloud deployments expose Grafana on a public load balancer with anonymous access enabled by default. An attacker gains read access to all dashboards, which may reveal API keys in log queries, customer usage patterns, inference costs, and infrastructure topology
 - **Pattern: default-deny for operator tools.** Observability UIs should never be publicly accessible. Use VPN, SSH tunnel, or SSM port-forwarding to access them. Set `GF_AUTH_ANONYMOUS_ENABLED=false` and configure an identity provider (OIDC, SAML, or at minimum basic auth). The only observability endpoint exposed publicly should be the telemetry collection receiver (e.g., OpenTelemetry collector, Faro receiver), and only if browser-based telemetry is needed
 - **CORS for telemetry collection endpoints.** If using browser-based telemetry collection (Grafana Faro, OpenTelemetry browser SDK), the collection receiver requires CORS configuration. Never use `allowed_origins = ["*"]` in production. A wildcard allows any website to send telemetry to your collector, polluting your data or enabling denial-of-service against the collection pipeline. Template CORS to your specific application domain(s)
-- For ML inference specifically: observability stores may contain audio chunk metadata, transcript fragments in log messages, speaker identifiers, and model confidence scores, all of which have privacy implications under GDPR and HIPAA (see Chapter 11)
+- For ML inference specifically: observability stores may contain audio chunk metadata, transcript fragments in log messages, speaker identifiers, and model confidence scores, all of which have privacy implications under GDPR and HIPAA (see Chapter 12)
 
 ### Why Audio Data Is Uniquely Sensitive
 
@@ -201,7 +201,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - **Voicegain**: 95%+ PII detection accuracy, redaction in both audio and text outputs, on-premise deployment option for maximum data control
 - Feature comparison: what each provider redacts by default, what is configurable, and what requires custom implementation
 
-<!-- DIAGRAM: ch10-pii-redaction-pipeline.html - PII Redaction Pipeline -->
+<!-- DIAGRAM: ch11-pii-redaction-pipeline.html - PII Redaction Pipeline -->
 
 \newpage
 
@@ -261,4 +261,4 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ---
 
-**Next: [Chapter 11: Compliance & Data Governance](./11-compliance-data-governance.md)**
+**Next: [Chapter 12: Compliance & Data Governance](./12-compliance-data-governance.md)**

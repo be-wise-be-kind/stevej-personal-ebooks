@@ -1,6 +1,6 @@
-# Chapter 4: Streaming Audio Architecture
+# Chapter 5: Streaming Audio Architecture
 
-<!-- DIAGRAM: ch04-opener.html - Chapter 4 Opener -->
+<!-- DIAGRAM: ch05-opener.html - Chapter 4 Opener -->
 
 \newpage
 
@@ -29,7 +29,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Inference results (partial transcripts, final transcripts, events) stream back to the client over the same connection
 - Client renders results in real-time; partial results appearing word-by-word, final results replacing partials
 
-<!-- DIAGRAM: ch04-e2e-architecture.html - End-to-End Streaming Audio Architecture -->
+<!-- DIAGRAM: ch05-e2e-architecture.html - End-to-End Streaming Audio Architecture -->
 
 \newpage
 
@@ -90,7 +90,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - 100ms chunks: recommended by Deepgram for optimal balance; provides rapid partial results without significant accuracy loss
 - 200-250ms chunks: used by providers optimizing for accuracy on longer utterances
 
-<!-- DIAGRAM: ch04-chunk-size-tradeoff.html - Chunk Size: Latency vs Accuracy Trade-off -->
+<!-- DIAGRAM: ch05-chunk-size-tradeoff.html - Chunk Size: Latency vs Accuracy Trade-off -->
 
 \newpage
 
@@ -205,7 +205,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Billing: per-token (input and output audio tokens); different pricing model than per-second
 - Distinguishing characteristic: speech-to-speech without ASR+TTS pipeline; the model natively understands and generates audio
 
-<!-- DIAGRAM: ch04-provider-comparison.html - Provider Comparison Matrix -->
+<!-- DIAGRAM: ch05-provider-comparison.html - Provider Comparison Matrix -->
 
 \newpage
 
@@ -252,4 +252,4 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ---
 
-**Next: [Chapter 5: Protocol Selection for Audio](./05-protocol-selection.md)**
+**Next: [Chapter 6: Protocol Selection for Audio](./06-protocol-selection.md)**

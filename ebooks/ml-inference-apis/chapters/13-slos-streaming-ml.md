@@ -1,6 +1,6 @@
-# Chapter 12: SLOs for Streaming ML Systems
+# Chapter 13: SLOs for Streaming ML Systems
 
-<!-- DIAGRAM: ch12-opener.html - Chapter 12 Opener -->
+<!-- DIAGRAM: ch13-opener.html - Chapter 12 Opener -->
 
 \newpage
 
@@ -71,7 +71,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - RTF as a capacity planning metric: as load increases, RTF approaches 1.0; this is the signal to scale out before crossing the threshold
 - Target: RTF < 0.5 under normal load (50% headroom), with alerting when RTF > 0.8
 
-<!-- DIAGRAM: ch12-streaming-sli-taxonomy.html - Streaming SLI Taxonomy -->
+<!-- DIAGRAM: ch13-streaming-sli-taxonomy.html - Streaming SLI Taxonomy -->
 
 \newpage
 
@@ -104,7 +104,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Emphasize that targets are starting points; adjust based on user research and business requirements
 - More aggressive targets increase infrastructure cost; relaxed targets reduce cost but may degrade user experience
 
-<!-- DIAGRAM: ch12-slo-target-framework.html - SLO Target Framework -->
+<!-- DIAGRAM: ch13-slo-target-framework.html - SLO Target Framework -->
 
 \newpage
 
@@ -252,7 +252,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - This is especially common when assembling observability from multiple components: the inference service emits JSON, the ASGI middleware emits logfmt, the GPU exporter emits plaintext, each requiring different LogQL parsing pipelines
 - **Prevention**: emit a test request through the full pipeline, check raw telemetry at the collector (e.g., query Loki with `{job="app"} | line_format "{{.}}"` to see raw lines), then write queries that match the actual format. Do this for every new telemetry source before building dashboards
 
-<!-- DIAGRAM: ch12-burn-rate-alerting.html - Burn Rate Alerting -->
+<!-- DIAGRAM: ch13-burn-rate-alerting.html - Burn Rate Alerting -->
 
 \newpage
 
@@ -288,7 +288,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - **Alerting on every SLO violation individually**: multi-window burn rate alerts prevent alert fatigue; a single spike that self-resolves should not page anyone
 - **Forgetting that model accuracy compounds with infrastructure reliability**: 99% model accuracy on 99.9% infrastructure yields 98.9% end-to-end quality; account for both in error budget planning
 - **Point-in-time sampling of connection gauges for fast requests**: an `ObservableGauge` sampled at 60-second intervals reads zero for all sub-second streams; the metric is useless for capacity planning and auto-scaling. Use peak-tracking counters or high-frequency histograms instead
-- **Measuring streaming latency at response headers instead of response completion**: standard HTTP middleware (e.g., Starlette's `BaseHTTPMiddleware`) reports latency only to headers-sent, then returns. For streaming ML responses, the entire inference duration occurs during body streaming. A request consuming 30 seconds of GPU time shows as 1ms in header-only metrics. Use ASGI-level instrumentation that captures the full `send()` lifecycle (see Chapter 6)
+- **Measuring streaming latency at response headers instead of response completion**: standard HTTP middleware (e.g., Starlette's `BaseHTTPMiddleware`) reports latency only to headers-sent, then returns. For streaming ML responses, the entire inference duration occurs during body streaming. A request consuming 30 seconds of GPU time shows as 1ms in header-only metrics. Use ASGI-level instrumentation that captures the full `send()` lifecycle (see Chapter 7)
 - **Dashboard queries targeting labels that don't match exporter configuration**: if traces export `service_name` but dashboards query by `service`, every panel silently shows "no data." Always verify label names across metrics, traces, and logs before building dashboards
 - **Writing LogQL/PromQL queries before verifying emitted format**: queries built for JSON parsing (`| json`) fail silently against logfmt-emitting applications. Test against actual raw telemetry output before scaling query patterns across dashboards
 
@@ -317,4 +317,4 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ---
 
-**Next: [Chapter 13: Usage Metering & Billing](./13-usage-metering-billing.md)**
+**Next: [Chapter 14: Usage Metering & Billing](./14-usage-metering-billing.md)**

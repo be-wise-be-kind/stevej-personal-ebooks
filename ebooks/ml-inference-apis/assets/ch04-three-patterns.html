@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three Deployment Architecture Patterns</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Shared Cluster: green/teal gradient -->
+                <linearGradient id="sharedGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#14b8a6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0d9488;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="sharedGradLight" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#99f6e4;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#5eead4;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="gpuPoolGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ccfbf1;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#99f6e4;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Container-per-Model: blue gradient -->
+                <linearGradient id="isoGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="isoGradLight" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#bfdbfe;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#93c5fd;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Platform Template: purple/indigo gradient -->
+                <linearGradient id="platGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="platGradLight" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ddd6fe;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#c4b5fd;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="platServiceGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#ede9fe;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ddd6fe;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Arrow marker -->
+                <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+                </marker>
+                <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+                </marker>
+
+                <!-- Drop shadow -->
+                <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+                    <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.12"/>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="900" height="620" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="450" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #1e293b; text-anchor: middle;">Three Deployment Architecture Patterns</text>
+            <text x="450" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">Same three models (ASR, TTS, PII Redaction) deployed under each pattern</text>
+
+            <!-- Column headers -->
+            <text x="155" y="82" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #0d9488; text-anchor: middle;">Pattern 1: Shared Cluster</text>
+            <text x="460" y="82" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #2563eb; text-anchor: middle;">Pattern 2: Container-per-Model</text>
+            <text x="755" y="82" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #7c3aed; text-anchor: middle;">Pattern 3: Platform Template</text>
+
+            <!-- Dashed dividers -->
+            <line x1="302" y1="68" x2="302" y2="530" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="608" y1="68" x2="608" y2="530" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+
+
+            <!-- ==================== COLUMN 1: SHARED CLUSTER ==================== -->
+            <g transform="translate(20, 95)">
+                <!-- K8s cluster outer box -->
+                <rect x="8" y="0" width="270" height="280" rx="10" fill="none" stroke="#0d9488" stroke-width="2" stroke-dasharray="6,3"/>
+                <text x="143" y="20" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #0d9488; text-anchor: middle;">K8s Cluster</text>
+
+                <!-- GPU Pool area -->
+                <rect x="22" y="32" width="242" height="150" rx="6" fill="url(#gpuPoolGrad)" stroke="#5eead4" stroke-width="1"/>
+                <text x="143" y="50" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #0f766e; text-anchor: middle;">Shared GPU Pool</text>
+
+                <!-- GPU icons row -->
+                <rect x="38" y="58" width="40" height="18" rx="3" fill="#ccfbf1" stroke="#0d9488" stroke-width="1"/>
+                <text x="58" y="71" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #0f766e; text-anchor: middle;">GPU</text>
+                <rect x="86" y="58" width="40" height="18" rx="3" fill="#ccfbf1" stroke="#0d9488" stroke-width="1"/>
+                <text x="106" y="71" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #0f766e; text-anchor: middle;">GPU</text>
+                <rect x="134" y="58" width="40" height="18" rx="3" fill="#ccfbf1" stroke="#0d9488" stroke-width="1"/>
+                <text x="154" y="71" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #0f766e; text-anchor: middle;">GPU</text>
+                <rect x="182" y="58" width="40" height="18" rx="3" fill="#ccfbf1" stroke="#0d9488" stroke-width="1"/>
+                <text x="202" y="71" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #0f766e; text-anchor: middle;">GPU</text>
+
+                <!-- Model boxes inside GPU pool -->
+                <rect x="36" y="90" width="66" height="40" rx="5" fill="url(#sharedGrad)" filter="url(#shadow)"/>
+                <text x="69" y="114" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #ffffff; text-anchor: middle;">ASR</text>
+
+                <rect x="110" y="90" width="66" height="40" rx="5" fill="url(#sharedGrad)" filter="url(#shadow)"/>
+                <text x="143" y="114" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #ffffff; text-anchor: middle;">TTS</text>
+
+                <rect x="184" y="90" width="66" height="40" rx="5" fill="url(#sharedGrad)" filter="url(#shadow)"/>
+                <text x="217" y="114" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 600; fill: #ffffff; text-anchor: middle;">PII</text>
+
+                <!-- Pipeline arrow -->
+                <line x1="69" y1="138" x2="69" y2="158" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+                <line x1="143" y1="138" x2="143" y2="158" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+                <line x1="217" y1="138" x2="217" y2="158" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+                <!-- Single pipeline bar -->
+                <rect x="36" y="160" width="214" height="14" rx="3" fill="url(#sharedGradLight)"/>
+                <text x="143" y="170" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; font-weight: 600; fill: #0f766e; text-anchor: middle;">Single Shared Pipeline</text>
+
+                <!-- Label below cluster box -->
+                <text x="143" y="300" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">1 cluster, 1 pipeline, shared GPUs</text>
+
+                <!-- Annotation -->
+                <rect x="28" y="316" width="230" height="28" rx="5" fill="#f0fdfa" stroke="#99f6e4" stroke-width="1"/>
+                <text x="143" y="334" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #0d9488; text-anchor: middle;">Lowest cost, highest coupling</text>
+            </g>
+
+
+            <!-- ==================== COLUMN 2: CONTAINER-PER-MODEL ==================== -->
+            <g transform="translate(318, 95)">
+                <!-- ASR deployment -->
+                <rect x="8" y="0" width="270" height="78" rx="8" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+                <rect x="22" y="12" width="56" height="36" rx="5" fill="url(#isoGrad)" filter="url(#shadow)"/>
+                <text x="50" y="34" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #ffffff; text-anchor: middle;">ASR</text>
+                <rect x="90" y="17" width="34" height="24" rx="3" fill="url(#isoGradLight)" stroke="#93c5fd" stroke-width="0.5"/>
+                <text x="107" y="33" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #1e40af; text-anchor: middle;">GPU</text>
+                <!-- Pipeline arrow -->
+                <line x1="132" y1="30" x2="170" y2="30" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+                <text x="200" y="26" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #64748b; text-anchor: start;">CI/CD</text>
+                <rect x="188" y="28" width="72" height="14" rx="3" fill="#eff6ff" stroke="#bfdbfe" stroke-width="0.5"/>
+                <text x="224" y="39" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #3b82f6; text-anchor: middle;">own pipeline</text>
+                <text x="143" y="68" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 600; fill: #3b82f6; text-anchor: middle;">ASR Deployment</text>
+
+                <!-- TTS deployment -->
+                <rect x="8" y="94" width="270" height="78" rx="8" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+                <rect x="22" y="106" width="56" height="36" rx="5" fill="url(#isoGrad)" filter="url(#shadow)"/>
+                <text x="50" y="128" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #ffffff; text-anchor: middle;">TTS</text>
+                <rect x="90" y="111" width="34" height="24" rx="3" fill="url(#isoGradLight)" stroke="#93c5fd" stroke-width="0.5"/>
+                <text x="107" y="127" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #1e40af; text-anchor: middle;">GPU</text>
+                <line x1="132" y1="124" x2="170" y2="124" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+                <text x="200" y="120" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #64748b; text-anchor: start;">CI/CD</text>
+                <rect x="188" y="122" width="72" height="14" rx="3" fill="#eff6ff" stroke="#bfdbfe" stroke-width="0.5"/>
+                <text x="224" y="133" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #3b82f6; text-anchor: middle;">own pipeline</text>
+                <text x="143" y="162" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 600; fill: #3b82f6; text-anchor: middle;">TTS Deployment</text>
+
+                <!-- PII deployment -->
+                <rect x="8" y="188" width="270" height="78" rx="8" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+                <rect x="22" y="200" width="56" height="36" rx="5" fill="url(#isoGrad)" filter="url(#shadow)"/>
+                <text x="50" y="222" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #ffffff; text-anchor: middle;">PII</text>
+                <rect x="90" y="205" width="34" height="24" rx="3" fill="url(#isoGradLight)" stroke="#93c5fd" stroke-width="0.5"/>
+                <text x="107" y="221" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #1e40af; text-anchor: middle;">GPU</text>
+                <line x1="132" y1="218" x2="170" y2="218" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+                <text x="200" y="214" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 8px; fill: #64748b; text-anchor: start;">CI/CD</text>
+                <rect x="188" y="216" width="72" height="14" rx="3" fill="#eff6ff" stroke="#bfdbfe" stroke-width="0.5"/>
+                <text x="224" y="227" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #3b82f6; text-anchor: middle;">own pipeline</text>
+                <text x="143" y="256" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 600; fill: #3b82f6; text-anchor: middle;">PII Deployment</text>
+
+                <!-- Label -->
+                <text x="143" y="300" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">Isolated deployments, own CI/CD</text>
+
+                <!-- Annotation -->
+                <rect x="12" y="316" width="262" height="28" rx="5" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+                <text x="143" y="334" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #2563eb; text-anchor: middle;">Best isolation, 30-50% more GPU spend</text>
+            </g>
+
+
+            <!-- ==================== COLUMN 3: PLATFORM TEMPLATE ==================== -->
+            <g transform="translate(622, 95)">
+                <!-- Template layer on top -->
+                <rect x="8" y="0" width="256" height="40" rx="6" fill="url(#platGrad)" filter="url(#shadow)"/>
+                <text x="136" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #ffffff; text-anchor: middle;">Terraform Module / Helm Chart</text>
+
+                <!-- Dotted lines from template to deployments -->
+                <line x1="60" y1="40" x2="60" y2="62" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="3,2"/>
+                <line x1="136" y1="40" x2="136" y2="62" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="3,2"/>
+                <line x1="210" y1="40" x2="210" y2="62" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+                <!-- Three generated deployments -->
+                <rect x="18" y="62" width="80" height="68" rx="6" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+                <rect x="28" y="72" width="60" height="30" rx="4" fill="url(#platGradLight)" stroke="#c4b5fd" stroke-width="0.5"/>
+                <text x="58" y="91" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #5b21b6; text-anchor: middle;">ASR</text>
+                <rect x="33" y="107" width="50" height="14" rx="3" fill="#ede9fe"/>
+                <text x="58" y="117" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #7c3aed; text-anchor: middle;">GPU + CI/CD</text>
+
+                <rect x="106" y="62" width="80" height="68" rx="6" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+                <rect x="116" y="72" width="60" height="30" rx="4" fill="url(#platGradLight)" stroke="#c4b5fd" stroke-width="0.5"/>
+                <text x="146" y="91" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #5b21b6; text-anchor: middle;">TTS</text>
+                <rect x="121" y="107" width="50" height="14" rx="3" fill="#ede9fe"/>
+                <text x="146" y="117" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #7c3aed; text-anchor: middle;">GPU + CI/CD</text>
+
+                <rect x="194" y="62" width="80" height="68" rx="6" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+                <rect x="204" y="72" width="60" height="30" rx="4" fill="url(#platGradLight)" stroke="#c4b5fd" stroke-width="0.5"/>
+                <text x="234" y="91" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: 600; fill: #5b21b6; text-anchor: middle;">PII</text>
+                <rect x="209" y="107" width="50" height="14" rx="3" fill="#ede9fe"/>
+                <text x="234" y="117" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 7px; fill: #7c3aed; text-anchor: middle;">GPU + CI/CD</text>
+
+                <!-- Dotted lines from deployments to shared services -->
+                <line x1="58" y1="130" x2="58" y2="152" stroke="#8b5cf6" stroke-width="1" stroke-dasharray="3,2"/>
+                <line x1="146" y1="130" x2="146" y2="152" stroke="#8b5cf6" stroke-width="1" stroke-dasharray="3,2"/>
+                <line x1="234" y1="130" x2="234" y2="152" stroke="#8b5cf6" stroke-width="1" stroke-dasharray="3,2"/>
+
+                <!-- Shared services bar -->
+                <rect x="8" y="152" width="256" height="36" rx="6" fill="url(#platServiceGrad)" stroke="#c4b5fd" stroke-width="1"/>
+                <!-- Three service sections -->
+                <text x="58" y="174" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 600; fill: #5b21b6; text-anchor: middle;">Observability</text>
+                <line x1="95" y1="158" x2="95" y2="182" stroke="#c4b5fd" stroke-width="1"/>
+                <text x="136" y="174" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 600; fill: #5b21b6; text-anchor: middle;">Registry</text>
+                <line x1="175" y1="158" x2="175" y2="182" stroke="#c4b5fd" stroke-width="1"/>
+                <text x="219" y="174" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; font-weight: 600; fill: #5b21b6; text-anchor: middle;">Gateway</text>
+
+                <!-- Label -->
+                <text x="136" y="300" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">Template-driven, shared services</text>
+
+                <!-- Annotation -->
+                <rect x="28" y="316" width="216" height="28" rx="5" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1"/>
+                <text x="136" y="334" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #7c3aed; text-anchor: middle;">Best balance at scale</text>
+            </g>
+
+
+            <!-- ==================== BOTTOM LEGEND ==================== -->
+            <g transform="translate(40, 560)">
+                <rect x="0" y="0" width="820" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+
+                <!-- Shared Cluster key -->
+                <rect x="30" y="13" width="18" height="14" rx="3" fill="url(#sharedGrad)"/>
+                <text x="56" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">Shared Cluster</text>
+
+                <!-- Divider -->
+                <line x1="175" y1="8" x2="175" y2="32" stroke="#e2e8f0" stroke-width="1"/>
+
+                <!-- Container-per-Model key -->
+                <rect x="195" y="13" width="18" height="14" rx="3" fill="url(#isoGrad)"/>
+                <text x="221" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">Container-per-Model</text>
+
+                <!-- Divider -->
+                <line x1="375" y1="8" x2="375" y2="32" stroke="#e2e8f0" stroke-width="1"/>
+
+                <!-- Platform Template key -->
+                <rect x="395" y="13" width="18" height="14" rx="3" fill="url(#platGrad)"/>
+                <text x="421" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">Platform Template</text>
+
+                <!-- Divider -->
+                <line x1="560" y1="8" x2="560" y2="32" stroke="#e2e8f0" stroke-width="1"/>
+
+                <!-- Dashed = cluster/template boundary -->
+                <line x1="580" y1="20" x2="610" y2="20" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/>
+                <text x="620" y="24" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569;">Cluster / template boundary</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

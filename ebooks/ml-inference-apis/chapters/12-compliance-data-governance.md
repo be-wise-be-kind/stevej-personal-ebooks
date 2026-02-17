@@ -1,6 +1,6 @@
-# Chapter 11: Compliance & Data Governance
+# Chapter 12: Compliance & Data Governance
 
-<!-- DIAGRAM: ch11-opener.html - Chapter 11 Opener -->
+<!-- DIAGRAM: ch12-opener.html - Chapter 11 Opener -->
 
 \newpage
 
@@ -34,7 +34,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - **Availability**: SLOs for inference uptime, redundancy for model serving infrastructure, failover procedures
 - **Processing Integrity**: model versioning audit trails, ensuring the correct model version processes each request
 - **Confidentiality**: customer audio data isolation (multi-tenant separation), data classification policies for audio vs. transcripts vs. metadata
-- **Privacy**: PII handling procedures (cross-reference Chapter 10), data retention and deletion policies, consent management
+- **Privacy**: PII handling procedures (cross-reference Chapter 11), data retention and deletion policies, consent management
 
 ### SOC 2 Evidence for ML-Specific Controls
 
@@ -129,7 +129,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - **August 2, 2026**: High-risk AI system requirements and transparency obligations for AI systems that interact with natural persons
 - **August 2, 2027**: Requirements for AI systems embedded in regulated products (medical devices, vehicles, etc.)
 
-<!-- DIAGRAM: ch11-eu-ai-act-timeline.html - EU AI Act Timeline -->
+<!-- DIAGRAM: ch12-eu-ai-act-timeline.html - EU AI Act Timeline -->
 
 \newpage
 
@@ -212,7 +212,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - **Audit logging**: comprehensive, tamper-proof logging of all inference operations and data access events
 - **Consent management**: record and enforce user consent for audio processing, biometric analysis, and data retention
 
-<!-- DIAGRAM: ch11-compliance-matrix.html - Compliance Matrix -->
+<!-- DIAGRAM: ch12-compliance-matrix.html - Compliance Matrix -->
 
 \newpage
 
@@ -223,7 +223,7 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 - Example: retrofitting zero-retention into a system that was designed with persistent storage is a major rewrite; designing for zero-retention from the start is a configuration choice
 - The cost of bolt-on is 5-10x higher than built-in; both in engineering time and in audit remediation
 
-<!-- DIAGRAM: ch11-data-lifecycle.html - Data Lifecycle -->
+<!-- DIAGRAM: ch12-data-lifecycle.html - Data Lifecycle -->
 
 \newpage
 
@@ -262,4 +262,4 @@ This chapter draws on concepts from both ML infrastructure and API engineering. 
 
 ---
 
-**Next: [Chapter 12: SLOs for Streaming ML Systems](./12-slos-streaming-ml.md)**
+**Next: [Chapter 13: SLOs for Streaming ML Systems](./13-slos-streaming-ml.md)**

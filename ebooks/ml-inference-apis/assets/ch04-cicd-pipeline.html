@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Deployment vs Code Deployment Pipeline</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 550" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Blue gradient for code pipeline -->
+                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="blueLightGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#dbeafe;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#bfdbfe;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Orange/amber gradient for model pipeline -->
+                <linearGradient id="amberGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="amberLightGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#fef3c7;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#fde68a;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Arrow markers -->
+                <marker id="blueArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+                </marker>
+                <marker id="amberArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#d97706"/>
+                </marker>
+
+                <!-- Drop shadow -->
+                <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.1"/>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="900" height="550" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="450" y="35" text-anchor="middle" fill="#1e293b" font-size="20" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">
+                Model Deployment vs Code Deployment Pipeline
+            </text>
+
+            <!-- ============================================ -->
+            <!-- CODE DEPLOYMENT PIPELINE (Blue) - Top Row    -->
+            <!-- ============================================ -->
+
+            <!-- Section label -->
+            <text x="450" y="75" text-anchor="middle" fill="#2563eb" font-size="15" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">
+                Code Deployment Pipeline
+            </text>
+
+            <!-- Connection arrows (drawn first for z-order) -->
+            <line x1="232" y1="120" x2="258" y2="120" stroke="#3b82f6" stroke-width="2" marker-end="url(#blueArrow)"/>
+            <line x1="420" y1="120" x2="446" y2="120" stroke="#3b82f6" stroke-width="2" marker-end="url(#blueArrow)"/>
+            <line x1="608" y1="120" x2="634" y2="120" stroke="#3b82f6" stroke-width="2" marker-end="url(#blueArrow)"/>
+
+            <!-- Stage 1: Build -->
+            <rect x="70" y="92" width="160" height="56" rx="10" fill="url(#blueLightGrad)" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+            <text x="150" y="114" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">Build</text>
+            <text x="150" y="133" text-anchor="middle" fill="#3b82f6" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">~30s | 50-500 MB</text>
+
+            <!-- Stage 2: Test -->
+            <rect x="270" y="92" width="148" height="56" rx="10" fill="url(#blueLightGrad)" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+            <text x="344" y="114" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">Test</text>
+            <text x="344" y="133" text-anchor="middle" fill="#3b82f6" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">Unit tests | Pass/Fail</text>
+
+            <!-- Stage 3: Deploy -->
+            <rect x="448" y="92" width="158" height="56" rx="10" fill="url(#blueLightGrad)" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+            <text x="527" y="114" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">Deploy</text>
+            <text x="527" y="133" text-anchor="middle" fill="#3b82f6" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">~10s pull</text>
+
+            <!-- Stage 4: Verify -->
+            <rect x="646" y="92" width="158" height="56" rx="10" fill="url(#blueLightGrad)" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+            <text x="725" y="114" text-anchor="middle" fill="#1e40af" font-size="14" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">Verify</text>
+            <text x="725" y="133" text-anchor="middle" fill="#3b82f6" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">Health check</text>
+
+            <!-- Total time annotation -->
+            <text x="845" y="124" text-anchor="middle" fill="#2563eb" font-size="13" font-weight="700" style="font-family: Liberation Sans, Arial, sans-serif">Minutes</text>
+
+            <!-- ============================================ -->
+            <!-- COMPARISON ANNOTATIONS (Middle)              -->
+            <!-- ============================================ -->
+
+            <!-- Dashed separator lines -->
+            <line x1="40" y1="170" x2="860" y2="170" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="40" y1="280" x2="860" y2="280" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+
+            <!-- Comparison box background -->
+            <rect x="140" y="185" width="620" height="80" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+
+            <!-- Comparison items -->
+            <text x="450" y="210" text-anchor="middle" fill="#475569" font-size="13" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">
+                Key Differences
+            </text>
+
+            <text x="220" y="235" text-anchor="middle" fill="#64748b" font-size="12" style="font-family: Liberation Sans, Arial, sans-serif">
+                Artifact: MB vs GB
+            </text>
+            <text x="450" y="235" text-anchor="middle" fill="#64748b" font-size="12" style="font-family: Liberation Sans, Arial, sans-serif">
+                Validation: Deterministic vs Statistical
+            </text>
+            <text x="680" y="235" text-anchor="middle" fill="#64748b" font-size="12" style="font-family: Liberation Sans, Arial, sans-serif">
+                Rollback: Seconds vs Minutes
+            </text>
+
+            <!-- Comparison indicator dots -->
+            <circle cx="155" cy="231" r="4" fill="#3b82f6"/>
+            <circle cx="155" cy="249" r="4" fill="#f59e0b"/>
+            <text x="167" y="235" fill="#3b82f6" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">Code</text>
+            <text x="167" y="253" fill="#d97706" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">Model</text>
+
+            <!-- ============================================ -->
+            <!-- MODEL DEPLOYMENT PIPELINE (Amber) - Bottom   -->
+            <!-- ============================================ -->
+
+            <!-- Section label -->
+            <text x="450" y="310" text-anchor="middle" fill="#d97706" font-size="15" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">
+                Model Deployment Pipeline
+            </text>
+
+            <!-- Connection arrows (drawn first for z-order) -->
+            <line x1="195" y1="360" x2="211" y2="360" stroke="#d97706" stroke-width="2" marker-end="url(#amberArrow)"/>
+            <line x1="355" y1="360" x2="371" y2="360" stroke="#d97706" stroke-width="2" marker-end="url(#amberArrow)"/>
+            <line x1="505" y1="360" x2="521" y2="360" stroke="#d97706" stroke-width="2" marker-end="url(#amberArrow)"/>
+            <line x1="655" y1="360" x2="671" y2="360" stroke="#d97706" stroke-width="2" marker-end="url(#amberArrow)"/>
+
+            <!-- Stage 1: Build -->
+            <rect x="40" y="330" width="153" height="60" rx="10" fill="url(#amberLightGrad)" stroke="#d97706" stroke-width="2" filter="url(#shadow)"/>
+            <text x="116" y="354" text-anchor="middle" fill="#92400e" font-size="14" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">Build</text>
+            <text x="116" y="374" text-anchor="middle" fill="#b45309" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">7+ min | 1-15 GB</text>
+
+            <!-- Stage 2: Quality Gate -->
+            <rect x="223" y="330" width="130" height="60" rx="10" fill="url(#amberLightGrad)" stroke="#d97706" stroke-width="2" filter="url(#shadow)"/>
+            <text x="288" y="352" text-anchor="middle" fill="#92400e" font-size="13" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">Quality Gate</text>
+            <text x="288" y="367" text-anchor="middle" fill="#b45309" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">WER comparison</text>
+            <text x="288" y="380" text-anchor="middle" fill="#b45309" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">Statistical</text>
+
+            <!-- Stage 3: Staging -->
+            <rect x="383" y="330" width="120" height="60" rx="10" fill="url(#amberLightGrad)" stroke="#d97706" stroke-width="2" filter="url(#shadow)"/>
+            <text x="443" y="354" text-anchor="middle" fill="#92400e" font-size="14" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">Staging</text>
+            <text x="443" y="374" text-anchor="middle" fill="#b45309" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">Production replay</text>
+
+            <!-- Stage 4: Canary -->
+            <rect x="533" y="330" width="120" height="60" rx="10" fill="url(#amberLightGrad)" stroke="#d97706" stroke-width="2" filter="url(#shadow)"/>
+            <text x="593" y="352" text-anchor="middle" fill="#92400e" font-size="13" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">Canary 1-5%</text>
+            <text x="593" y="370" text-anchor="middle" fill="#b45309" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">30-60 min</text>
+            <text x="593" y="383" text-anchor="middle" fill="#b45309" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">soak</text>
+
+            <!-- Stage 5: Promote -->
+            <rect x="683" y="330" width="140" height="60" rx="10" fill="url(#amberLightGrad)" stroke="#d97706" stroke-width="2" filter="url(#shadow)"/>
+            <text x="753" y="354" text-anchor="middle" fill="#92400e" font-size="14" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">Promote</text>
+            <text x="753" y="374" text-anchor="middle" fill="#b45309" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">Region by region</text>
+
+            <!-- Total time annotation -->
+            <text x="845" y="364" text-anchor="middle" fill="#d97706" font-size="13" font-weight="700" style="font-family: Liberation Sans, Arial, sans-serif">Hours</text>
+
+            <!-- ============================================ -->
+            <!-- TIME SCALE COMPARISON (Bottom)               -->
+            <!-- ============================================ -->
+
+            <!-- Blue time bar -->
+            <rect x="70" y="425" width="120" height="14" rx="7" fill="#3b82f6" opacity="0.8"/>
+            <text x="200" y="436" fill="#2563eb" font-size="11" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">Code: Minutes</text>
+
+            <!-- Amber time bar -->
+            <rect x="70" y="455" width="700" height="14" rx="7" fill="#f59e0b" opacity="0.8"/>
+            <text x="780" y="466" fill="#d97706" font-size="11" font-weight="600" style="font-family: Liberation Sans, Arial, sans-serif">Model: Hours</text>
+
+            <!-- Scale labels -->
+            <text x="70" y="495" text-anchor="start" fill="#94a3b8" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">0</text>
+            <text x="190" y="495" text-anchor="middle" fill="#94a3b8" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">15 min</text>
+            <text x="310" y="495" text-anchor="middle" fill="#94a3b8" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">30 min</text>
+            <text x="430" y="495" text-anchor="middle" fill="#94a3b8" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">1 hr</text>
+            <text x="570" y="495" text-anchor="middle" fill="#94a3b8" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">2 hr</text>
+            <text x="770" y="495" text-anchor="middle" fill="#94a3b8" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">4 hr+</text>
+
+            <!-- Tick marks -->
+            <line x1="70" y1="478" x2="70" y2="486" stroke="#cbd5e1" stroke-width="1"/>
+            <line x1="190" y1="478" x2="190" y2="486" stroke="#cbd5e1" stroke-width="1"/>
+            <line x1="310" y1="478" x2="310" y2="486" stroke="#cbd5e1" stroke-width="1"/>
+            <line x1="430" y1="478" x2="430" y2="486" stroke="#cbd5e1" stroke-width="1"/>
+            <line x1="570" y1="478" x2="570" y2="486" stroke="#cbd5e1" stroke-width="1"/>
+            <line x1="770" y1="478" x2="770" y2="486" stroke="#cbd5e1" stroke-width="1"/>
+
+            <!-- Baseline -->
+            <line x1="70" y1="478" x2="770" y2="478" stroke="#cbd5e1" stroke-width="1"/>
+
+            <!-- Footer note -->
+            <text x="450" y="530" text-anchor="middle" fill="#94a3b8" font-size="10" style="font-family: Liberation Sans, Arial, sans-serif">
+                Model pipelines require statistical validation and gradual traffic shifting, extending deployment time significantly
+            </text>
+        </svg>
+    </div>
+</body>
+</html>
