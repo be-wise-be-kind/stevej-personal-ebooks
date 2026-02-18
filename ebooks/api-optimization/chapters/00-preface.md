@@ -163,6 +163,12 @@ Defining scope is as important as defining content. This book focuses specifical
 
 If these topics interest you, the References section at the end of each chapter points to resources that cover them well.
 
+## A Note on How This Book Was Written {-}
+
+This book was written with substantial assistance from AI language models. The author directed the structure, chose the topics, decided what to include and exclude, verified technical claims against cited sources, and edited every chapter. The drafting itself was a collaboration between human judgment and AI generation.
+
+Transparency about this matters more than pretending otherwise. The result is a book that reflects the author's experience and editorial decisions, produced using tools that made it possible for one person to cover this breadth of material. If the content helps you build faster, more reliable APIs, the process that produced it is a footnote.
+
 ---
 
 With that context in hand, let's begin. Chapter 1 introduces the problem landscape, makes the business case for performance work, and establishes the core methodology and principles that guide every optimization effort in this book.
