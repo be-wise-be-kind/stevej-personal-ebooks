@@ -499,3 +499,11 @@ release version="":
         --generate-notes
 
     echo "Release $VERSION published successfully!"
+
+# Dry-run: show extracted passages without searching
+plagiarism-dry-run bookname:
+    python3 scripts/check-plagiarism.py {{bookname}} --dry-run
+
+# Run plagiarism spot-check via web search
+plagiarism-check bookname *args:
+    python3 scripts/check-plagiarism.py {{bookname}} {{args}}

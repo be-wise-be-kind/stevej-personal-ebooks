@@ -187,17 +187,39 @@ The following works are referenced across multiple chapters and form the foundat
 
 ## Chapter 5: Streaming Audio Architecture
 
-1. **AssemblyAI** (2026). "Top APIs and Models for Real-Time Speech Recognition 2026." https://www.assemblyai.com/blog/
+1. **AssemblyAI** (2025). "The 300ms Rule: Why Latency Makes or Breaks Voice AI." https://www.assemblyai.com/blog/the-300ms-rule
 
-2. **Deepgram** (2026). "Best Speech-to-Text APIs 2026." https://deepgram.com/learn/best-speech-to-text-apis
+2. **Google** (2024). "RAIL Performance Model." https://web.dev/rail
 
-3. **OpenAI** (2025). "Realtime API Documentation." https://platform.openai.com/docs/guides/realtime
+3. **RFC 6716** (2012). Valin, J.-M., Vos, K., & Terriberry, T. "Definition of the Opus Audio Codec." Internet Engineering Task Force. https://www.rfc-editor.org/rfc/rfc6716
 
-4. **Google Cloud** (2025). "Speech-to-Text Documentation." https://cloud.google.com/speech-to-text/docs
+4. **Xiph.Org Foundation** (2025). "FLAC: Free Lossless Audio Codec." https://xiph.org/flac/
 
-5. **Amazon Web Services** (2025). "Amazon Transcribe Streaming Documentation." https://docs.aws.amazon.com/transcribe/
+5. **ITU-T** (1988). "G.711: Pulse Code Modulation (PCM) of Voice Frequencies." International Telecommunication Union.
 
-6. **AssemblyAI** (2025). "The 300ms Rule: Why Latency Makes or Breaks Voice AI." https://www.assemblyai.com/blog/the-300ms-rule
+6. **Silero VAD** (2025). "Silero VAD: Pre-trained Enterprise-Grade Voice Activity Detector." GitHub. https://github.com/snakers4/silero-vad
+
+7. **Cisco** (2025). "Voice Over IP: Per Call Bandwidth Consumption." https://www.cisco.com/c/en/us/support/docs/voice/voice-quality/7934-bwidth-consume.html
+
+8. **ITU-T P.59** (1993). "Artificial Conversational Speech." International Telecommunication Union.
+
+9. **Deepgram** (2026). "Best Speech-to-Text APIs 2026." https://deepgram.com/learn/best-speech-to-text-apis
+
+10. **Deepgram** (2025). "Measuring Streaming Latency." https://developers.deepgram.com/docs/measuring-streaming-latency
+
+11. **Deepgram** (2025). "Endpointing." https://developers.deepgram.com/docs/endpointing
+
+12. **AssemblyAI** (2026). "Top APIs and Models for Real-Time Speech Recognition 2026." https://www.assemblyai.com/blog/
+
+13. **Google Cloud** (2025). "Speech-to-Text Streaming Recognition; gRPC API Reference." https://cloud.google.com/speech-to-text/docs
+
+14. **Amazon Web Services** (2025). "Amazon Transcribe Streaming Transcription." https://docs.aws.amazon.com/transcribe/
+
+15. **OpenAI** (2025). "Realtime API Documentation; Audio Formats and Protocols." https://platform.openai.com/docs/guides/realtime
+
+16. **gRPC** (2025). "Flow Control." https://grpc.io/docs/guides/flow-control/
+
+17. **WebRTC** (2025). "WebRTC Jitter Buffer and Audio Processing." https://webrtchacks.com/how-webrtcs-neteq-jitter-buffer-provides-smooth-audio/
 
 ---
 

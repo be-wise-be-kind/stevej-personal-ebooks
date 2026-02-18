@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>End-to-End Streaming Audio Architecture</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            width: 100%;
+            max-width: 1440px;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 550" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="clientGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="transportGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#475569;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="serverGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="resultClientGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#047857;stop-opacity:1" />
+                </linearGradient>
+                <marker id="arrowFwd" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #7c3aed;"/>
+                </marker>
+                <marker id="arrowBack" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #059669;"/>
+                </marker>
+                <marker id="arrowGray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #94a3b8;"/>
+                </marker>
+            </defs>
+
+            <!-- Title -->
+            <text x="450" y="32" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #1e293b; text-anchor: middle;">End-to-End Streaming Audio Architecture</text>
+            <text x="450" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle;">Bidirectional data flow between client and inference server</text>
+
+            <!-- === TOP ROW: Forward Path (Audio Upload) === -->
+            <text x="450" y="85" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #7c3aed; text-anchor: middle;">AUDIO PATH (client → server)</text>
+
+            <!-- Client Side -->
+            <g transform="translate(30, 100)">
+                <rect x="0" y="0" width="170" height="110" rx="8" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1.5"/>
+                <text x="85" y="22" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #5b21b6; text-anchor: middle;">CLIENT</text>
+
+                <!-- Sub-stages -->
+                <rect x="15" y="36" width="140" height="26" rx="4" fill="url(#clientGrad)"/>
+                <text x="85" y="54" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">Mic Capture (16kHz)</text>
+
+                <rect x="15" y="70" width="140" height="26" rx="4" fill="url(#clientGrad)"/>
+                <text x="85" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">Codec Encode (Opus)</text>
+            </g>
+
+            <!-- Arrow: Client to Transport -->
+            <line x1="205" y1="155" x2="235" y2="155" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowFwd)"/>
+            <text x="220" y="147" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #7c3aed; text-anchor: middle;">100ms</text>
+            <text x="220" y="172" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #7c3aed; text-anchor: middle;">chunks</text>
+
+            <!-- Transport -->
+            <g transform="translate(240, 100)">
+                <rect x="0" y="0" width="130" height="110" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+                <text x="65" y="22" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #475569; text-anchor: middle;">TRANSPORT</text>
+
+                <rect x="15" y="36" width="100" height="26" rx="4" fill="url(#transportGrad)"/>
+                <text x="65" y="54" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">WebSocket</text>
+
+                <rect x="15" y="70" width="100" height="26" rx="4" fill="url(#transportGrad)"/>
+                <text x="65" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">gRPC / WebRTC</text>
+            </g>
+
+            <!-- Arrow: Transport to Server -->
+            <line x1="375" y1="155" x2="405" y2="155" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowFwd)"/>
+            <text x="390" y="147" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #7c3aed; text-anchor: middle;">binary</text>
+            <text x="390" y="172" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #7c3aed; text-anchor: middle;">frames</text>
+
+            <!-- Server Pipeline -->
+            <g transform="translate(410, 100)">
+                <rect x="0" y="0" width="460" height="110" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+                <text x="230" y="22" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #1e40af; text-anchor: middle;">SERVER INFERENCE PIPELINE</text>
+
+                <!-- Pipeline sub-stages -->
+                <rect x="15" y="40" width="80" height="56" rx="4" fill="url(#serverGrad)"/>
+                <text x="55" y="62" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">Buffer</text>
+                <text x="55" y="78" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #bfdbfe; text-anchor: middle;">Jitter +</text>
+                <text x="55" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #bfdbfe; text-anchor: middle;">Decode</text>
+
+                <!-- Arrow -->
+                <line x1="100" y1="68" x2="115" y2="68" stroke="#93c5fd" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+
+                <rect x="120" y="40" width="70" height="56" rx="4" fill="url(#serverGrad)"/>
+                <text x="155" y="62" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">VAD</text>
+                <text x="155" y="78" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #bfdbfe; text-anchor: middle;">Speech</text>
+                <text x="155" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #bfdbfe; text-anchor: middle;">Detection</text>
+
+                <!-- Arrow -->
+                <line x1="195" y1="68" x2="210" y2="68" stroke="#93c5fd" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+
+                <rect x="215" y="40" width="100" height="56" rx="4" fill="url(#serverGrad)"/>
+                <text x="265" y="62" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">ASR Model</text>
+                <text x="265" y="78" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #bfdbfe; text-anchor: middle;">GPU Inference</text>
+                <text x="265" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #bfdbfe; text-anchor: middle;">(Whisper/etc)</text>
+
+                <!-- Arrow -->
+                <line x1="320" y1="68" x2="335" y2="68" stroke="#93c5fd" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+
+                <rect x="340" y="40" width="100" height="56" rx="4" fill="url(#serverGrad)"/>
+                <text x="390" y="62" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #ffffff; text-anchor: middle;">Post-proc</text>
+                <text x="390" y="78" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #bfdbfe; text-anchor: middle;">Formatting,</text>
+                <text x="390" y="88" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #bfdbfe; text-anchor: middle;">Punctuation</text>
+            </g>
+
+            <!-- === RETURN PATH (Results) === -->
+            <text x="450" y="250" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #059669; text-anchor: middle;">RESULTS PATH (server → client)</text>
+
+            <!-- Return arrow: Server to Client -->
+            <g transform="translate(30, 265)">
+                <rect x="0" y="0" width="840" height="55" rx="8" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.5"/>
+
+                <!-- Return flow stages -->
+                <text x="710" y="22" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #065f46; text-anchor: middle;">Partial Results</text>
+                <text x="710" y="38" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #047857; text-anchor: middle;">(interim transcripts)</text>
+
+                <!-- Left arrow -->
+                <line x1="630" y1="28" x2="585" y2="28" stroke="#059669" stroke-width="1.5" marker-end="url(#arrowBack)"/>
+
+                <text x="505" y="22" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #065f46; text-anchor: middle;">Final Results</text>
+                <text x="505" y="38" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #047857; text-anchor: middle;">(after endpoint)</text>
+
+                <line x1="425" y1="28" x2="380" y2="28" stroke="#059669" stroke-width="1.5" marker-end="url(#arrowBack)"/>
+
+                <text x="305" y="22" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #065f46; text-anchor: middle;">Transport</text>
+                <text x="305" y="38" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #047857; text-anchor: middle;">(same connection)</text>
+
+                <line x1="225" y1="28" x2="180" y2="28" stroke="#059669" stroke-width="1.5" marker-end="url(#arrowBack)"/>
+
+                <text x="105" y="22" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #065f46; text-anchor: middle;">Client Render</text>
+                <text x="105" y="38" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 9px; fill: #047857; text-anchor: middle;">(word-by-word display)</text>
+            </g>
+
+            <!-- === SESSION STATE BAR === -->
+            <g transform="translate(30, 345)">
+                <rect x="0" y="0" width="840" height="70" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+                <text x="420" y="22" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #475569; text-anchor: middle;">SESSION STATE (maintained for connection lifetime)</text>
+
+                <!-- State items -->
+                <rect x="20" y="34" width="140" height="26" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="90" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">Audio Buffer</text>
+
+                <rect x="180" y="34" width="140" height="26" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="250" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">Decoder Context</text>
+
+                <rect x="340" y="34" width="140" height="26" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="410" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">VAD State</text>
+
+                <rect x="500" y="34" width="160" height="26" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="580" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">Partial Transcript Acc.</text>
+
+                <rect x="680" y="34" width="140" height="26" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="750" y="52" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #475569; text-anchor: middle;">Model KV Cache</text>
+            </g>
+
+            <!-- === TIMING ANNOTATIONS === -->
+            <g transform="translate(30, 440)">
+                <rect x="0" y="0" width="840" height="85" rx="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+                <text x="420" y="22" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #9a3412; text-anchor: middle;">LATENCY BUDGET (300ms total for voice AI)</text>
+
+                <!-- Timing segments -->
+                <rect x="20" y="38" width="160" height="32" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+                <text x="100" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #92400e; text-anchor: middle;">Capture: ~10ms</text>
+
+                <rect x="200" y="38" width="140" height="32" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+                <text x="270" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #92400e; text-anchor: middle;">Network: 10-50ms</text>
+
+                <rect x="360" y="38" width="280" height="32" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+                <text x="500" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #92400e; text-anchor: middle;">Inference + Post-proc: 100-200ms</text>
+
+                <rect x="660" y="38" width="160" height="32" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+                <text x="740" y="58" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; font-weight: 600; fill: #92400e; text-anchor: middle;">Delivery: 10-50ms</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>
