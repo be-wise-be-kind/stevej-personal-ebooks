@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 10: Traffic Management - Protecting the System</title>
+    <title>Chapter 9: Scaling Strategies by Bottleneck</title>
     <style>
         body {
             font-family: Liberation Sans, Arial, sans-serif;
@@ -30,226 +30,169 @@
 </head>
 <body>
     <div class="diagram-container">
-        <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 850 480" xmlns="http://www.w3.org/2000/svg">
             <defs>
-                <!-- Gradients -->
-                <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
-                    <stop offset="50%" style="stop-color:#1d4ed8;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
                 </linearGradient>
-
-                <linearGradient id="serverGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="greenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
                     <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
                 </linearGradient>
-
-                <linearGradient id="chaosGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#fef2f2;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#fee2e2;stop-opacity:0.3" />
+                <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
                 </linearGradient>
-
-                <linearGradient id="orderGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#dcfce7;stop-opacity:0.3" />
-                    <stop offset="100%" style="stop-color:#bbf7d0;stop-opacity:1" />
+                <linearGradient id="grayGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#64748b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#475569;stop-opacity:1" />
                 </linearGradient>
-
-                <!-- Drop shadow -->
                 <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.2"/>
+                    <feDropShadow dx="2" dy="2" stdDeviation="2" flood-opacity="0.15"/>
                 </filter>
-
-                <!-- Glow for shield -->
-                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                    <feMerge>
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                    </feMerge>
-                </filter>
-
-                <!-- Arrow marker for allowed requests -->
+                <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+                </marker>
+                <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#f59e0b"/>
+                </marker>
                 <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
                     <polygon points="0 0, 8 3, 0 6" fill="#22c55e"/>
                 </marker>
-
-                <!-- X marker for blocked requests -->
-                <marker id="blockX" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
-                    <circle cx="5" cy="5" r="4" fill="#ef4444"/>
-                    <line x1="3" y1="3" x2="7" y2="7" stroke="#ffffff" stroke-width="1.5"/>
-                    <line x1="7" y1="3" x2="3" y2="7" stroke="#ffffff" stroke-width="1.5"/>
+                <marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#8b5cf6"/>
+                </marker>
+                <marker id="arrowGray" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
                 </marker>
             </defs>
 
-            <!-- Background -->
-            <rect width="800" height="400" fill="#ffffff" rx="8"/>
-
             <!-- Title -->
-            <text x="400" y="32" text-anchor="middle" fill="#1e293b" font-size="18" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
-                Traffic Management: Protecting the System
+            <text x="425" y="30" text-anchor="middle" fill="#1e293b" font-size="18" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                Scaling Strategies: Match the Solution to the Bottleneck
             </text>
 
-            <!-- Chaos zone (left) -->
-            <rect x="20" y="50" width="280" height="300" fill="url(#chaosGradient)" rx="6"/>
-            <text x="160" y="75" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
-                INCOMING TRAFFIC
-            </text>
-
-            <!-- Order zone (right) -->
-            <rect x="500" y="50" width="280" height="300" fill="url(#orderGradient)" rx="6"/>
-            <text x="640" y="75" text-anchor="middle" fill="#16a34a" font-size="11" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
-                PROTECTED SYSTEM
-            </text>
-
-            <!-- Flood of incoming requests (chaotic dots/arrows from left) -->
-            <!-- Row 1 -->
-            <circle cx="40" cy="110" r="5" fill="#ef4444" opacity="0.7"/>
-            <circle cx="65" cy="105" r="4" fill="#f97316" opacity="0.8"/>
-            <circle cx="55" cy="125" r="6" fill="#ef4444" opacity="0.6"/>
-            <circle cx="85" cy="115" r="5" fill="#ef4444" opacity="0.75"/>
-            <circle cx="100" cy="108" r="4" fill="#f97316" opacity="0.7"/>
-
-            <!-- Row 2 -->
-            <circle cx="35" cy="150" r="6" fill="#ef4444" opacity="0.8"/>
-            <circle cx="60" cy="155" r="5" fill="#f97316" opacity="0.65"/>
-            <circle cx="80" cy="145" r="4" fill="#ef4444" opacity="0.7"/>
-            <circle cx="95" cy="160" r="6" fill="#ef4444" opacity="0.75"/>
-            <circle cx="45" cy="175" r="5" fill="#f97316" opacity="0.8"/>
-
-            <!-- Row 3 -->
-            <circle cx="50" cy="200" r="5" fill="#ef4444" opacity="0.7"/>
-            <circle cx="75" cy="195" r="6" fill="#ef4444" opacity="0.8"/>
-            <circle cx="40" cy="215" r="4" fill="#f97316" opacity="0.65"/>
-            <circle cx="90" cy="210" r="5" fill="#ef4444" opacity="0.7"/>
-            <circle cx="65" cy="225" r="5" fill="#f97316" opacity="0.75"/>
-
-            <!-- Row 4 -->
-            <circle cx="45" cy="250" r="6" fill="#ef4444" opacity="0.75"/>
-            <circle cx="70" cy="255" r="4" fill="#f97316" opacity="0.7"/>
-            <circle cx="55" cy="270" r="5" fill="#ef4444" opacity="0.8"/>
-            <circle cx="85" cy="245" r="5" fill="#ef4444" opacity="0.65"/>
-            <circle cx="95" cy="265" r="6" fill="#f97316" opacity="0.7"/>
-
-            <!-- Row 5 -->
-            <circle cx="40" cy="295" r="5" fill="#ef4444" opacity="0.7"/>
-            <circle cx="65" cy="300" r="6" fill="#f97316" opacity="0.75"/>
-            <circle cx="80" cy="290" r="4" fill="#ef4444" opacity="0.8"/>
-            <circle cx="50" cy="315" r="5" fill="#ef4444" opacity="0.65"/>
-            <circle cx="90" cy="310" r="5" fill="#f97316" opacity="0.7"/>
-
-            <!-- Incoming arrow streams (chaotic) -->
-            <line x1="120" y1="120" x2="280" y2="140" stroke="#ef4444" stroke-width="2" opacity="0.6"/>
-            <line x1="115" y1="160" x2="280" y2="175" stroke="#f97316" stroke-width="2" opacity="0.7"/>
-            <line x1="120" y1="200" x2="280" y2="200" stroke="#ef4444" stroke-width="2" opacity="0.65"/>
-            <line x1="115" y1="240" x2="280" y2="225" stroke="#ef4444" stroke-width="2" opacity="0.7"/>
-            <line x1="120" y1="280" x2="280" y2="260" stroke="#f97316" stroke-width="2" opacity="0.6"/>
-            <line x1="118" y1="310" x2="280" y2="295" stroke="#ef4444" stroke-width="2" opacity="0.55"/>
-
-            <!-- The Shield/Gate (center) -->
-            <g transform="translate(340, 90)">
-                <!-- Shield outer glow -->
-                <path d="M60 0 L120 20 L120 120 C120 180 60 220 60 220 C60 220 0 180 0 120 L0 20 Z"
-                      fill="url(#shieldGradient)" filter="url(#glow)" opacity="0.3" transform="scale(1.1) translate(-6, -10)"/>
-
-                <!-- Shield shape -->
-                <path d="M60 0 L120 20 L120 120 C120 180 60 220 60 220 C60 220 0 180 0 120 L0 20 Z"
-                      fill="url(#shieldGradient)" filter="url(#shadow)"/>
-
-                <!-- Shield inner highlight -->
-                <path d="M60 15 L105 30 L105 115 C105 165 60 195 60 195 C60 195 15 165 15 115 L15 30 Z"
-                      fill="none" stroke="#ffffff" stroke-width="2" opacity="0.3"/>
-
-                <!-- Shield emblem - checkmark -->
-                <path d="M35 110 L55 130 L90 80" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-
-                <!-- Rate limit text on shield -->
-                <text x="60" y="170" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
-                    RATE LIMIT
-                </text>
-                <text x="60" y="185" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif" opacity="0.9">
-                    CIRCUIT BREAKER
-                </text>
+            <!-- Traffic/Load box at top -->
+            <g transform="translate(350, 50)">
+                <rect x="0" y="0" width="150" height="40" rx="6" fill="url(#grayGrad)" filter="url(#shadow)"/>
+                <text x="75" y="26" text-anchor="middle" fill="white" font-size="13" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Increased Load</text>
             </g>
 
-            <!-- Blocked requests bouncing off (red, deflected) -->
-            <g transform="translate(280, 100)">
-                <!-- Blocked request 1 -->
-                <line x1="0" y1="40" x2="50" y2="60" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3"/>
-                <circle cx="0" cy="40" r="5" fill="#ef4444"/>
-                <line x1="50" y1="60" x2="30" y2="100" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3" opacity="0.6"/>
+            <!-- Arrow down to question -->
+            <line x1="425" y1="90" x2="425" y2="115" stroke="#64748b" stroke-width="2" marker-end="url(#arrowGray)"/>
 
-                <!-- Blocked request 2 -->
-                <line x1="0" y1="125" x2="50" y2="110" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3"/>
-                <circle cx="0" cy="125" r="5" fill="#ef4444"/>
-                <line x1="50" y1="110" x2="25" y2="70" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3" opacity="0.6"/>
-
-                <!-- Blocked request 3 -->
-                <line x1="0" y1="195" x2="50" y2="180" stroke="#f97316" stroke-width="2" stroke-dasharray="4,3"/>
-                <circle cx="0" cy="195" r="5" fill="#f97316"/>
-                <line x1="50" y1="180" x2="20" y2="230" stroke="#f97316" stroke-width="2" stroke-dasharray="4,3" opacity="0.6"/>
+            <!-- Central question box -->
+            <g transform="translate(300, 120)">
+                <rect x="0" y="0" width="250" height="50" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+                <text x="125" y="32" text-anchor="middle" fill="#92400e" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Where's the bottleneck?</text>
             </g>
 
-            <!-- X marks for rejected -->
-            <g fill="#ef4444">
-                <g transform="translate(305, 185)">
-                    <circle cx="0" cy="0" r="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
-                    <line x1="-4" y1="-4" x2="4" y2="4" stroke="#ef4444" stroke-width="2"/>
-                    <line x1="4" y1="-4" x2="-4" y2="4" stroke="#ef4444" stroke-width="2"/>
-                </g>
-                <g transform="translate(295, 245)">
-                    <circle cx="0" cy="0" r="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
-                    <line x1="-4" y1="-4" x2="4" y2="4" stroke="#ef4444" stroke-width="2"/>
-                    <line x1="4" y1="-4" x2="-4" y2="4" stroke="#ef4444" stroke-width="2"/>
-                </g>
+            <!-- Branching arrows -->
+            <!-- To Compute (left) -->
+            <path d="M 350 170 Q 350 195 200 195 L 200 220" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <!-- To Database -->
+            <path d="M 400 170 Q 400 195 365 195 L 365 220" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <!-- To Static Content -->
+            <path d="M 450 170 Q 450 195 485 195 L 485 220" fill="none" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <!-- To Variable Traffic (right) -->
+            <path d="M 500 170 Q 500 195 650 195 L 650 220" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+
+            <!-- Compute Bound box -->
+            <g transform="translate(115, 225)">
+                <rect x="0" y="0" width="170" height="45" rx="6" fill="url(#blueGrad)" filter="url(#shadow)"/>
+                <text x="85" y="20" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Compute Bound</text>
+                <text x="85" y="36" text-anchor="middle" fill="#bfdbfe" font-size="10" font-family="Liberation Sans, Arial, sans-serif">CPU/Memory saturated</text>
             </g>
 
-            <!-- Allowed requests passing through (green arrows) -->
-            <g stroke="#22c55e" stroke-width="2" fill="none">
-                <!-- Allowed request 1 -->
-                <line x1="470" y1="160" x2="530" y2="160" marker-end="url(#arrowGreen)"/>
-                <circle cx="480" cy="160" r="5" fill="#22c55e"/>
-
-                <!-- Allowed request 2 -->
-                <line x1="470" y1="200" x2="530" y2="200" marker-end="url(#arrowGreen)"/>
-                <circle cx="480" cy="200" r="5" fill="#22c55e"/>
-
-                <!-- Allowed request 3 -->
-                <line x1="470" y1="240" x2="530" y2="240" marker-end="url(#arrowGreen)"/>
-                <circle cx="480" cy="240" r="5" fill="#22c55e"/>
+            <!-- Database Bound box -->
+            <g transform="translate(295, 225)">
+                <rect x="0" y="0" width="140" height="45" rx="6" fill="url(#orangeGrad)" filter="url(#shadow)"/>
+                <text x="70" y="20" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Database Bound</text>
+                <text x="70" y="36" text-anchor="middle" fill="#fef3c7" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Queries/connections</text>
             </g>
 
-            <!-- Protected Server (right side) -->
-            <g transform="translate(590, 130)">
-                <!-- Server box -->
-                <rect x="0" y="0" width="140" height="140" rx="10" fill="url(#serverGradient)" filter="url(#shadow)"/>
-
-                <!-- Server details -->
-                <rect x="20" y="25" width="100" height="12" rx="2" fill="#ffffff" opacity="0.3"/>
-                <rect x="20" y="45" width="80" height="12" rx="2" fill="#ffffff" opacity="0.3"/>
-                <rect x="20" y="65" width="90" height="12" rx="2" fill="#ffffff" opacity="0.3"/>
-
-                <!-- Status indicators -->
-                <circle cx="35" cy="100" r="8" fill="#ffffff" opacity="0.9"/>
-                <circle cx="35" cy="100" r="5" fill="#16a34a"/>
-                <circle cx="70" cy="100" r="8" fill="#ffffff" opacity="0.9"/>
-                <circle cx="70" cy="100" r="5" fill="#16a34a"/>
-                <circle cx="105" cy="100" r="8" fill="#ffffff" opacity="0.9"/>
-                <circle cx="105" cy="100" r="5" fill="#16a34a"/>
-
-                <!-- Server label -->
-                <text x="70" y="130" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
-                    HEALTHY
-                </text>
+            <!-- Static Content box -->
+            <g transform="translate(445, 225)">
+                <rect x="0" y="0" width="140" height="45" rx="6" fill="url(#greenGrad)" filter="url(#shadow)"/>
+                <text x="70" y="20" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Static Content</text>
+                <text x="70" y="36" text-anchor="middle" fill="#dcfce7" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Cacheable responses</text>
             </g>
 
-            <!-- Labels -->
-            <text x="300" y="370" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
-                Rejected: 429 Too Many Requests
-            </text>
-            <text x="550" y="370" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">
-                Accepted: 200 OK
-            </text>
+            <!-- Variable Traffic box -->
+            <g transform="translate(595, 225)">
+                <rect x="0" y="0" width="140" height="45" rx="6" fill="url(#purpleGrad)" filter="url(#shadow)"/>
+                <text x="70" y="20" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Variable Traffic</text>
+                <text x="70" y="36" text-anchor="middle" fill="#e9d5ff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Unpredictable load</text>
+            </g>
 
+            <!-- Arrows to solutions -->
+            <!-- Compute splits to Vertical and Horizontal -->
+            <line x1="170" y1="270" x2="130" y2="305" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <line x1="230" y1="270" x2="230" y2="305" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+            <!-- Database to solutions -->
+            <line x1="365" y1="270" x2="365" y2="305" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <!-- Static to CDN -->
+            <line x1="515" y1="270" x2="515" y2="305" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <!-- Variable to Serverless -->
+            <line x1="665" y1="270" x2="665" y2="305" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+
+            <!-- Solution boxes - Row 1 -->
+            <!-- Vertical Scaling -->
+            <g transform="translate(50, 310)">
+                <rect x="0" y="0" width="130" height="70" rx="5" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+                <text x="65" y="20" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Vertical Scaling</text>
+                <text x="65" y="38" text-anchor="middle" fill="#3b82f6" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Bigger instances</text>
+                <text x="65" y="52" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">VPA, instance resizing</text>
+                <text x="65" y="64" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Simpler architecture</text>
+            </g>
+
+            <!-- Horizontal Scaling -->
+            <g transform="translate(190, 310)">
+                <rect x="0" y="0" width="130" height="70" rx="5" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+                <text x="65" y="20" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Horizontal Scaling</text>
+                <text x="65" y="38" text-anchor="middle" fill="#3b82f6" font-size="10" font-family="Liberation Sans, Arial, sans-serif">More instances</text>
+                <text x="65" y="52" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">HPA, Kubernetes, ASG</text>
+                <text x="65" y="64" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Near-linear scaling</text>
+            </g>
+
+            <!-- Database Solutions -->
+            <g transform="translate(330, 310)">
+                <rect x="0" y="0" width="130" height="70" rx="5" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="65" y="20" text-anchor="middle" fill="#92400e" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Data Scaling</text>
+                <text x="65" y="38" text-anchor="middle" fill="#b45309" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Read replicas</text>
+                <text x="65" y="52" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Sharding, CQRS</text>
+                <text x="65" y="64" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Connection pooling</text>
+            </g>
+
+            <!-- CDN/Edge -->
+            <g transform="translate(470, 310)">
+                <rect x="0" y="0" width="130" height="70" rx="5" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+                <text x="65" y="20" text-anchor="middle" fill="#166534" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">CDN / Edge</text>
+                <text x="65" y="38" text-anchor="middle" fill="#16a34a" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Cache at edge</text>
+                <text x="65" y="52" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Cloudflare, CloudFront</text>
+                <text x="65" y="64" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Offload origin servers</text>
+            </g>
+
+            <!-- Serverless -->
+            <g transform="translate(610, 310)">
+                <rect x="0" y="0" width="130" height="70" rx="5" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
+                <text x="65" y="20" text-anchor="middle" fill="#5b21b6" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Serverless</text>
+                <text x="65" y="38" text-anchor="middle" fill="#7c3aed" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Auto-scaling</text>
+                <text x="65" y="52" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Lambda, Cloud Run</text>
+                <text x="65" y="64" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Pay per request</text>
+            </g>
+
+            <!-- Footer note -->
+            <g transform="translate(125, 410)">
+                <rect x="0" y="0" width="600" height="50" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+                <text x="300" y="20" text-anchor="middle" fill="#475569" font-size="11" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Before Scaling: Profile First</text>
+                <text x="300" y="38" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Observability (Ch. 3) reveals bottlenecks • Optimize queries, caching, async (Ch. 6-8) before adding capacity</text>
+            </g>
         </svg>
     </div>
 </body>

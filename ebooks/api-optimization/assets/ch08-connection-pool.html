@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connection Pool Exhaustion</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Arrow markers -->
+                <marker id="arrowRed" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#ef4444"/>
+                </marker>
+                <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#22c55e"/>
+                </marker>
+                <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#f59e0b"/>
+                </marker>
+                <marker id="arrowGray" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+                </marker>
+            </defs>
+
+            <!-- ===== MAIN TITLE ===== -->
+            <text x="450" y="35" text-anchor="middle" font-size="20" font-weight="600" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Connection Pool: Thundering Herd vs. Jitter</text>
+
+            <!-- ===== TOP SCENARIO: THUNDERING HERD (BAD) ===== -->
+
+            <!-- Section label -->
+            <rect x="50" y="55" width="330" height="28" rx="5" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <text x="215" y="74" text-anchor="middle" font-size="13" font-weight="600" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Pool Exhaustion + Thundering Herd</text>
+
+            <!-- Timeline axis line -->
+            <line x1="80" y1="200" x2="820" y2="200" stroke="#e2e8f0" stroke-width="1.5"/>
+            <text x="80" y="215" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">t=0</text>
+            <text x="800" y="215" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">time →</text>
+
+            <!-- === POOL FILLING (partial) — left section === -->
+            <!-- Label "Pool (5/10 used)" -->
+            <text x="100" y="100" font-size="11" font-weight="500" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Pool (5/10 used)</text>
+
+            <!-- 5 green squares (connections in use) -->
+            <rect x="100" y="108" width="22" height="22" rx="3" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <rect x="126" y="108" width="22" height="22" rx="3" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <rect x="152" y="108" width="22" height="22" rx="3" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <rect x="178" y="108" width="22" height="22" rx="3" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <rect x="204" y="108" width="22" height="22" rx="3" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <!-- 5 empty slots -->
+            <rect x="230" y="108" width="22" height="22" rx="3" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+            <rect x="256" y="108" width="22" height="22" rx="3" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+            <rect x="282" y="108" width="22" height="22" rx="3" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+            <rect x="308" y="108" width="22" height="22" rx="3" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+            <rect x="334" y="108" width="22" height="22" rx="3" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+
+            <!-- Arrow: pool fills up -->
+            <line x1="370" y1="119" x2="400" y2="119" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+
+            <!-- === POOL FULL — middle-left section === -->
+            <text x="405" y="100" font-size="11" font-weight="500" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Pool FULL (10/10)</text>
+
+            <!-- 10 red squares -->
+            <rect x="405" y="108" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="431" y="108" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="457" y="108" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="483" y="108" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="509" y="108" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="535" y="108" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="561" y="108" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="587" y="108" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="613" y="108" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="639" y="108" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+
+            <!-- === WAITING QUEUE of threads === -->
+            <text x="405" y="155" font-size="11" font-weight="500" fill="#d97706" font-family="Liberation Sans, Arial, sans-serif">Waiting queue ⏱</text>
+
+            <!-- 5 thread/person icons (circle heads) -->
+            <!-- Thread 1 -->
+            <circle cx="418" cy="175" r="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <rect x="411" y="183" width="14" height="10" rx="2" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <!-- Thread 2 -->
+            <circle cx="444" cy="175" r="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <rect x="437" y="183" width="14" height="10" rx="2" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <!-- Thread 3 -->
+            <circle cx="470" cy="175" r="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <rect x="463" y="183" width="14" height="10" rx="2" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <!-- Thread 4 -->
+            <circle cx="496" cy="175" r="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <rect x="489" y="183" width="14" height="10" rx="2" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <!-- Thread 5 -->
+            <circle cx="522" cy="175" r="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <rect x="515" y="183" width="14" height="10" rx="2" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+
+            <!-- === POOL RECOVERS — vertical dashed line === -->
+            <line x1="680" y1="80" x2="680" y2="265" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6,4"/>
+            <text x="683" y="92" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Pool</text>
+            <text x="683" y="104" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">recovers</text>
+
+            <!-- === THUNDERING HERD BURST — all arrows to DB === -->
+            <!-- All 5 arrows fan out from same source point (x=680, y=200) to DB -->
+            <line x1="680" y1="200" x2="790" y2="235" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+            <line x1="680" y1="200" x2="793" y2="245" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+            <line x1="680" y1="200" x2="793" y2="255" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+            <line x1="680" y1="200" x2="790" y2="265" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+            <line x1="680" y1="200" x2="785" y2="275" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+
+            <!-- Thundering herd label -->
+            <text x="700" y="225" font-size="10" font-weight="600" fill="#ef4444" font-family="Liberation Sans, Arial, sans-serif">Thundering Herd!</text>
+
+            <!-- === DB cylinder (bad) === -->
+            <!-- Cylinder body -->
+            <rect x="800" y="228" width="70" height="55" rx="4" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+            <!-- Cylinder top ellipse -->
+            <ellipse cx="835" cy="232" rx="35" ry="8" fill="#fca5a5" stroke="#ef4444" stroke-width="2"/>
+            <!-- Cylinder bottom ellipse -->
+            <ellipse cx="835" cy="279" rx="35" ry="8" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+            <text x="835" y="254" text-anchor="middle" font-size="11" font-weight="600" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">DB</text>
+            <text x="835" y="268" text-anchor="middle" font-size="9" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Overwhelmed</text>
+
+            <!-- ===== DIVIDER LINE ===== -->
+            <line x1="30" y1="305" x2="870" y2="305" stroke="#e2e8f0" stroke-width="2"/>
+
+            <!-- ===== BOTTOM SCENARIO: JITTER + QUEUE (GOOD) ===== -->
+
+            <!-- Section label -->
+            <rect x="50" y="315" width="260" height="28" rx="5" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <text x="180" y="334" text-anchor="middle" font-size="13" font-weight="600" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">Jitter + Queue Approach</text>
+
+            <!-- Timeline axis line (bottom) -->
+            <line x1="80" y1="460" x2="820" y2="460" stroke="#e2e8f0" stroke-width="1.5"/>
+            <text x="80" y="475" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">t=0</text>
+            <text x="800" y="475" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">time →</text>
+
+            <!-- === POOL FILLING (partial) — left section bottom === -->
+            <text x="100" y="362" font-size="11" font-weight="500" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Pool (5/10 used)</text>
+
+            <!-- 5 green squares -->
+            <rect x="100" y="370" width="22" height="22" rx="3" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <rect x="126" y="370" width="22" height="22" rx="3" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <rect x="152" y="370" width="22" height="22" rx="3" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <rect x="178" y="370" width="22" height="22" rx="3" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <rect x="204" y="370" width="22" height="22" rx="3" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <!-- 5 empty slots -->
+            <rect x="230" y="370" width="22" height="22" rx="3" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+            <rect x="256" y="370" width="22" height="22" rx="3" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+            <rect x="282" y="370" width="22" height="22" rx="3" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+            <rect x="308" y="370" width="22" height="22" rx="3" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+            <rect x="334" y="370" width="22" height="22" rx="3" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+
+            <!-- Arrow: pool fills up -->
+            <line x1="370" y1="381" x2="400" y2="381" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+
+            <!-- === POOL FULL bottom === -->
+            <text x="405" y="362" font-size="11" font-weight="500" fill="#991b1b" font-family="Liberation Sans, Arial, sans-serif">Pool FULL (10/10)</text>
+
+            <!-- 10 red squares bottom -->
+            <rect x="405" y="370" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="431" y="370" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="457" y="370" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="483" y="370" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="509" y="370" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="535" y="370" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="561" y="370" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="587" y="370" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="613" y="370" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="639" y="370" width="22" height="22" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+
+            <!-- === WAITING QUEUE bottom === -->
+            <text x="405" y="418" font-size="11" font-weight="500" fill="#d97706" font-family="Liberation Sans, Arial, sans-serif">Waiting queue ⏱</text>
+
+            <!-- 5 thread icons (bottom) -->
+            <circle cx="418" cy="438" r="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <rect x="411" y="446" width="14" height="10" rx="2" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <circle cx="444" cy="438" r="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <rect x="437" y="446" width="14" height="10" rx="2" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <circle cx="470" cy="438" r="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <rect x="463" y="446" width="14" height="10" rx="2" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <circle cx="496" cy="438" r="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <rect x="489" y="446" width="14" height="10" rx="2" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <circle cx="522" cy="438" r="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <rect x="515" y="446" width="14" height="10" rx="2" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+
+            <!-- === POOL RECOVERS — vertical dashed line (bottom) === -->
+            <line x1="680" y1="342" x2="680" y2="530" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6,4"/>
+            <text x="683" y="355" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">Pool</text>
+            <text x="683" y="367" font-size="10" fill="#64748b" font-family="Liberation Sans, Arial, sans-serif">recovers</text>
+
+            <!-- === JITTER — staggered arrows at different x positions === -->
+            <!-- Arrow 1: earliest (small jitter) -->
+            <line x1="695" y1="460" x2="798" y2="482" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+            <!-- Arrow 2: slight delay -->
+            <line x1="705" y1="460" x2="800" y2="492" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+            <!-- Arrow 3: more delay -->
+            <line x1="717" y1="460" x2="800" y2="502" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+            <!-- Arrow 4: more delay -->
+            <line x1="729" y1="460" x2="799" y2="512" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+            <!-- Arrow 5: most delay -->
+            <line x1="743" y1="460" x2="797" y2="522" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+
+            <!-- Jitter spread label -->
+            <text x="686" y="415" font-size="10" font-weight="600" fill="#22c55e" font-family="Liberation Sans, Arial, sans-serif">Requests spread</text>
+            <text x="686" y="428" font-size="10" font-weight="600" fill="#22c55e" font-family="Liberation Sans, Arial, sans-serif">over time (jitter)</text>
+
+            <!-- === DB cylinder (good) === -->
+            <!-- Cylinder body -->
+            <rect x="800" y="486" width="70" height="55" rx="4" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+            <!-- Cylinder top ellipse -->
+            <ellipse cx="835" cy="490" rx="35" ry="8" fill="#86efac" stroke="#22c55e" stroke-width="2"/>
+            <!-- Cylinder bottom ellipse -->
+            <ellipse cx="835" cy="537" rx="35" ry="8" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+            <text x="835" y="512" text-anchor="middle" font-size="11" font-weight="600" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">DB</text>
+            <text x="835" y="526" text-anchor="middle" font-size="9" fill="#166534" font-family="Liberation Sans, Arial, sans-serif">stable load</text>
+
+            <!-- === LEGEND / SUMMARY BAR at bottom === -->
+            <rect x="50" y="553" width="800" height="38" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+            <!-- Green square legend item -->
+            <rect x="68" y="566" width="14" height="14" rx="2" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <text x="88" y="577" font-size="11" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Idle connection</text>
+            <!-- Red square legend item -->
+            <rect x="200" y="566" width="14" height="14" rx="2" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+            <text x="220" y="577" font-size="11" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Active connection</text>
+            <!-- Orange circle legend item -->
+            <circle cx="344" cy="573" r="7" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="358" y="577" font-size="11" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Blocked thread</text>
+            <!-- Red arrow legend -->
+            <line x1="462" y1="573" x2="490" y2="573" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+            <text x="496" y="577" font-size="11" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Burst (thundering herd)</text>
+            <!-- Green arrow legend -->
+            <line x1="660" y1="573" x2="688" y2="573" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+            <text x="694" y="577" font-size="11" fill="#1e293b" font-family="Liberation Sans, Arial, sans-serif">Jittered request</text>
+        </svg>
+    </div>
+</body>
+</html>

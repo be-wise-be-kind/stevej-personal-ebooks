@@ -453,6 +453,6 @@ Debugging spans systems. A bug might involve the interaction between PostgreSQL 
 
 10. **Kleppmann, Martin** (2017) - *Designing Data-Intensive Applications*. O'Reilly Media. Comprehensive coverage of database internals and distributed systems.
 
-## Next: [Chapter 8: Asynchronous Processing and Queuing](./08-async-queuing.md)
+## Next: [Chapter 8: Database Access Patterns](./08-database-access-patterns.md)
 
 Having selected appropriate data stores, we now examine patterns that remove database operations from the critical request path entirely. The next chapter covers message queues, event-driven architectures, and asynchronous processing patterns that improve responsiveness by deferring non-essential work.

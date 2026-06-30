@@ -1,6 +1,6 @@
-# Chapter 10: Traffic Management and Resilience
+# Chapter 11: Traffic Management and Resilience
 
-![Chapter 10 Opener](../assets/ch10-opener.html)
+![Chapter 10 Opener](../assets/ch11-opener.html)
 
 \newpage
 
@@ -14,7 +14,7 @@ The philosophy here is pragmatic: we assume failures will happen and design our 
 
 <!-- DIAGRAM: High-level resilience architecture showing: Client requests -> Rate Limiter -> Load Balancer -> Circuit Breaker -> Bulkhead -> Service, with arrows showing where each pattern intervenes -->
 
-![Resilience Architecture](../assets/ch10-resilience-architecture.html)
+![Resilience Architecture](../assets/ch11-resilience-architecture.html)
 
 ## Key Concepts
 
@@ -60,9 +60,9 @@ Sliding window requires tracking requests across two windows, which increases me
 
 <!-- DIAGRAM: Comparison of fixed window vs sliding window rate limiting showing: Fixed window with boundary spike (requests clustered at window boundaries), Sliding window with smooth enforcement (consistent rate across boundaries) -->
 
-![Rate Limiting Comparison](../assets/ch10-rate-limiting-comparison.html)
+![Rate Limiting Comparison](../assets/ch11-rate-limiting-comparison.html)
 
-For rate limiting at the CDN edge, including distributed state challenges and edge-specific configuration patterns, see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md).
+For rate limiting at the CDN edge, including distributed state challenges and edge-specific configuration patterns, see [Chapter 13: Edge Infrastructure](./13-edge-infrastructure.md).
 
 #### Communicating Rate Limits to Clients
 
@@ -167,7 +167,7 @@ The foundation is Little's Law from queuing theory: at steady state, the number 
 
 <!-- DIAGRAM: Adaptive concurrency feedback loop showing: Request arrives -> Check against current limit -> If under limit, process and measure latency -> Calculate new limit based on gradient algorithm (comparing sampleRTT to minRTT) -> Loop continues. Show reject path when over limit (HTTP 503) -->
 
-![Adaptive Concurrency Feedback Loop](../assets/ch10-adaptive-concurrency.html)
+![Adaptive Concurrency Feedback Loop](../assets/ch11-adaptive-concurrency.html)
 
 Adaptive algorithms measure actual system performance and adjust limits dynamically:
 
@@ -327,7 +327,7 @@ on request:
 
 <!-- DIAGRAM: Circuit breaker state machine: Closed (normal) -[failures exceed threshold]-> Open (fail fast) -[timeout expires]-> Half-Open (test) -[success]-> Closed OR -[failure]-> Open, with annotations for each transition condition -->
 
-![Circuit Breaker State Machine](../assets/ch10-circuit-breaker-states.html)
+![Circuit Breaker State Machine](../assets/ch11-circuit-breaker-states.html)
 
 #### Configuring Circuit Breakers
 
@@ -419,7 +419,7 @@ The "consistent" part means that when instances are added or removed, only a fra
 
 <!-- DIAGRAM: Load balancing strategies comparison: Round-robin (sequential distribution to 3 servers: 1,2,3,1,2,3), Least-connections (preference to server with fewer active connections), Consistent hashing (same user always routes to same server based on hash) -->
 
-![Load Balancing Strategies](../assets/ch10-load-balancing-strategies.html)
+![Load Balancing Strategies](../assets/ch11-load-balancing-strategies.html)
 
 ### Service Mesh Traffic Management
 
@@ -475,7 +475,7 @@ A service mesh deploys a sidecar proxy (typically Envoy) alongside each service 
 
 <!-- DIAGRAM: Service mesh traffic flow showing: Client -> Ingress Gateway -> VirtualService routing rules -> DestinationRule policies -> Envoy sidecar -> Service Pod. Annotate each component's role in traffic management -->
 
-![Service Mesh Traffic Flow](../assets/ch10-service-mesh-traffic.html)
+![Service Mesh Traffic Flow](../assets/ch11-service-mesh-traffic.html)
 
 **Virtual Services** define routing rules that determine how requests reach services:
 
@@ -528,7 +528,7 @@ Semaphore bulkheads are more memory-efficient than thread pools but do not provi
 
 <!-- DIAGRAM: Bulkhead pattern showing isolated resource pools: Service A pool (5 connections) at 80% capacity, Service B pool (10 connections) at 100% and blocking, Service C pool (3 connections) at 30% capacity. Annotation: "Service B exhaustion does not affect A or C" -->
 
-![Bulkhead Pattern](../assets/ch10-bulkhead-pattern.html)
+![Bulkhead Pattern](../assets/ch11-bulkhead-pattern.html)
 
 ### Graceful Degradation Strategies
 
@@ -538,7 +538,7 @@ The key insight is that not all features are equally important. When capacity is
 
 <!-- DIAGRAM: Degradation hierarchy pyramid showing layers from bottom to top: Unavailable (503 error), Minimal (static fallback), Partial (cached/stale data), Full Service (real-time, complete). Each layer shows what features are available and example scenarios -->
 
-![Graceful Degradation Hierarchy](../assets/ch10-graceful-degradation.html)
+![Graceful Degradation Hierarchy](../assets/ch11-graceful-degradation.html)
 
 **Feature Flags for Runtime Resilience**
 
@@ -623,7 +623,7 @@ Hedged requests send the same request to multiple backends (or retry to the same
 
 <!-- DIAGRAM: Hedged request timeline showing: Request 1 sent -> wait 50ms -> Request 2 (hedge) sent -> First response received (from either) -> Cancel other request -->
 
-![Hedged Requests Timeline](../assets/ch10-hedged-requests.html)
+![Hedged Requests Timeline](../assets/ch11-hedged-requests.html)
 
 The hedge delay is critical. Too short increases load substantially. Too long provides no benefit. A common strategy uses the p95 latency as the hedge trigger: if the first request has not returned by the time 95% of requests normally complete, we send the hedge.
 
@@ -644,7 +644,7 @@ The approach is empirical: define steady-state behavior (normal system metrics),
 
 <!-- DIAGRAM: Chaos engineering workflow showing circular process: Define Steady State -> Form Hypothesis -> Design Experiment -> Inject Fault (with blast radius controls) -> Observe Behavior -> Analyze Results -> Address Weaknesses -> back to Define Steady State -->
 
-![Chaos Engineering Workflow](../assets/ch10-chaos-engineering.html)
+![Chaos Engineering Workflow](../assets/ch11-chaos-engineering.html)
 
 **Types of Fault Injection**
 
@@ -798,6 +798,6 @@ Start simple: kill a non-critical pod and verify traffic shifts to remaining ins
 
 14. **Dean, J., & Barroso, L. A.** (2013). "The Tail at Scale." Communications of the ACM, 56(2), 74-80. https://dl.acm.org/doi/10.1145/2408776.2408794
 
-## Next: [Chapter 11: Authentication Performance](./11-auth-performance.md)
+## Next: [Chapter 12: Authentication Performance](./12-auth-performance.md)
 
 With resilience patterns established, the next chapter examines authentication through the lens of performance. We cover token validation overhead, caching strategies, stateless vs stateful trade-offs, and maintaining performance under attack.

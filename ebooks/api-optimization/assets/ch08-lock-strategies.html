@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lock Strategies</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Solid arrowhead marker - blue -->
+                <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #3b82f6;" />
+                </marker>
+                <!-- Solid arrowhead marker - orange -->
+                <marker id="arrow-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #f59e0b;" />
+                </marker>
+                <!-- Dashed arrowhead marker - blue (for blocked arrows) -->
+                <marker id="arrow-blue-dashed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #3b82f6; opacity: 0.7;" />
+                </marker>
+                <!-- Dashed arrowhead marker - orange (for blocked arrows) -->
+                <marker id="arrow-orange-dashed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #f59e0b; opacity: 0.7;" />
+                </marker>
+                <!-- Green arrowhead for right panel -->
+                <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #22c55e;" />
+                </marker>
+                <!-- Orange dashed arrowhead for right panel wait -->
+                <marker id="arrow-orange-wait" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" style="fill: #f59e0b; opacity: 0.65;" />
+                </marker>
+            </defs>
+
+            <!-- ═══════════════════════════════ MAIN TITLE ═══════════════════════════════ -->
+            <text x="450" y="35" style="font-size: 18px; font-weight: bold; fill: #1e293b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">Lock Strategies: Deadlock vs. Consistent Order</text>
+
+            <!-- ═══════════════════════════════ LEFT PANEL — DEADLOCK ═══════════════════════════════ -->
+
+            <!-- Panel title -->
+            <text x="230" y="75" style="font-size: 14px; font-weight: bold; fill: #ef4444; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">Deadlock (Inconsistent Lock Order)</text>
+
+            <!-- Transaction A box -->
+            <rect x="80" y="95" width="120" height="40" rx="6" style="fill: #dbeafe; stroke: #3b82f6; stroke-width: 1.5;" />
+            <text x="140" y="112" style="font-size: 13px; font-weight: bold; fill: #1e293b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">Transaction A</text>
+            <text x="140" y="128" style="font-size: 10px; fill: #3b82f6; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">(acquires Row 1 first)</text>
+
+            <!-- Transaction B box -->
+            <rect x="260" y="95" width="120" height="40" rx="6" style="fill: #fef3c7; stroke: #f59e0b; stroke-width: 1.5;" />
+            <text x="320" y="112" style="font-size: 13px; font-weight: bold; fill: #1e293b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">Transaction B</text>
+            <text x="320" y="128" style="font-size: 10px; fill: #f59e0b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">(acquires Row 2 first)</text>
+
+            <!-- Row 1 resource box -->
+            <rect x="80" y="230" width="100" height="40" rx="6" style="fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.5;" />
+            <text x="130" y="247" style="font-size: 12px; font-weight: bold; fill: #1e293b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">Row 1</text>
+            <text x="130" y="262" style="font-size: 10px; fill: #64748b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">resource</text>
+
+            <!-- Row 2 resource box -->
+            <rect x="260" y="230" width="100" height="40" rx="6" style="fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.5;" />
+            <text x="310" y="247" style="font-size: 12px; font-weight: bold; fill: #1e293b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">Row 2</text>
+            <text x="310" y="262" style="font-size: 10px; fill: #64748b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">resource</text>
+
+            <!-- Tx A locks Row 1 (solid blue arrow down) -->
+            <line x1="130" y1="135" x2="130" y2="228"
+                  style="stroke: #3b82f6; stroke-width: 2; marker-end: url(#arrow-blue);" />
+            <text x="68" y="185" style="font-size: 11px; fill: #3b82f6; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">locks</text>
+
+            <!-- Tx B locks Row 2 (solid orange arrow down) -->
+            <line x1="310" y1="135" x2="310" y2="228"
+                  style="stroke: #f59e0b; stroke-width: 2; marker-end: url(#arrow-orange);" />
+            <text x="355" y="185" style="font-size: 11px; fill: #f59e0b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">locks</text>
+
+            <!-- Tx A wants Row 2 (dashed blue arrow, blocked) -->
+            <!-- Path: from bottom-right area of Tx A box, arc toward Row 2 -->
+            <path d="M 170 165 Q 200 200 258 250"
+                  style="stroke: #3b82f6; stroke-width: 1.8; stroke-dasharray: 5,3; fill: none; marker-end: url(#arrow-blue-dashed);" />
+            <text x="232" y="198" style="font-size: 11px; font-weight: bold; fill: #ef4444; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">wants →</text>
+            <text x="232" y="212" style="font-size: 11px; font-weight: bold; fill: #ef4444; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">(BLOCKED)</text>
+
+            <!-- Tx B wants Row 1 (dashed orange arrow, blocked) -->
+            <!-- Path: from bottom-left area of Tx B box, arc toward Row 1 -->
+            <path d="M 265 165 Q 235 200 182 250"
+                  style="stroke: #f59e0b; stroke-width: 1.8; stroke-dasharray: 5,3; fill: none; marker-end: url(#arrow-orange-dashed);" />
+            <text x="213" y="157" style="font-size: 11px; font-weight: bold; fill: #ef4444; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">← wants</text>
+            <text x="213" y="171" style="font-size: 11px; font-weight: bold; fill: #ef4444; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">(BLOCKED)</text>
+
+            <!-- DEADLOCK label -->
+            <text x="230" y="322" style="font-size: 20px; font-weight: bold; fill: #ef4444; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">DEADLOCK</text>
+
+            <!-- Red warning indicator: circle with X -->
+            <circle cx="230" cy="355" r="16" style="fill: #fee2e2; stroke: #ef4444; stroke-width: 2;" />
+            <line x1="222" y1="347" x2="238" y2="363" style="stroke: #ef4444; stroke-width: 2.5; stroke-linecap: round;" />
+            <line x1="238" y1="347" x2="222" y2="363" style="stroke: #ef4444; stroke-width: 2.5; stroke-linecap: round;" />
+
+            <!-- Each holds what the other needs — explanatory note -->
+            <text x="230" y="395" style="font-size: 11px; fill: #64748b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">Each transaction holds what</text>
+            <text x="230" y="410" style="font-size: 11px; fill: #64748b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">the other needs — neither can proceed</text>
+
+            <!-- ═══════════════════════════════ VERTICAL DIVIDER ═══════════════════════════════ -->
+            <line x1="450" y1="70" x2="450" y2="480" style="stroke: #e2e8f0; stroke-width: 2;" />
+
+            <!-- ═══════════════════════════════ RIGHT PANEL — CONSISTENT ORDER ═══════════════════════════════ -->
+
+            <!-- Panel title -->
+            <text x="670" y="75" style="font-size: 14px; font-weight: bold; fill: #22c55e; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">Consistent Lock Order</text>
+
+            <!-- Transaction A box -->
+            <rect x="530" y="95" width="120" height="40" rx="6" style="fill: #dbeafe; stroke: #3b82f6; stroke-width: 1.5;" />
+            <text x="590" y="112" style="font-size: 13px; font-weight: bold; fill: #1e293b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">Transaction A</text>
+            <text x="590" y="128" style="font-size: 10px; fill: #3b82f6; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">(Row 1 → Row 2)</text>
+
+            <!-- Transaction B box -->
+            <rect x="710" y="95" width="120" height="40" rx="6" style="fill: #fef3c7; stroke: #f59e0b; stroke-width: 1.5;" />
+            <text x="770" y="112" style="font-size: 13px; font-weight: bold; fill: #1e293b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">Transaction B</text>
+            <text x="770" y="128" style="font-size: 10px; fill: #f59e0b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">(Row 1 → Row 2)</text>
+
+            <!-- Row 1 resource box -->
+            <rect x="530" y="230" width="100" height="40" rx="6" style="fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.5;" />
+            <text x="580" y="247" style="font-size: 12px; font-weight: bold; fill: #1e293b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">Row 1</text>
+            <text x="580" y="262" style="font-size: 10px; fill: #64748b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">resource</text>
+
+            <!-- Row 2 resource box -->
+            <rect x="710" y="230" width="100" height="40" rx="6" style="fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.5;" />
+            <text x="760" y="247" style="font-size: 12px; font-weight: bold; fill: #1e293b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">Row 2</text>
+            <text x="760" y="262" style="font-size: 10px; fill: #64748b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">resource</text>
+
+            <!-- Tx A locks Row 1 (solid blue arrow down) -->
+            <line x1="575" y1="135" x2="570" y2="228"
+                  style="stroke: #3b82f6; stroke-width: 2; marker-end: url(#arrow-blue);" />
+            <text x="545" y="182" style="font-size: 11px; fill: #3b82f6; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">locks</text>
+
+            <!-- Tx A then locks Row 2 (solid blue arrow from Row 1 to Row 2) -->
+            <line x1="632" y1="250" x2="708" y2="250"
+                  style="stroke: #3b82f6; stroke-width: 2; marker-end: url(#arrow-blue);" />
+            <text x="670" y="243" style="font-size: 11px; fill: #3b82f6; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">then locks</text>
+
+            <!-- Tx B wants Row 1 (dashed orange arrow, waiting) -->
+            <path d="M 730 135 Q 700 180 635 228"
+                  style="stroke: #f59e0b; stroke-width: 1.8; stroke-dasharray: 5,3; fill: none; marker-end: url(#arrow-orange-wait);" />
+            <text x="730" y="185" style="font-size: 11px; fill: #f59e0b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">waits...</text>
+
+            <!-- After waiting, B proceeds label -->
+            <text x="770" y="300" style="font-size: 11px; fill: #64748b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">(then proceeds</text>
+            <text x="770" y="315" style="font-size: 11px; fill: #64748b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">in order)</text>
+
+            <!-- Green checkmark and success message -->
+            <!-- Green circle -->
+            <circle cx="620" cy="355" r="16" style="fill: #dcfce7; stroke: #22c55e; stroke-width: 2;" />
+            <!-- Checkmark path -->
+            <polyline points="611,355 618,363 631,346"
+                      style="stroke: #22c55e; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round;" />
+
+            <text x="643" y="351" style="font-size: 13px; font-weight: bold; fill: #22c55e; text-anchor: start; font-family: Liberation Sans, Arial, sans-serif;">No deadlock —</text>
+            <text x="643" y="367" style="font-size: 13px; font-weight: bold; fill: #22c55e; text-anchor: start; font-family: Liberation Sans, Arial, sans-serif;">B waits, then proceeds</text>
+
+            <!-- Explanatory note right panel -->
+            <text x="670" y="400" style="font-size: 11px; fill: #64748b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">Same acquisition order means</text>
+            <text x="670" y="415" style="font-size: 11px; fill: #64748b; text-anchor: middle; font-family: Liberation Sans, Arial, sans-serif;">circular wait is impossible</text>
+
+            <!-- ═══════════════════════════════ FOOTER / LEGEND ═══════════════════════════════ -->
+            <line x1="30" y1="445" x2="870" y2="445" style="stroke: #e2e8f0; stroke-width: 1;" />
+
+            <!-- Legend items -->
+            <line x1="50" y1="462" x2="80" y2="462" style="stroke: #3b82f6; stroke-width: 2; marker-end: url(#arrow-blue);" />
+            <text x="85" y="466" style="font-size: 11px; fill: #64748b; text-anchor: start; font-family: Liberation Sans, Arial, sans-serif;">Lock acquired (solid)</text>
+
+            <line x1="230" y1="462" x2="260" y2="462" style="stroke: #3b82f6; stroke-width: 1.8; stroke-dasharray: 5,3; marker-end: url(#arrow-blue-dashed);" />
+            <text x="265" y="466" style="font-size: 11px; fill: #64748b; text-anchor: start; font-family: Liberation Sans, Arial, sans-serif;">Blocked / waiting (dashed)</text>
+
+            <rect x="460" y="455" width="12" height="12" rx="2" style="fill: #fee2e2; stroke: #ef4444; stroke-width: 1.5;" />
+            <text x="477" y="466" style="font-size: 11px; fill: #64748b; text-anchor: start; font-family: Liberation Sans, Arial, sans-serif;">Deadlock state</text>
+
+            <rect x="620" y="455" width="12" height="12" rx="2" style="fill: #dcfce7; stroke: #22c55e; stroke-width: 1.5;" />
+            <text x="637" y="466" style="font-size: 11px; fill: #64748b; text-anchor: start; font-family: Liberation Sans, Arial, sans-serif;">Safe: proceeds without deadlock</text>
+        </svg>
+    </div>
+</body>
+</html>

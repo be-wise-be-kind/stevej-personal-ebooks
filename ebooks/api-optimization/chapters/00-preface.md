@@ -50,11 +50,11 @@ If you're new to performance optimization, read the book in order. Chapters buil
 
 - **Chapters 1-4** establish foundations: the optimization mindset, measurement infrastructure, observability, and monitoring practices. Without these fundamentals, later optimizations become guesswork.
 
-- **Chapters 5-11** address specific optimization domains: networking, caching, databases, async processing, scaling, traffic management, and authentication. Each chapter assumes you understand how to measure and identify bottlenecks first.
+- **Chapters 5-12** address specific optimization domains: networking, caching, database selection, database access patterns, async processing, scaling, traffic management, and authentication. Each chapter assumes you understand how to measure and identify bottlenecks first.
 
-- **Chapter 12** covers edge infrastructure: CDN caching, edge workers, distributed rate limiting, edge data stores, and edge authentication patterns. Edge infrastructure offloads optimization problems to the network layer closest to users.
+- **Chapter 13** covers edge infrastructure: CDN caching, edge workers, distributed rate limiting, edge data stores, and edge authentication patterns. Edge infrastructure offloads optimization problems to the network layer closest to users.
 
-- **Chapters 13-14** cover advanced techniques and synthesis: protocol optimization (GraphQL, gRPC), speculative execution, and putting everything together into a coherent methodology.
+- **Chapters 14-15** cover advanced techniques and synthesis: protocol optimization (GraphQL, gRPC), speculative execution, and putting everything together into a coherent methodology.
 
 If you're facing a specific problem, jump directly to relevant chapters:
 
@@ -63,17 +63,18 @@ If you're facing a specific problem, jump directly to relevant chapters:
 - Network latency killing you? **Chapter 5: Network Optimization** addresses connection management and protocols
 - Cache hit rates disappointing? **Chapter 6: Caching Strategies** covers patterns and pitfalls
 - Unsure which database type fits your access patterns? **Chapter 7: Database and Storage Selection** helps you choose
-- Need async processing? **Chapter 8: Asynchronous Processing** explains queues and background jobs
-- Scaling problems? **Chapter 9: Compute and Scaling** covers horizontal and vertical strategies
-- System unstable under load? **Chapter 10: Traffic Management** covers circuit breakers and rate limiting
-- Authentication slowing you down? **Chapter 11: Authentication Performance** covers token validation, caching, and auth under attack
-- Need CDN or edge optimization? **Chapter 12: Edge Infrastructure** covers CDN caching, edge workers, and distributed rate limiting
+- Transactions, connection pools, or N+1 queries causing problems? **Chapter 8: Database Access Patterns** covers the access mistakes that degrade performance at scale
+- Need async processing? **Chapter 9: Asynchronous Processing** explains queues and background jobs
+- Scaling problems? **Chapter 10: Compute and Scaling** covers horizontal and vertical strategies
+- System unstable under load? **Chapter 11: Traffic Management** covers circuit breakers and rate limiting
+- Authentication slowing you down? **Chapter 12: Authentication Performance** covers token validation, caching, and auth under attack
+- Need CDN or edge optimization? **Chapter 13: Edge Infrastructure** covers CDN caching, edge workers, and distributed rate limiting
 
 Each chapter stands alone enough to be useful in isolation, while connecting to the broader framework established early in the book.
 
 ### The Journey Ahead {-}
 
-This book takes you from first principles through advanced optimization techniques across fourteen chapters. Here's the journey:
+This book takes you from first principles through advanced optimization techniques across fifteen chapters. Here's the journey:
 
 #### Part I: Foundations (Chapters 1-4) {-}
 
@@ -85,7 +86,7 @@ This book takes you from first principles through advanced optimization techniqu
 
 **Chapter 4: Monitoring** builds on observability to cover operational practices. You'll learn dashboard design that tells stories instead of displaying noise, SLO-based alerting that reduces alert fatigue, incident response workflows, and on-call best practices. This chapter answers: what do we do with the data we collect?
 
-#### Part II: Optimization Domains (Chapters 5-11) {-}
+#### Part II: Optimization Domains (Chapters 5-12) {-}
 
 **Chapter 5: Network Optimization** addresses the latency you can't eliminate through code changes alone. You'll learn connection pooling, HTTP/2 and HTTP/3 benefits, compression trade-offs, and payload optimization. We cover what happens below your application code and how to influence it.
 
@@ -93,25 +94,27 @@ This book takes you from first principles through advanced optimization techniqu
 
 **Chapter 7: Database and Storage Selection** addresses the strategic question of which database type fits which access pattern. You'll learn when to use relational databases versus document stores, key-value stores for session data, wide-column databases for write-heavy workloads, vector databases for similarity search, and when polyglot persistence is worth the complexity.
 
-**Chapter 8: Asynchronous Processing** covers message queues, async patterns, and background job processing. You'll learn when to move work off the critical path, how to handle backpressure, and patterns for reliable message handling.
+**Chapter 8: Database Access Patterns** addresses how to use a database well once it is chosen. You'll learn transaction scoping, connection pool sizing and leak detection, the N+1 query problem, lock contention and deadlock prevention, ORM performance traps, bulk operations, indexing mistakes, and pagination at scale. These access patterns are a leading cause of database performance problems that surface only under production load.
 
-**Chapter 9: Compute and Scaling** addresses horizontal and vertical scaling strategies, stateless service design, auto-scaling policies, serverless considerations, and graceful shutdown patterns.
+**Chapter 9: Asynchronous Processing** covers message queues, async patterns, and background job processing. You'll learn when to move work off the critical path, how to handle backpressure, and patterns for reliable message handling.
 
-**Chapter 10: Traffic Management** covers the resilience patterns that keep systems stable under pressure: rate limiting algorithms, circuit breakers, load balancing strategies, bulkhead patterns, and retry strategies with backoff.
+**Chapter 10: Compute and Scaling** addresses horizontal and vertical scaling strategies, stateless service design, auto-scaling policies, serverless considerations, and graceful shutdown patterns.
 
-**Chapter 11: Authentication Performance** examines authentication through the lens of latency and scalability. You'll learn token validation overhead, caching strategies for validation results, stateless vs stateful authentication trade-offs, and how to maintain performance under attack. An appendix provides auth fundamentals for readers who need background.
+**Chapter 11: Traffic Management** covers the resilience patterns that keep systems stable under pressure: rate limiting algorithms, circuit breakers, load balancing strategies, bulkhead patterns, and retry strategies with backoff.
 
-#### Part III: Edge and Advanced Topics (Chapters 12-14) {-}
+**Chapter 12: Authentication Performance** examines authentication through the lens of latency and scalability. You'll learn token validation overhead, caching strategies for validation results, stateless vs stateful authentication trade-offs, and how to maintain performance under attack. An appendix provides auth fundamentals for readers who need background.
 
-**Chapter 12: Edge Infrastructure** covers the middleware layer between users and origin servers. You'll learn CDN caching patterns for APIs, edge workers and compute, distributed rate limiting, edge data stores (KV, databases, coordination primitives), and edge authentication. Edge infrastructure offloads many optimization problems discussed in earlier chapters to the network edge, reducing latency and origin load.
+#### Part III: Edge and Advanced Topics (Chapters 13-15) {-}
 
-**Chapter 13: Testing Performance** covers load testing, benchmarking, and performance regression testing - the practices that validate our optimization work and prevent regressions.
+**Chapter 13: Edge Infrastructure** covers the middleware layer between users and origin servers. You'll learn CDN caching patterns for APIs, edge workers and compute, distributed rate limiting, edge data stores (KV, databases, coordination primitives), and edge authentication. Edge infrastructure offloads many optimization problems discussed in earlier chapters to the network edge, reducing latency and origin load.
 
-**Chapter 14: Putting It All Together** synthesizes everything into a coherent methodology. You'll work through real-world case studies, learn decision frameworks for choosing techniques, and develop a systematic approach to performance optimization.
+**Chapter 14: Testing Performance** covers load testing, benchmarking, and performance regression testing - the practices that validate our optimization work and prevent regressions.
+
+**Chapter 15: Putting It All Together** synthesizes everything into a coherent methodology. You'll work through real-world case studies, learn decision frameworks for choosing techniques, and develop a systematic approach to performance optimization.
 
 #### The Connecting Thread {-}
 
-Throughout these chapters, you'll notice recurring themes: measure before optimizing, understand before measuring, validate after changing. The specific techniques vary by domain, but the discipline remains constant. The Five Conditions are the thread connecting all of it. Chapters 3-4 build Visibility and Understanding - the ability to see and interpret system behavior. Chapters 5-12 give you the knowledge to exercise Agency effectively across every optimization domain. And the empirical methodology woven throughout ensures Velocity - the ability to iterate safely and quickly. By the end, you won't just know how to make APIs faster - you'll know how to *think* about making APIs faster, which serves you long after any specific technique becomes obsolete.
+Throughout these chapters, you'll notice recurring themes: measure before optimizing, understand before measuring, validate after changing. The specific techniques vary by domain, but the discipline remains constant. The Five Conditions are the thread connecting all of it. Chapters 3-4 build Visibility and Understanding - the ability to see and interpret system behavior. Chapters 5-13 give you the knowledge to exercise Agency effectively across every optimization domain. And the empirical methodology woven throughout ensures Velocity - the ability to iterate safely and quickly. By the end, you won't just know how to make APIs faster - you'll know how to *think* about making APIs faster, which serves you long after any specific technique becomes obsolete.
 
 ### A Note on Code Examples {-}
 

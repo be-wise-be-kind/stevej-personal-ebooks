@@ -275,5 +275,27 @@ All other citations reference well-established academic papers, RFCs, or publish
 
 ---
 
-*Last updated: January 2026*
+## Chapter 8: Database Access Patterns
+
+1. **Leapcell.** "Optimal Database Transaction Scope in Web Requests." leapcell.io/blog, 2024. [Transaction duration and deadlock risk]
+
+2. **Cybertec PostgreSQL International GmbH.** "SELECT FOR UPDATE Considered Harmful in PostgreSQL." cybertec-postgresql.com, 2024. [Lock modes, SELECT FOR NO KEY UPDATE]
+
+3. **Cybertec PostgreSQL International GmbH.** "Index Your Foreign Key." cybertec-postgresql.com, 2024. [Foreign key indexing requirement and benchmarks]
+
+4. **Redis.** "How to Tame the Thundering Herd Problem." redis.io/blog, 2024. [Connection pool thundering herd, jitter mitigation]
+
+5. **CedarDB.** "Offset Considered Harmful: The Surprising Complexity of Pagination in SQL." cedardb.com/blog, 2024. [OFFSET cost model, keyset pagination]
+
+6. **Microsoft.** "Optimize Large SQL Server Insert, Update, and Delete Processes by Using Batches." mssqltips.com, 2024. [Batch INSERT performance benchmarks]
+
+7. **Tideways.** "5 Doctrine ORM Performance Traps You Should Avoid." tideways.com/profiler/blog. [ORM lazy loading, cartesian product explosions]
+
+8. **SQLAlchemy.** "Relationship Loading Techniques." SQLAlchemy Documentation, docs.sqlalchemy.org, 2024. [Selectin loading, joined loading, lazy loading strategies]
+
+9. **PostgreSQL Global Development Group.** "Transaction Isolation." PostgreSQL Documentation, postgresql.org, 2024. [Isolation levels, lock behavior, SQLSTATE 40P01]
+
+---
+
+*Last updated: June 2026*
 *Compiled by: Fact-Checker/Citation Editor Agent*

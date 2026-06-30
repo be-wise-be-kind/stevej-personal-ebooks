@@ -1,6 +1,6 @@
-# Chapter 13: Testing Performance
+# Chapter 14: Testing Performance
 
-![Chapter 13 Opener](../assets/ch13-opener.html)
+![Chapter 13 Opener](../assets/ch14-opener.html)
 
 \newpage
 
@@ -20,7 +20,7 @@ Performance testing is not a single activity but a family of related testing typ
 
 <!-- DIAGRAM: Four load profile shapes side by side: (1) Load test showing gradual ramp-up to plateau then ramp-down, (2) Stress test showing continuous increase until failure point marked with X, (3) Spike test showing sudden vertical jump then return to baseline, (4) Soak test showing flat sustained load over 8+ hours. Each with time on X-axis and concurrent users on Y-axis -->
 
-![Performance Test Load Profiles](../assets/ch13-load-profiles.html)
+![Performance Test Load Profiles](../assets/ch14-load-profiles.html)
 
 #### Load Testing
 
@@ -38,7 +38,7 @@ A well-designed load test follows a three-phase pattern:
 
 <!-- DIAGRAM: Load test time-series dashboard showing three stacked panels: RPS (with failures), Response Time (p50/p95 with initial cache-cold spike), and Concurrent Users (ramp-up/steady-state/ramp-down phases). Shows the relationship between user count, throughput, and latency over a 5-minute test -->
 
-![Load Test Results Dashboard](../assets/ch13-load-test-dashboard.html)
+![Load Test Results Dashboard](../assets/ch14-load-test-dashboard.html)
 
 The primary metrics to observe during load testing:
 
@@ -56,7 +56,7 @@ A successful load test shows stable metrics throughout the steady-state phase. I
 
 <!-- DIAGRAM: Per-endpoint statistics table from a load test showing Method, Endpoint, Requests, Failures, p50/p95/p99 latencies, Average, and RPS for 8 realistic API endpoints with color-coded p95 latency values -->
 
-![Load Test Per-Endpoint Statistics](../assets/ch13-load-test-stats.html)
+![Load Test Per-Endpoint Statistics](../assets/ch14-load-test-stats.html)
 
 **Example Load Test Scenario**
 
@@ -217,7 +217,7 @@ The performance testing ecosystem offers tools ranging from simple HTTP benchmar
 
 <!-- DIAGRAM: Architecture comparison showing three tool types: (1) Thread-based (JMeter) with one thread icon per virtual user, showing high memory usage, (2) Event-driven (Locust, k6) with single event loop handling many connections, showing low memory usage, (3) Constant-throughput (wrk2) showing fixed request rate regardless of response time -->
 
-![Load Testing Tool Architectures](../assets/ch13-tool-architectures.html)
+![Load Testing Tool Architectures](../assets/ch14-tool-architectures.html)
 
 #### Tool Architecture Matters
 
@@ -367,7 +367,7 @@ hey is not designed for complex scenarios but serves well for quick sanity check
 
 <!-- DIAGRAM: Decision tree for tool selection: Start -> "Need non-HTTP protocols?" -> Yes: JMeter -> No: "CI/CD integration priority?" -> Yes: k6 -> No: "Team knows Python?" -> Yes: Locust -> No: "Need extreme concurrency?" -> Yes: Gatling -> No: "Quick benchmark only?" -> Yes: wrk2/hey -->
 
-![Tool Selection Decision Tree](../assets/ch13-tool-selection.html)
+![Tool Selection Decision Tree](../assets/ch14-tool-selection.html)
 
 ### Test Design and Methodology
 
@@ -426,7 +426,7 @@ Think time represents the pauses between user actions, simulating the time real 
 
 <!-- DIAGRAM: Timeline comparison showing two scenarios: (1) Without think time: request-response-request-response in rapid succession, generating 10 RPS per user, (2) With 2-second think time: request-response-[2 second pause]-request-response, generating 0.5 RPS per user. Both showing same 100 VUs but dramatically different server load -->
 
-![Think Time Impact](../assets/ch13-think-time.html)
+![Think Time Impact](../assets/ch14-think-time.html)
 
 **Impact of Think Time**
 
@@ -564,7 +564,7 @@ Coordinated omission is a measurement artifact that causes most benchmarking too
 
 <!-- DIAGRAM: Two timeline comparisons: (1) "Naive measurement" showing requests sent only after previous response, with slow response (1000ms) reducing measurement opportunities, labeled "Underreports latency", (2) "Correct measurement (wrk2)" showing requests sent at constant rate regardless of response time, measuring from intended send time, labeled "Accurate latency" -->
 
-![Coordinated Omission Explained](../assets/ch13-coordinated-omission.html)
+![Coordinated Omission Explained](../assets/ch14-coordinated-omission.html)
 
 **The Problem**
 
@@ -678,7 +678,7 @@ Integrating performance testing into CI/CD pipelines catches regressions before 
 
 <!-- DIAGRAM: CI/CD pipeline with performance gates: Code Commit -> Build -> Unit Tests -> Ephemeral Env -> [Smoke Perf Test: 2 min] -> Deploy to Staging -> [Load Test: 15 min] -> Deploy to Production. Show pass/fail gates at each perf test step with threshold examples -->
 
-![CI/CD Performance Pipeline](../assets/ch13-cicd-pipeline.html)
+![CI/CD Performance Pipeline](../assets/ch14-cicd-pipeline.html)
 
 #### Threshold-Based Quality Gates
 
@@ -787,7 +787,7 @@ Single-machine load generation has limits. CPU, memory, and network constraints 
 
 <!-- DIAGRAM: Distributed Locust architecture showing: Master node (coordinates test, aggregates stats, serves web UI) connected to multiple Worker nodes (generate actual load, report to master), all pointing to Target System. Show network topology and data flow directions -->
 
-![Distributed Load Testing Architecture](../assets/ch13-distributed-architecture.html)
+![Distributed Load Testing Architecture](../assets/ch14-distributed-architecture.html)
 
 #### When Distributed Testing Is Needed
 
@@ -1033,6 +1033,6 @@ Shadow testing validates behavior under real traffic patterns without user impac
 
 17. **Grafana Labs** (2025). "Performance Testing with Grafana k6 and GitHub Actions." https://grafana.com/blog/performance-testing-with-grafana-k6-and-github-actions/
 
-## Next: [Chapter 14: Putting It All Together](./14-putting-it-all-together.md)
+## Next: [Chapter 15: Putting It All Together](./15-putting-it-all-together.md)
 
 With testing strategies established, Chapter 14 synthesizes everything into a coherent methodology for API performance optimization, including decision frameworks and real-world case studies.

@@ -1,6 +1,6 @@
-# Chapter 12: Geographic Optimization
+# Chapter 13: Geographic Optimization
 
-![Chapter 12 Opener](../assets/ch12-opener.html)
+![Chapter 12 Opener](../assets/ch13-opener.html)
 
 \newpage
 
@@ -28,7 +28,7 @@ The most sophisticated architectures combine both strategies: multi-region origi
 
 The breakdown of a typical API request reveals the opportunity: processing takes just 1-2 milliseconds, but network transit consumes the rest.
 
-![Where Does Latency Come From?](../assets/ch12-latency-waterfall.html)
+![Where Does Latency Come From?](../assets/ch13-latency-waterfall.html)
 
 This chapter covers all three approaches. We begin with the geography problem and why distance matters. We then cover regional distribution - deploying your servers in multiple regions - including database strategies and global load balancing. Next, we examine vendor edge infrastructure in depth, exploring how to maximize the requests handled entirely at edge. Finally, we discuss hybrid patterns that combine both approaches and provide a decision framework for choosing your strategy.
 
@@ -52,7 +52,7 @@ These numbers matter because they represent hard floors. No amount of code optim
 
 Understanding this distinction prevents the common mistake of expecting vendor edge infrastructure to magically reduce latency for all requests. It reduces latency for edge-resolvable requests and provides faster pipes for origin-required requests - both valuable, but different mechanisms.
 
-![Geographic Latency Optimization Strategies](../assets/ch12-geographic-strategies.html)
+![Geographic Latency Optimization Strategies](../assets/ch13-geographic-strategies.html)
 
 ## Regional Distribution
 
@@ -195,7 +195,7 @@ Managed global databases abstract replication complexity:
 
 These services handle replication, failover, and often geographic routing automatically. Trade-offs include vendor lock-in, cost premium, and constraints on the data model or query patterns.
 
-![Database Replication Strategies](../assets/ch12-database-replication-strategies.html)
+![Database Replication Strategies](../assets/ch13-database-replication-strategies.html)
 
 ### Global Load Balancing
 
@@ -255,7 +255,7 @@ This provides the most flexibility:
 
 Edge-based routing is covered in detail in the vendor edge infrastructure section.
 
-![Global Load Balancing Approaches](../assets/ch12-global-load-balancing.html)
+![Global Load Balancing Approaches](../assets/ch13-global-load-balancing.html)
 
 ### Data Consistency Trade-offs
 
@@ -369,7 +369,7 @@ As covered in the overview, edge provides genuine distance reduction for edge-re
 
 Beyond latency, edge infrastructure offloads work from origin servers. CDN caching serves repeated requests without origin involvement. Edge workers handle routing, validation, and transformation at the network edge. The impact can be dramatic: one browser extension company serving millions of users saw server connections drop from ~500 to ~20 per server after adopting edge infrastructure.
 
-![Edge Optimization Tiers](../assets/ch12-three-tier-advantage.html)
+![Edge Optimization Tiers](../assets/ch13-three-tier-advantage.html)
 
 ### Choosing an Edge Platform
 
@@ -445,7 +445,7 @@ Cache stampedes (thundering herd) occur when many requests arrive for the same e
 
 **Lock-based refresh via Durable Objects**: For strong consistency, use Durable Objects to coordinate refresh across edge locations. Only one worker acquires the refresh lock; others wait or serve stale content. This adds 20-100ms latency but guarantees single-flight refresh globally.
 
-![Cache Stampede Prevention Mechanisms](../assets/ch12-cache-stampede-prevention.html)
+![Cache Stampede Prevention Mechanisms](../assets/ch13-cache-stampede-prevention.html)
 
 ### Event-Driven Cache Invalidation
 
@@ -636,7 +636,7 @@ This offloads image processing from origin servers while serving optimized image
 
 Edge authentication validates credentials before requests reach origin servers, reducing latency for valid requests and protecting origins from authentication floods. Chapter 11 covers JWT validation mechanics and authentication performance in detail. This section focuses on edge-specific patterns.
 
-![Edge Authentication Decision Flow](../assets/ch12-edge-auth-flow.html)
+![Edge Authentication Decision Flow](../assets/ch13-edge-auth-flow.html)
 
 **JWT at Edge**: Cache JWKS in KV store, validate signatures using Web Crypto API, check claims (exp, iat, iss, aud), then forward validated claims to origin in headers or reject with 401. This eliminates cryptographic validation at origin while enabling edge caching by user ID.
 
@@ -699,7 +699,7 @@ With edge aggregation at a Singapore edge node:
 
 The improvement comes from two sources: eliminating two sequential RTTs (160ms saved) and reducing client-edge distance (65ms saved per trip compared to client-origin).
 
-![Edge Aggregation Latency Comparison](../assets/ch12-edge-aggregation-latency.html)
+![Edge Aggregation Latency Comparison](../assets/ch13-edge-aggregation-latency.html)
 
 Edge aggregation also reduces bandwidth consumption on mobile networks. Instead of three HTTP request/response cycles with headers, clients receive one response. For API responses averaging 5KB each, this reduces header overhead from approximately 1.5KB (3 × 500B) to 500B.
 
@@ -771,7 +771,7 @@ Edge WebSocket limits are generous: free and pro tiers support up to 100,000 con
 
 For simple streaming scenarios (AI responses, event feeds), SSE is simpler and lower overhead. For bidirectional communication or connections lasting hours, WebSockets are more robust [Source: Cloudflare, 2025].
 
-![Edge Streaming Architecture](../assets/ch12-edge-streaming-architecture.html)
+![Edge Streaming Architecture](../assets/ch13-edge-streaming-architecture.html)
 
 ### Smart Routing and Traffic Steering
 
@@ -808,7 +808,7 @@ Best practices for edge canary deployment:
 
 Sticky sessions are particularly important when deployments involve state assumptions. Without stickiness, a user might see the stable version's checkout flow, then the canary version's confirmation page, potentially encountering bugs when state structures differ between versions.
 
-![Smart Routing and Canary Deployment](../assets/ch12-smart-routing-canary.html)
+![Smart Routing and Canary Deployment](../assets/ch13-smart-routing-canary.html)
 
 **Failover and Circuit Breaking:** Edge workers implement circuit breaking patterns to protect origins and improve resilience:
 
@@ -1113,7 +1113,7 @@ Start simple, add complexity only when measurements justify it:
 
 Measure at each step. If edge optimization provides sufficient improvement, skip multi-region complexity.
 
-![Hybrid Architecture](../assets/ch12-hybrid-architecture.html)
+![Hybrid Architecture](../assets/ch13-hybrid-architecture.html)
 
 ### Choosing Your Strategy
 
@@ -1289,6 +1289,6 @@ Most applications should stop at step 2. Multi-region adds significant complexit
 
 25. **Azure** (2025). "Azure Front Door Post-Incident Analysis." Microsoft Azure Status History.
 
-## Next: [Chapter 13: Testing Performance](./13-testing-performance.md)
+## Next: [Chapter 14: Testing Performance](./14-testing-performance.md)
 
 With edge infrastructure established, we turn to testing performance: load testing, benchmarking, and performance regression testing - the practices that validate our optimization work and prevent regressions.

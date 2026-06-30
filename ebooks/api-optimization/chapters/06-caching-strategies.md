@@ -52,7 +52,7 @@ CDN caching for APIs differs from static asset caching. API responses are often 
 
 Cloudflare reports that customers with well-configured caching rules achieve cache hit ratios above 90% for cacheable content, dramatically reducing origin server load [Source: Cloudflare, 2023].
 
-For comprehensive coverage of CDN architecture, edge workers, and advanced edge patterns, see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md).
+For comprehensive coverage of CDN architecture, edge workers, and advanced edge patterns, see [Chapter 13: Edge Infrastructure](./13-edge-infrastructure.md).
 
 **L4: Browser/Client Cache**
 
@@ -358,7 +358,7 @@ Edge caching is less suitable for:
 - **Rapidly changing data**: High invalidation frequency negates caching benefits
 - **Strong consistency requirements**: Edge eventual consistency may be unacceptable
 
-For comprehensive coverage of CDN architecture, edge workers, edge data stores, and edge authentication, see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md).
+For comprehensive coverage of CDN architecture, edge workers, edge data stores, and edge authentication, see [Chapter 13: Edge Infrastructure](./13-edge-infrastructure.md).
 
 ### Cache Invalidation Strategies
 

@@ -3,67 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 13: Testing Performance</title>
+    <title>Chapter 12: Edge Infrastructure - The Global Network</title>
     <style>
-        body { font-family: Liberation Sans, Arial, sans-serif; margin: 0; padding: 20px; background: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .diagram-container { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); padding: 24px; max-width: 100%; }
-        svg { display: block; margin: 0 auto; }
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
     <div class="diagram-container">
-        <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg">
             <defs>
-                <linearGradient id="loadGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#10b981;stop-opacity:1" /><stop offset="100%" style="stop-color:#059669;stop-opacity:1" /></linearGradient>
-                <linearGradient id="benchGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" /><stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" /></linearGradient>
-                <linearGradient id="ciGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" /><stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" /></linearGradient>
-                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.2"/></filter>
+                <linearGradient id="earthGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#1e3a5f;stop-opacity:1" />
+                    <stop offset="50%" style="stop-color:#0f172a;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="edgeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="originGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                </linearGradient>
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.2"/>
+                </filter>
+                <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#f97316"/>
+                </marker>
             </defs>
-            <rect width="800" height="400" fill="#ffffff" rx="8"/>
-            <text x="400" y="40" text-anchor="middle" fill="#1e293b" font-size="20" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Testing Performance</text>
-            <text x="400" y="65" text-anchor="middle" fill="#64748b" font-size="12" font-family="Liberation Sans, Arial, sans-serif">Validating optimization work and preventing regressions</text>
-
-            <!-- Load Testing pillar -->
-            <g transform="translate(120, 100)">
-                <rect x="0" y="0" width="160" height="220" rx="12" fill="url(#loadGrad)" filter="url(#shadow)"/>
-                <text x="80" y="35" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Load Testing</text>
-                <text x="80" y="55" text-anchor="middle" fill="#ffffff" font-size="11" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Strategies &amp; Tools</text>
-                <rect x="20" y="75" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="95" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Capacity Planning</text>
-                <rect x="20" y="115" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="135" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Stress Testing</text>
-                <rect x="20" y="155" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="175" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Soak Testing</text>
+            <rect width="800" height="450" fill="#ffffff" rx="8"/>
+            <text x="400" y="32" text-anchor="middle" fill="#1e293b" font-size="18" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Edge Infrastructure: Closer to Users</text>
+            <ellipse cx="400" cy="240" rx="200" ry="150" fill="url(#earthGradient)" filter="url(#shadow)"/>
+            <ellipse cx="400" cy="240" rx="200" ry="150" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
+            <ellipse cx="400" cy="240" rx="200" ry="50" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
+            <ellipse cx="400" cy="240" rx="200" ry="100" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
+            <line x1="400" y1="90" x2="400" y2="390" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
+            <ellipse cx="400" cy="240" rx="100" ry="150" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
+            <g transform="translate(370, 210)">
+                <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#originGradient)" filter="url(#shadow)"/>
+                <rect x="12" y="12" width="36" height="8" rx="2" fill="#ffffff" opacity="0.4"/>
+                <rect x="12" y="25" width="28" height="8" rx="2" fill="#ffffff" opacity="0.4"/>
+                <rect x="12" y="38" width="32" height="8" rx="2" fill="#ffffff" opacity="0.4"/>
+                <text x="30" y="75" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">ORIGIN</text>
             </g>
-
-            <!-- Benchmarking pillar -->
-            <g transform="translate(320, 100)">
-                <rect x="0" y="0" width="160" height="220" rx="12" fill="url(#benchGrad)" filter="url(#shadow)"/>
-                <text x="80" y="35" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Benchmarking</text>
-                <text x="80" y="55" text-anchor="middle" fill="#ffffff" font-size="11" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Best Practices</text>
-                <rect x="20" y="75" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="95" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Microbenchmarks</text>
-                <rect x="20" y="115" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="135" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Reproducibility</text>
-                <rect x="20" y="155" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="175" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Statistical Rigor</text>
-            </g>
-
-            <!-- CI/CD Integration pillar -->
-            <g transform="translate(520, 100)">
-                <rect x="0" y="0" width="160" height="220" rx="12" fill="url(#ciGrad)" filter="url(#shadow)"/>
-                <text x="80" y="35" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">CI/CD</text>
-                <text x="80" y="55" text-anchor="middle" fill="#ffffff" font-size="11" opacity="0.9" font-family="Liberation Sans, Arial, sans-serif">Integration</text>
-                <rect x="20" y="75" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="95" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Regression Tests</text>
-                <rect x="20" y="115" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="135" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Performance Gates</text>
-                <rect x="20" y="155" width="120" height="30" rx="4" fill="#ffffff" opacity="0.2"/>
-                <text x="80" y="175" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Trend Analysis</text>
-            </g>
-
-            <rect x="100" y="345" width="600" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
-            <text x="400" y="370" text-anchor="middle" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Practices that validate optimization work and prevent regressions</text>
+            <g transform="translate(220, 160)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">SF</text></g>
+            <line x1="236" y1="165" x2="365" y2="225" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(280, 130)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">NYC</text></g>
+            <line x1="290" y1="140" x2="370" y2="215" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(450, 120)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">LDN</text></g>
+            <line x1="445" y1="135" x2="415" y2="210" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(500, 150)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">FRA</text></g>
+            <line x1="490" y1="160" x2="430" y2="220" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(560, 180)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">TYO</text></g>
+            <line x1="548" y1="188" x2="435" y2="230" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(540, 280)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">SIN</text></g>
+            <line x1="525" y1="278" x2="435" y2="255" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(580, 340)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">SYD</text></g>
+            <line x1="565" y1="335" x2="430" y2="265" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(310, 330)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">GRU</text></g>
+            <line x1="318" y1="318" x2="380" y2="265" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+            <g transform="translate(160, 140)"><circle cx="0" cy="0" r="10" fill="#22c55e"/><circle cx="0" cy="-3" r="4" fill="#ffffff"/><ellipse cx="0" cy="4" rx="5" ry="3" fill="#ffffff"/></g>
+            <line x1="172" y1="145" x2="202" y2="157" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <g transform="translate(430, 70)"><circle cx="0" cy="0" r="10" fill="#22c55e"/><circle cx="0" cy="-3" r="4" fill="#ffffff"/><ellipse cx="0" cy="4" rx="5" ry="3" fill="#ffffff"/></g>
+            <line x1="438" y1="82" x2="448" y2="102" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <g transform="translate(620, 160)"><circle cx="0" cy="0" r="10" fill="#22c55e"/><circle cx="0" cy="-3" r="4" fill="#ffffff"/><ellipse cx="0" cy="4" rx="5" ry="3" fill="#ffffff"/></g>
+            <line x1="608" y1="165" x2="578" y2="175" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <g transform="translate(640, 360)"><circle cx="0" cy="0" r="10" fill="#22c55e"/><circle cx="0" cy="-3" r="4" fill="#ffffff"/><ellipse cx="0" cy="4" rx="5" ry="3" fill="#ffffff"/></g>
+            <line x1="628" y1="355" x2="598" y2="345" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowOrange)"/>
+            <rect x="50" y="395" width="700" height="45" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+            <circle cx="100" cy="417" r="10" fill="url(#edgeGradient)"/>
+            <text x="115" y="421" fill="#1e293b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Edge Node (~10-50ms from users)</text>
+            <rect x="320" y="407" width="20" height="20" rx="4" fill="url(#originGradient)"/>
+            <text x="345" y="421" fill="#1e293b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Origin Server (centralized)</text>
+            <circle cx="550" cy="417" r="10" fill="#22c55e"/>
+            <text x="565" y="421" fill="#1e293b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">User Request</text>
         </svg>
     </div>
 </body>

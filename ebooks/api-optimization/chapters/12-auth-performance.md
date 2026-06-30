@@ -1,6 +1,6 @@
-# Chapter 11: Authentication Performance
+# Chapter 12: Authentication Performance
 
-![Chapter 11 Opener](../assets/ch11-opener.html)
+![Chapter 11 Opener](../assets/ch12-opener.html)
 
 \newpage
 
@@ -12,11 +12,11 @@ If you need a refresher on authentication fundamentals (the difference between s
 
 The patterns here connect directly to earlier chapters: token caching applies the strategies from Chapter 6, connection pooling to identity providers follows Chapter 5's network optimization principles, and protecting authentication under attack uses the circuit breakers and rate limiting from Chapter 10. Authentication is where these patterns converge on a critical path that affects every request.
 
-For edge-based authentication patterns (validating tokens at the CDN edge before requests reach your origin servers), see [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md). Edge auth can eliminate origin load from invalid tokens and reduce latency for valid requests.
+For edge-based authentication patterns (validating tokens at the CDN edge before requests reach your origin servers), see [Chapter 13: Edge Infrastructure](./13-edge-infrastructure.md). Edge auth can eliminate origin load from invalid tokens and reduce latency for valid requests.
 
 <!-- DIAGRAM: Request timeline showing: TLS handshake complete -> Extract token -> Validate signature -> Check claims -> Authorization check -> Business logic, with typical latency annotations at each step -->
 
-![Request Auth Timeline](../assets/ch11-request-auth-timeline.html)
+![Request Auth Timeline](../assets/ch12-request-auth-timeline.html)
 
 ## Key Concepts
 
@@ -67,7 +67,7 @@ These microseconds matter when multiplied across thousands of requests per secon
 
 <!-- DIAGRAM: JWT validation flow showing: Parse header -> Decode payload (base64) -> Extract algorithm -> Fetch signing key (if asymmetric) -> Verify signature -> Validate claims (exp, iss, aud) -> Decision, with typical latency for each step -->
 
-![JWT Validation Flow](../assets/ch11-jwt-validation-flow.html)
+![JWT Validation Flow](../assets/ch12-jwt-validation-flow.html)
 
 #### Local vs Remote Validation
 
@@ -140,7 +140,7 @@ on request with token:
 
 <!-- DIAGRAM: Token cache-aside pattern: Request with token -> Hash token -> Check validation cache -> [hit: return cached user claims] or [miss: validate token, cache result with TTL, return claims] -->
 
-![Token Cache Pattern](../assets/ch11-token-cache-pattern.html)
+![Token Cache Pattern](../assets/ch12-token-cache-pattern.html)
 
 #### TTL Considerations
 
@@ -168,7 +168,7 @@ The choice between stateless (JWT) and stateful (session) authentication has sig
 
 <!-- DIAGRAM: Side-by-side comparison showing stateless (JWT) vs stateful (session) request flows. JWT: Extract token -> Verify signature -> Read claims -> Proceed. Session: Extract session ID -> Lookup session in Redis -> Deserialize session -> Proceed. Annotate typical latencies and trade-offs. -->
 
-![Stateless vs Stateful Comparison](../assets/ch11-stateless-vs-stateful.html)
+![Stateless vs Stateful Comparison](../assets/ch12-stateless-vs-stateful.html)
 
 #### Stateless (JWT) Performance Profile
 
@@ -318,7 +318,7 @@ This fails fast on malformed input without cryptographic overhead.
 
 <!-- DIAGRAM: Auth system under attack showing: Normal load (100 RPS) -> Attack begins (10,000 RPS) -> Rate limiting activates (rejects 9,900 RPS) -> Auth service latency increases -> Circuit breaker trips on elevated error rate -> Fallback to cached sessions, with annotations showing metrics at each stage -->
 
-![Auth Under Attack](../assets/ch11-auth-under-attack.html)
+![Auth Under Attack](../assets/ch12-auth-under-attack.html)
 
 #### Circuit Breakers for Auth Services
 
@@ -400,6 +400,6 @@ Authentication deserves dedicated dashboard space. Key panels include:
 
 7. **Curity** (2023). "JWT Performance." https://curity.io/resources/learn/jwt-performance/
 
-## Next: [Chapter 12: Edge Infrastructure](./12-edge-infrastructure.md)
+## Next: [Chapter 13: Edge Infrastructure](./13-edge-infrastructure.md)
 
 With authentication performance optimized, the next chapter explores edge infrastructure including CDN strategies, edge computing patterns, and how to push optimization closer to your users.

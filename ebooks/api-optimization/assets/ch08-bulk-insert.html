@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Insert Performance</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+
+            <!-- Title -->
+            <text x="450" y="35" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 18px; font-weight: bold; fill: #1e293b; text-anchor: middle;">Bulk Insert Performance: Single-Row vs. Batched</text>
+
+            <!-- Chart area background -->
+            <rect x="100" y="70" width="740" height="330" style="fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1;"/>
+
+            <!-- Y-axis label (rotated) -->
+            <text x="25" y="240" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; fill: #64748b; text-anchor: middle;" transform="rotate(-90, 25, 240)">Time (seconds)</text>
+
+            <!-- Grid lines (dashed) at 0, 20, 40, 60, 80, 100, 120, 140s -->
+            <!-- y = 400 - (seconds * 2.357) -->
+            <!-- 0s  -> y=400 -->
+            <!-- 20s -> y=400 - 47.14 = 352.86 -->
+            <!-- 40s -> y=400 - 94.28 = 305.72 -->
+            <!-- 60s -> y=400 - 141.43 = 258.57 -->
+            <!-- 80s -> y=400 - 188.57 = 211.43 -->
+            <!-- 100s-> y=400 - 235.71 = 164.29 -->
+            <!-- 120s-> y=400 - 282.86 = 117.14 -->
+            <!-- 140s-> y=400 - 330 = 70 -->
+
+            <line x1="100" y1="400" x2="840" y2="400" style="stroke: #e2e8f0; stroke-width: 1; stroke-dasharray: 4 4;"/>
+            <line x1="100" y1="353" x2="840" y2="353" style="stroke: #e2e8f0; stroke-width: 1; stroke-dasharray: 4 4;"/>
+            <line x1="100" y1="306" x2="840" y2="306" style="stroke: #e2e8f0; stroke-width: 1; stroke-dasharray: 4 4;"/>
+            <line x1="100" y1="259" x2="840" y2="259" style="stroke: #e2e8f0; stroke-width: 1; stroke-dasharray: 4 4;"/>
+            <line x1="100" y1="212" x2="840" y2="212" style="stroke: #e2e8f0; stroke-width: 1; stroke-dasharray: 4 4;"/>
+            <line x1="100" y1="165" x2="840" y2="165" style="stroke: #e2e8f0; stroke-width: 1; stroke-dasharray: 4 4;"/>
+            <line x1="100" y1="118" x2="840" y2="118" style="stroke: #e2e8f0; stroke-width: 1; stroke-dasharray: 4 4;"/>
+            <line x1="100" y1="70"  x2="840" y2="70"  style="stroke: #e2e8f0; stroke-width: 1; stroke-dasharray: 4 4;"/>
+
+            <!-- Y-axis tick labels -->
+            <text x="90" y="404" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: end;">0</text>
+            <text x="90" y="357" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: end;">20</text>
+            <text x="90" y="310" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: end;">40</text>
+            <text x="90" y="263" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: end;">60</text>
+            <text x="90" y="216" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: end;">80</text>
+            <text x="90" y="169" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: end;">100</text>
+            <text x="90" y="122" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: end;">120</text>
+            <text x="90" y="74"  style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: end;">140</text>
+
+            <!-- Y-axis line -->
+            <line x1="100" y1="70" x2="100" y2="400" style="stroke: #94a3b8; stroke-width: 1.5;"/>
+            <!-- X-axis line -->
+            <line x1="100" y1="400" x2="840" y2="400" style="stroke: #94a3b8; stroke-width: 1.5;"/>
+
+            <!-- ============================================================ -->
+            <!-- GROUP 1: 100 rows, center x=175 -->
+            <!-- Red bar: 1.3s -> height=3px min, x=142, top_y=397 -->
+            <!-- Green bar: 0.03s -> height=3px min, x=197, top_y=397 -->
+            <!-- ============================================================ -->
+
+            <!-- Red bar (single-row, 1.3s, ~3px, show min 3px) -->
+            <rect x="142" y="397" width="50" height="3" style="fill: #ef4444;"/>
+            <!-- Label above red bar -->
+            <text x="167" y="392" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e293b; text-anchor: middle;">1.3s</text>
+
+            <!-- Green bar (batch, 0.03s, show min 3px) -->
+            <rect x="197" y="397" width="50" height="3" style="fill: #22c55e;"/>
+            <!-- Label above green bar -->
+            <text x="222" y="392" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e293b; text-anchor: middle;">0.03s</text>
+
+            <!-- Group 1 x-axis label -->
+            <text x="197" y="420" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #1e293b; text-anchor: middle;">100 rows</text>
+
+            <!-- ============================================================ -->
+            <!-- GROUP 2: 1,000 rows, center x=360 -->
+            <!-- Red bar: 13s -> height=31px, x=327, top_y=369 -->
+            <!-- Green bar: 0.26s -> height~0.6px, show min 3px, x=382 -->
+            <!-- ============================================================ -->
+
+            <!-- Red bar (single-row, 13s, height=31px) -->
+            <rect x="327" y="369" width="50" height="31" style="fill: #ef4444;"/>
+            <!-- Label above red bar -->
+            <text x="352" y="364" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e293b; text-anchor: middle;">13s</text>
+
+            <!-- Green bar (batch, 0.26s, show min 3px) -->
+            <rect x="382" y="397" width="50" height="3" style="fill: #22c55e;"/>
+            <!-- Label above green bar -->
+            <text x="407" y="392" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e293b; text-anchor: middle;">0.26s</text>
+
+            <!-- Group 2 x-axis label -->
+            <text x="382" y="420" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #1e293b; text-anchor: middle;">1,000 rows</text>
+
+            <!-- ============================================================ -->
+            <!-- GROUP 3: 10,000 rows, center x=560 -->
+            <!-- Red bar: 129s -> height=304px, x=527, top_y=96 -->
+            <!-- Green bar: 2.6s -> height=6px, x=582, top_y=394 -->
+            <!-- ============================================================ -->
+
+            <!-- Red bar (single-row, 129s, height=304px) -->
+            <rect x="527" y="96" width="50" height="304" style="fill: #ef4444;"/>
+            <!-- Label above red bar -->
+            <text x="552" y="90" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e293b; text-anchor: middle;">129s</text>
+
+            <!-- Green bar (batch, 2.6s, height=6px) -->
+            <rect x="582" y="394" width="50" height="6" style="fill: #22c55e;"/>
+            <!-- Label above green bar -->
+            <text x="607" y="389" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e293b; text-anchor: middle;">2.6s</text>
+
+            <!-- ~50x faster callout annotation between the two bars in group 3 -->
+            <!-- Arrow from green bar top to red bar midpoint area -->
+            <line x1="582" y1="370" x2="577" y2="300" style="stroke: #f59e0b; stroke-width: 1.5; stroke-dasharray: 3 3;"/>
+            <polygon points="577,295 573,305 581,305" style="fill: #f59e0b;"/>
+            <text x="565" y="375" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; font-weight: bold; fill: #f59e0b; text-anchor: middle;">~50x faster</text>
+
+            <!-- Group 3 x-axis label -->
+            <text x="568" y="420" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #1e293b; text-anchor: middle;">10,000 rows</text>
+
+            <!-- ============================================================ -->
+            <!-- GROUP 4: 100,000 rows, center x=740 -->
+            <!-- Red bar: truncated (would be ~3,050px), show at chart top y=70 with jagged break -->
+            <!-- Green bar: 26s -> height=61px, x=772, top_y=339 -->
+            <!-- ============================================================ -->
+
+            <!-- Red bar truncated (from y=400 up to y=90, leaving room for jagged break) -->
+            <rect x="707" y="90" width="50" height="310" style="fill: #ef4444;"/>
+
+            <!-- Jagged break line at top of truncated red bar (zigzag to indicate truncation) -->
+            <polyline points="707,90 717,80 727,90 737,80 747,90 757,80" style="fill: none; stroke: white; stroke-width: 2.5;"/>
+            <polyline points="707,90 717,100 727,90 737,100 747,90 757,100" style="fill: none; stroke: white; stroke-width: 2.5;"/>
+
+            <!-- "Too long / (1,290s)" text inside/above the truncated bar -->
+            <text x="732" y="78" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e293b; text-anchor: middle;">Too long</text>
+            <text x="732" y="108" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: white; text-anchor: middle; font-weight: bold;">(1,290s)</text>
+
+            <!-- Green bar (batch, 26s, height=61px, top_y=339) -->
+            <rect x="762" y="339" width="50" height="61" style="fill: #22c55e;"/>
+            <!-- Label above green bar -->
+            <text x="787" y="334" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 10px; fill: #1e293b; text-anchor: middle;">26s</text>
+
+            <!-- Group 4 x-axis label -->
+            <text x="753" y="420" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #1e293b; text-anchor: middle;">100,000 rows</text>
+
+            <!-- ============================================================ -->
+            <!-- X-axis label -->
+            <!-- ============================================================ -->
+            <text x="470" y="440" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 13px; fill: #64748b; text-anchor: middle;">Number of Rows</text>
+
+            <!-- ============================================================ -->
+            <!-- Legend (top-right, ~x=630, y=80) -->
+            <!-- ============================================================ -->
+            <rect x="630" y="80" width="20" height="14" style="fill: #ef4444;"/>
+            <text x="656" y="92" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #1e293b; text-anchor: start;">Single-row INSERT</text>
+
+            <rect x="630" y="102" width="20" height="14" style="fill: #22c55e;"/>
+            <text x="656" y="114" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 12px; fill: #1e293b; text-anchor: start;">Batched INSERT (1,000 rows/batch)</text>
+
+            <!-- ============================================================ -->
+            <!-- Source note -->
+            <!-- ============================================================ -->
+            <text x="450" y="500" style="font-family: Liberation Sans, Arial, sans-serif; font-size: 11px; fill: #64748b; text-anchor: middle;">Source: Microsoft SQL Server benchmarks, 2024</text>
+
+        </svg>
+    </div>
+</body>
+</html>

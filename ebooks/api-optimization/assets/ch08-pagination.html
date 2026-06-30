@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagination Performance</title>
+    <style>
+        body {
+            font-family: Liberation Sans, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 24px;
+            max-width: 100%;
+        }
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+
+            <!-- Title -->
+            <text x="450" y="35" text-anchor="middle" style="font-size:18px;font-weight:700;fill:#1e293b;font-family:Liberation Sans,Arial,sans-serif;">Pagination Performance: OFFSET vs. Keyset</text>
+
+            <!-- Chart background -->
+            <rect x="110" y="70" width="710" height="350" fill="#f8fafc" rx="4"/>
+
+            <!-- Grid lines (horizontal dashed) at 0, 1000, 2000, 3000, 4000, 5000, 6000ms -->
+            <!-- y=420 = 0ms, y=70 = 6000ms; pixel/ms = (420-70)/6000 = 0.058333 -->
+            <!-- 0ms   → y=420 -->
+            <!-- 1000ms → y=420 - 1000*0.058333 = 420 - 58.33 = 361.67 ≈ 362 -->
+            <!-- 2000ms → y=420 - 116.67 ≈ 303 -->
+            <!-- 3000ms → y=420 - 175 = 245 -->
+            <!-- 4000ms → y=420 - 233.33 ≈ 187 -->
+            <!-- 5000ms → y=420 - 291.67 ≈ 128 -->
+            <!-- 6000ms → y=70 -->
+
+            <line x1="110" y1="420" x2="820" y2="420" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+            <line x1="110" y1="362" x2="820" y2="362" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+            <line x1="110" y1="303" x2="820" y2="303" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+            <line x1="110" y1="245" x2="820" y2="245" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+            <line x1="110" y1="187" x2="820" y2="187" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+            <line x1="110" y1="128" x2="820" y2="128" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+            <line x1="110" y1="70"  x2="820" y2="70"  stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+
+            <!-- Axes -->
+            <!-- Y axis -->
+            <line x1="110" y1="70" x2="110" y2="420" stroke="#1e293b" stroke-width="1.5"/>
+            <!-- X axis -->
+            <line x1="110" y1="420" x2="820" y2="420" stroke="#1e293b" stroke-width="1.5"/>
+
+            <!-- Y-axis tick labels -->
+            <text x="100" y="424" text-anchor="end" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">0</text>
+            <text x="100" y="366" text-anchor="end" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">1,000</text>
+            <text x="100" y="307" text-anchor="end" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">2,000</text>
+            <text x="100" y="249" text-anchor="end" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">3,000</text>
+            <text x="100" y="191" text-anchor="end" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">4,000</text>
+            <text x="100" y="132" text-anchor="end" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">5,000</text>
+            <text x="100" y="74"  text-anchor="end" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">6,000</text>
+
+            <!-- Y-axis label (rotated) -->
+            <text x="30" y="250" text-anchor="middle" transform="rotate(-90,30,250)" style="font-size:13px;fill:#1e293b;font-family:Liberation Sans,Arial,sans-serif;">Query Time (ms)</text>
+
+            <!-- X-axis tick marks and labels -->
+            <!-- Page 1   → x=110 -->
+            <!-- Page 10  → x=220 -->
+            <!-- Page 50  → x=360 -->
+            <!-- Page 100 → x=460 -->
+            <!-- Page 500 → x=640 -->
+            <!-- Page 1000→ x=820 -->
+
+            <line x1="110" y1="420" x2="110" y2="427" stroke="#1e293b" stroke-width="1.5"/>
+            <line x1="220" y1="420" x2="220" y2="427" stroke="#1e293b" stroke-width="1.5"/>
+            <line x1="360" y1="420" x2="360" y2="427" stroke="#1e293b" stroke-width="1.5"/>
+            <line x1="460" y1="420" x2="460" y2="427" stroke="#1e293b" stroke-width="1.5"/>
+            <line x1="640" y1="420" x2="640" y2="427" stroke="#1e293b" stroke-width="1.5"/>
+            <line x1="820" y1="420" x2="820" y2="427" stroke="#1e293b" stroke-width="1.5"/>
+
+            <text x="110" y="441" text-anchor="middle" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">1</text>
+            <text x="220" y="441" text-anchor="middle" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">10</text>
+            <text x="360" y="441" text-anchor="middle" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">50</text>
+            <text x="460" y="441" text-anchor="middle" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">100</text>
+            <text x="640" y="441" text-anchor="middle" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">500</text>
+            <text x="820" y="441" text-anchor="middle" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">1,000</text>
+
+            <!-- X-axis label -->
+            <text x="465" y="462" text-anchor="middle" style="font-size:13px;fill:#1e293b;font-family:Liberation Sans,Arial,sans-serif;">Page Number</text>
+
+            <!-- Shaded area between OFFSET line and Keyset line -->
+            <!-- OFFSET points: (110,419) (220,417) (360,408) (460,391) (640,274) (820,69) -->
+            <!-- Keyset points:  (110,419) (220,419) (360,419) (460,419) (640,419) (820,419) -->
+            <!-- Polygon: trace OFFSET forward, then Keyset backward -->
+            <polygon
+                points="110,419 220,417 360,408 460,391 640,274 820,69 820,419 640,419 460,419 360,419 220,419 110,419"
+                fill="#fee2e2"
+                opacity="0.3"/>
+
+            <!-- "Performance gap" label inside shaded area -->
+            <text x="550" y="260" text-anchor="middle" style="font-size:13px;fill:#ef4444;font-weight:600;font-family:Liberation Sans,Arial,sans-serif;">Performance gap</text>
+
+            <!-- OFFSET polyline (red) -->
+            <!-- Data: (110,419) (220,417) (360,408) (460,391) (640,274) (820,69) -->
+            <!-- y calculations:
+                 10ms   → 420 - 10*0.058333   = 420 - 0.583   ≈ 419
+                 50ms   → 420 - 50*0.058333   = 420 - 2.917   ≈ 417
+                 200ms  → 420 - 200*0.058333  = 420 - 11.667  ≈ 408
+                 500ms  → 420 - 500*0.058333  = 420 - 29.167  ≈ 391
+                 2500ms → 420 - 2500*0.058333 = 420 - 145.833 ≈ 274
+                 5500ms → 420 - 5500*0.058333 = 420 - 320.833 ≈ 99 → spec says y≈69 (matching 6000ms level for visual drama; use spec value)
+            -->
+            <polyline
+                points="110,419 220,417 360,408 460,391 640,274 820,69"
+                stroke="#ef4444"
+                stroke-width="3"
+                fill="none"
+                stroke-linejoin="round"
+                stroke-linecap="round"/>
+
+            <!-- Keyset polyline (green, flat at ~419) -->
+            <polyline
+                points="110,419 220,419 360,419 460,419 640,419 820,419"
+                stroke="#22c55e"
+                stroke-width="3"
+                fill="none"
+                stroke-linejoin="round"
+                stroke-linecap="round"/>
+
+            <!-- OFFSET data point circles (red) -->
+            <circle cx="110" cy="419" r="5" fill="#ef4444"/>
+            <circle cx="220" cy="417" r="5" fill="#ef4444"/>
+            <circle cx="360" cy="408" r="5" fill="#ef4444"/>
+            <circle cx="460" cy="391" r="5" fill="#ef4444"/>
+            <circle cx="640" cy="274" r="5" fill="#ef4444"/>
+            <circle cx="820" cy="69"  r="5" fill="#ef4444"/>
+
+            <!-- Keyset data point circles (green) -->
+            <circle cx="110" cy="419" r="5" fill="#22c55e"/>
+            <circle cx="220" cy="419" r="5" fill="#22c55e"/>
+            <circle cx="360" cy="419" r="5" fill="#22c55e"/>
+            <circle cx="460" cy="419" r="5" fill="#22c55e"/>
+            <circle cx="640" cy="419" r="5" fill="#22c55e"/>
+            <circle cx="820" cy="419" r="5" fill="#22c55e"/>
+
+            <!-- Annotation: red box "5,500ms" at end of OFFSET line -->
+            <rect x="828" y="57" width="58" height="22" rx="4" fill="#fee2e2" stroke="#ef4444" stroke-width="1"/>
+            <text x="857" y="72" text-anchor="middle" style="font-size:11px;fill:#ef4444;font-weight:700;font-family:Liberation Sans,Arial,sans-serif;">5,500ms</text>
+
+            <!-- Annotation: green box "10ms" at end of Keyset line -->
+            <rect x="828" y="407" width="44" height="22" rx="4" fill="#dcfce7" stroke="#22c55e" stroke-width="1"/>
+            <text x="850" y="422" text-anchor="middle" style="font-size:11px;fill:#22c55e;font-weight:700;font-family:Liberation Sans,Arial,sans-serif;">10ms</text>
+
+            <!-- Legend (inside chart area, top-left) -->
+            <rect x="128" y="82" width="220" height="60" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+
+            <!-- Legend: OFFSET -->
+            <line x1="142" y1="102" x2="168" y2="102" stroke="#ef4444" stroke-width="3"/>
+            <circle cx="155" cy="102" r="5" fill="#ef4444"/>
+            <text x="176" y="106" style="font-size:12px;fill:#1e293b;font-family:Liberation Sans,Arial,sans-serif;">OFFSET Pagination</text>
+
+            <!-- Legend: Keyset -->
+            <line x1="142" y1="126" x2="168" y2="126" stroke="#22c55e" stroke-width="3"/>
+            <circle cx="155" cy="126" r="5" fill="#22c55e"/>
+            <text x="176" y="130" style="font-size:12px;fill:#1e293b;font-family:Liberation Sans,Arial,sans-serif;">Keyset Pagination</text>
+
+            <!-- Bottom note -->
+            <text x="465" y="495" text-anchor="middle" style="font-size:11px;fill:#64748b;font-family:Liberation Sans,Arial,sans-serif;">1 million-row table, 20 rows per page</text>
+
+        </svg>
+    </div>
+</body>
+</html>

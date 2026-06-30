@@ -1,6 +1,6 @@
-# Chapter 9: Compute and Scaling Patterns
+# Chapter 10: Compute and Scaling Patterns
 
-![Chapter 9 Opener](../assets/ch09-opener.html)
+![Chapter 9 Opener](../assets/ch10-opener.html)
 
 \newpage
 
@@ -28,7 +28,7 @@ When a service reaches its capacity limits, we have two fundamental options: mak
 
 **Horizontal scaling** (scaling out) involves adding more instances of a service behind a load balancer. This approach offers near-linear capacity growth and improved fault tolerance: if one instance fails, others continue serving traffic. However, horizontal scaling introduces complexity: we must handle distributed state, coordinate between instances, and manage the load balancer itself.
 
-![Horizontal vs Vertical Scaling Comparison](../assets/ch09-scaling-comparison.html)
+![Horizontal vs Vertical Scaling Comparison](../assets/ch10-scaling-comparison.html)
 
 The choice between these approaches depends on several factors:
 
@@ -84,7 +84,7 @@ periodically:
 
 The specifics vary by platform, but this loop is universal.
 
-![Auto-scaling Feedback Loop](../assets/ch09-autoscaling-loop.html)
+![Auto-scaling Feedback Loop](../assets/ch10-autoscaling-loop.html)
 
 #### Reactive vs Predictive Scaling
 
@@ -164,7 +164,7 @@ In container orchestration and VM-based platforms, scaling happens at two levels
 
 These tiers interact: application scaling can be blocked if infrastructure lacks capacity, and infrastructure scaling is triggered when application demand exceeds available resources. Effective scaling requires configuring both tiers to work together.
 
-![Two-Tier Scaling Architecture](../assets/ch09-two-tier-scaling.html)
+![Two-Tier Scaling Architecture](../assets/ch10-two-tier-scaling.html)
 
 ### Understanding Traffic Patterns
 
@@ -284,7 +284,7 @@ For stable baseline capacity that will exist for 1+ years, reserved pricing sign
 
 Cloud providers offer significant discounts on spare compute capacity through spot instances (AWS), preemptible VMs (Google Cloud), and spot VMs (Azure). These instances cost 60-90% less than on-demand pricing but can be reclaimed with short notice when the provider needs the capacity.
 
-![Spot Instance Fleet Architecture](../assets/ch09-spot-fleet-architecture.html)
+![Spot Instance Fleet Architecture](../assets/ch10-spot-fleet-architecture.html)
 
 Spot instances work well for workloads with these characteristics:
 
@@ -330,7 +330,7 @@ on SIGTERM received:
 
 Most platforms provide a grace period between the termination signal and forced termination. Applications must complete shutdown within this window.
 
-![Graceful Shutdown Lifecycle](../assets/ch09-graceful-shutdown.html)
+![Graceful Shutdown Lifecycle](../assets/ch10-graceful-shutdown.html)
 
 **Health checks** communicate service status to load balancers and orchestrators. Two types serve different purposes:
 
@@ -369,7 +369,7 @@ Key configuration parameters:
 
 The Kubernetes Event-Driven Autoscaler (KEDA) extends HPA to scale based on external event sources: message queues, databases, monitoring systems. KEDA supports 65+ scalers covering Kafka, SQS, RabbitMQ, Prometheus, and more.
 
-![KEDA Architecture](../assets/ch09-keda-architecture.html)
+![KEDA Architecture](../assets/ch10-keda-architecture.html)
 
 KEDA's defining capability is **scale-to-zero**: reducing replicas to zero when no events are pending. For intermittent workloads, this can reduce compute costs by 70-90%.
 
@@ -384,7 +384,7 @@ KEDA's defining capability is **scale-to-zero**: reducing replicas to zero when 
 
 VPA right-sizes pod resource requests based on observed usage. It analyzes historical consumption and recommends (or applies) appropriate CPU and memory requests.
 
-![VPA Components](../assets/ch09-vpa-components.html)
+![VPA Components](../assets/ch10-vpa-components.html)
 
 VPA operates in three modes:
 
@@ -432,7 +432,7 @@ This model excels for variable, unpredictable workloads. A function receiving 10
 
 The trade-off is **cold starts**: the delay when the platform provisions a new execution environment.
 
-![Serverless Cold Start Timeline](../assets/ch09-cold-start-timeline.html)
+![Serverless Cold Start Timeline](../assets/ch10-cold-start-timeline.html)
 
 Cold start duration varies by runtime:
 - Lightweight functions (Python, Node.js, Go): 100-500ms
@@ -671,6 +671,6 @@ As systems grow, decomposing monoliths into services allows independent scaling 
 
 8. **Google Cloud Run Documentation**. "Configuring minimum instances." https://cloud.google.com/run/docs/configuring/min-instances
 
-## Next: [Chapter 10: Traffic Management and Resilience](./10-traffic-management.md)
+## Next: [Chapter 11: Traffic Management and Resilience](./11-traffic-management.md)
 
 With our services scaling effectively, we now turn to protecting them from overload and cascading failures. The next chapter covers rate limiting, circuit breakers, and the resilience patterns that keep services stable under adverse conditions.

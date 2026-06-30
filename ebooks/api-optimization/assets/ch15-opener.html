@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 14: Building Collab Docs - A Case Study</title>
+    <style>
+        body { font-family: Liberation Sans, Arial, sans-serif; margin: 0; padding: 20px; background: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .diagram-container { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); padding: 24px; max-width: 100%; }
+        svg { display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <svg viewBox="0 0 850 450" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="foundationGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="implementGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="incidentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="successGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.2"/>
+                </filter>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+                </marker>
+            </defs>
+
+            <rect width="850" height="450" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="425" y="35" text-anchor="middle" fill="#1e293b" font-size="20" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Building Collab Docs</text>
+            <text x="425" y="58" text-anchor="middle" fill="#64748b" font-size="12" font-family="Liberation Sans, Arial, sans-serif">A Case Study in API Performance Optimization</text>
+
+            <!-- Journey timeline -->
+            <line x1="100" y1="160" x2="700" y2="160" stroke="#e2e8f0" stroke-width="4" stroke-linecap="round"/>
+
+            <!-- Phase 1: Foundation -->
+            <g transform="translate(150, 160)">
+                <circle cx="0" cy="0" r="35" fill="url(#foundationGrad)" filter="url(#shadow)"/>
+                <text x="0" y="-5" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Foundation</text>
+                <text x="0" y="8" text-anchor="middle" fill="#c7d2fe" font-size="10" font-family="Liberation Sans, Arial, sans-serif">SLOs, DB, Obs</text>
+                <text x="0" y="55" text-anchor="middle" fill="#4f46e5" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Part I</text>
+            </g>
+
+            <!-- Phase 2: Implementation -->
+            <g transform="translate(325, 160)">
+                <circle cx="0" cy="0" r="35" fill="url(#implementGrad)" filter="url(#shadow)"/>
+                <text x="0" y="-5" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Implementation</text>
+                <text x="0" y="8" text-anchor="middle" fill="#bfdbfe" font-size="10" font-family="Liberation Sans, Arial, sans-serif">WS, Cache</text>
+                <text x="0" y="55" text-anchor="middle" fill="#2563eb" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Part II</text>
+            </g>
+
+            <!-- Phase 3: Incidents -->
+            <g transform="translate(500, 160)">
+                <circle cx="0" cy="0" r="35" fill="url(#incidentGrad)" filter="url(#shadow)"/>
+                <text x="0" y="-5" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Launch</text>
+                <text x="0" y="8" text-anchor="middle" fill="#fed7aa" font-size="10" font-family="Liberation Sans, Arial, sans-serif">& Incidents</text>
+                <text x="0" y="55" text-anchor="middle" fill="#ea580c" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Part III</text>
+            </g>
+
+            <!-- Phase 4: Success -->
+            <g transform="translate(650, 160)">
+                <circle cx="0" cy="0" r="35" fill="url(#successGrad)" filter="url(#shadow)"/>
+                <text x="0" y="-5" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Scaling</text>
+                <text x="0" y="8" text-anchor="middle" fill="#bbf7d0" font-size="10" font-family="Liberation Sans, Arial, sans-serif">& Success</text>
+                <text x="0" y="55" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Part IV</text>
+            </g>
+
+            <!-- Connecting arrows on timeline -->
+            <path d="M185,160 L285,160" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <path d="M360,160 L460,160" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <path d="M535,160 L610,160" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+            <!-- Team section -->
+            <text x="350" y="260" text-anchor="middle" fill="#475569" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">The Team</text>
+
+            <!-- Maya -->
+            <g transform="translate(100, 320)">
+                <circle cx="30" cy="0" r="25" fill="#e0e7ff" stroke="#6366f1" stroke-width="2"/>
+                <text x="30" y="5" text-anchor="middle" fill="#4338ca" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">MC</text>
+                <text x="30" y="40" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Maya Chen</text>
+                <text x="30" y="52" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Lead Architect</text>
+            </g>
+
+            <!-- Jordan -->
+            <g transform="translate(220, 320)">
+                <circle cx="30" cy="0" r="25" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+                <text x="30" y="5" text-anchor="middle" fill="#166534" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">JO</text>
+                <text x="30" y="40" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Jordan Okafor</text>
+                <text x="30" y="52" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">SRE Lead</text>
+            </g>
+
+            <!-- Priya -->
+            <g transform="translate(340, 320)">
+                <circle cx="30" cy="0" r="25" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+                <text x="30" y="5" text-anchor="middle" fill="#1e40af" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">PS</text>
+                <text x="30" y="40" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Priya Sharma</text>
+                <text x="30" y="52" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Backend Lead</text>
+            </g>
+
+            <!-- Alex -->
+            <g transform="translate(460, 320)">
+                <circle cx="30" cy="0" r="25" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                <text x="30" y="5" text-anchor="middle" fill="#92400e" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">AR</text>
+                <text x="30" y="40" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Alex Rivera</text>
+                <text x="30" y="52" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Auth/Security</text>
+            </g>
+
+            <!-- Sam -->
+            <g transform="translate(580, 320)">
+                <circle cx="30" cy="0" r="25" fill="#f3e8ff" stroke="#a855f7" stroke-width="2"/>
+                <text x="30" y="5" text-anchor="middle" fill="#7c3aed" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">SK</text>
+                <text x="30" y="40" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="500" font-family="Liberation Sans, Arial, sans-serif">Sam Kim</text>
+                <text x="30" y="52" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">Eng Manager</text>
+            </g>
+
+            <!-- Key metrics box -->
+            <g transform="translate(750, 280)">
+                <rect x="-70" y="-30" width="140" height="100" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+                <text x="0" y="-12" text-anchor="middle" fill="#166534" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Final Results</text>
+                <text x="0" y="8" text-anchor="middle" fill="#22c55e" font-size="14" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">p95: 78ms</text>
+                <text x="0" y="28" text-anchor="middle" fill="#15803d" font-size="10" font-family="Liberation Sans, Arial, sans-serif">99.95% availability</text>
+                <text x="0" y="44" text-anchor="middle" fill="#15803d" font-size="10" font-family="Liberation Sans, Arial, sans-serif">85K daily users</text>
+                <text x="0" y="60" text-anchor="middle" fill="#15803d" font-size="10" font-family="Liberation Sans, Arial, sans-serif">40% under budget</text>
+            </g>
+
+            <!-- Subtitle -->
+            <text x="400" y="430" text-anchor="middle" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">From leadership mandate to production success: applying every chapter in practice</text>
+        </svg>
+    </div>
+</body>
+</html>

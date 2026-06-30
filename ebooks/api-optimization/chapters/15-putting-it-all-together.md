@@ -1,6 +1,6 @@
-# Chapter 14: Building Collab Docs: A Case Study
+# Chapter 15: Building Collab Docs: A Case Study
 
-![Chapter 14 Opener](../assets/ch14-opener.html)
+![Chapter 14 Opener](../assets/ch15-opener.html)
 
 \newpage
 
@@ -204,7 +204,7 @@ The two-week investment would pay dividends repeatedly. During the authenticatio
 
 <!-- DIAGRAM: Collab Docs architecture showing API Gateway, Document Service, Auth Service, Sync Service, PostgreSQL, Redis, with OpenTelemetry instrumentation and Prometheus metrics flowing to Grafana -->
 
-![Collab Docs Architecture](../assets/ch14-architecture.html)
+![Collab Docs Architecture](../assets/ch15-architecture.html)
 
 ## Part II: Implementation
 
@@ -507,7 +507,7 @@ The incident reinforced a principle from Chapter 11: authentication performance 
 
 <!-- DIAGRAM: Authentication flow before and after optimization: Before shows client -> origin -> JWKS fetch -> validate (showing latency at each step). After shows client -> edge validation -> origin (pre-authenticated) with much lower latency -->
 
-![Authentication Optimization](../assets/ch14-auth-optimization.html)
+![Authentication Optimization](../assets/ch15-auth-optimization.html)
 
 ### Incident Report: The Export Cascade
 
@@ -815,7 +815,7 @@ Maya summarized the technical learning. "The fundamental lesson is that stateful
 
 <!-- DIAGRAM: Viral document scaling showing: Before (single instance overwhelmed, all 4500 connections) vs After (document sharding across instance group with connection limits and presence throttling) -->
 
-![Viral Document Scaling](../assets/ch14-viral-document.html)
+![Viral Document Scaling](../assets/ch15-viral-document.html)
 
 ## Part IV: Scaling to Success
 

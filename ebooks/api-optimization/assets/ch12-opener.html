@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 12: Edge Infrastructure - The Global Network</title>
+    <title>Chapter 11: The Authentication Tax</title>
     <style>
         body {
             font-family: Liberation Sans, Arial, sans-serif;
@@ -30,78 +30,222 @@
 </head>
 <body>
     <div class="diagram-container">
-        <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 800 440" xmlns="http://www.w3.org/2000/svg">
             <defs>
-                <linearGradient id="earthGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#1e3a5f;stop-opacity:1" />
-                    <stop offset="50%" style="stop-color:#0f172a;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+                <!-- Request gradient -->
+                <linearGradient id="requestGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
                 </linearGradient>
-                <linearGradient id="edgeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+
+                <!-- Auth overhead gradient (orange/amber) -->
+                <linearGradient id="authGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
                     <stop offset="100%" style="stop-color:#ea580c;stop-opacity:1" />
                 </linearGradient>
-                <linearGradient id="originGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+
+                <!-- Total cost gradient (red) -->
+                <linearGradient id="totalGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
                 </linearGradient>
-                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                    <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                </filter>
+
+                <!-- Business logic gradient (green) -->
+                <linearGradient id="bizGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Drop shadow filter -->
                 <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.2"/>
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
                 </filter>
-                <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-                    <polygon points="0 0, 8 3, 0 6" fill="#f97316"/>
-                </marker>
+
+                <!-- Glow for emphasis -->
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                    <feMerge>
+                        <feMergeNode in="blur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
             </defs>
-            <rect width="800" height="450" fill="#ffffff" rx="8"/>
-            <text x="400" y="32" text-anchor="middle" fill="#1e293b" font-size="18" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Edge Infrastructure: Closer to Users</text>
-            <ellipse cx="400" cy="240" rx="200" ry="150" fill="url(#earthGradient)" filter="url(#shadow)"/>
-            <ellipse cx="400" cy="240" rx="200" ry="150" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
-            <ellipse cx="400" cy="240" rx="200" ry="50" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
-            <ellipse cx="400" cy="240" rx="200" ry="100" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
-            <line x1="400" y1="90" x2="400" y2="390" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
-            <ellipse cx="400" cy="240" rx="100" ry="150" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.5"/>
-            <g transform="translate(370, 210)">
-                <rect x="0" y="0" width="60" height="60" rx="8" fill="url(#originGradient)" filter="url(#shadow)"/>
-                <rect x="12" y="12" width="36" height="8" rx="2" fill="#ffffff" opacity="0.4"/>
-                <rect x="12" y="25" width="28" height="8" rx="2" fill="#ffffff" opacity="0.4"/>
-                <rect x="12" y="38" width="32" height="8" rx="2" fill="#ffffff" opacity="0.4"/>
-                <text x="30" y="75" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">ORIGIN</text>
+
+            <!-- Background -->
+            <rect width="800" height="420" fill="#ffffff" rx="8"/>
+
+            <!-- Title -->
+            <text x="400" y="35" text-anchor="middle" fill="#1e293b" font-size="20" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                The Authentication Tax
+            </text>
+            <text x="400" y="55" text-anchor="middle" fill="#64748b" font-size="12" font-family="Liberation Sans, Arial, sans-serif">
+                Every protected request pays the cost of validation
+            </text>
+
+            <!-- Left side: Single Request Timeline -->
+            <g transform="translate(40, 90)">
+                <text x="100" y="0" text-anchor="middle" fill="#475569" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Single Request
+                </text>
+
+                <!-- Timeline bar -->
+                <rect x="0" y="20" width="200" height="40" rx="6" fill="#e2e8f0" filter="url(#shadow)"/>
+
+                <!-- Auth portion (small) -->
+                <rect x="0" y="20" width="20" height="40" rx="6" fill="url(#authGradient)"/>
+                <rect x="20" y="20" width="0" height="40" fill="url(#authGradient)"/>
+
+                <!-- Business logic portion -->
+                <rect x="20" y="20" width="180" height="40" rx="0 6 6 0" fill="url(#bizGradient)"/>
+
+                <!-- Labels -->
+                <text x="10" y="85" text-anchor="middle" fill="#ea580c" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    1ms
+                </text>
+                <text x="10" y="98" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    auth
+                </text>
+                <text x="110" y="85" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    50ms
+                </text>
+                <text x="110" y="98" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    business logic
+                </text>
+
+                <!-- "Seems harmless" annotation -->
+                <text x="100" y="130" text-anchor="middle" fill="#94a3b8" font-size="11" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                    "Just 1ms overhead..."
+                </text>
             </g>
-            <g transform="translate(220, 160)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">SF</text></g>
-            <line x1="236" y1="165" x2="365" y2="225" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
-            <g transform="translate(280, 130)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">NYC</text></g>
-            <line x1="290" y1="140" x2="370" y2="215" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
-            <g transform="translate(450, 120)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">LDN</text></g>
-            <line x1="445" y1="135" x2="415" y2="210" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
-            <g transform="translate(500, 150)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">FRA</text></g>
-            <line x1="490" y1="160" x2="430" y2="220" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
-            <g transform="translate(560, 180)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">TYO</text></g>
-            <line x1="548" y1="188" x2="435" y2="230" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
-            <g transform="translate(540, 280)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">SIN</text></g>
-            <line x1="525" y1="278" x2="435" y2="255" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
-            <g transform="translate(580, 340)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">SYD</text></g>
-            <line x1="565" y1="335" x2="430" y2="265" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
-            <g transform="translate(310, 330)"><circle cx="0" cy="0" r="16" fill="url(#edgeGradient)" filter="url(#glow)"/><text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">GRU</text></g>
-            <line x1="318" y1="318" x2="380" y2="265" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
-            <g transform="translate(160, 140)"><circle cx="0" cy="0" r="10" fill="#22c55e"/><circle cx="0" cy="-3" r="4" fill="#ffffff"/><ellipse cx="0" cy="4" rx="5" ry="3" fill="#ffffff"/></g>
-            <line x1="172" y1="145" x2="202" y2="157" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowOrange)"/>
-            <g transform="translate(430, 70)"><circle cx="0" cy="0" r="10" fill="#22c55e"/><circle cx="0" cy="-3" r="4" fill="#ffffff"/><ellipse cx="0" cy="4" rx="5" ry="3" fill="#ffffff"/></g>
-            <line x1="438" y1="82" x2="448" y2="102" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowOrange)"/>
-            <g transform="translate(620, 160)"><circle cx="0" cy="0" r="10" fill="#22c55e"/><circle cx="0" cy="-3" r="4" fill="#ffffff"/><ellipse cx="0" cy="4" rx="5" ry="3" fill="#ffffff"/></g>
-            <line x1="608" y1="165" x2="578" y2="175" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowOrange)"/>
-            <g transform="translate(640, 360)"><circle cx="0" cy="0" r="10" fill="#22c55e"/><circle cx="0" cy="-3" r="4" fill="#ffffff"/><ellipse cx="0" cy="4" rx="5" ry="3" fill="#ffffff"/></g>
-            <line x1="628" y1="355" x2="598" y2="345" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowOrange)"/>
-            <rect x="50" y="395" width="700" height="45" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
-            <circle cx="100" cy="417" r="10" fill="url(#edgeGradient)"/>
-            <text x="115" y="421" fill="#1e293b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Edge Node (~10-50ms from users)</text>
-            <rect x="320" y="407" width="20" height="20" rx="4" fill="url(#originGradient)"/>
-            <text x="345" y="421" fill="#1e293b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">Origin Server (centralized)</text>
-            <circle cx="550" cy="417" r="10" fill="#22c55e"/>
-            <text x="565" y="421" fill="#1e293b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">User Request</text>
+
+            <!-- Center: Multiplication symbol -->
+            <g transform="translate(280, 140)">
+                <circle cx="30" cy="30" r="28" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+                <text x="30" y="40" text-anchor="middle" fill="#475569" font-size="28" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">
+                    ×
+                </text>
+            </g>
+
+            <!-- Center: Request volume -->
+            <g transform="translate(350, 90)">
+                <text x="50" y="0" text-anchor="middle" fill="#475569" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Daily Volume
+                </text>
+
+                <!-- Stacked request indicators -->
+                <g transform="translate(0, 20)">
+                    <!-- Request stream visualization -->
+                    <rect x="0" y="0" width="100" height="8" rx="2" fill="url(#requestGradient)" opacity="0.3"/>
+                    <rect x="0" y="12" width="100" height="8" rx="2" fill="url(#requestGradient)" opacity="0.4"/>
+                    <rect x="0" y="24" width="100" height="8" rx="2" fill="url(#requestGradient)" opacity="0.5"/>
+                    <rect x="0" y="36" width="100" height="8" rx="2" fill="url(#requestGradient)" opacity="0.6"/>
+                    <rect x="0" y="48" width="100" height="8" rx="2" fill="url(#requestGradient)" opacity="0.7"/>
+                    <rect x="0" y="60" width="100" height="8" rx="2" fill="url(#requestGradient)" opacity="0.8"/>
+                    <rect x="0" y="72" width="100" height="8" rx="2" fill="url(#requestGradient)" opacity="0.9"/>
+                    <rect x="0" y="84" width="100" height="8" rx="2" fill="url(#requestGradient)" opacity="1.0"/>
+                </g>
+
+                <!-- Volume number -->
+                <text x="50" y="130" text-anchor="middle" fill="#2563eb" font-size="16" font-weight="700" font-family="'SF Mono', 'Monaco', 'Consolas', monospace">
+                    10M
+                </text>
+                <text x="50" y="145" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    requests/day
+                </text>
+            </g>
+
+            <!-- Equals sign -->
+            <g transform="translate(470, 140)">
+                <circle cx="30" cy="30" r="28" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+                <text x="30" y="40" text-anchor="middle" fill="#475569" font-size="28" font-weight="700" font-family="Liberation Sans, Arial, sans-serif">
+                    =
+                </text>
+            </g>
+
+            <!-- Right side: Total auth overhead -->
+            <g transform="translate(540, 90)">
+                <text x="110" y="0" text-anchor="middle" fill="#475569" font-size="13" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Total Auth Overhead
+                </text>
+
+                <!-- Large overhead visualization -->
+                <rect x="0" y="20" width="220" height="100" rx="8" fill="url(#totalGradient)" filter="url(#shadow)" opacity="0.15"/>
+                <rect x="0" y="20" width="220" height="100" rx="8" fill="none" stroke="url(#totalGradient)" stroke-width="3"/>
+
+                <!-- Clock icon -->
+                <g transform="translate(30, 45)">
+                    <circle cx="25" cy="25" r="22" fill="none" stroke="#ef4444" stroke-width="3"/>
+                    <line x1="25" y1="25" x2="25" y2="12" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="25" y1="25" x2="35" y2="30" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+                </g>
+
+                <!-- Time value -->
+                <text x="145" y="60" text-anchor="middle" fill="#dc2626" font-size="28" font-weight="700" font-family="'SF Mono', 'Monaco', 'Consolas', monospace">
+                    2.8 hrs
+                </text>
+                <text x="145" y="82" text-anchor="middle" fill="#64748b" font-size="11" font-family="Liberation Sans, Arial, sans-serif">
+                    of CPU time daily
+                </text>
+                <text x="145" y="100" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Liberation Sans, Arial, sans-serif">
+                    (1ms × 10M requests)
+                </text>
+
+                <!-- Impact annotation -->
+                <text x="110" y="145" text-anchor="middle" fill="#dc2626" font-size="12" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Not harmless at scale
+                </text>
+            </g>
+
+            <!-- Bottom section: Key insight -->
+            <g transform="translate(40, 260)">
+                <!-- Divider line -->
+                <line x1="0" y1="0" x2="720" y2="0" stroke="#e2e8f0" stroke-width="2"/>
+
+                <!-- Section title -->
+                <text x="360" y="30" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">
+                    Where Auth Time Goes
+                </text>
+
+                <!-- Timeline breakdown -->
+                <g transform="translate(60, 50)">
+                    <!-- Base timeline -->
+                    <rect x="0" y="20" width="600" height="50" rx="6" fill="#f1f5f9"/>
+
+                    <!-- Segments with labels -->
+                    <!-- Token parsing -->
+                    <rect x="0" y="20" width="80" height="50" rx="6" fill="#6366f1"/>
+                    <text x="40" y="50" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Parse</text>
+
+                    <!-- Signature verification -->
+                    <rect x="80" y="20" width="200" height="50" fill="#8b5cf6"/>
+                    <text x="180" y="50" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Signature Verification</text>
+
+                    <!-- Claims check -->
+                    <rect x="280" y="20" width="120" height="50" fill="#a855f7"/>
+                    <text x="340" y="50" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Claims Check</text>
+
+                    <!-- Cache lookup -->
+                    <rect x="400" y="20" width="100" height="50" fill="#c084fc"/>
+                    <text x="450" y="50" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">Cache Lookup</text>
+
+                    <!-- IDP call (optional) -->
+                    <rect x="500" y="20" width="100" height="50" rx="0 6 6 0" fill="#e879f9" stroke="#d946ef" stroke-width="2" stroke-dasharray="4,2"/>
+                    <text x="550" y="45" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">IDP Call</text>
+                    <text x="550" y="58" text-anchor="middle" fill="#fce7f3" font-size="10" font-family="Liberation Sans, Arial, sans-serif">(cache miss)</text>
+
+                    <!-- Time markers -->
+                    <text x="40" y="90" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">~0.1ms</text>
+                    <text x="180" y="90" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">~0.5ms (RSA) / ~0.05ms (HMAC)</text>
+                    <text x="340" y="90" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">~0.1ms</text>
+                    <text x="450" y="90" text-anchor="middle" fill="#64748b" font-size="10" font-family="Liberation Sans, Arial, sans-serif">~0.2ms</text>
+                    <text x="550" y="90" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="600" font-family="Liberation Sans, Arial, sans-serif">+5-50ms!</text>
+                </g>
+            </g>
+
+            <!-- Footer subtitle -->
+            <text x="400" y="425" text-anchor="middle" fill="#64748b" font-size="13" font-style="italic" font-family="Liberation Sans, Arial, sans-serif">
+                Chapter 11: Authentication Performance
+            </text>
         </svg>
     </div>
 </body>

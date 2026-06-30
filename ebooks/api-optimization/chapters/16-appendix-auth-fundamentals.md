@@ -1,6 +1,6 @@
 # Appendix: Authentication Fundamentals
 
-This appendix provides background on authentication and authorization concepts for readers who need a refresher before reading Chapter 11: Authentication Performance. If you are already familiar with JWT, OAuth 2.0, and session-based authentication, you can skip this appendix and proceed directly to the performance content.
+This appendix provides background on authentication and authorization concepts for readers who need a refresher before reading Chapter 12: Authentication Performance. If you are already familiar with JWT, OAuth 2.0, and session-based authentication, you can skip this appendix and proceed directly to the performance content.
 
 \newpage
 
@@ -404,4 +404,4 @@ Always transmit tokens over TLS (HTTPS). Tokens in URLs appear in logs, browser 
 
 ---
 
-For performance optimization of these mechanisms, return to [Chapter 11: Authentication Performance](./11-auth-performance.md).
+For performance optimization of these mechanisms, return to [Chapter 12: Authentication Performance](./12-auth-performance.md).

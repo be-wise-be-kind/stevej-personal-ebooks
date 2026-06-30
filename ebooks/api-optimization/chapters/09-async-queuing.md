@@ -1,6 +1,6 @@
-# Chapter 8: Asynchronous Processing and Queuing
+# Chapter 9: Asynchronous Processing and Queuing
 
-![Chapter 8 Opener](../assets/ch08-opener.html)
+![Chapter 8 Opener](../assets/ch09-opener.html)
 
 \newpage
 
@@ -22,7 +22,7 @@ This chapter shows you when and how to apply async patterns for API optimization
 
 Every millisecond on the critical path is a millisecond the user waits. In synchronous APIs, every operation executes sequentially, and the total response time is the sum of all operations.
 
-![Critical Path Latency Breakdown](../assets/ch08-critical-path-breakdown.html)
+![Critical Path Latency Breakdown](../assets/ch09-critical-path-breakdown.html)
 
 Consider what happens when a user places an order:
 
@@ -46,7 +46,7 @@ This pattern repeats across APIs:
 
 The fix is architectural: identify what the user needs to know *right now*, do only that synchronously, and move everything else to background processing.
 
-![Synchronous vs Asynchronous Flow](../assets/ch08-sync-vs-async-flow.html)
+![Synchronous vs Asynchronous Flow](../assets/ch09-sync-vs-async-flow.html)
 
 ### What Belongs on the Critical Path?
 
@@ -168,7 +168,7 @@ Different queue technologies optimize for different use cases:
 
 A critical challenge in distributed systems is ensuring that database updates and message publications happen together or not at all. This is the **dual-write problem**.
 
-![Transactional Outbox Pattern](../assets/ch08-transactional-outbox.html)
+![Transactional Outbox Pattern](../assets/ch09-transactional-outbox.html)
 
 #### The Dual-Write Problem
 
@@ -310,7 +310,7 @@ Use cases include: delayed email reminders, scheduled report generation, rate-li
 
 When a business operation spans multiple services, we need a way to maintain consistency without distributed transactions. The **saga pattern** coordinates a sequence of local transactions, with compensating transactions to undo work if a step fails.
 
-![Saga Patterns: Choreography vs Orchestration](../assets/ch08-saga-patterns.html)
+![Saga Patterns: Choreography vs Orchestration](../assets/ch09-saga-patterns.html)
 
 #### Choreography vs Orchestration
 
@@ -358,7 +358,7 @@ For frameworks that simplify saga implementation, see Temporal, Axon Saga, or Ev
 
 Messages are contracts between services. As systems evolve, message schemas change. Without careful management, schema changes break consumers.
 
-![Schema Compatibility Types](../assets/ch08-schema-evolution.html)
+![Schema Compatibility Types](../assets/ch09-schema-evolution.html)
 
 #### Compatibility Types
 
@@ -404,7 +404,7 @@ This allows breaking changes over multiple deployments without downtime.
 
 Beyond message queues for task distribution, **stream processing** enables continuous computation over unbounded event streams. While queues focus on work distribution, stream processors analyze, transform, and aggregate data in real-time.
 
-![Stream Processing Architecture](../assets/ch08-stream-processing.html)
+![Stream Processing Architecture](../assets/ch09-stream-processing.html)
 
 #### Streams vs Queues
 
@@ -455,7 +455,7 @@ The trade-off is complexity. Stream processing introduces eventual consistency, 
 
 When an API initiates asynchronous work, clients need a way to learn the outcome. Two primary patterns exist: polling and webhooks.
 
-![Async Results: Webhooks vs Polling](../assets/ch08-webhook-vs-polling.html)
+![Async Results: Webhooks vs Polling](../assets/ch09-webhook-vs-polling.html)
 
 #### Polling
 
@@ -597,6 +597,6 @@ These patterns introduce complexity and eventual consistency. Use them when thei
 
 14. **microservices.io**. "Pattern: Transactional outbox." https://microservices.io/patterns/data/transactional-outbox.html
 
-## Next: [Chapter 9: Compute and Scaling](./09-compute-scaling.md)
+## Next: [Chapter 10: Compute and Scaling](./10-compute-scaling.md)
 
 With asynchronous patterns in place, we need to scale our compute resources to handle the workload. The next chapter covers horizontal and vertical scaling strategies, stateless service design, auto-scaling policies, and container orchestration to ensure our async consumers and API servers can grow with demand.

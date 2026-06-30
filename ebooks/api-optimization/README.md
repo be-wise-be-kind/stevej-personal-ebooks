@@ -20,13 +20,14 @@ A practical guide to API performance, from foundational concepts to advanced tec
 5. [Network & Connection Optimization](chapters/05-network-connections.md)
 6. [Caching Strategies](chapters/06-caching-strategies.md)
 7. [Database & Storage Selection](chapters/07-database-patterns.md)
-8. [Async & Queue-Based Patterns](chapters/08-async-queuing.md)
-9. [Compute & Scaling](chapters/09-compute-scaling.md)
-10. [Traffic Management & Resilience](chapters/10-traffic-management.md)
-11. [Authentication Performance](chapters/11-auth-performance.md)
-12. [Geographic Optimization](chapters/12-edge-infrastructure.md)
-13. [Testing Performance](chapters/13-testing-performance.md)
-14. [Putting It All Together](chapters/14-putting-it-all-together.md)
+8. [Database Access Patterns](chapters/08-database-access-patterns.md)
+9. [Async & Queue-Based Patterns](chapters/09-async-queuing.md)
+10. [Compute & Scaling](chapters/10-compute-scaling.md)
+11. [Traffic Management & Resilience](chapters/11-traffic-management.md)
+12. [Authentication Performance](chapters/12-auth-performance.md)
+13. [Geographic Optimization](chapters/13-edge-infrastructure.md)
+14. [Testing Performance](chapters/14-testing-performance.md)
+15. [Putting It All Together](chapters/15-putting-it-all-together.md)
 
 ### Appendices
 
