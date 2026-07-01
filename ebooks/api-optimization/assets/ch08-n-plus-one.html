@@ -94,22 +94,21 @@
             <!-- X-axis label -->
             <text x="460" y="455" text-anchor="middle" font-family="Liberation Sans, Arial, sans-serif" font-size="12" fill="#64748b">Records Fetched</text>
 
-            <!-- Shaded area between N+1 line (top) and batch line (bottom) -->
-            <!-- N+1 points: (100,419), (310,416), (530,380), (820,80) -->
-            <!-- Batch points: (100,419), (310,419), (530,419), (820,419) -->
-            <!-- Polygon goes: N+1 forward then batch backward -->
-            <polygon points="100,419 310,416 530,380 820,80 820,419 530,419 310,419 100,419" fill="#fee2e2" fill-opacity="0.3"/>
+            <!-- Shaded area between N+1 curve (top) and batch line (bottom) -->
+            <!-- N+1 count = N+1 queries, plotted on a log x-axis and linear y-axis, -->
+            <!-- so the curve is exponential: it hugs the baseline then rises steeply. -->
+            <polygon points="100.0,419.6 137.0,419.5 163.2,419.3 200.2,418.9 226.4,418.6 246.8,418.3 277.5,417.6 310.0,416.6 348.7,414.9 376.2,413.2 415.0,409.8 442.5,406.4 463.8,403.0 495.9,396.2 530.0,386.0 581.1,369.0 617.3,352.0 668.4,318.0 704.6,284.0 732.7,250.0 755.7,216.0 775.1,182.0 791.9,148.0 820.0,80.0 820,419 100,419" fill="#fee2e2" fill-opacity="0.3"/>
 
             <!-- Green batch line (flat at y=419) -->
             <polyline points="100,419 310,419 530,419 820,419" fill="none" stroke="#22c55e" stroke-width="3" stroke-linejoin="round"/>
 
-            <!-- Red N+1 line -->
-            <polyline points="100,419 310,416 530,380 820,80" fill="none" stroke="#ef4444" stroke-width="3" stroke-linejoin="round"/>
+            <!-- Red N+1 curve (densely sampled exponential shape) -->
+            <polyline points="100.0,419.6 137.0,419.5 163.2,419.3 200.2,418.9 226.4,418.6 246.8,418.3 277.5,417.6 310.0,416.6 348.7,414.9 376.2,413.2 415.0,409.8 442.5,406.4 463.8,403.0 495.9,396.2 530.0,386.0 581.1,369.0 617.3,352.0 668.4,318.0 704.6,284.0 732.7,250.0 755.7,216.0 775.1,182.0 791.9,148.0 820.0,80.0" fill="none" stroke="#ef4444" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
 
             <!-- N+1 data point circles -->
             <circle cx="100" cy="419" r="6" fill="#ef4444" stroke="white" stroke-width="2"/>
             <circle cx="310" cy="416" r="6" fill="#ef4444" stroke="white" stroke-width="2"/>
-            <circle cx="530" cy="380" r="6" fill="#ef4444" stroke="white" stroke-width="2"/>
+            <circle cx="530" cy="386" r="6" fill="#ef4444" stroke="white" stroke-width="2"/>
             <circle cx="820" cy="80" r="6" fill="#ef4444" stroke="white" stroke-width="2"/>
 
             <!-- Batch data point circles -->

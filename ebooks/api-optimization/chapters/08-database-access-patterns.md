@@ -1,4 +1,4 @@
-# Chapter 8: Database Access Patterns: The Performance Mistakes Teams Actually Make
+# Chapter 8: Database Access Patterns: Common Performance Mistakes
 
 ![Chapter 8 Opener](../assets/ch08-opener.html)
 
@@ -27,7 +27,9 @@ The guidance in each section is grounded in specific, measurable results. "Use c
 
 ### Transaction Scope and Duration
 
-A database transaction is a unit of atomicity: either all of its writes commit, or none do. Transactions hold locks on the rows they modify, and those locks block concurrent access to the same rows until the transaction commits or rolls back. The performance implication follows directly: the longer a transaction runs, the longer other operations wait.
+In an ACID-compliant data store, a transaction is a unit of atomicity: either all of its writes commit, or none do. This guarantee is not universal. It is provided by relational databases (PostgreSQL, MySQL with InnoDB, and similar) and by a growing number of distributed databases, but many data stores offer it only under specific configurations, only within a single partition, or not at all. As Chapter 7 discussed, document stores, key-value stores, and wide-column databases vary widely in their transactional guarantees, and some trade atomicity for horizontal write scalability. The discussion that follows assumes an ACID-compliant store, because that is where transaction scope is both a correctness tool and a performance concern. If your store does not provide atomicity, the scoping guidance still applies to lock duration, but the all-or-nothing semantics do not.
+
+Within such a store, transactions hold locks on the rows they modify, and those locks block concurrent access to the same rows until the transaction commits or rolls back. The performance implication follows directly: the longer a transaction runs, the longer other operations wait.
 
 Leapcell's 2024 analysis of production PostgreSQL workloads found that transactions exceeding 5 seconds double the risk of timeout cascades and deadlocks compared to transactions completing within 2 seconds [Source: Leapcell, 2024]. This is not because 5 seconds is some intrinsic threshold; it is because in a system under load, 5 seconds is long enough for many other operations to queue up behind the same locks, and when the long-running transaction finally commits, the queued operations all proceed simultaneously, creating a burst that can exceed connection pool capacity.
 
